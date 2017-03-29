@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>p6-scheduling</artifactId>
+		<groupId>au.com.wp.corp.p6.scheduling</groupId>
+		<version>0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>p6-scheduling-app</artifactId>
+	<packaging>ear</packaging>
+	<name>${project.artifactId}</name>
+	
+	<properties>
+		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- JBoss dependency versions -->
+		<version.wildfly.maven.plugin>1.0.2.Final</version.wildfly.maven.plugin>
+	</properties>
+	
+	<build>
+		<finalName>${project.name}</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-ear-plugin</artifactId>
+				<version>2.10</version>
+				<configuration>
+					<modules>
+						<webModule>
+							<groupId>au.com.wp.corp.p6.scheduling</groupId>
+							<artifactId>p6-portlet-web</artifactId>
+							<bundleFileName>p6-portlet-web.war</bundleFileName>
+							<contextRoot>/p6-portal</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>au.com.wp.corp.p6.scheduling</groupId>
+							<artifactId>p6-portlet-service</artifactId>
+							<bundleFileName>p6-portlet-service.war</bundleFileName>
+							<contextRoot>/p6-portal-service</contextRoot>
+						</webModule>
+					</modules>
+					<displayName>p6 scheduling forntend</displayName>
+					<!-- Maven to generate the application.xml, set this to true -->
+					<generateApplicationXml>true</generateApplicationXml>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+					<groupId>org.wildfly.plugins</groupId>
+					<artifactId>wildfly-maven-plugin</artifactId>
+					<version>${version.wildfly.maven.plugin}</version>
+					<configuration>
+						<domain>
+							<server-groups>
+								<server-group>server-group-int-04</server-group>
+							</server-groups>
+						</domain>
+						<force>true</force>
+						<port>9990</port>
+						<hostname>localhost</hostname>
+						<username>n039126</username>
+						<password>westPower14</password>
+						<fileNames>
+							<fileName>target/{finalName}.ear</fileName>
+						</fileNames>
+					</configuration>
+				</plugin>
+		</plugins>
+	</build>
+
+	<!-- Define the versions of ear components here -->
+	<dependencies>
+		<dependency>
+			<groupId>au.com.wp.corp.p6.scheduling</groupId>
+			<artifactId>p6-portlet-web</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>au.com.wp.corp.p6.scheduling</groupId>
+			<artifactId>p6-portlet-service</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+	</dependencies>
+</project>
