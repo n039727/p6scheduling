@@ -16,9 +16,9 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>portletWebController</servlet-name>
-		<url-pattern>/</url-pattern>
-		<url-pattern>*.htm</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
+
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<realm-name>active-directory</realm-name>
@@ -35,20 +35,40 @@
 		<web-resource-collection>
 			<web-resource-name>All Secured</web-resource-name>
 			<url-pattern>/*</url-pattern>
+			<http-method>POST</http-method>
+			<http-method>GET</http-method>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>${amr.std.user.ad.group}</role-name>
 		</auth-constraint>
-		<!-- <user-data-constraint> <transport-guarantee>NONE</transport-guarantee> 
-			</user-data-constraint> -->
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>No direct Access</web-resource-name>
 			<url-pattern>/auth/*</url-pattern>
+			<http-method>POST</http-method>
 		</web-resource-collection>
 		<auth-constraint />
-		<!-- <user-data-constraint> <transport-guarantee>NONE</transport-guarantee> 
-			</user-data-constraint> -->
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
 	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>CSS_AND_JS</web-resource-name>
+			<url-pattern>/css/*</url-pattern>
+			<url-pattern>/js/bootstrap.js</url-pattern>
+			<url-pattern>/js/jquery.js</url-pattern>
+			<url-pattern>/web/css/*</url-pattern>
+			<url-pattern>/web/js/bootstrap.js</url-pattern>
+			<url-pattern>/web/js/jquery.js</url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
 </web-app>

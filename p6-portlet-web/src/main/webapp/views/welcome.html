@@ -1,3 +1,338 @@
 <html>
-<h3>welcome to p6 scheduling</h3>
+    <head>
+        <title>P6 - Search Work Orders</title>
+        <!-- Latest compiled and minified CSS 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		-->
+		<link rel="stylesheet" href="css/bootstrap.css"/>
+		<!-- jQuery library 
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		-->
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<!-- Latest compiled JavaScript 
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		-->
+		<script type="text/javascript" src="js/bootstrap.js"></script>
+		<!-- Date Picker 
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+		-->
+		<script type="text/javascript" src="js/date-picker.js"></script>
+		<link rel="stylesheet" href="css/date-picker.css"/>
+		<!-- Date Picker -->
+		<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
+		<link rel="stylesheet" href="css/bootstrap-multiselect.css"/>
+		
+		<!-- Custom style and JS -->
+		<script type="text/javascript" src="js/search-wo.js"></script>
+		<link rel="stylesheet" href="css/search-wo.css"/>
+
+    </head>
+	<body>
+		<div class="container search-query-container col-md-offset-1 col-md-10">
+			<div class="panel panel-default">
+				<div class="panel-heading search-query-panel-heading"><h4>Search Work Orders</h4></div>
+				<div class="panel-body">
+					<form class="form-horizontal">
+						<div class="form-group">
+							<label class="control-label col-md-2" for="userId">Depot</label>
+							<div class="col-md-3">
+								<select class="form-control" id="sel1">
+									<option>Depo 1</option>
+									<option>Depo 2</option>
+									<option>Depo 3</option>
+									<option>Depo 4</option>
+								</select>
+							</div>
+							<label class="control-label col-md-1" for="userId">Crew</label>
+							<div class="col-md-3">
+								<select class="form-control" id="crew-select" multiple="multiple">
+									<option>Crew 1</option>
+									<option>Crew 2</option>
+									<option>Crew 3</option>
+									<option>Crew 4</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-md-2" for="pwd">Execution Package</label>
+							<div class="col-md-3">
+								<input class="form-control" id="executionPkg"/>
+							</div>
+							<label class="control-label col-md-1" for="pwd">Schedule Date</label>
+							<div class="col-md-3">
+								<div class="input-group input-append date" id="datePicker">
+									<input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text"/>
+									<span class="input-group-addon add-on">
+										<span class="glyphicon glyphicon-calendar"></span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-md-offset-3 col-md-1">
+								<button type="submit" class="btn btn-warning btn-lg btn-block">Refresh</button>
+							</div>
+							<div class="col-md-offset-3 col-md-1">
+								<button type="submit" class="btn btn-warning btn-lg btn-block">Search</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="container side-panel-body-container col-md-offset-1 col-md-10">
+			<div class="panel panel-default side-panel col-md-2">
+				<div class="panel-heading side-panel-heading"><h5><b>Scheduling</b></h5></div>
+				<div class="panel-body side-panel-body">
+					<div class="side-panel-button-container col-md-12">
+						<button type="submit" class="btn btn-default btn-block side-panel-button">Add Scheduling To-Do</button>
+					</div>
+					<div class="side-panel-button-container col-md-12">
+						<button type="submit" class="btn btn-default btn-block">Update Materials Req.</button>
+					</div>
+					<div class="side-panel-button-container col-md-12">
+						<button type="submit" class="btn btn-default btn-block side-panel-button">View To-Do Status</button>
+					</div>
+					<div class="side-panel-button-container col-md-12">
+						<button type="submit" class="btn btn-default btn-block side-panel-button">Create Execution Package</button>
+					</div>
+				</div>
+			</div>
+			<div class="panel query-result-panel panel-primary col-md-10">
+				<div class="panel-body">
+					<table class="table table-condensed table-bordered table-striped" style="border-collapse:collapse;">
+						<thead class="query-result-header">
+							<tr>
+								<th>&nbsp;</th>
+								<th>Execution Package</th>
+								<th>WO #</th>
+								<th>Schedule Date</th>
+								<th>Crew Assigned</th>
+								<th>Lead Crew</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="accordion-toggle">
+								<td>
+									<button class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" data-toggle="collapse" data-target="#demo1">
+										<!--<span class="glyphicon glyphicon-plus"></span>-->
+									</button>
+								</td>
+								<td>2 May 2017 Albany</td>
+								<td>Y123456, Y345677, Y235976, YA123456, 0235678, YA123457</td>
+								<td>02-May-2017</td>
+								<td>MOST1, MOST2</td>
+								<td> 
+									<select class="form-control" id="lead-crew-select">
+										<option>MOST1</option>
+										<option>MOST2</option>
+									</select> 
+								</td>
+							</tr>
+							<tr>
+								<td colspan="12" class="hiddenRow">
+									<div class="accordian-body collapse" id="demo1">
+										<div class="panel panel-default panel-standard-to-do">
+											<div class="panel-heading">Select Standard To-Do</div>
+											<div class="panel-body">
+												<div class="col-md-6">
+													<table class="table table-condensed">
+														<thead>
+															<th>To-Do</th>
+															<th>Linked WO</th>
+														</thead>
+														<tbody>
+															<tr>
+																<td>Traffic Management</td>
+																<td>
+																	<select class="form-control" id="to-do-1" multiple="multiple">
+																		<option>All</option>
+																		<option>Y123456</option>
+																		<option>Y345677</option>
+																		<option>Y235976</option>
+																		<option>YA123456</option>
+																		<option>0235678</option>
+																		<option>YA123457</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td>DBYD</td>
+																<td>
+																	<select class="form-control" id="to-do-1" multiple="multiple">
+																		<option>All</option>
+																		<option>Y123456</option>
+																		<option>Y345677</option>
+																		<option>Y235976</option>
+																		<option>YA123456</option>
+																		<option>0235678</option>
+																		<option>YA123457</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td>ENAR</td>
+																<td>
+																	<select class="form-control" id="to-do-1" multiple="multiple">
+																		<option>All</option>
+																		<option>Y123456</option>
+																		<option>Y345677</option>
+																		<option>Y235976</option>
+																		<option>YA123456</option>
+																		<option>0235678</option>
+																		<option>YA123457</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td>ESA</td>
+																<td>
+																	<select class="form-control" id="to-do-1" multiple="multiple">
+																		<option>All</option>
+																		<option>Y123456</option>
+																		<option>Y345677</option>
+																		<option>Y235976</option>
+																		<option>YA123456</option>
+																		<option>0235678</option>
+																		<option>YA123457</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td>Rail Permit</td>
+																<td>
+																	<select class="form-control" id="to-do-1" multiple="multiple">
+																		<option>All</option>
+																		<option>Y123456</option>
+																		<option>Y345677</option>
+																		<option>Y235976</option>
+																		<option>YA123456</option>
+																		<option>0235678</option>
+																		<option>YA123457</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td>Access Permit</td>
+																<td>
+																	<select class="form-control" id="to-do-1" multiple="multiple">
+																		<option>All</option>
+																		<option>Y123456</option>
+																		<option>Y345677</option>
+																		<option>Y235976</option>
+																		<option>YA123456</option>
+																		<option>0235678</option>
+																		<option>YA123457</option>
+																	</select>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+												<div class="col-md-12">
+													<label for="comment">Standard To-Do Comment</label>
+													<textarea class="form-control" rows="3" id="comment-1"></textarea> 
+												</div>
+											</div>
+											<div class="panel-footer"><button class="btn btn-default">Save</button></div>
+									</div>
+								</td>
+							</tr>
+							<tr class="accordion-toggle">
+								<td>
+									<button class="btn btn-default btn-lg row-expander glyphicon glyphicon-plus" data-toggle="collapse" data-target="#demo2">
+										<!--<span class="glyphicon glyphicon-plus"></span>
+										<span class="glyphicon glyphicon-minus"></span>-->
+									</button>
+								</td>
+								<td>&nbsp;</td>
+								<td>Y345123</td>
+								<td>02-May-2017</td>
+								<td>MOST3</td>
+								<td>
+									<select class="form-control" id="lead-crew-select">
+										<option>MOST3</option>
+									</select> 
+								</td>
+							</tr>
+							<tr>
+								<td colspan="12" class="hiddenRow">
+									<div class="accordian-body collapse" id="demo2">
+										<div class="panel panel-default panel-standard-to-do">
+											<div class="panel-heading">Select Standard To-Do</div>
+											<div class="panel-body">
+												<div class="col-md-6">
+													<table class="table table-condensed">
+														<thead>
+															<th>To-Do</th>
+															<th>Linked WO</th>
+														</thead>
+														<tbody>
+															<tr>
+																<td>Traffic Management</td>
+																<td>
+																	<select class="form-control" id="to-do-2" multiple="multiple">
+																		<option>Y345123</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td>DBYD</td>
+																<td>
+																	<select class="form-control" id="to-do-2" multiple="multiple">
+																		<option>Y345123</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td>ENAR</td>
+																<td>
+																	<select class="form-control" id="to-do-2" multiple="multiple">
+																		<option>Y345123</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td>ESA</td>
+																<td>
+																	<select class="form-control" id="to-do-2" multiple="multiple">
+																		<option>Y345123</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td>Rail Permit</td>
+																<td>
+																	<select class="form-control" id="to-do-2" multiple="multiple">
+																		<option>Y345123</option>
+																	</select>
+																</td>
+															</tr>
+															<tr>
+																<td>Access Permit</td>
+																<td>
+																	<select class="form-control" id="to-do-2" multiple="multiple"> 
+																		<option>Y345123</option>
+																	</select>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+												<div class="col-md-12">
+													<label for="comment">Standard To-Do Comment</label>
+													<textarea class="form-control" rows="3" id="comment-2"></textarea> 
+												</div>
+											</div>
+											<div class="panel-footer"><button class="btn btn-default">Save</button></div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>

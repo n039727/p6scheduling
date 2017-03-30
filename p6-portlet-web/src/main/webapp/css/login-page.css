@@ -1,0 +1,14 @@
+.vertically-middle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.login-panel-heading {
+	background-color:#f0ad4e !important;
+	color:#ffffff !important;
+}
+
+body {
+	background-color: #428bca;
+}
