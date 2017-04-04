@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import au.com.wp.corp.p6.businessservice.P6SchedulingService;
+import au.com.wp.corp.p6.businessservice.WorkOrder;
 
 @RestController
-public class MainController {
+public class P6SchedulingRestService {
 
     @RequestMapping("/home")
     @ResponseBody
@@ -22,12 +23,6 @@ public class MainController {
     }
     @Inject
     P6SchedulingService welcomeservice;
-    
-    @RequestMapping("/welcome")
-    @ResponseBody
-    String welcome() {
-        return "This is great !!! " +welcomeservice.getWelcomeMessage();
-    }
 
     @RequestMapping(value = "/retrieveWorkOrders" , 
     		method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
@@ -36,6 +31,11 @@ public class MainController {
         return welcomeservice.retrieveWorkOrders(null);
     }
     
-   
+    @RequestMapping(value = "/retrieveJobs" , 
+    		method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    @ResponseBody
+    List<WorkOrder> retrieveJobs() {
+        return welcomeservice.retrieveWorkOrders(null);
+    }
 }
 

@@ -1,4 +1,4 @@
-package au.com.wp.corp.p6.service;
+package au.com.wp.corp.p6.businessservice;
 
 import java.util.List;
 
