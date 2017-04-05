@@ -55,7 +55,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		WorkOrder workOrder3 = new WorkOrder();
 		workOrder3.setLeadCrew("MOST3");
 		workOrder3.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
-		workOrder3.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67" }));
+		workOrder3.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP87" }));
 		/* this code will be replaced will the actual P6 Service call */
 		mapStorage.put(workOrder3.getWorkOrders().get(0), workOrder3);
 	}

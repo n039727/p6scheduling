@@ -1,6 +1,10 @@
 <html>
     <head>
         <title>P6 - Search Work Orders</title>
+		
+		<!-- angular JS-->
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+		
         <!-- Latest compiled and minified CSS 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		-->
@@ -27,78 +31,17 @@
 		<script type="text/javascript" src="js/search-wo.js"></script>
 		<link rel="stylesheet" href="css/search-wo.css"/>
 		
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-		
 		 <script>
 			var app = angular.module("todoPortal", []);
-			app.controller("toDoPortalCOntroller", function($scope) {
+			app.controller("toDoPortalCOntroller", function($scope, $http) {
 			
-				/*$('[id^=to-do').multiselect({
-					buttonWidth: '100%'
-				});*/
-				
-				$scope.workOrders = [
-							{
-								"executionPkg": "",
-								"workOrderId":"Y123456",
-								"plannedStartDate":"12/04/2017",
-								"crewAssigned":"MOST1",
-								"leadCrew":"",
-								"todos": [
-									"ESA","DEC Permit","DBYD"
-								]
-							},
-							{
-								"executionPkg": "",
-								"workOrderId":"Y345678",
-								"plannedStartDate":"15/04/2017",
-								"crewAssigned":"MOST3",
-								"leadCrew":"",
-								"todos": [
-									"ESA","DEC Permit","DBYD"
-								]
-							},
-							{
-								"executionPkg": "",
-								"workOrderId":"Y687987",
-								"plannedStartDate":"16/04/2017",
-								"crewAssigned":"MOST2",
-								"leadCrew":"",
-								"todos": [
-									"ESA","DEC Permit","DBYD"
-								]
-							},
-							{
-								"executionPkg": "",
-								"workOrderId":"Y945190",
-								"plannedStartDate":"11/04/2017",
-								"crewAssigned":"MOST2",
-								"leadCrew":"",
-								"todos": [
-									"ESA","DEC Permit","DBYD"
-								]
-							},
-							{
-								"executionPkg": "",
-								"workOrderId":"Y398134",
-								"plannedStartDate":"09/04/2017",
-								"crewAssigned":"MOST1",
-								"leadCrew":"",
-								"todos": [
-									"ESA","DEC Permit","DBYD"
-								]
-							},
-							{
-								"executionPkg": "",
-								"workOrderId":"Y190865",
-								"plannedStartDate":"10/04/2017",
-								"crewAssigned":"MOST3",
-								"leadCrew":"",
-								"todos": [
-									"ESA","DEC Permit","DBYD"
-								]
-							}
-						];
+				$scope.workOrders = [];
+						
+				$http.post("/p6-portal-service/retrieveJobs").then(function (response) {
+					console.log("Received data from server");
+					$scope.fetchedData = response.data;
+					console.log("Data from server: " + JSON.stringify($scope.fetchedData));
+				});
 				
 				$scope.todoGrp1 = ["ESA","DEC Permit","DBYD","Gas Permit","Rail Permit","Water Permit","ENAR"];
 				$scope.todoGrp2 = ["Traffic","Lay Down Area Arrangements","Fibre Optics","Inductions (Mine Site)","Specialised Plant / Equipment Availability","Additional Trades","Others"];
@@ -107,6 +50,7 @@
 				$scope.resultVisible = false;
 				
 				$scope.search = function () {
+						$scope.workOrders = $scope.fetchedData
 						$scope.resultVisible = true;
 				};
 				$scope.refresh = function () {
@@ -115,26 +59,65 @@
 				$scope.addRemoveTodo = function ($event, wo, todo) {
 						var cb = $event.target;
 						if (cb.checked) {
-							if (wo.todos.indexOf(todo) == -1)
-								wo.todos.push(todo);
-						}	
-						else {
-							var index = wo.todos.indexOf(todo);
+							if (findToDo(wo.toDoItems, todo) == -1) {
+								wo.toDoItems.push({toDoName:todo, workOrders:[wo.workOrders[0]]});
+								console.log('WO after adding To Do: ' + JSON.stringify(wo));
+							}
+								
+						} else {
+							var index = findToDo(wo.toDoItems, todo);
 							if (index > -1) {
-								wo.todos.splice(index, 1);
+								wo.toDoItems.splice(index, 1);
+								console.log('WO after removing To Do: ' + JSON.stringify(wo));
 							}
 						}
 							//wo.todos.remove(todo);
 						
 				};
 				
+				function findToDo(toDoList, toDoName) {
+					if (toDoList) {
+						for(i=0; i < toDoList.length; i++) {
+							if (toDoList[i].toDoName === toDoName) {
+								return i;
+							}
+						}
+					}
+					return -1;
+				}
+				
 				$scope.calculateEnable = function(wo, todo) {
-					console.log(todo);
-					return wo.todos.indexOf(todo) == -1;
+					//console.log('Work Order: ');
+					//console.log(JSON.stringify(wo));
+					if (wo.toDoItems) {
+						for(i=0; i < wo.toDoItems.length; i++) {
+							//console.log('Comparing ' + wo.toDoItems[i].toDoName + ' with ' + todo);
+							if (wo.toDoItems[i].toDoName === todo) {
+								//console.log('returning true');
+								return true;
+							}
+						}
+					}
+					
+					//console.log('returning false');
+					return false;
 				};
 				
 				$scope.saveToDo = function(wo){
-					alert("Scheduling TO DO saved for " + wo.workOrderId);
+					var req = {
+						 method: 'POST',
+						 url: '/p6-portal-service/saveWorkOrder',
+						 headers: {
+						   'Content-Type': 'application/json'
+						 },
+						 data: JSON.stringify(wo)
+					};
+					$http(req).then(function (response) {
+						console.log("Received data from server");
+						$scope.fetchedData = response.data;
+						console.log("Data from server: " + JSON.stringify($scope.fetchedData));
+						alert("Scheduling TO DO saved for " + wo.workOrderId);
+					});
 				};
 				
 				$scope.toggleExpansion  = function($event) {
@@ -148,6 +131,18 @@
 						$('#'+button.id).addClass("glyphicon-plus");
 					}
 				};
+				
+				$scope.page = 'ADD';
+				
+				$scope.viewToDoStatus = function() {
+					$scope.page = 'VIEW';
+					$scope.workOrders = [];
+				} 
+				
+				$scope.addUpdateSchedulingToDo = function() {
+					$scope.page = 'ADD';
+					$scope.workOrders = [];
+				} 
 				
 			});
 			
@@ -224,13 +219,13 @@
 						<div class="panel-heading side-panel-heading"><h4><b>Scheduling</b></h4></div>
 						<div class="panel-body side-panel-body">
 							<div class="side-panel-button-container col-md-12">
-								<button type="submit" class="btn btn-default btn-block side-panel-button">Add/Update Scheduling To-Do</button>
+								<button type="submit" class="btn btn-default btn-block side-panel-button" ng-click="addUpdateSchedulingToDo()">Add/Update Scheduling To-Do</button>
 							</div>
 							<div class="side-panel-button-container col-md-12">
 								<button type="submit" class="btn btn-default btn-block">Update Materials Req.</button>
 							</div>
 							<div class="side-panel-button-container col-md-12">
-								<button type="submit" class="btn btn-default btn-block side-panel-button">View To-Do Status</button>
+								<button type="submit" class="btn btn-default btn-block side-panel-button" ng-click="viewToDoStatus()">View To-Do Status</button>
 							</div>
 							<div class="side-panel-button-container col-md-12">
 								<button type="submit" class="btn btn-default btn-block side-panel-button">Create Execution Package</button>
@@ -266,23 +261,23 @@
 						<tbody>
 							<tr ng-repeat-start="wo in workOrders"class="accordion-toggle">
 								<td>
-									<button id="{{wo.workOrderId + '-expand'}}" class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" ng-click="toggleExpansion($event)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrderId}}">
+									<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" ng-click="toggleExpansion($event)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
 									</button>
 								</td>
-								<td>{{wo.executionPkg}}</td>
-								<td>{{wo.workOrderId}}</td>
-								<td>{{wo.plannedStartDate}}</td>
-								<td>{{wo.crewAssigned}}</td>
+								<td>{{wo.executionPackage}}</td>
+								<td>{{wo.workOrders[0]}}</td>
+								<td>{{wo.scheduleDate}}</td>
+								<td>{{wo.leadCrew}}</td>
 								<td> 
 									<select class="form-control" id="lead-crew-select" disabled>
-										<option>{{wo.crewAssigned}}</option>
+										<option>&nbsp;</option>
 									</select> 
 								</td>
 							</tr>
 							<tr ng-repeat-end>
 								<td colspan="12" class="hiddenRow">
-									<div class="accordian-body collapse" id="{{'demo-' + wo.workOrderId}}">
-										<div class="panel panel-default panel-standard-to-do">
+									<div class="accordian-body collapse" id="{{'demo-' + wo.workOrders[0]}}">
+										<div ng-show="{{page == 'ADD'}}" class="panel panel-default panel-standard-to-do">
 											<div class="panel-heading panel-standard-to-do-heading"><b>Select Scheduling To-Do</b></div>
 											<div class="panel-body">
 												<div class="col-md-6">
@@ -295,11 +290,11 @@
 														<tbody>
 															<tr ng-repeat="todo in todoGrp1">
 																<td>{{todo}}</td>
-																<td><input type="checkbox" ng-checked="wo.todos.indexOf(todo) != -1" ng-click="addRemoveTodo($event, wo, todo)"></td>
+																<td><input type="checkbox" ng-checked="calculateEnable(wo, todo)" ng-click="addRemoveTodo($event, wo, todo)"></td>
 																<td>
-																	<select class="form-control"  ng-disabled="calculateEnable(wo, todo)">
+																	<select class="form-control"  ng-disabled="!calculateEnable(wo, todo)">
 																		<!--<option disabled selected>Select</option>-->
-																		<option>{{wo.workOrderId}}</option>
+																		<option ng-if="calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
 																	</select>
 																</td>
 															</tr>
@@ -316,10 +311,10 @@
 														<tbody>
 															<tr ng-repeat="todo in todoGrp2">
 																<td>{{todo}}</td>
-																<td><input type="checkbox" ng-checked="wo.todos.indexOf(todo) != -1" ng-click="addRemoveTodo($event, wo, todo)"></td>
+																<td><input type="checkbox" ng-checked="calculateEnable(wo, todo)" ng-click="addRemoveTodo($event, wo, todo)"></td>
 																<td>
-																	<select class="form-control"  ng-disabled="calculateEnable(wo, todo)">
-																		<option>{{wo.workOrderId}}</option>
+																	<select class="form-control"  ng-disabled="!calculateEnable(wo, todo)">
+																		<option ng-if="calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
 																	</select>
 																</td>
 															</tr>
@@ -328,14 +323,55 @@
 												</div>
 												<div class="col-md-12">
 													<label for="comment">Scheduling To-Do Comment</label>
-													<textarea class="form-control" rows="3" id="comment-1">{{wo.todoComment}}</textarea> 
+													<textarea class="form-control" rows="3" id="comment-1">{{wo.schedulingToDoComment}}</textarea> 
 												</div>
 												<div class="col-md-offset-9 col-md-2" style="padding:5px">
 													<button id="save-to-do-1" class="btn btn-warning btn-block" ng-click="saveToDo(wo)">
 														<h4><b>Save</b></h4>
 													</button>
 												</div>
-											</div>
+											</div>	
+										</div>
+										<div ng-show="{{page == 'VIEW'}}" class="panel panel-default panel-standard-to-do">
+											<div class="panel-heading panel-standard-to-do-heading"><b>Scheduling To-Do</b></div>
+											<div class="panel-body">
+												<div class="col-md-12">
+													<table class="table table-condensed">
+														<thead>
+															<th class="standard-to-do-header">To-Do</th>
+															<th class="standard-to-do-header">WO Assigned</th>
+															<th class="standard-to-do-header">Req By Date</th>
+															<th class="standard-to-do-header">Comment</th>
+															<th class="standard-to-do-header">Status</th>
+															<th class="standard-to-do-header">Supporting Document</th>
+														</thead>
+														<tbody>
+															<tr ng-repeat="todo in wo.toDoItems">
+																<td>{{todo.toDoName}}</td>
+																<td>{{todo.workWorders[0]}}</td>
+																<td>{{todo.reqByDate}}</td>
+																<td>{{todo.comment}}</td>
+																<td>{{todo.status}}</td>
+																<td>{{todo.supportingDocLink}}</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+												<div class="col-md-12">
+													<label for="comment">Scheduling To-Do Comment</label>
+													<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.schedulingToDoComment}}</textarea> 
+												</div>
+												<div class="col-md-12">
+													<label for="comment">Depot To-Do Comment</label>
+													<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.depotToDoComment}}</textarea> 
+												</div>
+												<div class="col-md-offset-9 col-md-2" style="padding:5px">
+													<button id="save-to-do-1" class="btn btn-warning btn-block" ng-click="saveToDo(wo)">
+														<h4><b>Save</b></h4>
+													</button>
+												</div>
+											</div>	
+										</div>
 									</div>
 								</td>
 							</tr>

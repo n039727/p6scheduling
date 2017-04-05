@@ -13,6 +13,8 @@ public class WorkOrder {
 	private String scheduleDate;
 	private String leadCrew;
 	private List<ToDoItems> toDoItems;
+	private String schedulingToDoComment;
+	private String depotToDoComment;
 	
 	public String getExecutionPackage() {
 		return executionPackage;
@@ -43,6 +45,18 @@ public class WorkOrder {
 	}
 	public void setToDoItems(List<ToDoItems> toDoItems) {
 		this.toDoItems = toDoItems;
+	}
+	public String getSchedulingToDoComment() {
+		return schedulingToDoComment;
+	}
+	public void setSchedulingToDoComment(String schedulingToDoComment) {
+		this.schedulingToDoComment = schedulingToDoComment;
+	}
+	public String getDepotToDoComment() {
+		return depotToDoComment;
+	}
+	public void setDepotToDoComment(String depotToDoComment) {
+		this.depotToDoComment = depotToDoComment;
 	}
 	
 	
