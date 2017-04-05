@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import au.com.wp.corp.p6.service.P6SchedulingAppService;
-import au.com.wp.corp.p6.service.impl.P6SchedulingAppServiceImpl;
+import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
+import au.com.wp.corp.p6.businessservice.impl.P6SchedulingBusinessServiceImpl;
 
 @Configuration
 @ComponentScan("au.com.wp.corp.p6")
@@ -16,8 +16,8 @@ import au.com.wp.corp.p6.service.impl.P6SchedulingAppServiceImpl;
 public class AppConfig {
 
 	@Bean
-    public P6SchedulingAppService p6Service(){
+    public P6SchedulingBusinessService p6Service(){
     	
-    	return new P6SchedulingAppServiceImpl();
+    	return new P6SchedulingBusinessServiceImpl();
     }
 }

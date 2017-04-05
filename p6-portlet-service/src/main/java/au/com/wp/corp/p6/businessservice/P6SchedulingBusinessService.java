@@ -9,4 +9,5 @@ public interface P6SchedulingBusinessService {
 	
 	List<WorkOrder> retrieveJobs(WorkOrderSerachInput input);
 	List<WorkOrder> retrieveWorkOrders(WorkOrderSerachInput input);
+	List<WorkOrder> saveWorkOrder(WorkOrder workOrder);
 }
