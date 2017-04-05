@@ -1,4 +1,4 @@
-package au.com.wp.corp.p6.businessservice;
+package au.com.wp.corp.p6.dto;
 public class Crew{
 	public String getCrewId() {
 		return crewId;

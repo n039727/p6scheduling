@@ -1,4 +1,4 @@
-package au.com.wp.corp.p6.service;
+package au.com.wp.corp.p6.service.impl;
 
 import java.util.List;
 
@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import au.com.wp.corp.p6.businessservice.P6SchedulingService;
-import au.com.wp.corp.p6.businessservice.WorkOrder;
+import au.com.wp.corp.p6.dto.WorkOrder;
+import au.com.wp.corp.p6.dto.WorkOrderSerachInput;
+import au.com.wp.corp.p6.service.P6SchedulingAppService;
 
 @RestController
-public class P6SchedulingRestService {
+public class P6SchedulingAppServiceImpl implements P6SchedulingAppService{
 
     @RequestMapping("/home")
     @ResponseBody
@@ -22,20 +23,23 @@ public class P6SchedulingRestService {
         return "Hello World!";
     }
     @Inject
-    P6SchedulingService welcomeservice;
+    P6SchedulingAppService p6Service;
 
+    
     @RequestMapping(value = "/retrieveWorkOrders" , 
     		method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
     @ResponseBody
-    List<WorkOrder> retrieveWorkOrders() {
-        return welcomeservice.retrieveWorkOrders(null);
-    }
-    
+	public List<WorkOrder> retrieveWorkOrders(WorkOrderSerachInput input) {
+    	 return p6Service.retrieveWorkOrders(null);
+	}
+
     @RequestMapping(value = "/retrieveJobs" , 
     		method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
     @ResponseBody
-    List<WorkOrder> retrieveJobs() {
-        return welcomeservice.retrieveWorkOrders(null);
-    }
+	public List<WorkOrder> retrieveJobs(WorkOrderSerachInput input) {
+    	return p6Service.retrieveJobs(null);
+	}
+
+	
 }
 

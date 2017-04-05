@@ -2,7 +2,10 @@ package au.com.wp.corp.p6.businessservice;
 
 import java.util.List;
 
-public interface P6SchedulingService {
+import au.com.wp.corp.p6.dto.WorkOrder;
+import au.com.wp.corp.p6.dto.WorkOrderSerachInput;
+
+public interface P6SchedulingBusinessService {
 	
 	List<WorkOrder> retrieveJobs(WorkOrderSerachInput input);
 	List<WorkOrder> retrieveWorkOrders(WorkOrderSerachInput input);

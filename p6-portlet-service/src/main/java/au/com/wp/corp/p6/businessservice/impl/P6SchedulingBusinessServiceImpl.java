@@ -1,4 +1,4 @@
-package au.com.wp.corp.p6.businessservice;
+package au.com.wp.corp.p6.businessservice.impl;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -8,8 +8,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
+import au.com.wp.corp.p6.dto.WorkOrder;
+import au.com.wp.corp.p6.dto.WorkOrderSerachInput;
+
 @Service
-public class P6SchedulingServiceImpl implements P6SchedulingService{
+public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService{
 
 	/*@Override
 	public String getWelcomeMessage() {
