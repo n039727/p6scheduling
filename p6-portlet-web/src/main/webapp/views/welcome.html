@@ -26,9 +26,147 @@
 		<!-- Custom style and JS -->
 		<script type="text/javascript" src="js/search-wo.js"></script>
 		<link rel="stylesheet" href="css/search-wo.css"/>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+		
+		 <script>
+			var app = angular.module("todoPortal", []);
+			app.controller("toDoPortalCOntroller", function($scope) {
+			
+				/*$('[id^=to-do').multiselect({
+					buttonWidth: '100%'
+				});*/
+				
+				$scope.workOrders = [
+							{
+								"executionPkg": "",
+								"workOrderId":"Y123456",
+								"plannedStartDate":"12/04/2017",
+								"crewAssigned":"MOST1",
+								"leadCrew":"",
+								"todos": [
+									"ESA","DEC Permit","DBYD"
+								]
+							},
+							{
+								"executionPkg": "",
+								"workOrderId":"Y345678",
+								"plannedStartDate":"15/04/2017",
+								"crewAssigned":"MOST3",
+								"leadCrew":"",
+								"todos": [
+									"ESA","DEC Permit","DBYD"
+								]
+							},
+							{
+								"executionPkg": "",
+								"workOrderId":"Y687987",
+								"plannedStartDate":"16/04/2017",
+								"crewAssigned":"MOST2",
+								"leadCrew":"",
+								"todos": [
+									"ESA","DEC Permit","DBYD"
+								]
+							},
+							{
+								"executionPkg": "",
+								"workOrderId":"Y945190",
+								"plannedStartDate":"11/04/2017",
+								"crewAssigned":"MOST2",
+								"leadCrew":"",
+								"todos": [
+									"ESA","DEC Permit","DBYD"
+								]
+							},
+							{
+								"executionPkg": "",
+								"workOrderId":"Y398134",
+								"plannedStartDate":"09/04/2017",
+								"crewAssigned":"MOST1",
+								"leadCrew":"",
+								"todos": [
+									"ESA","DEC Permit","DBYD"
+								]
+							},
+							{
+								"executionPkg": "",
+								"workOrderId":"Y190865",
+								"plannedStartDate":"10/04/2017",
+								"crewAssigned":"MOST3",
+								"leadCrew":"",
+								"todos": [
+									"ESA","DEC Permit","DBYD"
+								]
+							}
+						];
+				
+				$scope.todoGrp1 = ["ESA","DEC Permit","DBYD","Gas Permit","Rail Permit","Water Permit","ENAR"];
+				$scope.todoGrp2 = ["Traffic","Lay Down Area Arrangements","Fibre Optics","Inductions (Mine Site)","Specialised Plant / Equipment Availability","Additional Trades","Others"];
+				$scope.depots = ["Depot1","Depot2","Depot3","Depot4"];
+				$scope.crews = ["MOST1","MOST2","MOST3"];
+				$scope.resultVisible = false;
+				
+				$scope.search = function () {
+						$scope.resultVisible = true;
+				};
+				$scope.refresh = function () {
+						$scope.resultVisible = false;
+				};
+				$scope.addRemoveTodo = function ($event, wo, todo) {
+						var cb = $event.target;
+						if (cb.checked) {
+							if (wo.todos.indexOf(todo) == -1)
+								wo.todos.push(todo);
+						}	
+						else {
+							var index = wo.todos.indexOf(todo);
+							if (index > -1) {
+								wo.todos.splice(index, 1);
+							}
+						}
+							//wo.todos.remove(todo);
+						
+				};
+				
+				$scope.calculateEnable = function(wo, todo) {
+					console.log(todo);
+					return wo.todos.indexOf(todo) == -1;
+				};
+				
+				$scope.saveToDo = function(wo){
+					alert("Scheduling TO DO saved for " + wo.workOrderId);
+				};
+				
+				$scope.toggleExpansion  = function($event) {
+					var button = $event.target;
+					
+					if($('#'+button.id).hasClass("glyphicon-plus")) {
+						$('#'+button.id).removeClass("glyphicon-plus");
+						$('#'+button.id).addClass("glyphicon-minus");
+					} else if ($('#'+button.id).hasClass("glyphicon-minus")) {
+						$('#'+button.id).removeClass("glyphicon-minus");
+						$('#'+button.id).addClass("glyphicon-plus");
+					}
+				};
+				
+			});
+			
+		</script>
 
     </head>
-	<body>
+	<body ng-app="todoPortal"  ng-controller="toDoPortalCOntroller">
+		<nav class="navbar navbar-default navbar-static-top navbar-top-fixed container col-md-12">
+			<div class="nav navbar-nav"><a href="#" class="navbar-top-link"><h4>Home</h4></a></div>
+			<div class="nav navbar-nav navbar-right"><a href="#" class="navbar-top-link"><h4>Administration</h4></a></div>
+			<!--<div id="navbarCollapse" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#" class="navbar-top-link"><h4>Home</h4></a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#" class="navbar-top-link"><h4>Administration</h4></a></li>
+				</ul>
+			</div>-->
+		</nav>
 		<div class="container search-query-container col-md-offset-1 col-md-10">
 			<div class="panel panel-default">
 				<div class="panel-heading search-query-panel-heading"><h4>Search Work Orders</h4></div>
@@ -37,20 +175,19 @@
 						<div class="form-group">
 							<label class="control-label col-md-2" for="userId">Depot</label>
 							<div class="col-md-3">
-								<select class="form-control" id="sel1">
-									<option>Depo 1</option>
-									<option>Depo 2</option>
-									<option>Depo 3</option>
-									<option>Depo 4</option>
+								<select class="form-control" id="depot-select" multiple="multiple">
+									<option>Depot 1</option>
+									<option>Depot 2</option>
+									<option>Depot 3</option>
+									<option>Depot 4</option>
 								</select>
 							</div>
 							<label class="control-label col-md-1" for="userId">Crew</label>
 							<div class="col-md-3">
 								<select class="form-control" id="crew-select" multiple="multiple">
-									<option>Crew 1</option>
-									<option>Crew 2</option>
-									<option>Crew 3</option>
-									<option>Crew 4</option>
+									<option>MOST1</option>
+									<option>MOST2</option>
+									<option>MOST3</option>
 								</select>
 							</div>
 						</div>
@@ -59,10 +196,10 @@
 							<div class="col-md-3">
 								<input class="form-control" id="executionPkg"/>
 							</div>
-							<label class="control-label col-md-1" for="pwd">Schedule Date</label>
+							<label class="control-label col-md-1" for="pwd">Planned Start Date</label>
 							<div class="col-md-3">
 								<div class="input-group input-append date" id="datePicker">
-									<input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text"/>
+									<input class="form-control" id="date" name="date" placeholder="DD/MM/YYY" type="text"/>
 									<span class="input-group-addon add-on">
 										<span class="glyphicon glyphicon-calendar"></span>
 									</span>
@@ -70,36 +207,50 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<div class="col-md-offset-3 col-md-1">
-								<button type="submit" class="btn btn-warning btn-lg btn-block">Refresh</button>
-							</div>
-							<div class="col-md-offset-3 col-md-1">
-								<button type="submit" class="btn btn-warning btn-lg btn-block">Search</button>
+							<div class="btn-group col-md-offset-5">
+								<button type="submit" class="btn btn-warning btn-lg" ng-click="refresh()">Refresh</button>
+								<button type="submit" class="btn btn-warning btn-lg" ng-click="search()">Search</button>
 							</div>
 						</div>
 					</form>
 				</div>
 			</div>
 		</div>
-		<div class="container side-panel-body-container col-md-offset-1 col-md-10">
+		<div class="container container-endless col-md-offset-1 col-md-10">
+		<div class="container side-panel-body-container col-md-12">
 			<div class="panel panel-default side-panel col-md-2">
-				<div class="panel-heading side-panel-heading"><h5><b>Scheduling</b></h5></div>
 				<div class="panel-body side-panel-body">
-					<div class="side-panel-button-container col-md-12">
-						<button type="submit" class="btn btn-default btn-block side-panel-button">Add Scheduling To-Do</button>
+					<div class="panel panel-default side-panel col-md-12">
+						<div class="panel-heading side-panel-heading"><h4><b>Scheduling</b></h4></div>
+						<div class="panel-body side-panel-body">
+							<div class="side-panel-button-container col-md-12">
+								<button type="submit" class="btn btn-default btn-block side-panel-button">Add/Update Scheduling To-Do</button>
+							</div>
+							<div class="side-panel-button-container col-md-12">
+								<button type="submit" class="btn btn-default btn-block">Update Materials Req.</button>
+							</div>
+							<div class="side-panel-button-container col-md-12">
+								<button type="submit" class="btn btn-default btn-block side-panel-button">View To-Do Status</button>
+							</div>
+							<div class="side-panel-button-container col-md-12">
+								<button type="submit" class="btn btn-default btn-block side-panel-button">Create Execution Package</button>
+							</div>
+						</div>
 					</div>
-					<div class="side-panel-button-container col-md-12">
-						<button type="submit" class="btn btn-default btn-block">Update Materials Req.</button>
-					</div>
-					<div class="side-panel-button-container col-md-12">
-						<button type="submit" class="btn btn-default btn-block side-panel-button">View To-Do Status</button>
-					</div>
-					<div class="side-panel-button-container col-md-12">
-						<button type="submit" class="btn btn-default btn-block side-panel-button">Create Execution Package</button>
+					<div class="panel panel-default side-panel col-md-12">
+						<div class="panel-heading side-panel-heading-disabled"><h4><b>Depot</b></h4></div>
+						<div class="panel-body side-panel-body">
+							<div class="side-panel-button-container col-md-12">
+								<button type="submit" class="btn btn-default btn-block disabled side-panel-button">Add Depot To-Do</button>
+							</div>
+							<div class="side-panel-button-container col-md-12">
+								<button type="submit" class="btn btn-default btn-block disabled side-panel-button">View To-Do Status</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
-			<div class="panel query-result-panel panel-primary col-md-10">
+			<div class="panel query-result-panel panel-primary col-md-10" ng-show="resultVisible">
 				<div class="panel-body">
 					<table class="table table-condensed table-bordered table-striped" style="border-collapse:collapse;">
 						<thead class="query-result-header">
@@ -107,123 +258,68 @@
 								<th>&nbsp;</th>
 								<th>Execution Package</th>
 								<th>WO #</th>
-								<th>Schedule Date</th>
+								<th>Planned Start Date</th>
 								<th>Crew Assigned</th>
 								<th>Lead Crew</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr class="accordion-toggle">
+							<tr ng-repeat-start="wo in workOrders"class="accordion-toggle">
 								<td>
-									<button class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" data-toggle="collapse" data-target="#demo1">
-										<!--<span class="glyphicon glyphicon-plus"></span>-->
+									<button id="{{wo.workOrderId + '-expand'}}" class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" ng-click="toggleExpansion($event)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrderId}}">
 									</button>
 								</td>
-								<td>2 May 2017 Albany</td>
-								<td>Y123456, Y345677, Y235976, YA123456, 0235678, YA123457</td>
-								<td>02-May-2017</td>
-								<td>MOST1, MOST2</td>
+								<td>{{wo.executionPkg}}</td>
+								<td>{{wo.workOrderId}}</td>
+								<td>{{wo.plannedStartDate}}</td>
+								<td>{{wo.crewAssigned}}</td>
 								<td> 
-									<select class="form-control" id="lead-crew-select">
-										<option>MOST1</option>
-										<option>MOST2</option>
+									<select class="form-control" id="lead-crew-select" disabled>
+										<option>{{wo.crewAssigned}}</option>
 									</select> 
 								</td>
 							</tr>
-							<tr>
+							<tr ng-repeat-end>
 								<td colspan="12" class="hiddenRow">
-									<div class="accordian-body collapse" id="demo1">
+									<div class="accordian-body collapse" id="{{'demo-' + wo.workOrderId}}">
 										<div class="panel panel-default panel-standard-to-do">
-											<div class="panel-heading">Select Standard To-Do</div>
+											<div class="panel-heading panel-standard-to-do-heading"><b>Select Scheduling To-Do</b></div>
 											<div class="panel-body">
 												<div class="col-md-6">
 													<table class="table table-condensed">
 														<thead>
-															<th>To-Do</th>
-															<th>Linked WO</th>
+															<th class="standard-to-do-header">To-Do</th>
+															<th class="standard-to-do-header">Enable</th>
+															<th class="standard-to-do-header">Linked WO</th>
 														</thead>
 														<tbody>
-															<tr>
-																<td>Traffic Management</td>
+															<tr ng-repeat="todo in todoGrp1">
+																<td>{{todo}}</td>
+																<td><input type="checkbox" ng-checked="wo.todos.indexOf(todo) != -1" ng-click="addRemoveTodo($event, wo, todo)"></td>
 																<td>
-																	<select class="form-control" id="to-do-1" multiple="multiple">
-																		<option>All</option>
-																		<option>Y123456</option>
-																		<option>Y345677</option>
-																		<option>Y235976</option>
-																		<option>YA123456</option>
-																		<option>0235678</option>
-																		<option>YA123457</option>
+																	<select class="form-control"  ng-disabled="calculateEnable(wo, todo)">
+																		<!--<option disabled selected>Select</option>-->
+																		<option>{{wo.workOrderId}}</option>
 																	</select>
 																</td>
 															</tr>
-															<tr>
-																<td>DBYD</td>
+														</tbody>
+													</table>
+												</div>
+												<div class="col-md-6">
+													<table class="table table-condensed">
+														<thead>
+															<th class="standard-to-do-header">To-Do</th>
+															<th class="standard-to-do-header">Enable</th>
+															<th class="standard-to-do-header">Linked WO</th>
+														</thead>
+														<tbody>
+															<tr ng-repeat="todo in todoGrp2">
+																<td>{{todo}}</td>
+																<td><input type="checkbox" ng-checked="wo.todos.indexOf(todo) != -1" ng-click="addRemoveTodo($event, wo, todo)"></td>
 																<td>
-																	<select class="form-control" id="to-do-1" multiple="multiple">
-																		<option>All</option>
-																		<option>Y123456</option>
-																		<option>Y345677</option>
-																		<option>Y235976</option>
-																		<option>YA123456</option>
-																		<option>0235678</option>
-																		<option>YA123457</option>
-																	</select>
-																</td>
-															</tr>
-															<tr>
-																<td>ENAR</td>
-																<td>
-																	<select class="form-control" id="to-do-1" multiple="multiple">
-																		<option>All</option>
-																		<option>Y123456</option>
-																		<option>Y345677</option>
-																		<option>Y235976</option>
-																		<option>YA123456</option>
-																		<option>0235678</option>
-																		<option>YA123457</option>
-																	</select>
-																</td>
-															</tr>
-															<tr>
-																<td>ESA</td>
-																<td>
-																	<select class="form-control" id="to-do-1" multiple="multiple">
-																		<option>All</option>
-																		<option>Y123456</option>
-																		<option>Y345677</option>
-																		<option>Y235976</option>
-																		<option>YA123456</option>
-																		<option>0235678</option>
-																		<option>YA123457</option>
-																	</select>
-																</td>
-															</tr>
-															<tr>
-																<td>Rail Permit</td>
-																<td>
-																	<select class="form-control" id="to-do-1" multiple="multiple">
-																		<option>All</option>
-																		<option>Y123456</option>
-																		<option>Y345677</option>
-																		<option>Y235976</option>
-																		<option>YA123456</option>
-																		<option>0235678</option>
-																		<option>YA123457</option>
-																	</select>
-																</td>
-															</tr>
-															<tr>
-																<td>Access Permit</td>
-																<td>
-																	<select class="form-control" id="to-do-1" multiple="multiple">
-																		<option>All</option>
-																		<option>Y123456</option>
-																		<option>Y345677</option>
-																		<option>Y235976</option>
-																		<option>YA123456</option>
-																		<option>0235678</option>
-																		<option>YA123457</option>
+																	<select class="form-control"  ng-disabled="calculateEnable(wo, todo)">
+																		<option>{{wo.workOrderId}}</option>
 																	</select>
 																</td>
 															</tr>
@@ -231,101 +327,15 @@
 													</table>
 												</div>
 												<div class="col-md-12">
-													<label for="comment">Standard To-Do Comment</label>
-													<textarea class="form-control" rows="3" id="comment-1"></textarea> 
+													<label for="comment">Scheduling To-Do Comment</label>
+													<textarea class="form-control" rows="3" id="comment-1">{{wo.todoComment}}</textarea> 
+												</div>
+												<div class="col-md-offset-9 col-md-2" style="padding:5px">
+													<button id="save-to-do-1" class="btn btn-warning btn-block" ng-click="saveToDo(wo)">
+														<h4><b>Save</b></h4>
+													</button>
 												</div>
 											</div>
-											<div class="panel-footer"><button class="btn btn-default">Save</button></div>
-									</div>
-								</td>
-							</tr>
-							<tr class="accordion-toggle">
-								<td>
-									<button class="btn btn-default btn-lg row-expander glyphicon glyphicon-plus" data-toggle="collapse" data-target="#demo2">
-										<!--<span class="glyphicon glyphicon-plus"></span>
-										<span class="glyphicon glyphicon-minus"></span>-->
-									</button>
-								</td>
-								<td>&nbsp;</td>
-								<td>Y345123</td>
-								<td>02-May-2017</td>
-								<td>MOST3</td>
-								<td>
-									<select class="form-control" id="lead-crew-select">
-										<option>MOST3</option>
-									</select> 
-								</td>
-							</tr>
-							<tr>
-								<td colspan="12" class="hiddenRow">
-									<div class="accordian-body collapse" id="demo2">
-										<div class="panel panel-default panel-standard-to-do">
-											<div class="panel-heading">Select Standard To-Do</div>
-											<div class="panel-body">
-												<div class="col-md-6">
-													<table class="table table-condensed">
-														<thead>
-															<th>To-Do</th>
-															<th>Linked WO</th>
-														</thead>
-														<tbody>
-															<tr>
-																<td>Traffic Management</td>
-																<td>
-																	<select class="form-control" id="to-do-2" multiple="multiple">
-																		<option>Y345123</option>
-																	</select>
-																</td>
-															</tr>
-															<tr>
-																<td>DBYD</td>
-																<td>
-																	<select class="form-control" id="to-do-2" multiple="multiple">
-																		<option>Y345123</option>
-																	</select>
-																</td>
-															</tr>
-															<tr>
-																<td>ENAR</td>
-																<td>
-																	<select class="form-control" id="to-do-2" multiple="multiple">
-																		<option>Y345123</option>
-																	</select>
-																</td>
-															</tr>
-															<tr>
-																<td>ESA</td>
-																<td>
-																	<select class="form-control" id="to-do-2" multiple="multiple">
-																		<option>Y345123</option>
-																	</select>
-																</td>
-															</tr>
-															<tr>
-																<td>Rail Permit</td>
-																<td>
-																	<select class="form-control" id="to-do-2" multiple="multiple">
-																		<option>Y345123</option>
-																	</select>
-																</td>
-															</tr>
-															<tr>
-																<td>Access Permit</td>
-																<td>
-																	<select class="form-control" id="to-do-2" multiple="multiple"> 
-																		<option>Y345123</option>
-																	</select>
-																</td>
-															</tr>
-														</tbody>
-													</table>
-												</div>
-												<div class="col-md-12">
-													<label for="comment">Standard To-Do Comment</label>
-													<textarea class="form-control" rows="3" id="comment-2"></textarea> 
-												</div>
-											</div>
-											<div class="panel-footer"><button class="btn btn-default">Save</button></div>
 									</div>
 								</td>
 							</tr>
@@ -333,6 +343,7 @@
 					</table>
 				</div>
 			</div>
+		</div>
 		</div>
 	</body>
 </html>

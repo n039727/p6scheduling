@@ -1,14 +1,21 @@
 $(document).ready(function() {
 	$('#datePicker')
 		.datepicker({
-			format: 'mm/dd/yyyy'
+			format: 'dd/mm/yyyy'
 		});
 	
-	$('#crew-select').multiselect();
+	$('#crew-select').multiselect({
+		buttonWidth: '100%'
+	});
+	$('#depot-select').multiselect({
+		buttonWidth: '100%'
+	});
 	
-	$('[id^=to-do').multiselect();
+	/*$('[id^=to-do').multiselect({
+		buttonWidth: '100%'
+	});*/
 	
-	$(".row-expander").click(function(){
+	/*$(".row-expander").click(function(){
 	
 		if($(this).hasClass("glyphicon-plus")) {
 			$(this).removeClass("glyphicon-plus");
@@ -17,6 +24,9 @@ $(document).ready(function() {
 			$(this).removeClass("glyphicon-minus");
 			$(this).addClass("glyphicon-plus");
 		}
-	});
+	});*/
 	
+	/*$('[id^=save-to-do').click(function(){
+		alert("Scheduling TO DO saved for the execution Package or Job Id");
+	});*/
 });
