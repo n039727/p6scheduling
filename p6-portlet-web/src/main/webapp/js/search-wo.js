@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$('#datePicker')
+	$('[id^=datePicker')
 		.datepicker({
 			format: 'dd/mm/yyyy'
 		});

@@ -60,6 +60,9 @@
 						var cb = $event.target;
 						if (cb.checked) {
 							if (findToDo(wo.toDoItems, todo) == -1) {
+								if(!wo.toDoItems)
+									wo.toDoItems = [];
+									
 								wo.toDoItems.push({toDoName:todo, workOrders:[wo.workOrders[0]]});
 								console.log('WO after adding To Do: ' + JSON.stringify(wo));
 							}
@@ -116,7 +119,7 @@
 						console.log("Received data from server");
 						$scope.fetchedData = response.data;
 						console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-						alert("Scheduling TO DO saved for " + wo.workOrderId);
+						alert("Scheduling TO DO saved for " + wo.workOrders[0]);
 					});
 				};
 				
@@ -152,7 +155,7 @@
 	<body ng-app="todoPortal"  ng-controller="toDoPortalCOntroller">
 		<nav class="navbar navbar-default navbar-static-top navbar-top-fixed container col-md-12">
 			<div class="nav navbar-nav"><a href="#" class="navbar-top-link"><h4>Home</h4></a></div>
-			<div class="nav navbar-nav navbar-right"><a href="#" class="navbar-top-link"><h4>Administration</h4></a></div>
+			<div class="nav navbar-nav navbar-right">Welcome Kausik &nbsp;<a href="/p6-portal/logout" class="navbar-top-link"><h4>Logout</h4></a></div>
 			<!--<div id="navbarCollapse" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="#" class="navbar-top-link"><h4>Home</h4></a></li>
@@ -323,7 +326,7 @@
 												</div>
 												<div class="col-md-12">
 													<label for="comment">Scheduling To-Do Comment</label>
-													<textarea class="form-control" rows="3" id="comment-1">{{wo.schedulingToDoComment}}</textarea> 
+													<textarea class="form-control" rows="3" id="comment-1" ng-model="wo.schedulingToDoComment"></textarea> 
 												</div>
 												<div class="col-md-offset-9 col-md-2" style="padding:5px">
 													<button id="save-to-do-1" class="btn btn-warning btn-block" ng-click="saveToDo(wo)">
@@ -348,11 +351,25 @@
 														<tbody>
 															<tr ng-repeat="todo in wo.toDoItems">
 																<td>{{todo.toDoName}}</td>
-																<td>{{todo.workWorders[0]}}</td>
-																<td>{{todo.reqByDate}}</td>
-																<td>{{todo.comment}}</td>
-																<td>{{todo.status}}</td>
-																<td>{{todo.supportingDocLink}}</td>
+																<td>{{todo.workOrders[0]}}</td>
+																<td>
+																	<div class="input-group input-append date" id="{{'datePicker-' + todo.workOrders[0] + '-' + todo.toDoName">
+																		<input class="form-control" id="date" name="date" placeholder="DD/MM/YYY" type="text" ng-model="todo.reqByDate"/>
+																		<span class="input-group-addon add-on">
+																			<span class="glyphicon glyphicon-calendar"></span>
+																		</span>
+																	</div>
+																</td>
+																<td><input type="text" class="form-control" id="userId" ng-model="todo.comment"></td>
+																<td>
+																	<select class="form-control" ng-model="todo.status" id="crew-select">
+																		<option disabled>Select</option>
+																		<option>Not Started</option>
+																		<option>In Progress</option>
+																		<option>Completed</option>
+																	</select>
+																</td>
+																<td><input type="text" class="form-control" id="userId" ng-model="todo.supportingDocLink"></td>
 															</tr>
 														</tbody>
 													</table>
