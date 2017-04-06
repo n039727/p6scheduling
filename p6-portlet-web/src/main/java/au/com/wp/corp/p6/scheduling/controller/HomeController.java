@@ -4,6 +4,7 @@
 package au.com.wp.corp.p6.scheduling.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,16 @@ public class HomeController {
 		logger.debug("request attributes - is user role 'amr_users_non_prod'- {} , user name- {}, session id - {} ",
 				request.isUserInRole("amr_users_non_prod"), request.getRemoteUser(), request.getSession().getId());
 		return "welcome";
+	}
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public ModelAndView logout(HttpServletRequest request) {
+		
+		HttpSession session = request.getSession(false);
+		if(session != null)
+		    session.invalidate();
+	
+		return new ModelAndView("redirect:/web/home");
 	}
 
 }
