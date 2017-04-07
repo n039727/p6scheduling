@@ -49,11 +49,35 @@
 				$scope.crews = ["MOST1","MOST2","MOST3"];
 				$scope.resultVisible = false;
 				
+				$scope.queryCrew = "";
+				$scope.queryScheduleDate = "";
+				
 				$scope.search = function () {
+				
+						/*var filteredResult = [];
+						console.log('queryCrew: ' + $scope.queryCrew);
+						console.log('queryScheduleDate: ' + $scope.queryScheduleDate);
+						if ($scope.fetchedData) {
+							for (i = 0; i < $scope.fetchedData.length; i++) {
+								var wo = $scope.fetchedData[i];
+								if (wo.leadCrew == $scope.queryCrew
+										&& wo.scheduleDate == $scope.queryScheduleDate) {
+									filteredResult.push(wo);
+								}
+							}
+						}*/
+						
 						$scope.workOrders = $scope.fetchedData
 						$scope.resultVisible = true;
+						$('[id^=datePicker')
+							.datepicker({
+								format: 'dd/mm/yyyy'
+						});
 				};
 				$scope.refresh = function () {
+						$scope.queryCrew = "";
+						$scope.queryScheduleDate = "";
+						$scope.queryDepot = "";
 						$scope.resultVisible = false;
 				};
 				$scope.addRemoveTodo = function ($event, wo, todo) {
@@ -140,11 +164,13 @@
 				$scope.viewToDoStatus = function() {
 					$scope.page = 'VIEW';
 					$scope.workOrders = [];
+					$scope.resultVisible = false;
 				} 
 				
 				$scope.addUpdateSchedulingToDo = function() {
 					$scope.page = 'ADD';
 					$scope.workOrders = [];
+					$scope.resultVisible = false;
 				} 
 				
 			});
@@ -155,7 +181,8 @@
 	<body ng-app="todoPortal"  ng-controller="toDoPortalCOntroller">
 		<nav class="navbar navbar-default navbar-static-top navbar-top-fixed container col-md-12">
 			<div class="nav navbar-nav"><a href="#" class="navbar-top-link"><h4>Home</h4></a></div>
-			<div class="nav navbar-nav navbar-right">Welcome Kausik &nbsp;<a href="/p6-portal/logout" class="navbar-top-link"><h4>Logout</h4></a></div>
+			<div class="nav navbar-nav navbar-right"><h4>&nbsp;</h4></div>
+			<div class="nav navbar-nav navbar-right"><span><h4>Welcome Kausik &nbsp;</h4><a href="/p6-portal/logout" class="navbar-top-link"><h4>Logout&nbsp;</h4></a><span></div>
 			<!--<div id="navbarCollapse" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
 					<li class="active"><a href="#" class="navbar-top-link"><h4>Home</h4></a></li>
@@ -173,7 +200,7 @@
 						<div class="form-group">
 							<label class="control-label col-md-2" for="userId">Depot</label>
 							<div class="col-md-3">
-								<select class="form-control" id="depot-select" multiple="multiple">
+								<select class="form-control" ng-model="queryDepot" id="depot-select" multiple="multiple">
 									<option>Depot 1</option>
 									<option>Depot 2</option>
 									<option>Depot 3</option>
@@ -182,7 +209,7 @@
 							</div>
 							<label class="control-label col-md-1" for="userId">Crew</label>
 							<div class="col-md-3">
-								<select class="form-control" id="crew-select" multiple="multiple">
+								<select class="form-control" ng-model="queryCrew" id="crew-select" multiple="multiple">
 									<option>MOST1</option>
 									<option>MOST2</option>
 									<option>MOST3</option>
@@ -197,7 +224,7 @@
 							<label class="control-label col-md-1" for="pwd">Planned Start Date</label>
 							<div class="col-md-3">
 								<div class="input-group input-append date" id="datePicker">
-									<input class="form-control" id="date" name="date" placeholder="DD/MM/YYY" type="text"/>
+									<input class="form-control" id="date" name="date" ng-model="queryScheduleDate" placeholder="DD/MM/YYY" type="text"/>
 									<span class="input-group-addon add-on">
 										<span class="glyphicon glyphicon-calendar"></span>
 									</span>
@@ -353,7 +380,7 @@
 																<td>{{todo.toDoName}}</td>
 																<td>{{todo.workOrders[0]}}</td>
 																<td>
-																	<div class="input-group input-append date" id="{{'datePicker-' + todo.workOrders[0] + '-' + todo.toDoName}}">
+																	<div class="input-group input-append date" id="datePicker">
 																		<input class="form-control" id="date" name="date" placeholder="DD/MM/YYY" type="text" ng-model="todo.reqByDate"/>
 																		<span class="input-group-addon add-on">
 																			<span class="glyphicon glyphicon-calendar"></span>
