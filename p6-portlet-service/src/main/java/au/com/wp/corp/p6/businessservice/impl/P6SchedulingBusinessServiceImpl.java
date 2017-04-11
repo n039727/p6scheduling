@@ -9,19 +9,28 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
+import au.com.wp.corp.p6.businessservice.dto.TaskDTO;
+import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dto.ToDoItems;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSerachInput;
+import au.com.wp.corp.p6.model.Task;
 
 @Service
 public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService {
 
 	private Map<String, WorkOrder> mapStorage = null;
 
+	@Autowired
+	TaskDAO taskDAO;
+	
 	@PostConstruct
 	public void initData() {
 		System.out.println("Initializing Datastore..");
@@ -114,6 +123,24 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		List<WorkOrder> listofJobs = new ArrayList<WorkOrder>(mapStorage.values());
 
 		return listofJobs;
+	}
+	
+	@Transactional
+	public List<TaskDTO> listTasks() {
+		
+		List<Task> taskList = taskDAO.listTasks();
+		List<TaskDTO> tasks = new ArrayList<TaskDTO>();
+		for (Task task2 : taskList) {
+			TaskDTO taskDTO = new TaskDTO();			
+			taskDTO.setTaskId(task2.getTaskId());
+			taskDTO.setExecutionPackageId(task2.getExecutionPackage().getExctnPckgId());
+			taskDTO.setDepotId(task2.getDepotId());
+			taskDTO.setCrewId(task2.getCrewId());
+			taskDTO.setLeadCrewId(task2.getLeadCrewId());
+			taskDTO.setMatrlReqRef(task2.getMatrlReqRef());
+			tasks.add(taskDTO);
+		}
+		return tasks;
 	}
 
 }
