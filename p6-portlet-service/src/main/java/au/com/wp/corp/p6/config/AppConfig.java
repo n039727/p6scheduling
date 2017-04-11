@@ -25,17 +25,13 @@ import au.com.wp.corp.p6.dataservice.impl.TaskDAOImpl;
 @Configuration
 @ComponentScan("au.com.wp.corp.p6")
 @EnableWebMvc
-@PropertySource("classpath:application.properties")
+@PropertySource("file:/${properties.dir}/application.properties")
 @EnableTransactionManagement
 public class AppConfig {
 
 	@Autowired
 	private Environment environment; 
-	@Bean
-    public P6SchedulingBusinessService p6Service(){
-    	
-    	return new P6SchedulingBusinessServiceImpl();
-    }
+	
 	
 	@Bean(name = "dataSource")
 	public DataSource getDataSource() {
