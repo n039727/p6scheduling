@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.businessservice.dto.TaskDTO;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
-import au.com.wp.corp.p6.dto.ToDoItems;
+import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.WorkOrder;
-import au.com.wp.corp.p6.dto.WorkOrderSerachInput;
+import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
 import au.com.wp.corp.p6.model.Task;
 
 @Service
@@ -40,10 +40,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrder1.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
 		workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP97" }));
 
-		ToDoItems toDoItems = new ToDoItems();
+		ToDoItem toDoItems = new ToDoItem();
 		toDoItems.setToDoName("ENAR");
 		toDoItems.setWorkOrders(workOrder1.getWorkOrders());
-		workOrder1.setToDoItems(Arrays.asList(new ToDoItems[] { toDoItems }));
+		workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
 
 		mapStorage.put(workOrder1.getWorkOrders().get(0), workOrder1);
 
@@ -52,10 +52,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrder2.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
 		workOrder2.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67" }));
 
-		toDoItems = new ToDoItems();
+		toDoItems = new ToDoItem();
 		toDoItems.setToDoName("ESA");
 		toDoItems.setWorkOrders(workOrder2.getWorkOrders());
-		workOrder2.setToDoItems(Arrays.asList(new ToDoItems[] { toDoItems }));
+		workOrder2.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
 
 		mapStorage.put(workOrder2.getWorkOrders().get(0), workOrder2);
 
@@ -67,7 +67,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		mapStorage.put(workOrder3.getWorkOrders().get(0), workOrder3);
 	}
 
-	public List<WorkOrder> retrieveWorkOrders(WorkOrderSerachInput input) {
+	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchInput input) {
 		List<WorkOrder> workOrders = new ArrayList<WorkOrder>();
 		/* this code will be replaced will the actual P6 Service call */
 		if (mapStorage == null || mapStorage.size() < 1) {
@@ -77,11 +77,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			workOrder1.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
 			workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
 
-			ToDoItems toDoItems = new ToDoItems();
+			ToDoItem toDoItems = new ToDoItem();
 			toDoItems.setToDoName("ENAR");
 			toDoItems.setWorkOrders(workOrder1.getWorkOrders());
 
-			workOrder1.setToDoItems(Arrays.asList(new ToDoItems[] { toDoItems }));
+			workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
 
 			workOrders.add(workOrder1);
 			WorkOrder workOrder2 = new WorkOrder();
@@ -107,7 +107,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	}
 
-	public List<WorkOrder> retrieveJobs(WorkOrderSerachInput input) {
+	public List<WorkOrder> retrieveJobs(WorkOrderSearchInput input) {
 
 		return new ArrayList<WorkOrder>(mapStorage.values());
 
@@ -141,6 +141,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			tasks.add(taskDTO);
 		}
 		return tasks;
+	}
+
+	@Override
+	public List<ToDoItem> fetchToDos() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -12,7 +12,7 @@ public class WorkOrder {
 	private List<String> workOrders;
 	private String scheduleDate;
 	private String leadCrew;
-	private List<ToDoItems> toDoItems;
+	private List<ToDoItem> toDoItems;
 	private String schedulingToDoComment;
 	private String depotToDoComment;
 	
@@ -40,10 +40,10 @@ public class WorkOrder {
 	public void setLeadCrew(String leadCrew) {
 		this.leadCrew = leadCrew;
 	}
-	public List<ToDoItems> getToDoItems() {
+	public List<ToDoItem> getToDoItems() {
 		return toDoItems;
 	}
-	public void setToDoItems(List<ToDoItems> toDoItems) {
+	public void setToDoItems(List<ToDoItem> toDoItems) {
 		this.toDoItems = toDoItems;
 	}
 	public String getSchedulingToDoComment() {

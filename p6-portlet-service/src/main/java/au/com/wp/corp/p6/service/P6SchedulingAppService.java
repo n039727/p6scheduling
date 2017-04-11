@@ -7,13 +7,13 @@ import org.springframework.http.ResponseEntity;
 
 import au.com.wp.corp.p6.businessservice.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
-import au.com.wp.corp.p6.dto.WorkOrderSerachInput;
+import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
 
 public interface P6SchedulingAppService {
 
-	ResponseEntity<List<WorkOrder>> retrieveWorkOrders(RequestEntity<WorkOrderSerachInput> input);
+	ResponseEntity<List<WorkOrder>> retrieveWorkOrders(RequestEntity<WorkOrderSearchInput> input);
 
-	ResponseEntity<List<WorkOrder>> retrieveJobs(RequestEntity<WorkOrderSerachInput> input);
+	ResponseEntity<List<WorkOrder>> retrieveJobs(RequestEntity<WorkOrderSearchInput> input);
 	
 	ResponseEntity<List<WorkOrder>> saveWorkOrder(RequestEntity<WorkOrder> workOrder);
 	
