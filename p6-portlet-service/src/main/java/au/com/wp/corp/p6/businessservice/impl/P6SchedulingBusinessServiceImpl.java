@@ -18,10 +18,12 @@ import org.springframework.stereotype.Service;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.businessservice.dto.TaskDTO;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
+import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
 import au.com.wp.corp.p6.model.Task;
+import au.com.wp.corp.p6.model.TodoTemplate;
 
 @Service
 public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService {
@@ -30,6 +32,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	@Autowired
 	TaskDAO taskDAO;
+	@Autowired
+	TodoDAO todoDAO;
 	
 	@PostConstruct
 	public void initData() {
@@ -41,7 +45,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP97" }));
 
 		ToDoItem toDoItems = new ToDoItem();
-		toDoItems.setToDoName("ENAR");
+		toDoItems.setTodoNam("ENAR");
 		toDoItems.setWorkOrders(workOrder1.getWorkOrders());
 		workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
 
@@ -53,7 +57,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrder2.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67" }));
 
 		toDoItems = new ToDoItem();
-		toDoItems.setToDoName("ESA");
+		toDoItems.setTodoNam("ESA");
 		toDoItems.setWorkOrders(workOrder2.getWorkOrders());
 		workOrder2.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
 
@@ -78,7 +82,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
 
 			ToDoItem toDoItems = new ToDoItem();
-			toDoItems.setToDoName("ENAR");
+			toDoItems.setTodoNam("ENAR");
 			toDoItems.setWorkOrders(workOrder1.getWorkOrders());
 
 			workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
@@ -145,8 +149,24 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	@Override
 	public List<ToDoItem> fetchToDos() {
-		// TODO Auto-generated method stub
-		return null;
+
+		List<TodoTemplate> toDoTemplateList = todoDAO.fetchAllToDos();
+		List<ToDoItem> toDos = new ArrayList<ToDoItem>();
+		for (TodoTemplate toDo : toDoTemplateList) {
+			ToDoItem item = new ToDoItem();			
+			item.setCrtdTs(toDo.getCrtdTs().toString());
+			item.setCrtdUsr(toDo.getCrtdUsr());
+			if(null != toDo.getLstUpdtdTs()){
+				item.setLstUpdtdTs(toDo.getLstUpdtdTs().toString());
+			}
+			item.setLstUpdtdUsr(toDo.getLstUpdtdUsr());
+			item.setTmpltDesc(toDo.getTmpltDesc());
+			item.setTmpltId(String.valueOf(toDo.getTmpltId()));
+			item.setTodoNam(toDo.getTodoNam());
+			//TODO populate work order
+			toDos.add(item);
+		}
+		return toDos;
 	}
 
 }

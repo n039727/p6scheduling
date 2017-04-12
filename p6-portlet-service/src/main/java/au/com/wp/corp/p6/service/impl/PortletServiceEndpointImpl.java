@@ -41,10 +41,15 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 			produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
 	@Override
 	public List<ToDoItem> fetchToDoItems() {
-		// TODO Auto-generated method stub
-		return null;
+		return p6BusinessService.fetchToDos();
 	}
 	
+	@RequestMapping(value="/fetchWOForTODOStatus", method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
+	@Override
+	public List<WorkOrder> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query){
+		return null;
+	}
 	
 
 }
