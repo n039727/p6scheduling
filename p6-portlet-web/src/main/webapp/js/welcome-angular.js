@@ -11,41 +11,28 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 	
 	$scope.todoGrp1 = ["ESA","DEC Permit","DBYD","Gas Permit","Rail Permit","Water Permit","ENAR"];
 	$scope.todoGrp2 = ["Traffic","Lay Down Area Arrangements","Fibre Optics","Inductions (Mine Site)","Specialised Plant / Equipment Availability","Additional Trades","Others"];
-	$scope.depots = ["Depot1","Depot2","Depot3","Depot4"];
-	$scope.crews = ["MOST1","MOST2","MOST3"];
+	$scope.metaData.depotList = ["Depot1","Depot2","Depot3","Depot4"];
+	$scope.metaData.crewList = ["MOST1","MOST2","MOST3"];
 	$scope.resultVisible = false;
 	
 	$scope.queryCrew = "";
 	$scope.queryScheduleDate = "";
 	
-	$scope.search = function () {
+	/*$scope.search = function () {
 	
-			/*var filteredResult = [];
-			console.log('queryCrew: ' + $scope.queryCrew);
-			console.log('queryScheduleDate: ' + $scope.queryScheduleDate);
-			if ($scope.fetchedData) {
-				for (i = 0; i < $scope.fetchedData.length; i++) {
-					var wo = $scope.fetchedData[i];
-					if (wo.leadCrew == $scope.queryCrew
-							&& wo.scheduleDate == $scope.queryScheduleDate) {
-						filteredResult.push(wo);
-					}
-				}
-			}*/
-			
 			$scope.workOrders = $scope.fetchedData
 			$scope.resultVisible = true;
 			$('[id^=datePicker')
 				.datepicker({
 					format: 'dd/mm/yyyy'
 			});
-	};
-	$scope.refresh = function () {
+	};*/
+	/*$scope.refresh = function () {
 			$scope.queryCrew = "";
 			$scope.queryScheduleDate = "";
 			$scope.queryDepot = "";
 			$scope.resultVisible = false;
-	};
+	};*/
 	$scope.addRemoveTodo = function ($event, wo, todo) {
 			var cb = $event.target;
 			if (cb.checked) {
@@ -140,4 +127,3 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 	} 
 	
 });
-			
