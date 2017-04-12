@@ -11,13 +11,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
-import org.springframework.beans.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
-import au.com.wp.corp.p6.businessservice.dto.TaskDTO;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
+import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
@@ -27,13 +28,13 @@ import au.com.wp.corp.p6.model.Task;
 public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService {
 
 	private Map<String, WorkOrder> mapStorage = null;
-
+	private static final Logger logger = LoggerFactory.getLogger(TaskDAO.class);
 	@Autowired
 	TaskDAO taskDAO;
 	
 	@PostConstruct
 	public void initData() {
-		System.out.println("Initializing Datastore..");
+		logger.info("Initializing Datastore..");
 		mapStorage = new ConcurrentHashMap<String, WorkOrder>();
 		WorkOrder workOrder1 = new WorkOrder();
 		workOrder1.setLeadCrew("MOST1");

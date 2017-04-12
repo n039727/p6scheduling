@@ -27,9 +27,8 @@
 			<form-error-page>/auth/error.html</form-error-page>
 		</form-login-config>
 	</login-config>
-
 	<security-role>
-		<role-name>amr_users_non_PROD</role-name>
+		<role-name>${p6.portal.users.ad.group}</role-name>
 	</security-role>
 	<security-constraint>
 		<web-resource-collection>
@@ -39,7 +38,7 @@
 			<http-method>GET</http-method>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>amr_users_non_PROD</role-name>
+			<role-name>${p6.portal.users.ad.group}</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>NONE</transport-guarantee>
