@@ -1,4 +1,4 @@
-package au.com.wp.corp.p6.businessservice.dto;
+package au.com.wp.corp.p6.dto;
 
 import java.sql.Timestamp;
 import java.util.Date;
