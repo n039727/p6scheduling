@@ -17,15 +17,13 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
-import au.com.wp.corp.p6.businessservice.impl.P6SchedulingBusinessServiceImpl;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.impl.TaskDAOImpl;
 
 @Configuration
 @ComponentScan("au.com.wp.corp.p6")
 @EnableWebMvc
-@PropertySource("file:/${properties.dir}/application.properties")
+@PropertySource("file:/${properties.dir}/p6portal.properties")
 @EnableTransactionManagement
 public class AppConfig {
 
@@ -36,7 +34,7 @@ public class AppConfig {
 	@Bean(name = "dataSource")
 	public DataSource getDataSource() {
 		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
-		return dataSourceLookup.getDataSource(environment.getProperty("jndi.datasource"));
+		return dataSourceLookup.getDataSource(environment.getProperty("p6.portal.jndi.datasource"));
 	  
 	}
 	
