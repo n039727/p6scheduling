@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
-import au.com.wp.corp.p6.businessservice.dto.TaskDTO;
+import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
 import au.com.wp.corp.p6.service.P6SchedulingAppService;

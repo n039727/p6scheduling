@@ -2,7 +2,7 @@ package au.com.wp.corp.p6.businessservice;
 
 import java.util.List;
 
-import au.com.wp.corp.p6.businessservice.dto.TaskDTO;
+import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
