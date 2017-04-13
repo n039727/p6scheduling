@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
@@ -20,7 +19,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import au.com.wp.corp.p6.aspect.P6PortalLoggingAspect;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
+import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.impl.TaskDAOImpl;
+import au.com.wp.corp.p6.dataservice.impl.TodoDAOImpl;
 
 @Configuration
 @EnableWebMvc
@@ -77,4 +78,10 @@ public class AppConfig {
 	    return new TaskDAOImpl();
 	}
 	
+
+	@Autowired
+	@Bean(name = "todoDAO")
+	public TodoDAO getTodoDAO() {
+	    return new TodoDAOImpl();
+	}
 }

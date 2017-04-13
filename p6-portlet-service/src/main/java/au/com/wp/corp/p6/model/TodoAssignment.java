@@ -18,6 +18,7 @@ public class TodoAssignment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	@Column(name="ASIGNMT_ID")
 	private long asignmtId;
 
