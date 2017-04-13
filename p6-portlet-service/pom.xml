@@ -157,43 +157,6 @@
 	</dependency>
 	
 	
-				<!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
-					of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
-					of artifacts. We use this here so that we always get the correct versions 
-					of artifacts. Here we use the jboss-javaee-6.0-with-tools stack (you can 
-					read this as the JBoss stack of the Java EE 6 APIs, with some extras tools 
-					for your project, such as Arquillian for testing) and the jboss-javaee-6.0-with-hibernate 
-					stack you can read this as the JBoss stack of the Java EE 6 APIs, with extras 
-					from the Hibernate family of projects) -->
-			<!-- 	<dependency>
-					<groupId>org.jboss.bom.eap</groupId>
-					<artifactId>jboss-javaee-6.0-with-tools</artifactId>
-					<version>6.3.0.GA</version>
-					<type>pom</type>
-					<scope>import</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.jboss.bom.eap</groupId>
-					<artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
-					<version>6.3.0.GA</version>
-					<type>pom</type>
-					<scope>import</scope>
-				</dependency>
-		 -->
-
-
-
-		<!-- MyBatis API dependency -->
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis-spring</artifactId>
-			<version>1.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis</artifactId>
-			<version>3.2.3</version>
-		</dependency>
 		<!-- Logging API dependency START -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -215,6 +178,24 @@
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>2.0.1</version>
 		</dependency>
+		
+		<!-- Aspect J -->
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>4.3.2.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.8.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.8.9</version>
+        </dependency>
+        <!-- Aspect J -->
   </dependencies>
   <build>
     <finalName>p6-portlet-service</finalName>
