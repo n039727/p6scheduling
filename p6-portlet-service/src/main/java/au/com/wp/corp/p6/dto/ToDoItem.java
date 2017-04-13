@@ -7,18 +7,66 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
 public class ToDoItem {
-	private String toDoName;
-	private List<String> workOrders;
-	private String reqByDate;
-	private String comment;
-	private String status;
-	private String supportingDocLink;
 	
-	public String getToDoName() {
-		return toDoName;
+	
+	private String tmpltId;
+	private String crtdTs;
+	private String crtdUsr;
+	private String lstUpdtdTs;
+	private String lstUpdtdUsr;
+	private String tmpltDesc;
+	private String todoId;
+	private String todoNam;
+	private List<String> workOrders;
+		
+	
+	public String getTmpltId() {
+		return tmpltId;
 	}
-	public void setToDoName(String toDoName) {
-		this.toDoName = toDoName;
+	public void setTmpltId(String tmpltId) {
+		this.tmpltId = tmpltId;
+	}
+	public String getCrtdTs() {
+		return crtdTs;
+	}
+	public void setCrtdTs(String crtdTs) {
+		this.crtdTs = crtdTs;
+	}
+	public String getCrtdUsr() {
+		return crtdUsr;
+	}
+	public void setCrtdUsr(String crtdUsr) {
+		this.crtdUsr = crtdUsr;
+	}
+	public String getLstUpdtdTs() {
+		return lstUpdtdTs;
+	}
+	public void setLstUpdtdTs(String lstUpdtdTs) {
+		this.lstUpdtdTs = lstUpdtdTs;
+	}
+	public String getLstUpdtdUsr() {
+		return lstUpdtdUsr;
+	}
+	public void setLstUpdtdUsr(String lstUpdtdUsr) {
+		this.lstUpdtdUsr = lstUpdtdUsr;
+	}
+	public String getTmpltDesc() {
+		return tmpltDesc;
+	}
+	public void setTmpltDesc(String tmpltDesc) {
+		this.tmpltDesc = tmpltDesc;
+	}
+	public String getTodoId() {
+		return todoId;
+	}
+	public void setTodoId(String todoId) {
+		this.todoId = todoId;
+	}
+	public String getTodoNam() {
+		return todoNam;
+	}
+	public void setTodoNam(String todoNam) {
+		this.todoNam = todoNam;
 	}
 	public List<String> getWorkOrders() {
 		return workOrders;
@@ -26,28 +74,5 @@ public class ToDoItem {
 	public void setWorkOrders(List<String> workOrders) {
 		this.workOrders = workOrders;
 	}
-	public String getReqByDate() {
-		return reqByDate;
-	}
-	public void setReqByDate(String reqByDate) {
-		this.reqByDate = reqByDate;
-	}
-	public String getComment() {
-		return comment;
-	}
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-	public String getSupportingDocLink() {
-		return supportingDocLink;
-	}
-	public void setSupportingDocLink(String supportingDocLink) {
-		this.supportingDocLink = supportingDocLink;
-	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
+	
 }

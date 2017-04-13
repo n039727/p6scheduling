@@ -16,8 +16,8 @@ import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
 public interface PortletServiceEndpoint {
 	
 	List<WorkOrder> fetchWorkOrdersForAddUpdateScheduling(WorkOrderSearchInput query);
-	/*List<WorkOrder> fetchWorkOrdersForViewToDoStatus(WorkOrderQuery query);
-	List<WorkOrder> fetchWorkOrdersForExecutionPackage(WorkOrderQuery query);
+	List<WorkOrder> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query);
+	/*List<WorkOrder> fetchWorkOrdersForExecutionPackage(WorkOrderQuery query);
 	WorkOrder saveWorkOrder(WorkOrder workOrder);*/
 	
 	List<ToDoItem> fetchToDoItems();
