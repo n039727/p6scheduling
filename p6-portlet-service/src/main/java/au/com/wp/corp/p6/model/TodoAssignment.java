@@ -14,11 +14,12 @@ import java.sql.Timestamp;
 @Entity
 @Table(name="TODO_ASSIGNMENT")
 @NamedQuery(name="TodoAssignment.findAll", query="SELECT t FROM TodoAssignment t")
+@SequenceGenerator(name="seq", initialValue=1, allocationSize=100)
 public class TodoAssignment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE,generator="seq")
 	@Column(name="ASIGNMT_ID")
 	private long asignmtId;
 
