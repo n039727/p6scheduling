@@ -25,7 +25,7 @@ import au.com.wp.corp.p6.dataservice.impl.TaskDAOImpl;
 @Configuration
 @EnableWebMvc
 @ComponentScan("au.com.wp.corp.p6")
-//@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy
 @PropertySource("file:/${properties.dir}/p6portal.properties")
 @EnableTransactionManagement
 public class AppConfig {
