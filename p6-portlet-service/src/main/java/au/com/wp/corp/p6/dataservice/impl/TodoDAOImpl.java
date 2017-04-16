@@ -13,12 +13,15 @@ import org.springframework.stereotype.Repository;
 
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
+import au.com.wp.corp.p6.dto.WorkOrder;
+import au.com.wp.corp.p6.model.ExecutionPackage;
+import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
 
 @Repository
 public class TodoDAOImpl implements TodoDAO {
 	
-	private static final Logger logger = LoggerFactory.getLogger(TaskDAO.class);
+	private static final Logger logger = LoggerFactory.getLogger(TodoDAO.class);
 	@Autowired
 	SessionFactory sessionFactory;
 
@@ -33,6 +36,20 @@ public class TodoDAOImpl implements TodoDAO {
 	 
 	        return listToDo;
 
+	}
+	
+	@Transactional
+	public WorkOrder saveToDos(WorkOrder workOrder) {
+		logger.info("Entering method saveToDos");
+        @SuppressWarnings("unchecked")
+		TodoAssignment todoAssignment = new TodoAssignment();
+        todoAssignment.setCmts(workOrder.getSchedulingToDoComment());
+        ExecutionPackage executionPackage = new ExecutionPackage();
+        executionPackage.setExctnPckgNam(workOrder.getExecutionPackage());
+        todoAssignment.setExecutionPackage(executionPackage);
+        sessionFactory.getCurrentSession().saveOrUpdate(todoAssignment);
+		logger.info("Entering method saveToDos");
+        return workOrder;
 	}
 
 }
