@@ -3,8 +3,13 @@
         <title>P6 - Search Work Orders</title>
 		
 		<!-- angular JS-->
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-		
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+		<!--Angular Material -->
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css"/>
+		<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
         <!-- Latest compiled and minified CSS 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		-->
@@ -23,33 +28,43 @@
 		-->
 		<script type="text/javascript" src="js/date-picker.js"></script>
 		<link rel="stylesheet" href="css/date-picker.css"/>
-		<!-- Date Picker -->
+		<!-- multi-select -->
 		<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
 		<link rel="stylesheet" href="css/bootstrap-multiselect.css"/>
+		<!--oi-select-->
+		<!--<script type="text/javascript" src="js/oi-select.js"></script>
+		<link rel="stylesheet" href="css/oi-select.css"/>-->
+		<link rel="stylesheet" href="http://rawgit.com/tamtakoe/oi.select/master/dist/select.css" />
+		<script src="http://rawgit.com/tamtakoe/oi.select/master/dist/select-tpls.js"></script>
 		
 		<!-- Custom style and JS -->
 		<script type="text/javascript" src="js/search-wo.js"></script>
 		<link rel="stylesheet" href="css/search-wo.css"/>
 		<script type="text/javascript" src="js/welcome-angular.js"></script>
 		<script type="text/javascript" src="js/searchQuery.js"></script>
-		
+		<script type="text/javascript" src="js/sidePanel.js"></script>
+		<script type="text/javascript" src="js/queryResult.js"></script>
+		<script type="text/javascript" src="js/schedulingToDo.js"></script>
+		<script type="text/javascript" src="js/viewToDoStatus.js"></script>
 		 <script>
 			
 		</script>
 
     </head>
-	<body ng-app="todoPortal"  ng-controller="toDoPortalCOntroller">
+	<body ng-app="todoPortal"  ng-controller="toDoPortalCOntroller as vm">
 		<nav class="navbar navbar-default navbar-static-top navbar-top-fixed container col-md-12">
 			<div class="nav navbar-nav"><a href="#" class="navbar-top-link"><h4>Home</h4></a></div>
 			<div class="nav navbar-nav navbar-right"><h4>&nbsp;</h4></div>
 			<div class="nav navbar-nav navbar-right"><span><h4>Welcome Kausik &nbsp;</h4><a href="/p6-portal/logout" class="navbar-top-link"><h4>Logout&nbsp;</h4></a><span></div>
 		</nav>
-		<search-query />
+		<search-query metadata="vm.metadata" search="vm.search(query)"></search-query>
+		
 		<div class="container container-endless col-md-offset-1 col-md-10">
 			<div class="container side-panel-body-container col-md-12">
-				<side-panel />
-				
+				<side-panel active-context="vm.activeContext" on-change-context="vm.handleContext(context)"></side-panel>
+				<query-result active-context="vm.activeContext" data="vm.workOrders" visible="vm.resultVisible" handle-data-change="vm.handleDataChange()"></query-result>
 			</div>
 		</div>
+		
 	</body>
 </html>

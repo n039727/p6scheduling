@@ -16,7 +16,7 @@ public class ToDoItem {
 	private String lstUpdtdUsr;
 	private String tmpltDesc;
 	private String todoId;
-	private String todoNam;
+	private String todoName;
 	private List<String> workOrders;
 		
 	
@@ -62,11 +62,11 @@ public class ToDoItem {
 	public void setTodoId(String todoId) {
 		this.todoId = todoId;
 	}
-	public String getTodoNam() {
-		return todoNam;
+	public String getTodoName() {
+		return todoName;
 	}
-	public void setTodoNam(String todoNam) {
-		this.todoNam = todoNam;
+	public void setTodoName(String todoName) {
+		this.todoName = todoName;
 	}
 	public List<String> getWorkOrders() {
 		return workOrders;
