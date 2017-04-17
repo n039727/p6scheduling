@@ -15,7 +15,22 @@ public class WorkOrder {
 	private List<ToDoItem> toDoItems;
 	private String schedulingToDoComment;
 	private String depotToDoComment;
+	private String crewNames;
+	private String depotId;
+	private String meterialReqRef;
 	
+	public String getMeterialReqRef() {
+		return meterialReqRef;
+	}
+	public void setMeterialReqRef(String meterialReqRef) {
+		this.meterialReqRef = meterialReqRef;
+	}
+	public String getDepotId() {
+		return depotId;
+	}
+	public void setDepotId(String depotId) {
+		this.depotId = depotId;
+	}
 	public String getExecutionPackage() {
 		return executionPackage;
 	}
@@ -57,6 +72,12 @@ public class WorkOrder {
 	}
 	public void setDepotToDoComment(String depotToDoComment) {
 		this.depotToDoComment = depotToDoComment;
+	}
+	public String getCrewNames() {
+		return crewNames;
+	}
+	public void setCrewNames(String crewNames) {
+		this.crewNames = crewNames;
 	}
 	
 	

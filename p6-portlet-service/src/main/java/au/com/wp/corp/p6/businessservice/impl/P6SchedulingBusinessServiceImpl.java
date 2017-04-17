@@ -33,7 +33,7 @@ import au.com.wp.corp.p6.model.TodoTemplate;
 public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService {
 
 	private Map<String, WorkOrder> mapStorage = null;
-	private static final Logger logger = LoggerFactory.getLogger(TaskDAO.class);
+	private static final Logger logger = LoggerFactory.getLogger(P6SchedulingBusinessServiceImpl.class);
 	@Autowired
 	TaskDAO taskDAO;
 	@Autowired
@@ -80,7 +80,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchInput input) {
 		List<WorkOrder> workOrders = new ArrayList<WorkOrder>();
 		/* this code will be replaced will the actual P6 Service call */
-		if (mapStorage == null || mapStorage.size() < 1) {
 			WorkOrder workOrder1 = new WorkOrder();
 			workOrder1.setExecutionPackage("test execution 1");
 			workOrder1.setLeadCrew("MOST1");
@@ -109,9 +108,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			workOrder3.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
 
 			workOrders.add(workOrder3);
-		} else {
-			workOrders = new ArrayList<WorkOrder>(mapStorage.values());
-		}
+		
 		/* this code will be replaced will the actual P6 Service call */
 		return workOrders;
 

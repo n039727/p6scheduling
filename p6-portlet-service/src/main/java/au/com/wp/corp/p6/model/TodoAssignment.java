@@ -53,6 +53,7 @@ public class TodoAssignment implements Serializable {
 	@Column(name="REQD_BY_DT")
 	private Date reqdByDt;
 
+	@Column(name="STAT")
 	private String stat;
 
 	@Column(name="SUPRTNG_DOC_LNK")
