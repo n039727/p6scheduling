@@ -1,0 +1,45 @@
+<div class="container search-query-container col-md-offset-1 col-md-10">
+	<div class="panel panel-default">
+		<div class="panel-heading search-query-panel-heading"><h4>Search Work Orders</h4></div>
+		<div class="panel-body">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label class="control-label col-md-2" for="userId">Depot</label>
+					<div class="col-md-4">
+						<oi-select oi-options="depot.name for depot in $ctrl.metadata.depotList track by depot.id"
+							ng-model="$ctrl.selectedDepotList"
+							multiple
+							placeholder="Select"></oi-select>
+					</div>
+					<label class="control-label col-md-1" for="userId">Crew</label>
+					<div class="col-md-4">
+						<oi-select oi-options="crew.name for crew in $ctrl.metadata.crewList track by crew.id"
+							ng-model="$ctrl.selectedCrewList"
+							multiple
+							placeholder="Select"></oi-select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-md-2" for="pwd">WO#</label>
+					<div class="col-md-4">
+						<input class="form-control" ng-model="$ctrl.wo" id="wo"/>
+					</div>
+					<label class="control-label col-md-1" for="pwd">Planned Start Date</label>
+					<div class="col-md-4"> From
+						<md-datepicker ng-model="$ctrl.scheduleFromDate" md-placeholder="DD/MM/YYYY"></md-datepicker>
+						To
+						<md-datepicker ng-model="$ctrl.scheduleToDate" md-placeholder="DD/MM/YYYY"></md-datepicker>
+					</div>
+					<!--<div class="col-md-3"> 
+					</div>-->
+				</div>
+				<div class="form-group">
+					<div class="btn-group col-md-offset-5">
+						<button type="submit" class="btn btn-warning btn-lg" ng-click="$ctrl.refresh()">Refresh</button>
+						<button type="submit" class="btn btn-warning btn-lg" ng-click="$ctrl.prepareSearch()">Search</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

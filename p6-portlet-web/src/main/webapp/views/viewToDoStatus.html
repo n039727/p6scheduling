@@ -1,0 +1,84 @@
+<table class="table table-condensed table-bordered table-striped" style="border-collapse:collapse;">
+	<thead class="query-result-header">
+		<tr>
+			<th>&nbsp;</th>
+			<th>Execution Package</th>
+			<th>WO #</th>
+			<th>Planned Start Date</th>
+			<th>Crew Assigned</th>
+			<th>Lead Crew</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat-start="wo in $ctrl.data"class="accordion-toggle">
+			<td>
+				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
+				</button>
+			</td>
+			<td>{{wo.executionPackage}}</td>
+			<td>{{wo.workOrders[0]}}</td>
+			<td>{{wo.scheduleDate}}</td>
+			<td>{{wo.leadCrew}}</td>
+			<td> 
+				<select class="form-control" id="lead-crew-select" disabled>
+					<option>&nbsp;</option>
+				</select> 
+			</td>
+		</tr>
+		<tr ng-repeat-end>
+			<td colspan="12" class="hiddenRow">
+				<div class="accordian-body collapse" id="{{'demo-' + wo.workOrders[0]}}">
+					<div class="panel panel-default panel-standard-to-do">
+						<div class="panel-heading panel-standard-to-do-heading"><b>Scheduling To-Do</b></div>
+						<div class="panel-body">
+							<div class="col-md-12">
+								<table class="table table-condensed">
+									<thead>
+										<th class="standard-to-do-header">To-Do</th>
+										<th class="standard-to-do-header">WO Assigned</th>
+										<th class="standard-to-do-header">Req By Date</th>
+										<th class="standard-to-do-header">Comment</th>
+										<th class="standard-to-do-header">Status</th>
+										<th class="standard-to-do-header">Supporting Document</th>
+									</thead>
+									<tbody>
+										<tr ng-repeat="todo in wo.toDoItems">
+											<td>{{todo.todoName}}</td>
+											<td>{{todo.workOrders[0]}}</td>
+											<td>
+												<md-datepicker ng-model="todo.scheduleFromDate" md-placeholder="DD/MM/YYYY"></md-datepicker>
+											</td>
+											<td><input type="text" class="form-control" id="userId" ng-model="todo.comment"></td>
+											<td>
+												<select class="form-control" ng-model="todo.status" id="crew-select">
+													<option disabled>Select</option>
+													<option>Not Started</option>
+													<option>In Progress</option>
+													<option>Completed</option>
+												</select>
+											</td>
+											<td><input type="text" class="form-control" id="userId" ng-model="todo.supportingDocLink"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="col-md-12">
+								<label for="comment">Scheduling To-Do Comment</label>
+								<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.schedulingToDoComment}}</textarea> 
+							</div>
+							<div class="col-md-12">
+								<label for="comment">Depot To-Do Comment</label>
+								<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.depotToDoComment}}</textarea> 
+							</div>
+							<div class="col-md-offset-9 col-md-2" style="padding:5px">
+								<button id="save-to-do-1" class="btn btn-warning btn-block" ng-click="$ctrl.saveToDo(wo)">
+									<h4><b>Save</b></h4>
+								</button>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
