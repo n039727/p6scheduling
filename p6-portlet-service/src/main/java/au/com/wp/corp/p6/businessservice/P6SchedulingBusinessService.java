@@ -16,4 +16,6 @@ public interface P6SchedulingBusinessService {
 	List<TaskDTO> listTasks();
 	List<ToDoItem> fetchToDos();
 	List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query);
+	WorkOrder saveToDo(WorkOrder workOrder);
+
 }

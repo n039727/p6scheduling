@@ -1,10 +1,22 @@
 package au.com.wp.corp.p6.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.sql.Timestamp;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -14,12 +26,12 @@ import java.sql.Timestamp;
 @Entity
 @Table(name="TODO_ASSIGNMENT")
 @NamedQuery(name="TodoAssignment.findAll", query="SELECT t FROM TodoAssignment t")
-@SequenceGenerator(name="seq", initialValue=1, allocationSize=100)
 public class TodoAssignment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE,generator="seq")
+	@SequenceGenerator(name="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR", sequenceName="ASIGNMT_ID")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR")
 	@Column(name="ASIGNMT_ID")
 	private long asignmtId;
 

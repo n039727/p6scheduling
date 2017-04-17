@@ -18,6 +18,8 @@ public class TodoTemplate implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@SequenceGenerator(name="TODO_TEMPLATE_TMPLTID_GENERATOR", sequenceName="TMPLT_ID")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TODO_TEMPLATE_TMPLTID_GENERATOR")
 	@Column(name="TMPLT_ID")
 	private long tmpltId;
 

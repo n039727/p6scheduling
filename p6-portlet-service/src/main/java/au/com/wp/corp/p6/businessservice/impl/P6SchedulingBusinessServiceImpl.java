@@ -51,7 +51,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP97" }));
 
 		ToDoItem toDoItems = new ToDoItem();
-		toDoItems.setTodoNam("ENAR");
+		toDoItems.setTodoName("ENAR");
 		toDoItems.setWorkOrders(workOrder1.getWorkOrders());
 		workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
 
@@ -63,7 +63,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrder2.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67" }));
 
 		toDoItems = new ToDoItem();
-		toDoItems.setTodoNam("ESA");
+		toDoItems.setTodoName("ESA");
 		toDoItems.setWorkOrders(workOrder2.getWorkOrders());
 		workOrder2.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
 
@@ -88,7 +88,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
 
 			ToDoItem toDoItems = new ToDoItem();
-			toDoItems.setTodoNam("ENAR");
+			toDoItems.setTodoName("ENAR");
 			toDoItems.setWorkOrders(workOrder1.getWorkOrders());
 
 			workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
@@ -168,12 +168,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			item.setLstUpdtdUsr(toDo.getLstUpdtdUsr());
 			item.setTmpltDesc(toDo.getTmpltDesc());
 			item.setTmpltId(String.valueOf(toDo.getTmpltId()));
-			item.setTodoNam(toDo.getTodoNam());
+			item.setTodoName(toDo.getTodoNam());
 			//TODO populate work order
 			toDos.add(item);
 		}
 		return toDos;
 	}
+
 	
 	@Override
 	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query){
@@ -206,6 +207,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			toDoStatuses.add(status);
 		}
 		return toDoStatuses;
+	}
+	@Override
+	public WorkOrder saveToDo(WorkOrder workOrder) {
+		todoDAO.saveToDos(workOrder);
+		return workOrder;
 	}
 
 }

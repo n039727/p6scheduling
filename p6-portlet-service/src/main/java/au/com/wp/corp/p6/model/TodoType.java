@@ -17,6 +17,8 @@ public class TodoType implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@SequenceGenerator(name="TODO_TYPE_TYPID_GENERATOR", sequenceName="TODO_TYPE_ID")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TODO_TYPE_TYPID_GENERATOR")
 	@Column(name="TYP_ID")
 	private long typId;
 
