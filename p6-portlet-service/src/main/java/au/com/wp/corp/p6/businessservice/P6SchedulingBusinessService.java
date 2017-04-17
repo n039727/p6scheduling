@@ -4,6 +4,7 @@ import java.util.List;
 
 import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
+import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
 
@@ -14,5 +15,7 @@ public interface P6SchedulingBusinessService {
 	List<WorkOrder> saveWorkOrder(WorkOrder workOrder);
 	List<TaskDTO> listTasks();
 	List<ToDoItem> fetchToDos();
+	List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query);
 	WorkOrder saveToDo(WorkOrder workOrder);
+
 }

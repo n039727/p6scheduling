@@ -20,7 +20,7 @@ public class P6PortalLoggingAspect {
 	    public void logBefore(JoinPoint joinPoint) {
 	    	String nameOfMethod = joinPoint.getSignature().getName();
 	    	String arguments = Arrays.toString(joinPoint.getArgs());
-	    	logger.info("Before: {} gets called with {} ", nameOfMethod, arguments);  
+	        logger.info("Before1: " + nameOfMethod + " gets called with " + arguments);
 	    }
 	    
 	    // Use "logAround" pointcut declaration in the advice
@@ -28,7 +28,7 @@ public class P6PortalLoggingAspect {
 	    public void logAfterReturning(JoinPoint joinPoint) {
 	    	String nameOfMethod = joinPoint.getSignature().getName();
 	    	String arguments = Arrays.toString(joinPoint.getArgs());
-	    	logger.info("AfterReturning: {} gets called with {} ", nameOfMethod, arguments);
+	        logger.info("AfterReturning1: " + nameOfMethod + " gets called with " + arguments);
 	    }
 	  
 }

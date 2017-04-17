@@ -19,11 +19,14 @@ import org.springframework.stereotype.Service;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
+import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
+import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
 import au.com.wp.corp.p6.model.Task;
+import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
 
 @Service
@@ -35,6 +38,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	TaskDAO taskDAO;
 	@Autowired
 	TodoDAO todoDAO;
+	@Autowired
+	WorkOrderDAO workOrderDAO;
 	
 	@PostConstruct
 	public void initData() {
@@ -169,11 +174,44 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 		return toDos;
 	}
+
+	
+	@Override
+	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query){
+		
+		List<Task> tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
+		List<ViewToDoStatus> toDoStatuses = new ArrayList<ViewToDoStatus>();
+		
+		for(Task task : tasks){
+			ViewToDoStatus status = new ViewToDoStatus();
+			status.setCrewAssigned(task.getCrewId());
+			status.setDeportComment(task.getCmts());
+			status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
+			status.setLeadCrew(task.getLeadCrewId());
+			status.setScheduleDate(task.getSchdDt().toString());
+			//TODO
+			//status.setSchedulingComment(schedulingComment);
+			//status.setWorkOrders(workOrders);
+			List<TodoAssignment> toDoEntities = task.getTodoAssignments();
+			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
+			for(TodoAssignment assignment : toDoEntities){
+				au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO = new au.com.wp.corp.p6.dto.ToDoAssignment();
+				assignmentDTO.setComment(assignment.getCmts());
+				assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
+				assignmentDTO.setStatus(assignment.getStat());
+				assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
+				assignmentDTO.setToDoName(assignment.getTodoTemplate().getTodoNam());
+				assignmentDTOs.add(assignmentDTO);
+			}
+			status.setTodoAssignments(assignmentDTOs);
+			toDoStatuses.add(status);
+		}
+		return toDoStatuses;
+	}
 	@Override
 	public WorkOrder saveToDo(WorkOrder workOrder) {
 		todoDAO.saveToDos(workOrder);
 		return workOrder;
-		
 	}
 
 }

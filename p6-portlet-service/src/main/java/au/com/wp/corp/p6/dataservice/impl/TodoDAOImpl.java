@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.model.ExecutionPackage;
