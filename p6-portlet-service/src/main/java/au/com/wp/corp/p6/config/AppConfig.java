@@ -19,10 +19,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import au.com.wp.corp.p6.aspect.P6PortalLoggingAspect;
-import au.com.wp.corp.p6.dataservice.TaskDAO;
-import au.com.wp.corp.p6.dataservice.TodoDAO;
-import au.com.wp.corp.p6.dataservice.impl.TaskDAOImpl;
-import au.com.wp.corp.p6.dataservice.impl.TodoDAOImpl;
 
 @Configuration
 @EnableWebMvc
@@ -73,16 +69,5 @@ public class AppConfig {
 	    return transactionManager;
 	}
 	
-	@Autowired
-	@Bean(name = "taskDAO")
-	public TaskDAO gettaskDAO() {
-	    return new TaskDAOImpl();
-	}
-	
 
-	@Autowired
-	@Bean(name = "todoDAO")
-	public TodoDAO getTodoDAO() {
-	    return new TodoDAOImpl();
-	}
 }

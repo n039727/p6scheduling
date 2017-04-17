@@ -5,10 +5,10 @@ package au.com.wp.corp.p6.service.impl;
 
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,20 +28,21 @@ import au.com.wp.corp.p6.service.PortletServiceEndpoint;
  *
  */
 @RestController
+@RequestMapping(value="/scheduler")
 public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	
 	@Autowired
 	private P6SchedulingBusinessService p6BusinessService;
 	
 	@RequestMapping(value="/fetchToDos", method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
+			produces = {MediaType.APPLICATION_JSON_VALUE})
 	@Override
 	public List<ToDoItem> fetchToDoItems() {
 		return p6BusinessService.fetchToDos();
 	}
 	
-	@RequestMapping(value="/schedulingToDo/searchWorkOrder", method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
+	@RequestMapping(value="/searchWorkOrder", method = RequestMethod.POST,
+			produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
 	@Override
 	public List<WorkOrder> fetchWorkOrdersForAddUpdateScheduling(WorkOrderSearchInput query) {
 		// TODO Auto-generated method stub
@@ -49,16 +50,19 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	}
 	
 	@RequestMapping(value="/fetchWOForTODOStatus", method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
+			produces = {MediaType.APPLICATION_JSON_VALUE}, 
+			consumes = {MediaType.APPLICATION_JSON_VALUE})
 	@Override
 	public List<WorkOrder> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query){
 		return null;
 	}
 	
 	@RequestMapping(value = "/saveWorkOrder" , 
-    		method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON,
-    		consumes = MediaType.APPLICATION_JSON)
+    		method = RequestMethod.POST, 
+    		produces = {MediaType.APPLICATION_JSON_VALUE}, 
+    		consumes = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
+    @Override
 	public ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) {
     	return new ResponseEntity<WorkOrder>(p6BusinessService.saveToDo(workOrder.getBody()),HttpStatus.CREATED);
 	}
