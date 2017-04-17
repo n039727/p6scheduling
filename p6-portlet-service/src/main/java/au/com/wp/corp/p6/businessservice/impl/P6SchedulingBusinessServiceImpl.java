@@ -171,7 +171,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 	@Override
 	public WorkOrder saveToDo(WorkOrder workOrder) {
+		todoDAO.saveToDos(workOrder);
 		return workOrder;
 		
 	}
+
 }

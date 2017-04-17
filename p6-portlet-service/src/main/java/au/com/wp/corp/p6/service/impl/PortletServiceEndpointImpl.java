@@ -8,9 +8,13 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
@@ -51,5 +55,12 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 		return null;
 	}
 	
+	@RequestMapping(value = "/saveWorkOrder" , 
+    		method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON,
+    		consumes = MediaType.APPLICATION_JSON)
+    @ResponseBody
+	public ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) {
+    	return new ResponseEntity<WorkOrder>(p6BusinessService.saveToDo(workOrder.getBody()),HttpStatus.CREATED);
+	}
 
 }

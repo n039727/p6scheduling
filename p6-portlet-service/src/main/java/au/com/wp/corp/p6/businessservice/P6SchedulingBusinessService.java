@@ -14,5 +14,5 @@ public interface P6SchedulingBusinessService {
 	List<WorkOrder> saveWorkOrder(WorkOrder workOrder);
 	List<TaskDTO> listTasks();
 	List<ToDoItem> fetchToDos();
-	WorkOrder saveToDo();
+	WorkOrder saveToDo(WorkOrder workOrder);
 }

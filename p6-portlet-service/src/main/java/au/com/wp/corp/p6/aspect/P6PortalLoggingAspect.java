@@ -16,7 +16,7 @@ public class P6PortalLoggingAspect {
 	    private void logAround(){}*/
 
 	    // Use "logAround" pointcut declaration in the advice
-	   @Before("within(au.com.wp.corp.p6..*.*) && !within(au.com.wp.corp.p6.config..*)")
+	   @Before("within(au.com.wp.corp.p6.*service*..) && !within(au.com.wp.corp.p6.config..*)")
 	    public void logBefore(JoinPoint joinPoint) {
 	    	String nameOfMethod = joinPoint.getSignature().getName();
 	    	String arguments = Arrays.toString(joinPoint.getArgs());
@@ -24,7 +24,7 @@ public class P6PortalLoggingAspect {
 	    }
 	    
 	    // Use "logAround" pointcut declaration in the advice
-	   @After("within(au.com.wp.corp.p6..*.*) && !within(au.com.wp.corp.p6.config..*)")
+	   @After("within(au.com.wp.corp.p6..) && !within(au.com.wp.corp.p6.config..*)")
 	    public void logAfterReturning(JoinPoint joinPoint) {
 	    	String nameOfMethod = joinPoint.getSignature().getName();
 	    	String arguments = Arrays.toString(joinPoint.getArgs());
