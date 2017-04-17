@@ -182,13 +182,14 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		for(Task task : tasks){
 			ViewToDoStatus status = new ViewToDoStatus();
 			status.setCrewAssigned(task.getCrewId());
+			//TODO to decide the user to populate the comment
 			status.setDeportComment(task.getCmts());
 			status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
 			status.setLeadCrew(task.getLeadCrewId());
 			status.setScheduleDate(task.getSchdDt().toString());
 			//TODO
-			//status.setSchedulingComment(schedulingComment);
-			//status.setWorkOrders(workOrders);
+			
+			status.setWorkOrders(task.getTaskId());
 			List<TodoAssignment> toDoEntities = task.getTodoAssignments();
 			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
 			for(TodoAssignment assignment : toDoEntities){

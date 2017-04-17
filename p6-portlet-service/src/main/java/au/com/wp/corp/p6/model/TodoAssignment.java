@@ -30,7 +30,7 @@ public class TodoAssignment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR", sequenceName="ASIGNMT_ID")
+	@SequenceGenerator(name="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR", sequenceName="ASIGNMT_ID" , allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR")
 	@Column(name="ASIGNMT_ID")
 	private long asignmtId;
