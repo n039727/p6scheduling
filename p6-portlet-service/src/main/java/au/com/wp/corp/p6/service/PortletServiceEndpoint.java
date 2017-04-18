@@ -20,7 +20,7 @@ import au.com.wp.corp.p6.dto.ViewToDoStatus;
 public interface PortletServiceEndpoint {
 	
 	List<WorkOrder> fetchWorkOrdersForAddUpdateScheduling(WorkOrderSearchInput query);
-	List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query);
+	List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchInput> query);
 	/*List<WorkOrder> fetchWorkOrdersForExecutionPackage(WorkOrderQuery query);*/
 	ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder);
 	
