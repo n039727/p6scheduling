@@ -3,7 +3,8 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 
 	var ctrl = this;
 	ctrl.workOrders = [];
-			
+	ctrl.savedMsgVisible = false;
+				
 	/*$http.post("/p6-portal-service/retrieveJobs").then(function (response) {
 		console.log("Received data from server");
 		$scope.fetchedData = response.data;
@@ -33,6 +34,7 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 			console.log('Query:' + JSON.stringify(query));
 			ctrl.workOrders = ctrl.fetchedData
 			ctrl.resultVisible = true;
+			ctrl.savedMsgVisible = false;
 	};
 	
 	ctrl.activeContext = 'ADD_SCHEDULING_TODO';

@@ -1,0 +1,42 @@
+<div>
+	<table class="table table-condensed table-bordered table-striped" style="border-collapse:collapse;">
+		<thead class="query-result-header">
+			<tr>
+				<th>Select
+					<input type="checkbox" ng-model="selectedAll" ng-click="$ctrl.selectAll()" ></th>
+				<th>WO #</th>
+				<th>Planned Start Date</th>
+				<th>Crew Assigned</th>
+				<th>Lead Crew</th>
+				<th>Execution Package</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat-start="wo in $ctrl.data"class="accordion-toggle">
+				<td>
+					<label>
+						<input type="checkbox" ng-model="wo.selected" ng-click="$ctrl.checkIfAllSelected()" >
+					</label>
+	
+				</td>
+				<td>{{wo.workOrders[0]}}</td>
+				<td>{{wo.scheduleDate}}</td>
+				<td>{{wo.leadCrew}}</td>
+				<td>&nbsp;</td>
+				<td>
+					<select class="form-control" id="execution-package-select" >
+						<option>{{wo.executionPackage}}</option>
+					</select> 
+				</td>
+			</tr>
+			<tr ng-repeat-end></tr>
+		</tbody>
+	</table>
+</div>	
+<div class="form-group">
+	<div class="btn-group col-md-offset-2">
+		<button type="submit" class="btn btn-warning btn-lg" ng-click="refresh()" disabled>Add To-Dos</button>
+		<button type="submit" class="btn btn-warning btn-lg" ng-click="createPackage()">Create/Update Package</button>
+		<button type="submit" class="btn btn-warning btn-lg" >Remove from Package</button>
+	</div>
+</div>

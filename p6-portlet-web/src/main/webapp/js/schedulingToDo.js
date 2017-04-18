@@ -2,6 +2,7 @@ function schedulingToDoResultController($scope, $http) {
 	var ctrl = this;
 	
 	console.log('data received: ' + JSON.stringify(ctrl.data));
+	ctrl.savedMsgVisible = false;
 	
 	ctrl.toggleExpansion  = function($event) {
 		var button = $event.target;
@@ -13,6 +14,8 @@ function schedulingToDoResultController($scope, $http) {
 			$('#'+button.id).removeClass("glyphicon-minus");
 			$('#'+button.id).addClass("glyphicon-plus");
 		}
+		ctrl.savedMsgVisible = false;
+		
 	};
 	
 	ctrl.todoGrp1 = ["ESA","DEC Permit","DBYD","Gas Permit","Rail Permit","Water Permit","ENAR"];
@@ -72,17 +75,20 @@ function schedulingToDoResultController($scope, $http) {
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		var req = {
 			 method: 'POST',
-			 url: '/p6-portal-service/saveWorkOrder',
+			 url: '/p6-portal-service/scheduler/saveWorkOrder',
 			 headers: {
 			   'Content-Type': 'application/json'
 			 },
 			 data: JSON.stringify(wo)
+			 
 		};
 		$http(req).then(function (response) {
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			alert("Scheduling TO DO saved for " + wo.workOrders[0]);
+			//alert("Scheduling TO DO saved for " + wo.workOrders[0]);
+			ctrl.savedMsgVisible = true;
+			
 		});
 		ctrl.handleDataChange();
 	};
