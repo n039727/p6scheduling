@@ -1,12 +1,15 @@
 package au.com.wp.corp.p6.businessservice.impl;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
@@ -21,11 +24,13 @@ import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
+import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
@@ -196,21 +201,39 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			status.setCrewAssigned(task.getCrewId());
 			// TODO to decide the user to populate the comment
 			status.setDeportComment(task.getCmts());
-			status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
+			if(null != task.getExecutionPackage()){
+				status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
+			}
 			status.setLeadCrew(task.getLeadCrewId());
+
 			status.setScheduleDate(task.getSchdDt().toString());
+			//TODO
+			//status.setSchedulingComment(schedulingComment);
+			//status.setWorkOrders(workOrders);
+			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
+
+			if(null != task.getSchdDt()){
+				status.setScheduleDate(task.getSchdDt().toString());
+			}
 			// TODO
 
 			status.setWorkOrders(task.getTaskId());
-			List<TodoAssignment> toDoEntities = task.getTodoAssignments();
+
 			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
+			if(null != toDoEntities){
+				logger.debug("Size of ToDoAssignment for task>>>{}",toDoEntities.size());
+			}
 			for (TodoAssignment assignment : toDoEntities) {
 				au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO = new au.com.wp.corp.p6.dto.ToDoAssignment();
 				assignmentDTO.setComment(assignment.getCmts());
-				assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
+				if(null != assignment.getReqdByDt()){
+					assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
+				}
 				assignmentDTO.setStatus(assignment.getStat());
 				assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
-				assignmentDTO.setToDoName(assignment.getTodoTemplate().getTodoNam());
+				if(null != assignment.getTodoTemplate()){
+					assignmentDTO.setToDoName(assignment.getTodoTemplate().getTodoNam());
+				}
 				assignmentDTOs.add(assignmentDTO);
 			}
 			status.setTodoAssignments(assignmentDTOs);
@@ -224,5 +247,18 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		todoDAO.saveToDos(workOrder);
 		return workOrder;
 	}
+
+	
+
+	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) {
+		executionPackageDTO = taskDAO.saveExecutionPackage(executionPackageDTO);		
+		return executionPackageDTO;
+	}
+
+	public List<ExecutionPackageDTO> fetchExecutionPackageList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 
 }

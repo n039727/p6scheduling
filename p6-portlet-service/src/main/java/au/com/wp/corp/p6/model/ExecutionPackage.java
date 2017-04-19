@@ -3,6 +3,7 @@ package au.com.wp.corp.p6.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,12 +53,12 @@ public class ExecutionPackage implements Serializable {
 	private String lstUpdtdUsr;
 
 	//bi-directional many-to-one association to Task
-	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-	private List<Task> tasks;
+	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.PERSIST)
+	private Set<Task> tasks;
 
 	//bi-directional many-to-one association to TodoAssignment
-	@OneToMany(mappedBy="executionPackage")
-	private List<TodoAssignment> todoAssignments;
+	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.PERSIST)
+	private Set<TodoAssignment> todoAssignments;
 
 	public ExecutionPackage() {
 	}
@@ -118,11 +119,11 @@ public class ExecutionPackage implements Serializable {
 		this.lstUpdtdUsr = lstUpdtdUsr;
 	}
 
-	public List<Task> getTasks() {
+	public Set<Task> getTasks() {
 		return this.tasks;
 	}
 
-	public void setTasks(List<Task> tasks) {
+	public void setTasks(Set<Task> tasks) {
 		this.tasks = tasks;
 	}
 
@@ -140,11 +141,11 @@ public class ExecutionPackage implements Serializable {
 		return task;
 	}
 
-	public List<TodoAssignment> getTodoAssignments() {
+	public Set<TodoAssignment> getTodoAssignments() {
 		return this.todoAssignments;
 	}
 
-	public void setTodoAssignments(List<TodoAssignment> todoAssignments) {
+	public void setTodoAssignments(Set<TodoAssignment> todoAssignments) {
 		this.todoAssignments = todoAssignments;
 	}
 
