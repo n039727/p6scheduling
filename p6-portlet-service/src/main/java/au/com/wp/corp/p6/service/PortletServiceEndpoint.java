@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
+import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
@@ -24,5 +25,6 @@ public interface PortletServiceEndpoint {
 	ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder);
 	
 	List<ToDoItem> fetchToDoItems();
+	ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO);
 
 }

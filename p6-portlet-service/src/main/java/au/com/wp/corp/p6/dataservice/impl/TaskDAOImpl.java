@@ -1,6 +1,9 @@
 package au.com.wp.corp.p6.dataservice.impl;
 
+import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -12,24 +15,75 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import au.com.wp.corp.p6.dataservice.TaskDAO;
+import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.ToDoItem;
+import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
+import au.com.wp.corp.p6.model.TodoAssignment;
 
 @Repository
-public class TaskDAOImpl implements TaskDAO{
+public class TaskDAOImpl implements TaskDAO {
 
 	private static final Logger logger = LoggerFactory.getLogger(TaskDAO.class);
 	@Autowired
 	SessionFactory sessionFactory;
-	
-	@SuppressWarnings("unchecked")
+
 	@Transactional
+	@Override
 	public List<Task> listTasks() {
-		logger.debug("sessionfactory initialized ====="+sessionFactory);
-        List<Task> listTasks = (List<Task>) sessionFactory.getCurrentSession()
-                .createCriteria(Task.class)
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
- 
-        return listTasks;
+		logger.debug("sessionfactory initialized =====" + sessionFactory);
+		List<Task> listTasks = (List<Task>) sessionFactory.getCurrentSession().createCriteria(Task.class)
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+
+		return listTasks;
 	}
 
+	@Transactional
+	@Override
+	public List<ExecutionPackage> listExecutionPackages() {
+		logger.debug("sessionfactory initialized =====" + sessionFactory);
+		List<ExecutionPackage> listExecPakgs = (List<ExecutionPackage>) sessionFactory.getCurrentSession()
+				.createCriteria(ExecutionPackage.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+
+		return listExecPakgs;
+	}
+
+	@Transactional
+	@Override
+	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) {
+		logger.debug("sessionfactory initialized =====" + sessionFactory);
+		ExecutionPackage executionPackage = new ExecutionPackage();
+		logger.debug("Creating Execution Package");
+		executionPackage.setExctnPckgNam(executionPackageDTO.getExctnPckgNam());
+		executionPackage.setLeadCrewId(executionPackageDTO.getLeadCrew());
+		String scheduleDate = executionPackageDTO.getScheduleDate();
+		List<String> workOrders = executionPackageDTO.getWorkOrders();
+		if (workOrders != null && workOrders.size() > 0) {
+			logger.debug("work orders size {}", workOrders.size());
+			Set<Task> tasks = new HashSet<Task>();
+			for (String workOrder : workOrders) {
+				logger.debug("For each workorder {} corresponding Task is fecthed", workOrder);
+				Task task = (Task) sessionFactory.getCurrentSession().get(Task.class, workOrder);
+				if (task != null) {
+					logger.debug("Task {} is fecthed", task.getTaskId());
+					task.setExecutionPackage(executionPackage);
+					tasks.add(task);
+				} 
+			}
+			executionPackage.setTasks(tasks);
+
+		}
+		executionPackage.setCrtdTs(new Timestamp(System.currentTimeMillis()));
+		executionPackage.setCrtdUsr("test user");
+		executionPackage.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
+		executionPackage.setLstUpdtdUsr("test user");
+		sessionFactory.getCurrentSession().saveOrUpdate(executionPackage);
+
+		sessionFactory.getCurrentSession().flush();
+		sessionFactory.getCurrentSession().clear();
+
+		return executionPackageDTO;
+	}
 }
+	
+

@@ -1,11 +1,14 @@
 package au.com.wp.corp.p6.businessservice.impl;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
@@ -20,11 +23,13 @@ import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
+import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
@@ -189,7 +194,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			//TODO
 			//status.setSchedulingComment(schedulingComment);
 			//status.setWorkOrders(workOrders);
-			List<TodoAssignment> toDoEntities = task.getTodoAssignments();
+			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
 			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
 			for(TodoAssignment assignment : toDoEntities){
 				au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO = new au.com.wp.corp.p6.dto.ToDoAssignment();
@@ -210,5 +215,18 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		todoDAO.saveToDos(workOrder);
 		return workOrder;
 	}
+
+	
+
+	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) {
+		executionPackageDTO = taskDAO.saveExecutionPackage(executionPackageDTO);		
+		return executionPackageDTO;
+	}
+
+	public List<ExecutionPackageDTO> fetchExecutionPackageList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 
 }

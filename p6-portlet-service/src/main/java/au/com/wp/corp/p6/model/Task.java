@@ -3,12 +3,11 @@ package au.com.wp.corp.p6.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -67,8 +66,8 @@ public class Task implements Serializable {
 	private ExecutionPackage executionPackage;
 
 	//bi-directional many-to-one association to TodoAssignment
-	@OneToMany(mappedBy="task",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<TodoAssignment> todoAssignments;
+	@OneToMany(mappedBy="task",cascade = CascadeType.ALL)
+	private Set<TodoAssignment> todoAssignments;
 
 	public Task() {
 	}
@@ -169,11 +168,11 @@ public class Task implements Serializable {
 		this.executionPackage = executionPackage;
 	}
 
-	public List<TodoAssignment> getTodoAssignments() {
+	public Set<TodoAssignment> getTodoAssignments() {
 		return this.todoAssignments;
 	}
 
-	public void setTodoAssignments(List<TodoAssignment> todoAssignments) {
+	public void setTodoAssignments(Set<TodoAssignment> todoAssignments) {
 		this.todoAssignments = todoAssignments;
 	}
 
