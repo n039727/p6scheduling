@@ -121,18 +121,22 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	public List<WorkOrder> retrieveJobs(WorkOrderSearchInput input) {
-		//Map<String, WorkOrder> mapStorage = new ConcurrentHashMap<String, WorkOrder>();
 		for (WorkOrder workOrder : mapStorage.values()) {
 			List<TodoAssignment> list = todoDAO.fetchToDosByWorkOrder(workOrder);
 			List<ToDoItem> toDoItems = new ArrayList<ToDoItem>();
-			
-			for ( TodoAssignment todoTemplate : list){		
-			ToDoItem toDoItem = new ToDoItem();
-			toDoItem.setTodoName(todoTemplate.getTodoTemplate().getTodoNam());
-			toDoItem.setWorkOrders(workOrder.getWorkOrders());
-			toDoItems.add(toDoItem);
+
+			for (TodoAssignment todoTemplate : list) {
+				ToDoItem toDoItem = new ToDoItem();
+				toDoItem.setTodoName(todoTemplate.getTodoTemplate().getTodoNam());
+				toDoItem.setWorkOrders(workOrder.getWorkOrders());
+				toDoItems.add(toDoItem);
 			}
 			workOrder.setToDoItems(toDoItems);
+			WorkOrderSearchInput workOrderSearchInput = new WorkOrderSearchInput();
+			workOrderSearchInput.setWorkOrderId(workOrder.getWorkOrders().get(0));
+			List<Task> taskList = workOrderDAO.fetchWorkOrdersForViewToDoStatus(workOrderSearchInput);
+			for (Task task : taskList)
+				workOrder.setSchedulingToDoComment(task.getCmts());
 			mapStorage.put(workOrder.getWorkOrders().get(0), workOrder);
 		}
 		return new ArrayList<WorkOrder>(mapStorage.values());
@@ -201,18 +205,18 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			status.setCrewAssigned(task.getCrewId());
 			// TODO to decide the user to populate the comment
 			status.setDeportComment(task.getCmts());
-			if(null != task.getExecutionPackage()){
+			if (null != task.getExecutionPackage()) {
 				status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
 			}
 			status.setLeadCrew(task.getLeadCrewId());
 
 			status.setScheduleDate(task.getSchdDt().toString());
-			//TODO
-			//status.setSchedulingComment(schedulingComment);
-			//status.setWorkOrders(workOrders);
+			// TODO
+			// status.setSchedulingComment(schedulingComment);
+			// status.setWorkOrders(workOrders);
 			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
 
-			if(null != task.getSchdDt()){
+			if (null != task.getSchdDt()) {
 				status.setScheduleDate(task.getSchdDt().toString());
 			}
 			// TODO
@@ -220,18 +224,18 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			status.setWorkOrders(task.getTaskId());
 
 			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
-			if(null != toDoEntities){
-				logger.debug("Size of ToDoAssignment for task>>>{}",toDoEntities.size());
+			if (null != toDoEntities) {
+				logger.debug("Size of ToDoAssignment for task>>>{}", toDoEntities.size());
 			}
 			for (TodoAssignment assignment : toDoEntities) {
 				au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO = new au.com.wp.corp.p6.dto.ToDoAssignment();
 				assignmentDTO.setComment(assignment.getCmts());
-				if(null != assignment.getReqdByDt()){
+				if (null != assignment.getReqdByDt()) {
 					assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
 				}
 				assignmentDTO.setStatus(assignment.getStat());
 				assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
-				if(null != assignment.getTodoTemplate()){
+				if (null != assignment.getTodoTemplate()) {
 					assignmentDTO.setToDoName(assignment.getTodoTemplate().getTodoNam());
 				}
 				assignmentDTOs.add(assignmentDTO);
@@ -248,10 +252,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return workOrder;
 	}
 
-	
-
 	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) {
-		executionPackageDTO = taskDAO.saveExecutionPackage(executionPackageDTO);		
+		executionPackageDTO = taskDAO.saveExecutionPackage(executionPackageDTO);
 		return executionPackageDTO;
 	}
 
@@ -259,6 +261,5 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 
 }

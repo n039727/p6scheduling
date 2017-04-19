@@ -8,4 +8,5 @@ import au.com.wp.corp.p6.model.Task;
 public interface WorkOrderDAO {
 
 	List<Task> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query);
+	
 }
