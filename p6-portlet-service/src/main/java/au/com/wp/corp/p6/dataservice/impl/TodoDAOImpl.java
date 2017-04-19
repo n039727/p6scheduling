@@ -133,4 +133,23 @@ public class TodoDAOImpl implements TodoDAO {
         return workOrder;
 	}
 
+	@Transactional
+	@Override
+	public List<TodoAssignment> fetchToDosByWorkOrder(WorkOrder workOrder) {
+		logger.debug("Fetching todo list from TodoAssignment table for task id # {}", workOrder.getWorkOrders().get(0));
+		Task task = new Task();
+		task.setTaskId(workOrder.getWorkOrders().get(0));
+		
+        @SuppressWarnings("unchecked")
+		List<TodoAssignment> listToDo = (List<TodoAssignment>) sessionFactory.getCurrentSession()
+                .createCriteria(TodoAssignment.class)
+                .add(Restrictions.eq("task", task))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        logger.debug("Fetched todo list from TodoAssignment table for task id # {} and list of todos # {}", workOrder.getWorkOrders().get(0), listToDo);
+        sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().clear();
+        
+        return listToDo;
+	}
+
 }
