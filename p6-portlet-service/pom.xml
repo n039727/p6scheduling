@@ -121,7 +121,7 @@
 			<!--<version>3.6.9.Final</version> -->
 			<type>pom</type>
 		</dependency>
-		
+
 
 	<dependency>
 		<groupId>org.hibernate</groupId>

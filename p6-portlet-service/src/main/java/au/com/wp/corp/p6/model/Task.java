@@ -66,8 +66,10 @@ public class Task implements Serializable {
 	private ExecutionPackage executionPackage;
 
 	//bi-directional many-to-one association to TodoAssignment
+
 	@OneToMany(mappedBy="task",cascade = CascadeType.ALL)
 	private Set<TodoAssignment> todoAssignments;
+
 
 	public Task() {
 	}

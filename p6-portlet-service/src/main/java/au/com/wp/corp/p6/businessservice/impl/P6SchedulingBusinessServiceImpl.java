@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	TodoDAO todoDAO;
 	@Autowired
 	WorkOrderDAO workOrderDAO;
-	
+
 	@PostConstruct
 	public void initData() {
 		logger.info("Initializing Datastore..");
@@ -85,49 +86,61 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchInput input) {
 		List<WorkOrder> workOrders = new ArrayList<WorkOrder>();
 		/* this code will be replaced will the actual P6 Service call */
-			WorkOrder workOrder1 = new WorkOrder();
-			workOrder1.setExecutionPackage("test execution 1");
-			workOrder1.setLeadCrew("MOST1");
-			workOrder1.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
-			workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
+		WorkOrder workOrder1 = new WorkOrder();
+		workOrder1.setExecutionPackage("test execution 1");
+		workOrder1.setLeadCrew("MOST1");
+		workOrder1.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
+		workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
 
-			ToDoItem toDoItems = new ToDoItem();
-			toDoItems.setTodoName("ENAR");
-			toDoItems.setWorkOrders(workOrder1.getWorkOrders());
+		ToDoItem toDoItems = new ToDoItem();
+		toDoItems.setTodoName("ENAR");
+		toDoItems.setWorkOrders(workOrder1.getWorkOrders());
 
-			workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
+		workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
 
-			workOrders.add(workOrder1);
-			WorkOrder workOrder2 = new WorkOrder();
-			workOrder2.setExecutionPackage("test execution 1");
-			workOrder2.setLeadCrew("MOST1");
-			workOrder2.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
-			workOrder2.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
+		workOrders.add(workOrder1);
+		WorkOrder workOrder2 = new WorkOrder();
+		workOrder2.setExecutionPackage("test execution 1");
+		workOrder2.setLeadCrew("MOST1");
+		workOrder2.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
+		workOrder2.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
 
-			workOrders.add(workOrder2);
+		workOrders.add(workOrder2);
 
-			WorkOrder workOrder3 = new WorkOrder();
-			workOrder3.setExecutionPackage("test execution 1");
-			workOrder3.setLeadCrew("MOST1");
-			workOrder3.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
-			workOrder3.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
+		WorkOrder workOrder3 = new WorkOrder();
+		workOrder3.setExecutionPackage("test execution 1");
+		workOrder3.setLeadCrew("MOST1");
+		workOrder3.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
+		workOrder3.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
 
-			workOrders.add(workOrder3);
-		
+		workOrders.add(workOrder3);
+
 		/* this code will be replaced will the actual P6 Service call */
 		return workOrders;
 
 	}
 
 	public List<WorkOrder> retrieveJobs(WorkOrderSearchInput input) {
-
+		//Map<String, WorkOrder> mapStorage = new ConcurrentHashMap<String, WorkOrder>();
+		for (WorkOrder workOrder : mapStorage.values()) {
+			List<TodoAssignment> list = todoDAO.fetchToDosByWorkOrder(workOrder);
+			List<ToDoItem> toDoItems = new ArrayList<ToDoItem>();
+			
+			for ( TodoAssignment todoTemplate : list){		
+			ToDoItem toDoItem = new ToDoItem();
+			toDoItem.setTodoName(todoTemplate.getTodoTemplate().getTodoNam());
+			toDoItem.setWorkOrders(workOrder.getWorkOrders());
+			toDoItems.add(toDoItem);
+			}
+			workOrder.setToDoItems(toDoItems);
+			mapStorage.put(workOrder.getWorkOrders().get(0), workOrder);
+		}
 		return new ArrayList<WorkOrder>(mapStorage.values());
 
 	}
 
 	public List<WorkOrder> saveWorkOrder(WorkOrder workOrder) {
 		System.out.println(workOrder);
-
 		if (mapStorage.containsKey(workOrder.getWorkOrders().get(0))) {
 			mapStorage.put(workOrder.getWorkOrders().get(0), workOrder);
 		}
@@ -136,14 +149,14 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 		return listofJobs;
 	}
-	
+
 	@Transactional
 	public List<TaskDTO> listTasks() {
-		
+
 		List<Task> taskList = taskDAO.listTasks();
 		List<TaskDTO> tasks = new ArrayList<TaskDTO>();
 		for (Task task2 : taskList) {
-			TaskDTO taskDTO = new TaskDTO();			
+			TaskDTO taskDTO = new TaskDTO();
 			taskDTO.setTaskId(task2.getTaskId());
 			taskDTO.setExecutionPackageId(task2.getExecutionPackage().getExctnPckgId());
 			taskDTO.setDepotId(task2.getDepotId());
@@ -161,48 +174,66 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		List<TodoTemplate> toDoTemplateList = todoDAO.fetchAllToDos();
 		List<ToDoItem> toDos = new ArrayList<ToDoItem>();
 		for (TodoTemplate toDo : toDoTemplateList) {
-			ToDoItem item = new ToDoItem();			
+			ToDoItem item = new ToDoItem();
 			item.setCrtdTs(toDo.getCrtdTs().toString());
 			item.setCrtdUsr(toDo.getCrtdUsr());
-			if(null != toDo.getLstUpdtdTs()){
+			if (null != toDo.getLstUpdtdTs()) {
 				item.setLstUpdtdTs(toDo.getLstUpdtdTs().toString());
 			}
 			item.setLstUpdtdUsr(toDo.getLstUpdtdUsr());
 			item.setTmpltDesc(toDo.getTmpltDesc());
 			item.setTmpltId(String.valueOf(toDo.getTmpltId()));
 			item.setTodoName(toDo.getTodoNam());
-			//TODO populate work order
+			// TODO populate work order
 			toDos.add(item);
 		}
 		return toDos;
 	}
 
-	
 	@Override
-	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query){
-		
+	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query) {
+
 		List<Task> tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
 		List<ViewToDoStatus> toDoStatuses = new ArrayList<ViewToDoStatus>();
-		
-		for(Task task : tasks){
+
+		for (Task task : tasks) {
 			ViewToDoStatus status = new ViewToDoStatus();
 			status.setCrewAssigned(task.getCrewId());
+			// TODO to decide the user to populate the comment
 			status.setDeportComment(task.getCmts());
-			status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
+			if(null != task.getExecutionPackage()){
+				status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
+			}
 			status.setLeadCrew(task.getLeadCrewId());
+
 			status.setScheduleDate(task.getSchdDt().toString());
 			//TODO
 			//status.setSchedulingComment(schedulingComment);
 			//status.setWorkOrders(workOrders);
 			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
+
+			if(null != task.getSchdDt()){
+				status.setScheduleDate(task.getSchdDt().toString());
+			}
+			// TODO
+
+			status.setWorkOrders(task.getTaskId());
+
 			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
-			for(TodoAssignment assignment : toDoEntities){
+			if(null != toDoEntities){
+				logger.debug("Size of ToDoAssignment for task>>>{}",toDoEntities.size());
+			}
+			for (TodoAssignment assignment : toDoEntities) {
 				au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO = new au.com.wp.corp.p6.dto.ToDoAssignment();
 				assignmentDTO.setComment(assignment.getCmts());
-				assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
+				if(null != assignment.getReqdByDt()){
+					assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
+				}
 				assignmentDTO.setStatus(assignment.getStat());
 				assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
-				assignmentDTO.setToDoName(assignment.getTodoTemplate().getTodoNam());
+				if(null != assignment.getTodoTemplate()){
+					assignmentDTO.setToDoName(assignment.getTodoTemplate().getTodoNam());
+				}
 				assignmentDTOs.add(assignmentDTO);
 			}
 			status.setTodoAssignments(assignmentDTOs);
@@ -210,6 +241,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 		return toDoStatuses;
 	}
+
 	@Override
 	public WorkOrder saveToDo(WorkOrder workOrder) {
 		todoDAO.saveToDos(workOrder);

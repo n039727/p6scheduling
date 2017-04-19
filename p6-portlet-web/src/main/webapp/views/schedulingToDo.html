@@ -1,3 +1,8 @@
+<div class="standard-to-do-header" ng-show="$ctrl.savedMsgVisible">
+<b>Package has been saved</b>
+</div>
+
+<div>
 <table class="table table-condensed table-bordered table-striped" style="border-collapse:collapse;">
 	<thead class="query-result-header">
 		<tr>
@@ -7,6 +12,7 @@
 			<th>Planned Start Date</th>
 			<th>Crew Assigned</th>
 			<th>Lead Crew</th>
+			<th>Actioned</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -15,7 +21,7 @@
 				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
 				</button>
 			</td>
-			<td>{{wo.executionPackage}}</td>
+			<td>{{wo.executionPackage="PKG1"}}</td>
 			<td>{{wo.workOrders[0]}}</td>
 			<td>{{wo.scheduleDate}}</td>
 			<td>{{wo.leadCrew}}</td>
@@ -24,6 +30,10 @@
 					<option>&nbsp;</option>
 				</select> 
 			</td>
+			<td> <span ng-if="wo.workOrders.length > 0">Yes</span>
+				<span ng-if="wo.workOrders.length == 0">No</span>
+			</td>
+			
 		</tr>
 		<tr ng-repeat-end>
 			<td colspan="12" class="hiddenRow">
@@ -88,3 +98,4 @@
 		</tr>
 	</tbody>
 </table>
+</div>
