@@ -19,6 +19,26 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 		});
 	};
 	
+	ctrl.fetchToDos = function(){
+			var req = {
+					 method: 'GET',
+					 url: '/p6-portal-service/scheduler/fetchToDos',
+					 headers: {
+					   'Content-Type': 'application/json'
+					 },
+					 data: JSON.stringify()
+					 
+				};
+				$http(req).then(function (response) {
+					console.log("Received data from server for fetch to dos");
+					ctrl.metadata.todoList = response.data;
+					console.log("Data from server: " + JSON.stringify($scope.fetchedData));
+					
+				});
+			
+		
+	}
+	
 	ctrl.reload();
 	
 	ctrl.fetchedData = [{"workOrders":["Y6UIOP67"],"scheduleDate":"2017-04-15","leadCrew":"MOST2","toDoItems":[{"todoNam":"ESA","workOrders":["Y6UIOP67"]}]},{"workOrders":["Y6UIOP97"],"scheduleDate":"2017-04-15","leadCrew":"MOST1","toDoItems":[{"todoNam":"ENAR","workOrders":["Y6UIOP97"]}]},{"workOrders":["Y6UIOP87"],"scheduleDate":"2017-04-15","leadCrew":"MOST3"}];
@@ -27,41 +47,22 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 	ctrl.metadata.depotList = [{id:1, name:'Depot1'}, {id:2, name:'Depot2'}, {id:3, name:'Depot3'}];
 	ctrl.metadata.crewList = [{id:1, name:'MOST1'}, {id:2, name:'MOST2'}, {id:3, name:'MOST3'}];
 	ctrl.resultVisible = false;
-	
+	ctrl.fetchToDos();	
 	console.log('in Parent, metadata:' + JSON.stringify(ctrl.metadata));
 	
 	ctrl.search = function (query) {
 			console.log('Query:' + JSON.stringify(query));
-			if(	ctrl.activeContext == 'ADD_SCHEDULING_TODO'){
-				var req = {
-						 method: 'GET',
-						 url: '/p6-portal-service/scheduler/fetchToDos',
-						 headers: {
-						   'Content-Type': 'application/json'
-						 },
-						 data: JSON.stringify()
-						 
-					};
-					$http(req).then(function (response) {
-						console.log("Received data from server for fetch to dos");
-						$scope.fetchedData = response.data;
-						ctrl.workOrders = ctrl.fetchedData;
-						console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-						ctrl.resultVisible = true;
-						ctrl.savedMsgVisible = false;
-						
-					});
-				
-			}
+			var serviceUrl = "";
 			if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
+				serviceUrl = "/p6-portal-service/scheduler/fetchWOForTODOStatus";
 				var req = {
-						 method: 'GET',
-						 url: '/p6-portal-service/scheduler/fetchWOForTODOStatus',
-						 headers: {
+						method: 'POST',
+						url: serviceUrl,
+						headers: {
 						   'Content-Type': 'application/json'
-						 },
-						 data: JSON.stringify(query)
-						 
+						},
+						data: JSON.stringify(query)
+
 					};
 					$http(req).then(function (response) {
 						console.log("Received data from server for fetchWOForTODOStatus");
@@ -73,10 +74,12 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 						
 					});
 				
-			}
-/*			ctrl.workOrders = ctrl.fetchedData
+				
+			} 
+			
+			ctrl.workOrders = ctrl.fetchedData
 			ctrl.resultVisible = true;
-			ctrl.savedMsgVisible = false;*/
+			ctrl.savedMsgVisible = false; 
 	};
 	
 	ctrl.activeContext = 'ADD_SCHEDULING_TODO';

@@ -12,6 +12,7 @@ angular.module('todoPortal').component('queryResult', {
   bindings: {
 	  activeContext: '<',
 	  data: '<',
+	  metadata: '<',
 	  visible: '<',
 	  handleDataChange: '&'
   }
