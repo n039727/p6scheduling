@@ -2,7 +2,7 @@ function schedulingToDoResultController($scope, $http) {
 	var ctrl = this;
 	
 	console.log('data received: ' + JSON.stringify(ctrl.data));
-	ctrl.savedMsgVisible = false;
+	console.log('active context: ' + JSON.stringify(ctrl.activeContext));
 	
 	ctrl.toggleExpansion  = function($event) {
 		var button = $event.target;
@@ -18,8 +18,20 @@ function schedulingToDoResultController($scope, $http) {
 		
 	};
 	
-	ctrl.todoGrp1 = ["ESA","DEC Permit","DBYD","Gas Permit","Rail Permit","Water Permit","ENAR"];
-	ctrl.todoGrp2 = ["Traffic","Lay Down Area Arrangements","Fibre Optics","Inductions (Mine Site)","Specialised Plant / Equipment Availability","Additional Trades","Others"];
+	//ctrl.todoGrp1 = ["ESA","DEC Permit","DBYD","Gas Permit","Rail Permit","Water Permit","ENAR"];
+	//ctrl.todoGrp2 = ["Traffic","Lay Down Area Arrangements","Fibre Optics","Inductions (Mine Site)","Specialised Plant / Equipment Availability","Additional Trades","Others"];
+	console.log('fetch todoList:' + JSON.stringify(ctrl.metadata));
+	ctrl.todoGrp1 = [];
+	ctrl.todoGrp2 = [];
+	if(ctrl.metadata.todoList){
+		for(i=0; i<ctrl.metadata.todoList.length;i++) {  
+			if (i < ctrl.metadata.todoList.length/2) 
+				ctrl.todoGrp1.push(ctrl.metadata.todoList[i].todoName);
+			else
+				ctrl.todoGrp2.push(ctrl.metadata.todoList[i].todoName);
+		}
+	}
+	
 		
 	ctrl.addRemoveTodo = function ($event, wo, todo) {
 			var cb = $event.target;
@@ -102,6 +114,7 @@ angular.module('todoPortal').component('schedulingToDoResult', {
   bindings: {
 	  activeContext: '<',
 	  data: '<',
+	  metadata: '<',
 	  handleDataChange: '&'
   }
 });
