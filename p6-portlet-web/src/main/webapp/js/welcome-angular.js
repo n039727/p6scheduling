@@ -52,15 +52,17 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 	
 	ctrl.search = function (query) {
 			console.log('Query:' + JSON.stringify(query));
+			var serviceUrl = "";
 			if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
+				serviceUrl = "/p6-portal-service/scheduler/fetchWOForTODOStatus";
 				var req = {
-						 method: 'GET',
-						 url: '/p6-portal-service/scheduler/fetchWOForTODOStatus',
-						 headers: {
+						method: 'POST',
+						url: serviceUrl,
+						headers: {
 						   'Content-Type': 'application/json'
-						 },
-						 data: JSON.stringify(query)
-						 
+						},
+						data: JSON.stringify(query)
+
 					};
 					$http(req).then(function (response) {
 						console.log("Received data from server for fetchWOForTODOStatus");
@@ -72,10 +74,12 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 						
 					});
 				
-			}
-/*			ctrl.workOrders = ctrl.fetchedData
+				
+			} 
+			
+			ctrl.workOrders = ctrl.fetchedData
 			ctrl.resultVisible = true;
-			ctrl.savedMsgVisible = false;*/
+			ctrl.savedMsgVisible = false; 
 	};
 	
 	ctrl.activeContext = 'ADD_SCHEDULING_TODO';
