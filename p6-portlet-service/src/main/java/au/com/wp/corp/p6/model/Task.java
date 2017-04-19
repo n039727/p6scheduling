@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -67,7 +68,7 @@ public class Task implements Serializable {
 
 	//bi-directional many-to-one association to TodoAssignment
 
-	@OneToMany(mappedBy="task",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy="task",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<TodoAssignment> todoAssignments;
 
 
