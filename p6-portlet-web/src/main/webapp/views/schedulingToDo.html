@@ -53,7 +53,7 @@
 											<td>{{todo}}</td>
 											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
 											<td>
-												<select class="form-control"  ng-disabled="!$ctrl.calculateEnable(wo, todo)">
+												<select class="form-control" >
 													<!--<option disabled selected>Select</option>-->
 													<option ng-if="$ctrl.calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
 												</select>
@@ -74,7 +74,7 @@
 											<td>{{todo}}</td>
 											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
 											<td>
-												<select class="form-control"  ng-disabled="!$ctrl.calculateEnable(wo, todo)">
+												<select class="form-control" >
 													<option ng-if="$ctrl.calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
 												</select>
 											</td>
