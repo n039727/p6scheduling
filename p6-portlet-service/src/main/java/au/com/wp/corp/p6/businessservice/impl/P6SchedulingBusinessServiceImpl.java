@@ -196,21 +196,32 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			status.setCrewAssigned(task.getCrewId());
 			// TODO to decide the user to populate the comment
 			status.setDeportComment(task.getCmts());
-			status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
+			if(null != task.getExecutionPackage()){
+				status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
+			}
 			status.setLeadCrew(task.getLeadCrewId());
-			status.setScheduleDate(task.getSchdDt().toString());
+			if(null != task.getSchdDt()){
+				status.setScheduleDate(task.getSchdDt().toString());
+			}
 			// TODO
 
 			status.setWorkOrders(task.getTaskId());
 			List<TodoAssignment> toDoEntities = task.getTodoAssignments();
 			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
+			if(null != toDoEntities){
+				logger.debug("Size of ToDoAssignment for task>>>{}",toDoEntities.size());
+			}
 			for (TodoAssignment assignment : toDoEntities) {
 				au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO = new au.com.wp.corp.p6.dto.ToDoAssignment();
 				assignmentDTO.setComment(assignment.getCmts());
-				assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
+				if(null != assignment.getReqdByDt()){
+					assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
+				}
 				assignmentDTO.setStatus(assignment.getStat());
 				assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
-				assignmentDTO.setToDoName(assignment.getTodoTemplate().getTodoNam());
+				if(null != assignment.getTodoTemplate()){
+					assignmentDTO.setToDoName(assignment.getTodoTemplate().getTodoNam());
+				}
 				assignmentDTOs.add(assignmentDTO);
 			}
 			status.setTodoAssignments(assignmentDTOs);
