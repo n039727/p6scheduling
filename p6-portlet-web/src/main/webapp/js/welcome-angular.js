@@ -32,9 +32,51 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 	
 	ctrl.search = function (query) {
 			console.log('Query:' + JSON.stringify(query));
-			ctrl.workOrders = ctrl.fetchedData
+			if(	ctrl.activeContext == 'ADD_SCHEDULING_TODO'){
+				var req = {
+						 method: 'GET',
+						 url: '/p6-portal-service/scheduler/fetchToDos',
+						 headers: {
+						   'Content-Type': 'application/json'
+						 },
+						 data: JSON.stringify()
+						 
+					};
+					$http(req).then(function (response) {
+						console.log("Received data from server for fetch to dos");
+						$scope.fetchedData = response.data;
+						ctrl.workOrders = ctrl.fetchedData;
+						console.log("Data from server: " + JSON.stringify($scope.fetchedData));
+						ctrl.resultVisible = true;
+						ctrl.savedMsgVisible = false;
+						
+					});
+				
+			}
+			if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
+				var req = {
+						 method: 'GET',
+						 url: '/p6-portal-service/scheduler/fetchWOForTODOStatus',
+						 headers: {
+						   'Content-Type': 'application/json'
+						 },
+						 data: JSON.stringify(query)
+						 
+					};
+					$http(req).then(function (response) {
+						console.log("Received data from server for fetchWOForTODOStatus");
+						$scope.fetchedData = response.data;
+						ctrl.workOrders = ctrl.fetchedData;
+						console.log("Data from server: " + JSON.stringify($scope.fetchedData));
+						ctrl.resultVisible = true;
+						ctrl.savedMsgVisible = false;
+						
+					});
+				
+			}
+/*			ctrl.workOrders = ctrl.fetchedData
 			ctrl.resultVisible = true;
-			ctrl.savedMsgVisible = false;
+			ctrl.savedMsgVisible = false;*/
 	};
 	
 	ctrl.activeContext = 'ADD_SCHEDULING_TODO';
