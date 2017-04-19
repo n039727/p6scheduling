@@ -23,7 +23,7 @@ function viewToDoStatusController($scope, $http) {
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		var req = {
 			 method: 'POST',
-			 url: '/p6-portal-service/saveWorkOrder',
+			 url: '/p6-portal-service/scheduler/saveWorkOrder',
 			 headers: {
 			   'Content-Type': 'application/json'
 			 },
