@@ -148,15 +148,15 @@ public class TodoDAOImpl implements TodoDAO {
 																				// ToDoItesm
 																				// for
 																				// every
-																				// task name
-					Set<TodoAssignment> assignments = new HashSet<TodoAssignment>();
+																				// task
+																				// name
 					if (toDoItemList != null && toDoItemList.size() > 0) {
-						
+						Set<TodoAssignment> assignments = new HashSet<TodoAssignment>();
 						// TODO : for now deleting the existing records until
 						// composite key is added in DB for taskname and todo id
 						
-						//int recordsDeleted = deleteToDoAssignmentsByTaskToDo(taskName);
-						//logger.debug("Removing {} todo records for this task  {}", recordsDeleted, taskName);
+						int recordsDeleted = deleteToDoAssignmentsByTaskToDo(taskName);
+						logger.debug("Removing {} todo records for this task  {}", recordsDeleted, taskName);
 						for (ToDoItem toDoItem : toDoItemList) {
 
 							String toDoName = toDoItem.getTodoName();
@@ -168,46 +168,27 @@ public class TodoDAOImpl implements TodoDAO {
 
 							// logger.debug("Work order for ToDo {}
 							// {}",toDoName,workInTodo);
-							if(task.getTodoAssignments() != null && task.getTodoAssignments().size() > 0){
-								assignments = task.getTodoAssignments();
-								for (TodoAssignment todoAssignment : assignments) {
-										if(todoAssignment.getTodoId() == todoTemplateRecord.get(0).getTodoId()){
-											todoAssignment.setCmts(toDoItem.getComments());
-											todoAssignment.setExecutionPackage(executionPackage.get(0));
-											todoAssignment.setReqdByDt(toDoItem.getReqdByDate());
-											todoAssignment.setStat(toDoItem.getStatus());
-											todoAssignment.setSuprtngDocLnk(toDoItem.getSupportingDocLink());
-					
-											todoAssignment.setTodoTemplate(todoTemplateRecord.get(0));
-											todoAssignment.setTodoId(todoTemplateRecord.get(0).getTodoId());
-											todoAssignment.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
-											todoAssignment.setLstUpdtdUsr("test user");
-										}
-										
-									}
-								
-							}else{
-								TodoAssignment todoAssignment = new TodoAssignment();
-								todoAssignment.setCmts(toDoItem.getComments());
-								todoAssignment.setExecutionPackage(executionPackage.get(0));
-								todoAssignment.setReqdByDt(toDoItem.getReqdByDate());
-								todoAssignment.setStat(toDoItem.getStatus());
-								todoAssignment.setSuprtngDocLnk(toDoItem.getSupportingDocLink());
-	
-								todoAssignment.setTodoTemplate(todoTemplateRecord.get(0));
-								todoAssignment.setTodoId(todoTemplateRecord.get(0).getTodoId());
-								todoAssignment.setTask(task);
-								todoAssignment.setCrtdTs(new Timestamp(System.currentTimeMillis()));
-								todoAssignment.setCrtdUsr("test user");
-								todoAssignment.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
-								todoAssignment.setLstUpdtdUsr("test user");
-								assignments.add(todoAssignment);
-							 }
+							TodoAssignment todoAssignment = new TodoAssignment();
+							todoAssignment.setCmts(toDoItem.getComments());
+							todoAssignment.setExecutionPackage(executionPackage.get(0));
+							todoAssignment.setReqdByDt(toDoItem.getReqdByDate());
+							todoAssignment.setStat(toDoItem.getStatus());
+							todoAssignment.setSuprtngDocLnk(toDoItem.getSupportingDocLink());
+
+							todoAssignment.setTodoTemplate(todoTemplateRecord.get(0));
+							todoAssignment.setTodoId(todoTemplateRecord.get(0).getTodoId());
+							todoAssignment.setTask(task);
+							todoAssignment.setCrtdTs(new Timestamp(System.currentTimeMillis()));
+							todoAssignment.setCrtdUsr("test user");
+							todoAssignment.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
+							todoAssignment.setLstUpdtdUsr("test user");
+							assignments.add(todoAssignment);
+							// }
 						}
 
-						
+						task.setTodoAssignments(assignments);
 					}
-					task.setTodoAssignments(assignments);
+
 					task.setCrtdTs(new Timestamp(System.currentTimeMillis()));
 					task.setCrtdUsr("test user");
 					task.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
@@ -226,10 +207,6 @@ public class TodoDAOImpl implements TodoDAO {
 
 	
 
-	private void updateExistingAssignments(Set<TodoAssignment> todoAssignments) {
-		// TODO Auto-generated method stub
-		
-	}
 	private List<?> getRecordsByField(String fieldName, Class<?> className, String value){
 		Criteria criteria = sessionFactory.getCurrentSession().
 				 createCriteria(className);
