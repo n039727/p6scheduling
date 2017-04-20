@@ -28,7 +28,7 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	
 	private static final Logger logger = LoggerFactory.getLogger(WorkOrderDAOImpl.class);
 	@Autowired
-	SessionFactory sessionFactory;
+	SessionFactory sessionFactory; 
 
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.dataservice.WorkOrderDAO#fetchWorkOrdersForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchInput)
@@ -49,6 +49,37 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 		/* This list size should always be 1*/
 		logger.info("size={}",listTask.size());
         return listTask;
+	}
+	
+	@Override
+	@Transactional
+	public Task saveTask(Task task) {
+		sessionFactory.getCurrentSession().saveOrUpdate(task);
+		return task;
+	}
+
+	@Override
+	@Transactional
+	public Task fetch(String workOrderId) {
+		logger.debug("sessionfactory initialized ====={}",sessionFactory);
+		
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Task.class);
+        
+		logger.debug("Input TASK_ID>>>>{}", workOrderId);
+		criteria.add(Restrictions.eq("taskId", workOrderId));
+		criteria.setFetchSize(1);
+ 
+		@SuppressWarnings("unchecked")
+		List<Task> listTask = (List<Task>) criteria
+                  .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+		/* This list size should always be 1*/
+		logger.info("size={}",listTask.size());
+		if (listTask != null && listTask.size() == 1) {
+			return listTask.get(0);
+		} else {
+			// TODO throw exception
+		}
+        return null;
 	}
 
 }

@@ -4,12 +4,13 @@ function schedulingToDoResultController($scope, $http) {
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	console.log('active context: ' + JSON.stringify(ctrl.activeContext));
 	
-	ctrl.toggleExpansion  = function($event) {
+	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
 		
 		if($('#'+button.id).hasClass("glyphicon-plus")) {
 			$('#'+button.id).removeClass("glyphicon-plus");
 			$('#'+button.id).addClass("glyphicon-minus");
+			ctrl.fetchToDoAgainstWO(wo);
 		} else if ($('#'+button.id).hasClass("glyphicon-minus")) {
 			$('#'+button.id).removeClass("glyphicon-minus");
 			$('#'+button.id).addClass("glyphicon-plus");
@@ -20,15 +21,16 @@ function schedulingToDoResultController($scope, $http) {
 	
 	//ctrl.todoGrp1 = ["ESA","DEC Permit","DBYD","Gas Permit","Rail Permit","Water Permit","ENAR"];
 	//ctrl.todoGrp2 = ["Traffic","Lay Down Area Arrangements","Fibre Optics","Inductions (Mine Site)","Specialised Plant / Equipment Availability","Additional Trades","Others"];
-	console.log('fetch todoList:' + JSON.stringify(ctrl.metadata));
+	//console.log('fetch todoList:' + JSON.stringify(ctrl.metadata));
+	
 	ctrl.todoGrp1 = [];
 	ctrl.todoGrp2 = [];
 	if(ctrl.metadata.todoList){
 		for(i=0; i<ctrl.metadata.todoList.length;i++) {  
 			if (i < ctrl.metadata.todoList.length/2) 
-				ctrl.todoGrp1.push(ctrl.metadata.todoList[i].todoName);
+				ctrl.todoGrp1.push(ctrl.metadata.todoList[i].toDoName);
 			else
-				ctrl.todoGrp2.push(ctrl.metadata.todoList[i].todoName);
+				ctrl.todoGrp2.push(ctrl.metadata.todoList[i].toDoName);
 		}
 	}
 	
@@ -40,7 +42,7 @@ function schedulingToDoResultController($scope, $http) {
 					if(!wo.toDoItems)
 						wo.toDoItems = [];
 						
-					wo.toDoItems.push({todoName:todo, workOrders:[wo.workOrders[0]]});
+					wo.toDoItems.push({toDoName:todo, workOrders:[wo.workOrders[0]]});
 					console.log('WO after adding To Do: ' + JSON.stringify(wo));
 				}
 					
@@ -58,7 +60,7 @@ function schedulingToDoResultController($scope, $http) {
 	function findToDo(toDoList, todoName) {
 		if (toDoList) {
 			for(i=0; i < toDoList.length; i++) {
-				if (toDoList[i].todoName === todoName) {
+				if (toDoList[i].toDoName === todoName) {
 					return i;
 				}
 			}
@@ -71,8 +73,8 @@ function schedulingToDoResultController($scope, $http) {
 		//console.log(JSON.stringify(wo));
 		if (wo.toDoItems) {
 			for(i=0; i < wo.toDoItems.length; i++) {
-				//console.log('Comparing ' + wo.toDoItems[i].todoName + ' with ' + todo);
-				if (wo.toDoItems[i].todoName === todo) {
+				//console.log('Comparing ' + wo.toDoItems[i].toDoName + ' with ' + todo);
+				if (wo.toDoItems[i].toDoName == todo) {
 					//console.log('returning true');
 					return true;
 				}
@@ -104,6 +106,27 @@ function schedulingToDoResultController($scope, $http) {
 		});
 		ctrl.handleDataChange();
 	};
+	
+	ctrl.fetchToDoAgainstWO = function(wo) {
+		serviceUrl = "/p6-portal-service/scheduler/fetchWOForTODOStatus";
+		console.log('fetching To-Dos for work order: ' + wo.workOrders[0]);
+		var query = {workOrderId:wo.workOrders[0]};
+		var req = {
+				method: 'POST',
+				url: serviceUrl,
+				headers: {
+				   'Content-Type': 'application/json'
+				},
+				data: JSON.stringify(query)
+
+			};
+		$http(req).then(function (response) {
+			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data[0].todoAssignments));
+			wo.toDoItems = [];
+			wo.toDoItems = response.data[0].todoAssignments;
+			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
+		});
+	}
 	
 }
 

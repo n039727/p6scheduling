@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,8 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
+import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
@@ -30,10 +32,10 @@ import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
-import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
+
 
 @Service
 public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService {
@@ -46,6 +48,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	TodoDAO todoDAO;
 	@Autowired
 	WorkOrderDAO workOrderDAO;
+	
+	@Autowired
+	private ExecutionPackageDao executionPackageDao;
 
 	@PostConstruct
 	public void initData() {
@@ -56,10 +61,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrder1.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
 		workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP97" }));
 
-		ToDoItem toDoItems = new ToDoItem();
+		/*ToDoItem toDoItems = new ToDoItem();
 		toDoItems.setTodoName("ENAR");
 		toDoItems.setWorkOrders(workOrder1.getWorkOrders());
-		workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
+		workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));*/
 
 		mapStorage.put(workOrder1.getWorkOrders().get(0), workOrder1);
 
@@ -68,10 +73,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrder2.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
 		workOrder2.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67" }));
 
-		toDoItems = new ToDoItem();
+		/*toDoItems = new ToDoItem();
 		toDoItems.setTodoName("ESA");
 		toDoItems.setWorkOrders(workOrder2.getWorkOrders());
-		workOrder2.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
+		workOrder2.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));*/
 
 		mapStorage.put(workOrder2.getWorkOrders().get(0), workOrder2);
 
@@ -93,7 +98,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
 
 		ToDoItem toDoItems = new ToDoItem();
-		toDoItems.setTodoName("ENAR");
+		toDoItems.setToDoName("ENAR");
 		toDoItems.setWorkOrders(workOrder1.getWorkOrders());
 
 		workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
@@ -121,7 +126,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	public List<WorkOrder> retrieveJobs(WorkOrderSearchInput input) {
-		for (WorkOrder workOrder : mapStorage.values()) {
+		/*for (WorkOrder workOrder : mapStorage.values()) {
 			List<TodoAssignment> list = todoDAO.fetchToDosByWorkOrder(workOrder);
 			List<ToDoItem> toDoItems = new ArrayList<ToDoItem>();
 
@@ -138,7 +143,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			for (Task task : taskList)
 				workOrder.setSchedulingToDoComment(task.getCmts());
 			mapStorage.put(workOrder.getWorkOrders().get(0), workOrder);
-		}
+		}*/
 		return new ArrayList<WorkOrder>(mapStorage.values());
 
 	}
@@ -187,7 +192,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			item.setLstUpdtdUsr(toDo.getLstUpdtdUsr());
 			item.setTmpltDesc(toDo.getTmpltDesc());
 			item.setTmpltId(String.valueOf(toDo.getTmpltId()));
-			item.setTodoName(toDo.getTodoNam());
+			item.setToDoName(toDo.getTodoNam());
 			// TODO populate work order
 			toDos.add(item);
 		}
@@ -246,10 +251,92 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return toDoStatuses;
 	}
 
-	@Override
+	/*@Override
 	public WorkOrder saveToDo(WorkOrder workOrder) {
 		todoDAO.saveToDos(workOrder);
 		return workOrder;
+	}*/
+	
+	@Override
+	public WorkOrder saveToDo(WorkOrder workOrder) {
+		
+		if (workOrder == null)
+			throw new IllegalArgumentException("Work Order canot be null");
+		
+		if (workOrder.getWorkOrders() != null) {
+			for (String workOrderId: workOrder.getWorkOrders()) {
+				Task task = prepareTaskFromWorkOrderId(workOrderId, workOrder);
+				workOrderDAO.saveTask(task);
+			}
+		}
+		
+		
+		return workOrder;
+	}
+
+	
+	private Task prepareTaskFromWorkOrderId(String workOrderId, WorkOrder workOrder) {
+		Task dbTask = workOrderDAO.fetch(workOrderId);
+		Task updatedTask = prepareTaskBean(dbTask, workOrder);
+		prepareToDoAssignmentList(updatedTask, workOrder);
+		return updatedTask;
+	}
+
+	private void prepareToDoAssignmentList(Task updatedTask, WorkOrder workOrder) {
+		
+		for (Iterator<TodoAssignment> itr = updatedTask.getTodoAssignments().iterator(); itr.hasNext(); ){
+			TodoAssignment todo = itr.next();
+			boolean found = false;
+			System.out.println("todo.getTodoId(): " + todo.getTodoId());
+			for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
+				ToDoItem item = itrToDo.next();
+				System.out.println("item.getTodoName(): " + item.getToDoName());
+				if (item.getToDoName().equals(todoDAO.getToDoName(todo.getTodoId().longValue())) // TODO check on long ID
+						&& item.getWorkOrders().contains(updatedTask.getTaskId())) {
+					itrToDo.remove();
+					found = true;
+					break;
+				} 
+				if (!found) {
+					itr.remove();
+				}
+			}
+		}
+		
+		// Set the new values
+		for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
+			ToDoItem item = itrToDo.next();
+			TodoAssignment todoAssignment = new TodoAssignment();
+			todoAssignment.setTask(updatedTask);
+			todoAssignment.setExecutionPackage(updatedTask.getExecutionPackage());
+			todoAssignment.setTodoId(todoDAO.getToDoId(item.getToDoName()));
+		}
+	}
+
+	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder) {
+		// create new Task if not there in DB
+		if (dbTask == null) {
+			dbTask = new Task();
+		}
+		
+		dbTask.setCmts(workOrder.getSchedulingToDoComment());
+		dbTask.setCrewId(workOrder.getCrewNames());
+		dbTask.setLeadCrewId(workOrder.getLeadCrew());
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-mm-yyyy");
+		java.util.Date scheduleDate = null;
+		try {
+			scheduleDate = simpleDateFormat.parse(workOrder.getScheduleDate());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		dbTask.setSchdDt(scheduleDate);
+		dbTask.setDepotId(workOrder.getDepotId());
+		dbTask.setMatrlReqRef(workOrder.getMeterialReqRef());
+		dbTask.setExecutionPackage(executionPackageDao.fetch(StringUtils.isEmpty(workOrder.getExecutionPackage()) ? "PKG1" :
+			workOrder.getExecutionPackage()));
+		logger.debug("Execution Package {}", workOrder.getExecutionPackage());
+		return dbTask;
 	}
 
 	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) {

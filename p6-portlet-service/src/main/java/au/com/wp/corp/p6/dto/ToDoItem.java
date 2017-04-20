@@ -17,7 +17,7 @@ public class ToDoItem {
 	private String lstUpdtdUsr;
 	private String tmpltDesc;
 	private String todoId;
-	private String todoName;
+	private String toDoName;
 	private List<String> workOrders;
 	private String comments;	
 	private Date reqdByDate ;
@@ -78,11 +78,11 @@ public class ToDoItem {
 	public void setTodoId(String todoId) {
 		this.todoId = todoId;
 	}
-	public String getTodoName() {
-		return todoName;
+	public String getToDoName() {
+		return toDoName;
 	}
-	public void setTodoName(String todoName) {
-		this.todoName = todoName;
+	public void setToDoName(String todoName) {
+		this.toDoName = todoName;
 	}
 	public List<String> getWorkOrders() {
 		return workOrders;
