@@ -47,6 +47,7 @@ app.controller("toDoPortalCOntroller", function($scope, $http) {
 	ctrl.metadata.depotList = [{id:1, name:'Depot1'}, {id:2, name:'Depot2'}, {id:3, name:'Depot3'}];
 	ctrl.metadata.crewList = [{id:1, name:'MOST1'}, {id:2, name:'MOST2'}, {id:3, name:'MOST3'}];
 	ctrl.resultVisible = false;
+	ctrl.metadata.todoList = {};
 	ctrl.fetchToDos();	
 	console.log('in Parent, metadata:' + JSON.stringify(ctrl.metadata));
 	
