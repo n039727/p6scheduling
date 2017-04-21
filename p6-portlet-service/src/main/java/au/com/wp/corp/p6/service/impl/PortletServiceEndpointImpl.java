@@ -12,21 +12,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
-
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
-
-import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.service.PortletServiceEndpoint;
 
 /**
@@ -65,6 +62,15 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 		return p6BusinessService.fetchWorkOrdersForViewToDoStatus(query.getBody());
 	}
 	
+	@RequestMapping(value="/fetchWOForAddUpdateToDo", method = RequestMethod.POST,
+			produces = {MediaType.APPLICATION_JSON_VALUE}, 
+			consumes = {MediaType.APPLICATION_JSON_VALUE})
+	@Override
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchInput> query){ 
+		logger.debug("DEPOT_ID>>>>{}", query.getBody().getDepotList());
+		return p6BusinessService.fetchWorkOrdersForAddUpdateToDo(query.getBody());
+	}
+	
 	@RequestMapping(value = "/saveWorkOrder" , 
     		method = RequestMethod.POST, 
     		produces = {MediaType.APPLICATION_JSON_VALUE}, 
@@ -79,7 +85,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 			produces = {MediaType.APPLICATION_JSON_VALUE}, 
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
 	@Override
-	public ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO){
+	public ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO)throws P6BaseException{
 		return new ResponseEntity<ExecutionPackageDTO>(p6BusinessService.saveExecutionPackage(executionPackageDTO.getBody()),HttpStatus.CREATED);
 	}
 

@@ -12,6 +12,8 @@ import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.exception.P6BaseException;
+import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 
 /**
@@ -26,6 +28,7 @@ public interface PortletServiceEndpoint {
 	ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder);
 	
 	List<ToDoItem> fetchToDoItems();
-	ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO);
+	ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO) throws P6BaseException;
+	List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchInput> query);
 
 }

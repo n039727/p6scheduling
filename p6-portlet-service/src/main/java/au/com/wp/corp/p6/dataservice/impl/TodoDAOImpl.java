@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -18,7 +17,6 @@ import javax.transaction.Transactional;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,23 +32,39 @@ import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
 
 @Repository
-public class TodoDAOImpl implements TodoDAO {
+public class TodoDAOImpl implements TodoDAO { 
 	
 	private static final Logger logger = LoggerFactory.getLogger(TodoDAO.class);
-	@Autowired
+	@Autowired 
 	SessionFactory sessionFactory;
-
+	
+	private volatile Map<Long, TodoTemplate> toDoMap = null;
+	private volatile Map<String, TodoTemplate> toDoNameMap = null;
+	private Object lock = new Object();
+	
+	
 	@Transactional
 	public List<TodoTemplate> fetchAllToDos() {
+		
+		if (toDoMap == null) {
+			synchronized (lock) {
+				if (toDoMap == null) {
+					@SuppressWarnings("unchecked")
+					List<TodoTemplate> listToDo = (List<TodoTemplate>) sessionFactory.getCurrentSession()
+							.createCriteria(TodoTemplate.class)
+							.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+					toDoMap = new HashMap<Long, TodoTemplate>();
+					toDoNameMap = new HashMap<String, TodoTemplate>();
+					for (TodoTemplate todo:listToDo) {
+						toDoMap.put(todo.getTodoId().longValue(), todo);
+						toDoNameMap.put(todo.getTodoNam(), todo);
+					}
+				}
+			}
+		}
 
-		logger.debug("sessionfactory initialized ====="+sessionFactory);
-	        @SuppressWarnings("unchecked")
-			List<TodoTemplate> listToDo = (List<TodoTemplate>) sessionFactory.getCurrentSession()
-	                .createCriteria(TodoTemplate.class)
-	                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-	 
-	        return listToDo;
-
+		return new ArrayList<TodoTemplate>(toDoMap.values());
+		
 	}
 	/**
 	 * 
@@ -159,7 +173,7 @@ public class TodoDAOImpl implements TodoDAO {
 						logger.debug("Removing {} todo records for this task  {}", recordsDeleted, taskName);
 						for (ToDoItem toDoItem : toDoItemList) {
 
-							String toDoName = toDoItem.getTodoName();
+							String toDoName = toDoItem.getToDoName();
 							logger.debug("Adding Todo  item  {}", toDoName);
 							List<TodoTemplate> todoTemplateRecord = (List<TodoTemplate>) getRecordsByField("todoNam",
 									TodoTemplate.class, toDoName);
@@ -203,10 +217,6 @@ public class TodoDAOImpl implements TodoDAO {
 		}
 
 	}
-
-
-	
-
 	private List<?> getRecordsByField(String fieldName, Class<?> className, String value){
 		Criteria criteria = sessionFactory.getCurrentSession().
 				 createCriteria(className);
@@ -246,6 +256,21 @@ public class TodoDAOImpl implements TodoDAO {
         sessionFactory.getCurrentSession().clear();
         
         return listToDo;
+	}
+	@Override
+	public String getToDoName(Long id) {
+		if (toDoMap != null && toDoMap.containsKey(id)) {
+			return toDoMap.get(id).getTodoNam();
+		}
+		return null;
+	}
+
+	@Override
+	public BigDecimal getToDoId(String todoName) {
+		if (toDoNameMap != null && toDoNameMap.containsKey(todoName)) {
+			return toDoNameMap.get(todoName).getTodoId();
+		}
+		return null;
 	}
 
 }

@@ -12,7 +12,7 @@
 	<tbody>
 		<tr ng-repeat-start="wo in $ctrl.data"class="accordion-toggle">
 			<td>
-				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
+				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event, wo)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
 				</button>
 			</td>
 <!-- 			<td>{{wo.executionPackage}}</td> -->
@@ -44,7 +44,7 @@
 									</thead>
 									<tbody>
 										<tr ng-repeat="todo in wo.toDoItems">
-											<td>{{todo.todoName}}</td>
+											<td>{{todo.toDoName}}</td>
 											<td>{{todo.workOrders[0]}}</td>
 											<td>
 												<md-datepicker ng-model="todo.scheduleFromDate" md-placeholder="DD/MM/YYYY"></md-datepicker>
