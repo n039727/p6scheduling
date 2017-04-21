@@ -15,7 +15,7 @@ import au.com.wp.corp.p6.model.Task;
  * @version 1.0
  */
 
-public interface TaskDAO extends P6BaseDAO {
+public interface TaskDAO extends P6DAOExceptionParser {
 	/**
 	 * returns list of tasks from the task table
 	 * 

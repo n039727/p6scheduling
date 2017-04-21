@@ -15,7 +15,7 @@ import au.com.wp.corp.p6.exception.P6ExceptionMapper;
  *
  */
 @FunctionalInterface
-public interface P6BaseDAO extends P6ExceptionMapper{
+public interface P6DAOExceptionParser extends P6ExceptionMapper{
 	
 	Session getSession();
 	
