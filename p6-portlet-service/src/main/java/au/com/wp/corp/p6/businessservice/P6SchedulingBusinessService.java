@@ -21,5 +21,6 @@ public interface P6SchedulingBusinessService {
 	WorkOrder saveToDo(WorkOrder workOrder);
 	List<ExecutionPackageDTO> fetchExecutionPackageList();
 	ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO);
+	List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchInput body);
 
 }

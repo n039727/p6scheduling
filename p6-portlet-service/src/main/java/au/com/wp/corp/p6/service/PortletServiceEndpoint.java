@@ -27,5 +27,6 @@ public interface PortletServiceEndpoint {
 	
 	List<ToDoItem> fetchToDoItems();
 	ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO);
+	List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchInput> query);
 
 }

@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ import au.com.wp.corp.p6.model.TodoTemplate;
 
 @Service
 public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService {
-
+ 
 	private Map<String, WorkOrder> mapStorage = null;
 	private static final Logger logger = LoggerFactory.getLogger(P6SchedulingBusinessServiceImpl.class);
 	@Autowired
@@ -297,9 +298,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					found = true;
 					break;
 				} 
-				if (!found) {
-					itr.remove();
-				}
+			}
+			if (!found) {
+				itr.remove();
 			}
 		}
 		
@@ -310,7 +311,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			todoAssignment.setTask(updatedTask);
 			todoAssignment.setExecutionPackage(updatedTask.getExecutionPackage());
 			todoAssignment.setTodoId(todoDAO.getToDoId(item.getToDoName()));
+			updatedTask.getTodoAssignments().add(todoAssignment);
 		}
+		
+		System.out.println("After merging to do assignments size: " + updatedTask.getTodoAssignments().size());
+		System.out.println("After merging to do assignments: " + updatedTask.getTodoAssignments());
 	}
 
 	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder) {
@@ -347,6 +352,74 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	public List<ExecutionPackageDTO> fetchExecutionPackageList() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchInput query) {
+		List<Task> tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
+		
+		Map<String, WorkOrder> workOrderMap = new HashMap<String, WorkOrder>();
+		Map<String, Map<Long, ToDoItem>> workOrderToDoMap = new HashMap<String, Map<Long, ToDoItem>>();
+
+		for (Task task : tasks) {
+			
+			String executionPkg = null;
+			if (task.getExecutionPackage() != null) {
+				executionPkg = task.getExecutionPackage().getExctnPckgNam();
+			}
+			
+			WorkOrder workOrder = null;
+			Map<Long, ToDoItem> toDoMap = null;
+			if (!"PKG1".equals(executionPkg) && workOrderMap.containsKey(executionPkg)) {
+				workOrder = workOrderMap.get(executionPkg);
+				workOrder.setCrewNames(workOrder.getCrewNames() + "," + task.getCrewId());
+				workOrder.getWorkOrders().add(task.getTaskId());
+				toDoMap = workOrderToDoMap.get(executionPkg);
+			} else {
+				workOrder = new WorkOrder();
+				if (!"PKG1".equals(executionPkg))
+					workOrder.setExecutionPackage(executionPkg);
+				else 
+					executionPkg = task.getTaskId();
+				// TODO to decide the user to populate the comment
+				List<String> workOrders = new ArrayList<String>();
+				workOrders.add(task.getTaskId());
+				workOrder.setWorkOrders(workOrders);
+				workOrder.setLeadCrew(task.getLeadCrewId());
+				workOrder.setCrewNames(task.getCrewId());
+				workOrder.setScheduleDate(task.getSchdDt().toString());
+				toDoMap = new HashMap<Long, ToDoItem>();
+				workOrderMap.put(executionPkg, workOrder);
+			}
+			
+			if (task.getTodoAssignments() != null) {
+				for (TodoAssignment todo : task.getTodoAssignments()) {
+					Long todoId = todo.getTodoId().longValue();
+					if (toDoMap.containsKey(todoId)) {
+						toDoMap.get(todoId).getWorkOrders().add(todo.getTask().getTaskId());
+					} else {
+						ToDoItem item = new ToDoItem();
+						item.setTodoId(String.valueOf(todoId));
+						item.setToDoName(todoDAO.getToDoName(todoId));
+						List<String> workOrders = new ArrayList<String>();
+						workOrders.add(todo.getTask().getTaskId());
+						item.setWorkOrders(workOrders);
+						toDoMap.put(todoId, item);
+					}
+				}
+				workOrderToDoMap.put(executionPkg, toDoMap);
+			}
+		}
+		
+		List<WorkOrder> workOrders = new ArrayList<WorkOrder>(workOrderMap.values());
+		for (WorkOrder workOrder : workOrders) {
+			String executionPkg = workOrder.getExecutionPackage();
+			if (StringUtils.isEmpty(executionPkg)) {
+				executionPkg = workOrder.getWorkOrders().get(0);
+			}
+			workOrder.setToDoItems(new ArrayList<ToDoItem>(workOrderToDoMap.get(executionPkg).values()));
+		}
+		return workOrders;
 	}
 
 }

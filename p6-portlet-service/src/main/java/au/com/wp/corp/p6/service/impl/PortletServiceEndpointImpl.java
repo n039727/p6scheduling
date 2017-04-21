@@ -65,6 +65,15 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 		return p6BusinessService.fetchWorkOrdersForViewToDoStatus(query.getBody());
 	}
 	
+	@RequestMapping(value="/fetchWOForAddUpdateToDo", method = RequestMethod.POST,
+			produces = {MediaType.APPLICATION_JSON_VALUE}, 
+			consumes = {MediaType.APPLICATION_JSON_VALUE})
+	@Override
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchInput> query){ 
+		logger.debug("DEPOT_ID>>>>{}", query.getBody().getDepotList());
+		return p6BusinessService.fetchWorkOrdersForAddUpdateToDo(query.getBody());
+	}
+	
 	@RequestMapping(value = "/saveWorkOrder" , 
     		method = RequestMethod.POST, 
     		produces = {MediaType.APPLICATION_JSON_VALUE}, 

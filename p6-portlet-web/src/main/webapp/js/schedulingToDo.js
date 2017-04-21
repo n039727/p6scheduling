@@ -108,7 +108,7 @@ function schedulingToDoResultController($scope, $http) {
 	};
 	
 	ctrl.fetchToDoAgainstWO = function(wo) {
-		serviceUrl = "/p6-portal-service/scheduler/fetchWOForTODOStatus";
+		serviceUrl = "/p6-portal-service/scheduler/fetchWOForAddUpdateToDo";
 		console.log('fetching To-Dos for work order: ' + wo.workOrders[0]);
 		var query = {workOrderId:wo.workOrders[0]};
 		var req = {
@@ -121,9 +121,9 @@ function schedulingToDoResultController($scope, $http) {
 
 			};
 		$http(req).then(function (response) {
-			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data[0].todoAssignments));
+			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data[0].toDoItems));
 			wo.toDoItems = [];
-			wo.toDoItems = response.data[0].todoAssignments;
+			wo.toDoItems = response.data[0].toDoItems;
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
 		});
 	}

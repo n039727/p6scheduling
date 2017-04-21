@@ -3,6 +3,7 @@
  */
 package au.com.wp.corp.p6.dataservice.impl;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
 import au.com.wp.corp.p6.model.Task;
+import au.com.wp.corp.p6.model.TodoAssignment;
 
 /**
  * @author N039603
@@ -54,6 +56,25 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	@Override
 	@Transactional
 	public Task saveTask(Task task) {
+		long currentTime = System.currentTimeMillis();
+		if (task.getCrtdTs() != null) {
+			task.setCrtdTs(new Timestamp(currentTime));
+			task.setCrtdUsr("Test"); //TODO update the user name here
+		}
+		task.setLstUpdtdTs(new Timestamp(currentTime));
+		task.setLstUpdtdUsr("Test"); //TODO update the user name here
+		
+		
+		if (task.getTodoAssignments() != null) {
+			for (TodoAssignment todo: task.getTodoAssignments()) {
+				if (todo.getCrtdTs() == null) {
+					todo.setCrtdTs(new Timestamp(currentTime));
+					todo.setCrtdUsr("Test"); //TODO update the user name here
+				}
+				todo.setLstUpdtdTs(new Timestamp(currentTime));
+				todo.setLstUpdtdUsr("Test"); //TODO update the user name here
+			}
+		}
 		sessionFactory.getCurrentSession().saveOrUpdate(task);
 		return task;
 	}
