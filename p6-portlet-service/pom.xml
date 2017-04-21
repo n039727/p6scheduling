@@ -189,6 +189,7 @@
             <version>1.8.9</version>
         </dependency>
         <!-- Aspect J -->
+        
   </dependencies>
   <build>
     <finalName>p6-portlet-service</finalName>
