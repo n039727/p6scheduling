@@ -1,0 +1,32 @@
+<div class="modal fade">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>Create/Update Execution Package.</p>
+		<form class="form-horizontal" >
+		  <div class="form-group">
+			<label class="control-label col-md-2" for="wo">WO #</label>
+			<div class="col-md-4">
+				<input class="form-control" ng-model="wo" id="wo" />
+			</div>
+		  </div>
+		  <div class="form-group">
+		  	<label class="control-label col-md-1" for="crew">Select Lead Crew</label>
+				<div class="col-md-4">
+					<select class="form-control" >
+						<option >Most1</option>
+					</select>
+				</div>
+		  </div>
+		</form>
+      </div>
+      <div class="modal-footer">
+		  <div class="col-md-offset-9 col-md-2" style="padding:5px">
+				<button id="create_update_exe_pkg" class="btn btn-warning btn-block" ng-click="close()">
+					<h4><b>Create/Update Execution Package</b></h4>
+				</button>
+		  </div>
+	 </div> 
+    </div>
+  </div>
+</div>

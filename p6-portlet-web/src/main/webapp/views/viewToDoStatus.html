@@ -2,11 +2,11 @@
 	<thead class="query-result-header">
 		<tr>
 			<th>&nbsp;</th>
-			<th>Execution Package</th>
 			<th>WO #</th>
 			<th>Planned Start Date</th>
 			<th>Crew Assigned</th>
 			<th>Lead Crew</th>
+			<th>Execution Package</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -15,8 +15,6 @@
 				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event, wo)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
 				</button>
 			</td>
-<!-- 			<td>{{wo.executionPackage}}</td> -->
-			<td></td>
 			<td>{{wo.workOrders[0]}}</td>
 			<td>{{wo.scheduleDate}}</td>
 			<td>{{wo.leadCrew}}</td>
@@ -25,6 +23,8 @@
 					<option>&nbsp;</option>
 				</select> 
 			</td>
+<!-- 			<td>{{wo.executionPackage}}</td> -->
+			<td></td>
 		</tr>
 		<tr ng-repeat-end>
 			<td colspan="12" class="hiddenRow">

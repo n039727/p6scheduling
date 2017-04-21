@@ -19,7 +19,7 @@
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 
-<!-- 
+ 
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<realm-name>active-directory</realm-name>
@@ -70,5 +70,5 @@
 			<transport-guarantee>NONE</transport-guarantee>
 		</user-data-constraint>
 	</security-constraint>
- -->
+ 
 </web-app>
