@@ -22,6 +22,7 @@ function executionPackageResultController($scope, $http,ModalService) {
 				ctrl.selectedExecPckg.splice(index, 1);
 				console.log('WO after removing checked: ' + JSON.stringify(ctrl.selectedExecPckg));
 			}
+			ctrl.selectedAll = false;
 		}
 		
 	};
@@ -76,7 +77,8 @@ function executionPackageResultController($scope, $http,ModalService) {
         }).then(function(modal) {
             modal.element.modal();
             modal.close.then(function(result) {
-                $scope.complexResult  = "Name: " + result.name + ", age: " + result.age;
+                //$scope.complexResult  = "Name: " + result.name + ", age: " + result.age;
+				console.log('Result returned from modal:' + JSON.stringify(result));
             });
         });
     };
@@ -104,13 +106,12 @@ app.controller('ComplexController', [
 	  //  This close function doesn't need to use jQuery or bootstrap, because
 	  //  the button has the 'data-dismiss' attribute.
 	  $scope.cancel = function() {
-			console.log('called close() with WO in popup: ' );
-		  
+			//console.log('called close() with WO in popup: ' );
+			console.log('$scope.wo in close: ' + JSON.stringify($scope.wo));
 	 	  close({
-	      wo: $scope.wo,
-	      age: $scope.age
-	    }, 50); // close, but give 500ms for bootstrap to animate
-	 	  return true;
+	      wo: $scope.wo
+	    }, 500); // close, but give 500ms for bootstrap to animate
+	 	  //return true;
 	  };
 
 }]);

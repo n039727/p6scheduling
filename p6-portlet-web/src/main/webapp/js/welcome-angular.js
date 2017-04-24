@@ -1,5 +1,5 @@
 var app = angular.module("todoPortal", ['oi.select', 'ngMaterial','angularModalService']);
-//app.constant('metadata', {});
+
 function bootstrapApplication() {
 	angular.element(document).ready(function() {
 		angular.bootstrap(document, ["todoPortal"]);
@@ -37,17 +37,6 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata) {
 		});
 	};
 	
-	//ctrl.reload();
-	
-	//ctrl.fetchedData = [{"workOrders":["Y6UIOP67"],"scheduleDate":"2017-04-15","leadCrew":"MOST2","toDoItems":[{"todoNam":"ESA","workOrders":["Y6UIOP67"]}]},{"workOrders":["Y6UIOP97"],"scheduleDate":"2017-04-15","leadCrew":"MOST1","toDoItems":[{"todoNam":"ENAR","workOrders":["Y6UIOP97"]}]},{"workOrders":["Y6UIOP87"],"scheduleDate":"2017-04-15","leadCrew":"MOST3"}];
-	//ctrl.metadata = {};
-	//ctrl.metadata.depotList = [{id:1, name:'Depot1'}, {id:2, name:'Depot2'}, {id:3, name:'Depot3'}];
-	//ctrl.metadata.crewList = [{id:1, name:'MOST1'}, {id:2, name:'MOST2'}, {id:3, name:'MOST3'}];
-	//ctrl.resultVisible = false;
-	//ctrl.metadata.todoList = {};
-	//ctrl.fetchToDos();	
-	//console.log('in Parent, metadata:' + JSON.stringify(ctrl.metadata));
-	
 	ctrl.search = function (query) {
 			console.log('Query:' + JSON.stringify(query));
 			var serviceUrl = "";
@@ -68,25 +57,6 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata) {
 		ctrl.activeContext = context;
 		ctrl.resultVisible = false;
 	};
-	
-	
-	
-	/*$scope.saveToDo = function(wo){
-		var req = {
-			 method: 'POST',
-			 url: '/p6-portal-service/saveWorkOrder',
-			 headers: {
-			   'Content-Type': 'application/json'
-			 },
-			 data: JSON.stringify(wo)
-		};
-		$http(req).then(function (response) {
-			console.log("Received data from server");
-			$scope.fetchedData = response.data;
-			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			alert("Scheduling TO DO saved for " + wo.workOrders[0]);
-		});
-	};*/
 	
 	ctrl.handleDataChange = function() {
 		console.log('Data has changed')

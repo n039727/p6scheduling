@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$('[id^=datePicker')
+	/*$('[id^=datePicker')
 		.datepicker({
 			format: 'dd/mm/yyyy'
 		});
@@ -9,7 +9,7 @@ $(document).ready(function() {
 	});
 	$('#depot-select').multiselect({
 		buttonWidth: '100%'
-	});
+	});*/
 	
 	/*$('[id^=to-do').multiselect({
 		buttonWidth: '100%'
