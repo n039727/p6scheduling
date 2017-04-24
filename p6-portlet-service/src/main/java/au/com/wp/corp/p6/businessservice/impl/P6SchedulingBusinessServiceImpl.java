@@ -388,6 +388,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				workOrder.setLeadCrew(task.getLeadCrewId());
 				workOrder.setCrewNames(task.getCrewId());
 				workOrder.setScheduleDate(task.getSchdDt().toString());
+				workOrder.setSchedulingToDoComment(task.getCmts());
 				toDoMap = new HashMap<Long, ToDoItem>();
 				workOrderMap.put(executionPkg, workOrder);
 			}
