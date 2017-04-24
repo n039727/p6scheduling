@@ -33,6 +33,9 @@ import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.exception.P6BaseException;
+import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
@@ -161,7 +164,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	@Transactional
-	public List<TaskDTO> listTasks() {
+	public List<TaskDTO> listTasks() throws P6BusinessException {
 
 		List<Task> taskList = taskDAO.listTasks();
 		List<TaskDTO> tasks = new ArrayList<TaskDTO>();
@@ -344,7 +347,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return dbTask;
 	}
 
-	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) {
+	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) throws P6BusinessException {
 		executionPackageDTO = taskDAO.saveExecutionPackage(executionPackageDTO);
 		return executionPackageDTO;
 	}

@@ -63,8 +63,7 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 		}
 		task.setLstUpdtdTs(new Timestamp(currentTime));
 		task.setLstUpdtdUsr("Test"); //TODO update the user name here
-		
-		
+				
 		if (task.getTodoAssignments() != null) {
 			for (TodoAssignment todo: task.getTodoAssignments()) {
 				if (todo.getCrtdTs() == null) {

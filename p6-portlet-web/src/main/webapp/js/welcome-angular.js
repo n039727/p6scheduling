@@ -1,4 +1,4 @@
-var app = angular.module("todoPortal", ['oi.select', 'ngMaterial']);
+var app = angular.module("todoPortal", ['oi.select', 'ngMaterial','angularModalService']);
 //app.constant('metadata', {});
 function bootstrapApplication() {
 	angular.element(document).ready(function() {
