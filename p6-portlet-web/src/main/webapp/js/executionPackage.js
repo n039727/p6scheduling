@@ -66,7 +66,6 @@ function executionPackageResultController($scope, $http,ModalService) {
 	};
 
     ctrl.show = function(wo) {
-		console.log('Create Exc called with WO: ' + JSON.stringify(wo));
         ModalService.showModal({
             templateUrl: '../views/executionPackagePopup.html',
             controller: "ComplexController",
@@ -88,9 +87,19 @@ app.controller('ComplexController', [
 	  '$scope', '$element', 'wo', 'close', 
 	  function($scope, $element, wo, close) {
 			console.log('Create Exc called with WO in popup: ' + JSON.stringify(wo));
-		  
-	  $scope.wo = wo;
-	  $scope.age = null;
+			$scope.woList =[];
+			$scope.leadCrewList =[];
+			if(wo){
+				for(i=0; i<wo.length;i++) {  
+					$scope.woList.push(wo[i].workOrders);
+					$scope.leadCrewList.push(wo[i].leadCrew);
+				}
+			}
+
+			console.log('$scope.woList in popup: ' + JSON.stringify($scope.woList));
+			
+			$scope.wo = $scope.woList;
+			$scope.age = null;
 	  
 	  //  This close function doesn't need to use jQuery or bootstrap, because
 	  //  the button has the 'data-dismiss' attribute.
