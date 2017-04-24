@@ -3,7 +3,7 @@
 		<thead class="query-result-header">
 			<tr>
 				<th>Select
-					<input type="checkbox" ng-model="selectedAll" ng-click="$ctrl.selectAll()" ></th>
+					<input type="checkbox" ng-model="selectedAll" ng-change="$ctrl.isSelectAll()" ></th>
 				<th>WO #</th>
 				<th>Planned Start Date</th>
 				<th>Crew Assigned</th>
@@ -15,7 +15,7 @@
 			<tr ng-repeat-start="wo in $ctrl.data"class="accordion-toggle">
 				<td>
 					<label>
-						<input type="checkbox" ng-model="wo.selected" ng-click="$ctrl.checkIfAllSelected()" >
+						<input type="checkbox"  ng-model="wo.selected" ng-click="$ctrl.addRemoveWorkOrder($event, wo)" >
 					</label>
 	
 				</td>
@@ -36,6 +36,6 @@
 <div class="form-group">
 	<div class="btn-group col-md-offset-2">
 		<button type="submit" class="btn btn-warning btn-lg" ng-click="refresh()" disabled>Add Scheduling To-Dos</button>
-		<button type="submit" class="btn btn-warning btn-lg" ng-click="$ctrl.show('Sudhir')">Create/Update Package</button>
+		<button type="submit" class="btn btn-warning btn-lg" ng-click="$ctrl.show($ctrl.selectedExecPckg)">Create/Update Package</button>
 	</div>
 </div>

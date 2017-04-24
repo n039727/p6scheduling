@@ -1,32 +1,33 @@
-<div class="modal fade">
+<div class="modal fade" >
   <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p>Create/Update Execution Package.</p>
+    <div class="modal-content" >
 		<form class="form-horizontal" >
 		  <div class="form-group">
-			<label class="control-label col-md-2" for="wo">WO #</label>
+		  	 <label class="control-label col-md-6" for="title"><b>Create/Update Execution Package</b></label>
+		  </div>	
+		  <div class="form-group">
+			<label class="control-label col-md-4" for="wo">WO #</label>
 			<div class="col-md-4">
-				<input class="form-control" ng-model="wo" id="wo" />
+				<textarea class="form-control" ng-model="wo" id="wo" ng-readonly="true" ></textarea>
 			</div>
 		  </div>
 		  <div class="form-group">
-		  	<label class="control-label col-md-1" for="crew">Select Lead Crew</label>
+		  	<label class="control-label col-md-4" for="crew">Select Lead Crew</label>
 				<div class="col-md-4">
 					<select class="form-control" >
 						<option >Most1</option>
 					</select>
 				</div>
 		  </div>
-		</form>
-      </div>
-      <div class="modal-footer">
-		  <div class="col-md-offset-9 col-md-2" style="padding:5px">
-				<button id="create_update_exe_pkg" class="btn btn-warning btn-block" ng-click="close()">
-					<h4><b>Create/Update Execution Package</b></h4>
-				</button>
+		  <div class="form-group">
+			<div class="btn-group col-md-offset-5">
+				<button type="submit" class="btn btn-warning btn-lg" ng-click="cancel()">Cancel</button>
+				<button class="btn btn-warning btn-lg" ng-click="cancel()">Create/Update Execution Package</button>
+			</div>
+			  
 		  </div>
-	 </div> 
+		  
+		</form>
     </div>
   </div>
 </div>
