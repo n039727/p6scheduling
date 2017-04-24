@@ -3,32 +3,31 @@
  */
 package au.com.wp.corp.p6.dataservice;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.SessionFactory;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-
-import au.com.wp.corp.p6.config.AppConfig;
-import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
-import au.com.wp.corp.p6.model.Task;
-import au.com.wp.corp.p6.model.TodoAssignment;
-
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import junit.framework.Assert;
+
+import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
+import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.model.Task;
+import au.com.wp.corp.p6.model.TodoAssignment;
+import au.com.wp.corp.p6.test.config.AppConfig;
 /**
  * @author N039603
  *
@@ -38,10 +37,13 @@ import junit.framework.Assert;
 public class WorkOrderDAOTest {
 
 	@InjectMocks
-	WorkOrderDAO workOrderDAO;
+	WorkOrderDAOImpl workOrderDAO;
 	
-	@Mock
-	SessionFactory sessionFactory;
+	
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	
 	/**
 	 * @throws java.lang.Exception
 	 */

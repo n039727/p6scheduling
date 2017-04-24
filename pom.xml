@@ -178,6 +178,11 @@
 			<version>4.2.6.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>3.2.6.RELEASE</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
@@ -236,7 +241,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<skipTests>true</skipTests>
- 							<excludes>
+							<excludes>
 								<exclude>**IntegrationTest</exclude>
 							</excludes>
 						</configuration>
