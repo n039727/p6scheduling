@@ -64,43 +64,7 @@ public class TaskDAOImpl implements TaskDAO {
 
 		return listExecPakgs;
 	}
-
-	@Transactional
-	@Override
-	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) {
-		logger.debug("sessionfactory initialized =====" + sessionFactory);
-		ExecutionPackage executionPackage = new ExecutionPackage();
-		logger.debug("Creating Execution Package");
-		executionPackage.setExctnPckgNam(executionPackageDTO.getExctnPckgNam());
-		executionPackage.setLeadCrewId(executionPackageDTO.getLeadCrew());
-		String scheduleDate = executionPackageDTO.getScheduleDate();
-		List<String> workOrders = executionPackageDTO.getWorkOrders();
-		if (workOrders != null && workOrders.size() > 0) {
-			logger.debug("work orders size {}", workOrders.size());
-			Set<Task> tasks = new HashSet<Task>();
-			for (String workOrder : workOrders) {
-				logger.debug("For each workorder {} corresponding Task is fecthed", workOrder);
-				Task task = (Task) sessionFactory.getCurrentSession().get(Task.class, workOrder);
-				if (task != null) {
-					logger.debug("Task {} is fecthed", task.getTaskId());
-					task.setExecutionPackage(executionPackage);
-					tasks.add(task);
-				} 
-			}
-			executionPackage.setTasks(tasks);
-
-		}
-		executionPackage.setCrtdTs(new Timestamp(System.currentTimeMillis()));
-		executionPackage.setCrtdUsr("test user");
-		executionPackage.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
-		executionPackage.setLstUpdtdUsr("test user");
-		sessionFactory.getCurrentSession().saveOrUpdate(executionPackage);
-
-		sessionFactory.getCurrentSession().flush();
-		sessionFactory.getCurrentSession().clear();
-
-		return executionPackageDTO;
-	}
+	
 }
 	
 

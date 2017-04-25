@@ -25,6 +25,7 @@ import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.service.PortletServiceEndpoint;
+import au.com.wp.corp.p6.validation.Validator;
 
 /**
  * @author n039619
@@ -37,6 +38,8 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	private static final Logger logger = LoggerFactory.getLogger(PortletServiceEndpointImpl.class);
 	@Autowired
 	private P6SchedulingBusinessService p6BusinessService;
+	@Autowired
+	Validator validator;
 	
 	@RequestMapping(value="/fetchToDos", method = RequestMethod.GET,
 			produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -86,6 +89,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
 	@Override
 	public ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO)throws P6BaseException{
+		validator.validate(executionPackageDTO.getBody()); 
 		return new ResponseEntity<ExecutionPackageDTO>(p6BusinessService.saveExecutionPackage(executionPackageDTO.getBody()),HttpStatus.CREATED);
 	}
 

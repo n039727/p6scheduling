@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,6 +18,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,7 +41,7 @@ public class WorkOrderDAOTest {
 	@InjectMocks
 	WorkOrderDAOImpl workOrderDAO;
 	
-	
+		
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
