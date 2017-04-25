@@ -2,6 +2,10 @@ function queryResultController($scope) {
 	var ctrl = this;
 	//alert('Query Result Controller: ' + ctrl.visible);
 	
+	ctrl.onDataChange = function(event) {
+		ctrl.handleDataChange({event:event});
+	}
+	
 	
 }
 

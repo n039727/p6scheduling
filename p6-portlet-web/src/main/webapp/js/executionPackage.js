@@ -65,6 +65,9 @@ function executionPackageResultController($scope, $http,ModalService) {
             modal.element.modal();
             modal.close.then(function(result) {
 				console.log('Result returned from modal:' + JSON.stringify(result));
+				if (result.status === 'SUCCESS') {
+					ctrl.handleDataChange({event:{eventId:'EXECUTION_PKG_CREATED', eventData:result.data}});
+				}
             });
         });
     };
@@ -101,7 +104,7 @@ app.controller('ComplexController', [
 	  };
 	  $scope.saveExecutionPackage = function() {
 			console.log('Save execution package called with WO: ' + JSON.stringify(wo));
-			var req = {
+			/*var req = {
 				 method: 'POST',
 				 url: '/p6-portal-service/scheduler/saveExecutionPackages',
 				 headers: {
@@ -113,11 +116,14 @@ app.controller('ComplexController', [
 				console.log("Received data from server");
 				//$scope.fetchedData = response.data;
 				console.log("Data for execution package from server: " + JSON.stringify(response.data));
-			});
-		 	close({
-			      wo: $scope.wo
-			 }, 500); // close, but give 500ms for bootstrap to animate
+				
 		  
+			});*/
+			close({
+					status: 'SUCCESS',
+					data: {exctnPckgNam: '20170402-albony', workOrders:$scope.wo, leadCrew:$scope.selectedLeadCrew, toDoItems:[]}
+			 }, 500); // close, but give 500ms for bootstrap to animate
+		 	
 	  };
 
 }]);

@@ -21,7 +21,7 @@
 				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event, wo)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
 				</button>
 			</td>
-			<td>{{wo.workOrders[0]}}</td>
+			<td>{{wo.workOrders}}</td>
 			<td>{{wo.scheduleDate}}</td>
 			<td>{{wo.leadCrew}}</td>
 			<td> 
@@ -29,8 +29,7 @@
 					<option>&nbsp;</option>
 				</select> 
 			</td>
-			<!-- <td>{{wo.executionPackage="PKG1"}}</td>  -->
-			<td></td>
+			<td>{{wo.exctnPckgNam}}</td>
 			<td> <span ng-if="wo.workOrders.length > 0">Yes</span>
 				<span ng-if="wo.workOrders.length == 0">No</span>
 			</td>
