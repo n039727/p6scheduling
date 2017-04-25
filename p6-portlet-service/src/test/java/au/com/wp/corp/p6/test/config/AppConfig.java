@@ -43,7 +43,9 @@ public class AppConfig {
 		sessionBuilder.scanPackages("au.com.wp.corp.p6.model");
 		sessionBuilder.setProperty("hibernate.show_sql", "true");
 		sessionBuilder.addProperties(getHibernateProperties());
-		return sessionBuilder.buildSessionFactory();
+		SessionFactory factory = sessionBuilder.buildSessionFactory();
+		System.out.println("factory == "+ factory);
+		return factory;
 	}
 
 	private Properties getHibernateProperties() {
