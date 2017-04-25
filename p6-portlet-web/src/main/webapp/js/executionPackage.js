@@ -105,7 +105,7 @@ app.controller('ComplexController', [
 	  };
 	  $scope.saveExecutionPackage = function() {
 			console.log('$scope.createExecPkgWOs in saveExecutionPackage: ' + JSON.stringify($scope.createExecPkgWOs));
-		  $scope.createExecPkgReq = {workOrders:$scope.createExecPkgWOs,leadCrew:$scope.selectedLeadCrew};
+		  $scope.createExecPkgReq = {createDTO:$scope.createExecPkgWOs,leadCrew:$scope.selectedLeadCrew};
 			console.log('Save execution package called with createExecPkgReq: ' + JSON.stringify($scope.createExecPkgReq));
 			var req = {
 				 method: 'POST',
