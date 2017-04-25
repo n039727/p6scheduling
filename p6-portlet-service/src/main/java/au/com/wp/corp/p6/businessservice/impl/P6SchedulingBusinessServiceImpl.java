@@ -363,6 +363,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		
 		List<Task> tasks = null;
 		ExecutionPackage executionPackage = null;
+		logger.debug("ExecPckgName >>>>{}", query.getExecPckgName());
+		logger.debug("WorkOrderId >>>>{}", query.getWorkOrderId());
 		if(null != query && null != query.getExecPckgName()){
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
 			tasks = new ArrayList<Task>(executionPackage.getTasks());
@@ -438,7 +440,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	
 	private  String getCurrentDateTimeMS() {
 		java.util.Date dNow = new java.util.Date();
-        SimpleDateFormat ft = new SimpleDateFormat("dd-mm-yyyyhhmmssMs");
+        SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyyhhmmssMs");
         String datetime = ft.format(dNow);
         return datetime;
     }
