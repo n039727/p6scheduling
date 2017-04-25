@@ -72,14 +72,14 @@ function executionPackageResultController($scope, $http,ModalService) {
 }
 
 app.controller('ComplexController', [
-	  '$scope', '$element', 'wo', 'close', 
-	  function($scope, $element, wo, close) {
+	  '$scope', '$element', 'wo', 'close','$http', 
+	  function($scope, $element, wo, close,$http) {
 			console.log('Create Exc called with WO in popup: ' + JSON.stringify(wo));
 			$scope.woList =[];
 			$scope.leadCrewList =[];
 			if(wo){
 				for(i=0; i<wo.length;i++) {  
-					$scope.woList.push(wo[i].workOrders);
+					$scope.woList.push(wo[i].workOrders[0]);
 					$scope.leadCrewList.push(wo[i].leadCrew);
 				}
 			}
@@ -93,12 +93,31 @@ app.controller('ComplexController', [
 	  //  This close function doesn't need to use jQuery or bootstrap, because
 	  //  the button has the 'data-dismiss' attribute.
 	  $scope.cancel = function() {
-			//console.log('called close() with WO in popup: ' );
 			console.log('$scope.wo in close: ' + JSON.stringify($scope.wo));
 	 	  close({
 	      wo: $scope.wo
 	    }, 500); // close, but give 500ms for bootstrap to animate
 	 	  //return true;
+	  };
+	  $scope.saveExecutionPackage = function() {
+			console.log('Save execution package called with WO: ' + JSON.stringify(wo));
+			var req = {
+				 method: 'POST',
+				 url: '/p6-portal-service/scheduler/saveExecutionPackages',
+				 headers: {
+				   'Content-Type': 'application/json'
+				 },
+				 data: JSON.stringify(wo)
+			};
+			$http(req).then(function (response) {
+				console.log("Received data from server");
+				//$scope.fetchedData = response.data;
+				console.log("Data for execution package from server: " + JSON.stringify(response.data));
+			});
+		 	close({
+			      wo: $scope.wo
+			 }, 500); // close, but give 500ms for bootstrap to animate
+		  
 	  };
 
 }]);
