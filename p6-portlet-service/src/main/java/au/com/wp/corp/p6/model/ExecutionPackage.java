@@ -57,7 +57,7 @@ public class ExecutionPackage implements Serializable {
 	private Set<Task> tasks;
 
 	//bi-directional many-to-one association to TodoAssignment
-	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	private Set<TodoAssignment> todoAssignments;
 
 	public ExecutionPackage() {
