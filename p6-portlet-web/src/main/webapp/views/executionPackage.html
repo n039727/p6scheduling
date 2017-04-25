@@ -3,7 +3,7 @@
 		<thead class="query-result-header">
 			<tr>
 				<th>Select
-					<input type="checkbox" ng-model="$ctrl.selectedAll" ng-change="$ctrl.isSelectAll()" ></th>
+					<input type="checkbox" ng-model="$ctrl.selectedAll" ng-click="$ctrl.isSelectAll();$ctrl.addRemoveWOOnSelectAll($event, $ctrl.data)" ></th>
 				<th>WO #</th>
 				<th>Planned Start Date</th>
 				<th>Crew Assigned</th>
