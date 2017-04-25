@@ -4,6 +4,12 @@ function executionPackageResultController($scope, $http,ModalService) {
 	ctrl.selectedExecPckg = [];
 	console.log('data received in execution package: ' + JSON.stringify(ctrl.data));
 	
+	ctrl.addRemoveWOOnSelectAll = function($event, wo){
+		for(var i=0;i<wo.length; i++){
+			ctrl.addRemoveWorkOrder($event,wo[i]);
+		}
+	};
+	
 	ctrl.addRemoveWorkOrder = function($event, wo){
 		var cb = $event.target;
 		if (cb.checked) {
@@ -38,24 +44,7 @@ function executionPackageResultController($scope, $http,ModalService) {
 		return -1;
 	}
 	
-	ctrl.selectedLabelList = [];
 	ctrl.isSelectAll = function(){
-/*    	console.log('select checkbox:' + JSON.stringify(ctrl.data.length));
-		  if(ctrl.selectedAll){
-			  ctrl.selectedAll = true;
-			  alert("select checkbox1:" + ctrl.data.length);
-		    for(var i=0;i<ctrl.data.length;i++){
-		    	console.log('select checkbox2:' + JSON.stringify(ctrl.data[i].workOrders[0]));
-		     ctrl.selectedLabelList.push(ctrl.data[i].workOrders[0]);  
-		    }
-		  }
-		  else{
-			  ctrl.selectedAll = false;
-		  }	
-		  angular.forEach(ctrl.data, function (wo) {
-			    wo.selected = ctrl.selectedAll;
-			  });	*/	 
-		console.log('ctrl.selectedAll:' + JSON.stringify(ctrl.selectedAll));
 		var status = ctrl.selectedAll;
 		angular.forEach(ctrl.data,function(wo){
 			wo.selected = status;
@@ -63,8 +52,6 @@ function executionPackageResultController($scope, $http,ModalService) {
 		
 	};
 	
-	ctrl.checkIfAllSelected = function(){
-	};
 
     ctrl.show = function(wo) {
         ModalService.showModal({
@@ -77,7 +64,6 @@ function executionPackageResultController($scope, $http,ModalService) {
         }).then(function(modal) {
             modal.element.modal();
             modal.close.then(function(result) {
-                //$scope.complexResult  = "Name: " + result.name + ", age: " + result.age;
 				console.log('Result returned from modal:' + JSON.stringify(result));
             });
         });
@@ -99,9 +85,10 @@ app.controller('ComplexController', [
 			}
 
 			console.log('$scope.woList in popup: ' + JSON.stringify($scope.woList));
+			console.log('$scope.leadCrewList in popup: ' + JSON.stringify($scope.leadCrewList));
 			
 			$scope.wo = $scope.woList;
-			$scope.age = null;
+			$scope.leadCrews = $scope.leadCrewList;
 	  
 	  //  This close function doesn't need to use jQuery or bootstrap, because
 	  //  the button has the 'data-dismiss' attribute.
