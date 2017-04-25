@@ -109,8 +109,15 @@ function schedulingToDoResultController($scope, $http) {
 	
 	ctrl.fetchToDoAgainstWO = function(wo) {
 		serviceUrl = "/p6-portal-service/scheduler/fetchWOForAddUpdateToDo";
-		console.log('fetching To-Dos for work order: ' + wo.workOrders[0]);
-		var query = {workOrderId:wo.workOrders[0]};
+		var query = {};
+		if (wo.exctnPckgNam) {
+			query.execPckgName = wo.exctnPckgNam;
+		} else {
+			query.workOrderId = wo.workOrders[0];
+		}
+		
+		console.log('fetching To-Dos for : ' + JSON.stringify(query));
+		
 		var req = {
 				method: 'POST',
 				url: serviceUrl,

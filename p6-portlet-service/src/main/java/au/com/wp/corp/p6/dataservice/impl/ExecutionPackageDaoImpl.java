@@ -47,15 +47,20 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 				 createCriteria(ExecutionPackage.class);
 		criteria.add(Restrictions.eq("exctnPckgNam", name));
 		criteria.setFetchSize(1);
-		List<ExecutionPackage> retValue =  (List<ExecutionPackage>) criteria.list();
+		//List<ExecutionPackage> retValue =  (List<ExecutionPackage>) criteria.list();
+		ExecutionPackage retValue =  (ExecutionPackage) criteria.uniqueResult();
+		/*System.out.println("Execeution Package Name in query: " + name);
+		System.out.println("retValue size: " + (retValue == null ? "null" : retValue.size()));
 		ExecutionPackage pkg = null;
 		if (retValue != null && retValue.size() == 1) {
 			pkg = retValue.get(0);
 		} else {
 			// TODO Throw exception
-		}
+		}*/
 		
-		return pkg;
+		System.out.println("returning package as: " + retValue.getExctnPckgId());
+		
+		return retValue;
 	}
 	
 	@Transactional

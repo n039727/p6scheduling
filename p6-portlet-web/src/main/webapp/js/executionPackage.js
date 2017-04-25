@@ -87,6 +87,7 @@ app.controller('ComplexController', [
 					$scope.woList.push(wo[i].workOrders[0]);
 					$scope.leadCrewList.push(wo[i].leadCrew);
 					$scope.createExecPkgWOs.push({workOrderId:wo[i].workOrders[0],scheduleDate:wo[i].scheduleDate,crewAssigned:wo[i].leadCrew });
+					$scope.scheduleDate = wo[i].scheduleDate;
 				}
 			}
 
@@ -101,10 +102,10 @@ app.controller('ComplexController', [
 	  //  the button has the 'data-dismiss' attribute.
 	  $scope.cancel = function() {
 			console.log('$scope.wo in close: ' + JSON.stringify($scope.wo));
-	 	  close({
-	      wo: $scope.wo
-	    }, 500); // close, but give 500ms for bootstrap to animate
-	 	  //return true;
+			close({
+					status: 'CANCELLED'
+				  }, 500); // close, but give 500ms for bootstrap to animate
+		  
 	  };
 	  $scope.saveExecutionPackage = function() {
 			console.log('$scope.createExecPkgWOs in saveExecutionPackage: ' + JSON.stringify($scope.createExecPkgWOs));
@@ -120,15 +121,22 @@ app.controller('ComplexController', [
 			};
 			$http(req).then(function (response) {
 				console.log("Received data from server");
-				//$scope.fetchedData = response.data;
 				console.log("Data for execution package from server: " + JSON.stringify(response.data));
 				
+				close({
+					status: 'SUCCESS',
+					data: {
+						exctnPckgNam: response.data.exctnPckgNam, 
+						workOrders:$scope.wo, 
+						leadCrew:$scope.selectedLeadCrew, 
+						crewNames: $scope.leadCrews,
+						scheduleDate: $scope.scheduleDate,
+						toDoItems:[]
+						}
+				}, 500); // close, but give 500ms for bootstrap to animate
 		  
 			});
-			close({
-					status: 'SUCCESS',
-					data: {exctnPckgNam: '20170402-albony', workOrders:$scope.wo, leadCrew:$scope.selectedLeadCrew, toDoItems:[]}
-			 }, 500); // close, but give 500ms for bootstrap to animate
+			
 		 	
 	  };
 
