@@ -58,9 +58,16 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata) {
 		ctrl.resultVisible = false;
 	};
 	
-	ctrl.handleDataChange = function() {
-		console.log('Data has changed')
-		//ctrl.reload();
+	ctrl.handleDataChange = function(event) {
+		console.log('Data has changed for event: ' + JSON.stringify(event));
+		if (event&&event.eventId === 'EXECUTION_PKG_CREATED') {
+			ctrl.handleContext('ADD_SCHEDULING_TODO');
+			var eventData = event.eventData;
+			if(eventData) {
+				var executionPkgName = eventData.executionPkgName;
+				ctrl.search({executionPkgName:executionPkgName});
+			}
+		}
 	}
 	
 	

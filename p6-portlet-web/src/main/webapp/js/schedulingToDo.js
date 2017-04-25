@@ -104,7 +104,7 @@ function schedulingToDoResultController($scope, $http) {
 			ctrl.savedMsgVisible = true;
 			
 		});
-		ctrl.handleDataChange();
+		ctrl.handleDataChange({event:{eventId:'SCHEDULING_TODO_SAVED'}});
 	};
 	
 	ctrl.fetchToDoAgainstWO = function(wo) {

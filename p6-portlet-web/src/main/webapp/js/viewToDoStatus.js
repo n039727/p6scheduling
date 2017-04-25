@@ -36,7 +36,7 @@ function viewToDoStatusController($scope, $http) {
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
 			alert("Scheduling TO DO saved for " + wo.workOrders[0]);
 		});
-		ctrl.handleDataChange();
+		ctrl.handleDataChange({event: {eventId:'TO_DO_DETAILS_SAVED'}});
 	};
 	
 	ctrl.fetchToDoAgainstWO = function(wo) {
