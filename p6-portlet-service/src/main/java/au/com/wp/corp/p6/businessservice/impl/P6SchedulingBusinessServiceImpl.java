@@ -33,9 +33,8 @@ import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
-import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
-import au.com.wp.corp.p6.exception.P6DataAccessException;
+import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
@@ -52,6 +51,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	TodoDAO todoDAO;
 	@Autowired
 	WorkOrderDAO workOrderDAO;
+	
 	
 	@Autowired
 	private ExecutionPackageDao executionPackageDao;
@@ -348,7 +348,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) throws P6BusinessException {
-		executionPackageDTO = taskDAO.saveExecutionPackage(executionPackageDTO);
+		executionPackageDTO.setExctnPckgNam(getCurrentDateTimeMS());
+		executionPackageDTO = executionPackageDao.saveExecutionPackage(executionPackageDTO);
 		return executionPackageDTO;
 	}
 
@@ -359,7 +360,16 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	@Override
 	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchInput query) {
-		List<Task> tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
+		
+		List<Task> tasks = null;
+		ExecutionPackage executionPackage = null;
+		if(null != query && null != query.getExecPckgName()){
+			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
+			tasks = new ArrayList<Task>(executionPackage.getTasks());
+		}
+		else{
+			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
+		}
 		
 		Map<String, WorkOrder> workOrderMap = new HashMap<String, WorkOrder>();
 		Map<String, Map<Long, ToDoItem>> workOrderToDoMap = new HashMap<String, Map<Long, ToDoItem>>();
@@ -425,5 +435,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 		return workOrders;
 	}
+	
+	private  String getCurrentDateTimeMS() {
+		java.util.Date dNow = new java.util.Date();
+        SimpleDateFormat ft = new SimpleDateFormat("dd-mm-yyyyhhmmssMs");
+        String datetime = ft.format(dNow);
+        return datetime;
+    }
 
 }

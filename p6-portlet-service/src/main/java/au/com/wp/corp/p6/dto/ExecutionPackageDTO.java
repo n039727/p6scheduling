@@ -6,9 +6,8 @@ public class ExecutionPackageDTO {
 	private String exctnPckgNam;
 	private String leadCrew;
 	private String crewNames;
-	private List<ToDoItem> toDoItems;
-	private List<String> workOrders;
-	private String scheduleDate;
+	private List<EPCreateDTO> createDTO;
+	
 	public String getExctnPckgNam() {
 		return exctnPckgNam;
 	}
@@ -27,23 +26,13 @@ public class ExecutionPackageDTO {
 	public void setCrewNames(String crewNames) {
 		this.crewNames = crewNames;
 	}
-	public List<ToDoItem> getToDoItems() {
-		return toDoItems;
+	public List<EPCreateDTO> getCreateDTO() {
+		return createDTO;
 	}
-	public void setToDoItems(List<ToDoItem> toDoItems) {
-		this.toDoItems = toDoItems;
+	public void setCreateDTO(List<EPCreateDTO> createDTO) {
+		this.createDTO = createDTO;
 	}
-	public List<String> getWorkOrders() {
-		return workOrders;
-	}
-	public void setWorkOrders(List<String> workOrders) {
-		this.workOrders = workOrders;
-	}
-	public String getScheduleDate() {
-		return scheduleDate;
-	}
-	public void setScheduleDate(String scheduleDate) {
-		this.scheduleDate = scheduleDate;
-	}
+	
+	
 
 }

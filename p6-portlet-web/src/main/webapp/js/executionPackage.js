@@ -17,7 +17,7 @@ function executionPackageResultController($scope, $http,ModalService) {
 				if(!ctrl.selectedExecPckg)
 					ctrl.selectedExecPckg = [];
 					
-				ctrl.selectedExecPckg.push({leadCrew:wo.leadCrew, workOrders:[wo.workOrders[0]]});
+				ctrl.selectedExecPckg.push({leadCrew:wo.leadCrew, workOrders:[wo.workOrders[0]],scheduleDate:wo.scheduleDate});
 				console.log('WO after adding execution pckg: ' + JSON.stringify(ctrl.selectedExecPckg));
 			}
 			
@@ -78,17 +78,21 @@ app.controller('ComplexController', [
 	  '$scope', '$element', 'wo', 'close','$http', 
 	  function($scope, $element, wo, close,$http) {
 			console.log('Create Exc called with WO in popup: ' + JSON.stringify(wo));
+			
+			$scope.createExecPkgWOs = [];
 			$scope.woList =[];
 			$scope.leadCrewList =[];
 			if(wo){
 				for(i=0; i<wo.length;i++) {  
 					$scope.woList.push(wo[i].workOrders[0]);
 					$scope.leadCrewList.push(wo[i].leadCrew);
+					$scope.createExecPkgWOs.push({workOrderId:wo[i].workOrders[0],scheduleDate:wo[i].scheduleDate,crewAssigned:wo[i].leadCrew });
 				}
 			}
 
 			console.log('$scope.woList in popup: ' + JSON.stringify($scope.woList));
 			console.log('$scope.leadCrewList in popup: ' + JSON.stringify($scope.leadCrewList));
+			console.log('$scope.createExecPkgWOs in popup: ' + JSON.stringify($scope.createExecPkgWOs));
 			
 			$scope.wo = $scope.woList;
 			$scope.leadCrews = $scope.leadCrewList;
@@ -103,14 +107,16 @@ app.controller('ComplexController', [
 	 	  //return true;
 	  };
 	  $scope.saveExecutionPackage = function() {
-			console.log('Save execution package called with WO: ' + JSON.stringify(wo));
-			/*var req = {
+			console.log('$scope.createExecPkgWOs in saveExecutionPackage: ' + JSON.stringify($scope.createExecPkgWOs));
+		  $scope.createExecPkgReq = {createDTO:$scope.createExecPkgWOs,leadCrew:$scope.selectedLeadCrew};
+			console.log('Save execution package called with createExecPkgReq: ' + JSON.stringify($scope.createExecPkgReq));
+			var req = {
 				 method: 'POST',
 				 url: '/p6-portal-service/scheduler/saveExecutionPackages',
 				 headers: {
 				   'Content-Type': 'application/json'
 				 },
-				 data: JSON.stringify(wo)
+				 data: JSON.stringify($scope.createExecPkgReq)
 			};
 			$http(req).then(function (response) {
 				console.log("Received data from server");
@@ -118,7 +124,7 @@ app.controller('ComplexController', [
 				console.log("Data for execution package from server: " + JSON.stringify(response.data));
 				
 		  
-			});*/
+			});
 			close({
 					status: 'SUCCESS',
 					data: {exctnPckgNam: '20170402-albony', workOrders:$scope.wo, leadCrew:$scope.selectedLeadCrew, toDoItems:[]}

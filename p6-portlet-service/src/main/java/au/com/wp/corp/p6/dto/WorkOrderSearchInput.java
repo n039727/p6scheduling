@@ -13,6 +13,7 @@ public class WorkOrderSearchInput {
 	private String workOrderId;
 	private String fromDate;
 	private String toDate;
+	private String execPckgName;
 	
 	/**
 	 * @return the depotList
@@ -74,5 +75,12 @@ public class WorkOrderSearchInput {
 	public void setToDate(String toDate) {
 		this.toDate = toDate;
 	}
+	public String getExecPckgName() {
+		return execPckgName;
+	}
+	public void setExecPckgName(String execPckgName) {
+		this.execPckgName = execPckgName;
+	}
 
+	
 }

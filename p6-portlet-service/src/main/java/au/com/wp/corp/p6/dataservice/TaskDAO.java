@@ -29,12 +29,5 @@ public interface TaskDAO extends P6DAOExceptionParser {
 	 * @throws P6DataAccessException
 	 */
 	public List<ExecutionPackage> listExecutionPackages() throws P6DataAccessException;
-	/**
-	 * 
-	 * @param executionPackageDTO
-	 * @return
-	 * @throws P6DataAccessException
-	 */
-	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO)
-			throws P6DataAccessException;
+	
 }

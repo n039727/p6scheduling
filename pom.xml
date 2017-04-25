@@ -246,7 +246,6 @@
 					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<skipTests>false</skipTests>
 							<excludes>
 								<exclude>**IntegrationTest</exclude>
 							</excludes>
