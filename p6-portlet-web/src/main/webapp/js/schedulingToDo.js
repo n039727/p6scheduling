@@ -128,9 +128,10 @@ function schedulingToDoResultController($scope, $http) {
 
 			};
 		$http(req).then(function (response) {
-			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data[0].toDoItems));
+			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			wo.toDoItems = [];
 			wo.toDoItems = response.data[0].toDoItems;
+			wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
 		});
 	}

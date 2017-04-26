@@ -83,6 +83,16 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	public ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) {
     	return new ResponseEntity<WorkOrder>(p6BusinessService.saveToDo(workOrder.getBody()),HttpStatus.CREATED);
 	}
+	
+	@RequestMapping(value = "/saveWorkOrderForViewToDoStatus" , 
+    		method = RequestMethod.POST, 
+    		produces = {MediaType.APPLICATION_JSON_VALUE}, 
+    		consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    @Override
+	public ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus) {
+    	return new ResponseEntity<ViewToDoStatus>(p6BusinessService.saveViewToDoStatus(viewToDoStatus.getBody()),HttpStatus.CREATED);
+	}
 
 	@RequestMapping(value="/saveExecutionPackages", method = RequestMethod.POST,
 			produces = {MediaType.APPLICATION_JSON_VALUE}, 

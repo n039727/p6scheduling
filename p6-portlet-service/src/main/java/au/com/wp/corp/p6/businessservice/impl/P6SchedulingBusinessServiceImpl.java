@@ -48,7 +48,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	TaskDAO taskDAO;
 	@Autowired
-	TodoDAO todoDAO;
+	TodoDAO todoDAO; 
 	@Autowired
 	WorkOrderDAO workOrderDAO;
 	
@@ -213,7 +213,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			ViewToDoStatus status = new ViewToDoStatus();
 			status.setCrewAssigned(task.getCrewId());
 			// TODO to decide the user to populate the comment
-			status.setDeportComment(task.getCmts());
+			status.setSchedulingComment(task.getCmts());
 			if (null != task.getExecutionPackage()) {
 				status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
 			}
@@ -244,9 +244,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				}
 				assignmentDTO.setStatus(assignment.getStat());
 				assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
-				if (null != assignment.getTodoTemplate()) {
+				/*if (null != assignment.getTodoTemplate()) {
 					assignmentDTO.setToDoName(assignment.getTodoTemplate().getTodoNam());
-				}
+				}*/
+				assignmentDTO.setWorkOrderId(assignment.getTask().getTaskId());
+				assignmentDTO.setToDoName(todoDAO.getToDoName(assignment.getTodoId().longValue()));
 				assignmentDTOs.add(assignmentDTO);
 			}
 			status.setTodoAssignments(assignmentDTOs);
@@ -444,5 +446,20 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
         String datetime = ft.format(dNow);
         return datetime;
     }
+
+	@Override
+	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus workOrder) {
+		// TODO Auto-generated method stub
+		/*if (workOrder != null
+				&& workOrder.getTodoAssignments() != null) {
+			for(au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO : workOrder.getTodoAssignments()) {
+				assignmentDTO.getToDo
+				ToDOAssignment assignment = todoDAO.fetchToDosByWorkOrder(workOrder)
+				mergeToDoAssignment(assignment, assignmentDTO);
+			}
+			
+		}*/
+		return null;
+	}
 
 }

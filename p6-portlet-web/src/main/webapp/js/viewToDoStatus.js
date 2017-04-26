@@ -53,7 +53,7 @@ function viewToDoStatusController($scope, $http) {
 
 			};
 		$http(req).then(function (response) {
-			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data[0].todoAssignments));
+			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			wo.toDoItems = [];
 			wo.toDoItems = response.data[0].todoAssignments;
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));

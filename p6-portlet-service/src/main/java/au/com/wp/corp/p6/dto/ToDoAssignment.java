@@ -9,6 +9,7 @@ package au.com.wp.corp.p6.dto;
  */
 public class ToDoAssignment {
 
+	private String workOrderId;
 	private String toDoName;
 	private String reqByDate;
 	private String comment;
@@ -43,6 +44,18 @@ public class ToDoAssignment {
 	}
 	public void setSupportingDoc(String supportingDoc) {
 		this.supportingDoc = supportingDoc;
+	}
+	/**
+	 * @return the workOrderId
+	 */
+	public String getWorkOrderId() {
+		return workOrderId;
+	}
+	/**
+	 * @param workOrderId the workOrderId to set
+	 */
+	public void setWorkOrderId(String workOrderId) {
+		this.workOrderId = workOrderId;
 	}
 	
 }

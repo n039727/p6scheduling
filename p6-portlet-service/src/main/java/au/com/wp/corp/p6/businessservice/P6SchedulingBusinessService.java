@@ -23,5 +23,6 @@ public interface P6SchedulingBusinessService {
 	public List<ExecutionPackageDTO> fetchExecutionPackageList();
 	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) throws P6BusinessException;
 	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchInput body);
+	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus body);
 
 }
