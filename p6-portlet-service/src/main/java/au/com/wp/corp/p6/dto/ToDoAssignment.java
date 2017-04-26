@@ -9,6 +9,7 @@ package au.com.wp.corp.p6.dto;
  */
 public class ToDoAssignment {
 
+	private Long toDoAssignmentId;
 	private String workOrderId;
 	private String toDoName;
 	private String reqByDate;
@@ -56,6 +57,18 @@ public class ToDoAssignment {
 	 */
 	public void setWorkOrderId(String workOrderId) {
 		this.workOrderId = workOrderId;
+	}
+	/**
+	 * @return the toDoAssignmentId
+	 */
+	public Long getToDoAssignmentId() {
+		return toDoAssignmentId;
+	}
+	/**
+	 * @param toDoAssignmentId the toDoAssignmentId to set
+	 */
+	public void setToDoAssignmentId(Long toDoAssignmentId) {
+		this.toDoAssignmentId = toDoAssignmentId;
 	}
 	
 }

@@ -12,9 +12,9 @@ import java.util.List;
 public class ViewToDoStatus {
 
 	private String executionPackage;
-	private String workOrders;
+	private List<String> workOrders;
 	private String scheduleDate;
-	private String crewAssigned;
+	private List<String> crewAssigned;
 	private String leadCrew;
 	private String schedulingComment;
 	private String deportComment;
@@ -25,10 +25,10 @@ public class ViewToDoStatus {
 	public void setExecutionPackage(String executionPackage) {
 		this.executionPackage = executionPackage;
 	}
-	public String getWorkOrders() {
+	public List<String> getWorkOrders() {
 		return workOrders;
 	}
-	public void setWorkOrders(String workOrders) {
+	public void setWorkOrders(List<String> workOrders) {
 		this.workOrders = workOrders;
 	}
 	public String getScheduleDate() {
@@ -37,10 +37,10 @@ public class ViewToDoStatus {
 	public void setScheduleDate(String scheduleDate) {
 		this.scheduleDate = scheduleDate;
 	}
-	public String getCrewAssigned() {
+	public List<String> getCrewAssigned() {
 		return crewAssigned;
 	}
-	public void setCrewAssigned(String crewAssigned) {
+	public void setCrewAssigned(List<String> crewAssigned) {
 		this.crewAssigned = crewAssigned;
 	}
 	public String getLeadCrew() {

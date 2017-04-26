@@ -21,10 +21,18 @@ function viewToDoStatusController($scope, $http) {
 		
 
 	ctrl.saveToDo = function(wo){
+		
+		if (wo.todoAssignments) {
+			for (var i =0; i<wo.todoAssignments.length; i++) {
+				wo.todoAssignments[i].reqByDate = ctrl.formatDate(wo.todoAssignments[i].reqByDt);
+			}
+		}
+		
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
+		
 		var req = {
 			 method: 'POST',
-			 url: '/p6-portal-service/scheduler/saveWorkOrder',
+			 url: '/p6-portal-service/scheduler/saveWorkOrderForViewToDoStatus',
 			 headers: {
 			   'Content-Type': 'application/json'
 			 },
@@ -34,7 +42,8 @@ function viewToDoStatusController($scope, $http) {
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			alert("Scheduling TO DO saved for " + wo.workOrders[0]);
+			//alert("Scheduling TO DO saved for " + wo.workOrders[0]);
+			ctrl.savedMsgVisible = true;
 		});
 		ctrl.handleDataChange({event: {eventId:'TO_DO_DETAILS_SAVED'}});
 	};
@@ -54,11 +63,30 @@ function viewToDoStatusController($scope, $http) {
 			};
 		$http(req).then(function (response) {
 			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
-			wo.toDoItems = [];
-			wo.toDoItems = response.data[0].todoAssignments;
+			wo.todoAssignments = [];
+			wo.todoAssignments = response.data[0].todoAssignments;
+			if (wo.todoAssignments) {
+				for (var i =0; i<wo.todoAssignments.length; i++) {
+					wo.todoAssignments[i].reqByDt = new Date(wo.todoAssignments[i].reqByDate);
+				}
+			}
+			wo.schedulingComment = response.data[0].schedulingComment;
+			
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
 			
 		});
+		
+	ctrl.formatDate = function(date) {
+			var d = new Date(date),
+				month = '' + (d.getMonth() + 1),
+				day = '' + d.getDate(),
+				year = d.getFullYear();
+
+			if (month.length < 2) month = '0' + month;
+			if (day.length < 2) day = '0' + day;
+
+			return [year, month, day].join('-');
+		}
 	}
 	
 }

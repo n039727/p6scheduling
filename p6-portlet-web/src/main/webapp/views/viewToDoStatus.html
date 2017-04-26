@@ -1,3 +1,7 @@
+<div class="standard-to-do-header" ng-show="$ctrl.savedMsgVisible">
+<b>Package has been saved</b>
+</div>
+
 <table class="table table-condensed table-bordered table-striped" style="border-collapse:collapse;">
 	<thead class="query-result-header">
 		<tr>
@@ -43,13 +47,14 @@
 										<th class="standard-to-do-header">Supporting Document</th>
 									</thead>
 									<tbody>
-										<tr ng-repeat="todo in wo.toDoItems">
+										<tr ng-repeat="todo in wo.todoAssignments">
 											<td>{{todo.toDoName}}</td>
-											<td>{{todo.workOrders[0]}}</td>
+											<td>{{todo.workOrderId}}</td>
 											<td>
-												<md-datepicker ng-model="todo.scheduleFromDate" md-placeholder="DD/MM/YYYY"></md-datepicker>
+												<!--<md-datepicker ng-init="date = (todo.reqByDate | toDate)" ng-model="date" ng-change="todo.reqByDate = date.toISOString()" md-placeholder="DD/MM/YYYY"></md-datepicker>-->
+												<md-datepicker ng-model="todo.reqByDt" md-placeholder="DD/MM/YYYY"></md-datepicker>
 											</td>
-											<td><input type="text" class="form-control" id="userId" ng-model="todo.comment"></td>
+											<td><input type="text" class="form-control" ng-model="todo.comment"></td>
 											<td>
 												<select class="form-control" ng-model="todo.status" id="crew-select">
 													<option disabled>Select</option>
@@ -58,14 +63,14 @@
 													<option>Completed</option>
 												</select>
 											</td>
-											<td><input type="text" class="form-control" id="userId" ng-model="todo.supportingDocLink"></td>
+											<td><input type="text" class="form-control" ng-model="todo.supportingDoc"></td>
 										</tr>
 									</tbody>
 								</table>
 							</div>
 							<div class="col-md-12">
 								<label for="comment">Scheduling To-Do Comment</label>
-								<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.schedulingToDoComment}}</textarea> 
+								<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.schedulingComment}}</textarea> 
 							</div>
 							<div class="col-md-12">
 								<label for="comment">Depot To-Do Comment</label>

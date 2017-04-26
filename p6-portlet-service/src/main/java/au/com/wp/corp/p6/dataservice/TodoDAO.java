@@ -15,5 +15,7 @@ public interface TodoDAO {
 	List<TodoAssignment> fetchToDosByWorkOrder ( WorkOrder workOrder );
 	String getToDoName(Long id);
 	BigDecimal getToDoId(String todoName);
+	TodoAssignment fetchAssignmentWorkOrderNToDo(String workOrderId, String toDoName);
+	TodoAssignment saveToDoAssignment(TodoAssignment todoAssign);
 	
 }

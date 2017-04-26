@@ -29,6 +29,7 @@ import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.TaskDTO;
+import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -38,6 +39,7 @@ import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
+import au.com.wp.corp.p6.utils.DateUtils;
 
 
 @Service
@@ -208,29 +210,49 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 		List<Task> tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
 		List<ViewToDoStatus> toDoStatuses = new ArrayList<ViewToDoStatus>();
-
+		Map<String, ViewToDoStatus> taskIdWOMap = new HashMap<String, ViewToDoStatus>();
 		for (Task task : tasks) {
-			ViewToDoStatus status = new ViewToDoStatus();
-			status.setCrewAssigned(task.getCrewId());
-			// TODO to decide the user to populate the comment
+			ViewToDoStatus status = null;
+			String key = null;
+			if (task.getExecutionPackage() != null
+					&& "PKG1".equals(task.getExecutionPackage().getExctnPckgNam())) {
+				key = task.getExecutionPackage().getExctnPckgNam();
+			} else {
+				key = task.getTaskId();
+			}
+			
+			if (!taskIdWOMap.containsKey(key)) {
+				taskIdWOMap.put(key, new ViewToDoStatus());
+			}
+			
+			status = taskIdWOMap.get(key);
+			
+			if (status.getWorkOrders() == null) {
+				status.setWorkOrders(new ArrayList<String>());
+			}
+			status.getWorkOrders().add(task.getTaskId());
+			
+			if (status.getCrewAssigned() == null) {
+				status.setCrewAssigned(new ArrayList<String>());
+			}
+			status.getCrewAssigned().add(task.getCrewId());
+			
 			status.setSchedulingComment(task.getCmts());
-			if (null != task.getExecutionPackage()) {
+			
+			if (task.getExecutionPackage() != null
+					&& "PKG1".equals(task.getExecutionPackage().getExctnPckgNam())) {
 				status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
 			}
+			
 			status.setLeadCrew(task.getLeadCrewId());
 
-			status.setScheduleDate(task.getSchdDt().toString());
-			// TODO
-			// status.setSchedulingComment(schedulingComment);
-			// status.setWorkOrders(workOrders);
-			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
-
 			if (null != task.getSchdDt()) {
-				status.setScheduleDate(task.getSchdDt().toString());
+				status.setScheduleDate(DateUtils.toStringYYYY_MM_DD(task.getSchdDt()));
 			}
-			// TODO
 
-			status.setWorkOrders(task.getTaskId());
+			
+			// TODO
+			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
 
 			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
 			if (null != toDoEntities) {
@@ -238,16 +260,14 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			}
 			for (TodoAssignment assignment : toDoEntities) {
 				au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO = new au.com.wp.corp.p6.dto.ToDoAssignment();
+				
 				assignmentDTO.setComment(assignment.getCmts());
 				if (null != assignment.getReqdByDt()) {
 					assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
 				}
 				assignmentDTO.setStatus(assignment.getStat());
 				assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
-				/*if (null != assignment.getTodoTemplate()) {
-					assignmentDTO.setToDoName(assignment.getTodoTemplate().getTodoNam());
-				}*/
-				assignmentDTO.setWorkOrderId(assignment.getTask().getTaskId());
+				assignmentDTO.setWorkOrderId(task.getTaskId());
 				assignmentDTO.setToDoName(todoDAO.getToDoName(assignment.getTodoId().longValue()));
 				assignmentDTOs.add(assignmentDTO);
 			}
@@ -449,17 +469,47 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	@Override
 	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus workOrder) {
-		// TODO Auto-generated method stub
-		/*if (workOrder != null
-				&& workOrder.getTodoAssignments() != null) {
-			for(au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO : workOrder.getTodoAssignments()) {
-				assignmentDTO.getToDo
-				ToDOAssignment assignment = todoDAO.fetchToDosByWorkOrder(workOrder)
-				mergeToDoAssignment(assignment, assignmentDTO);
+		
+		if (workOrder != null) {
+			
+			List<Task> taskList = new ArrayList<Task>();
+			if (!StringUtils.isEmpty(workOrder.getExecutionPackage())
+					&& !workOrder.getExecutionPackage().equals("PKG1")) {
+				ExecutionPackage pkg = executionPackageDao.fetch(workOrder.getExecutionPackage());
+				taskList.addAll(pkg.getTasks());
+			} else {
+				taskList.add(workOrderDAO.fetch(workOrder.getWorkOrders().get(0)));
 			}
 			
-		}*/
-		return null;
+			for (Task task : taskList) {
+				for (TodoAssignment todo : task.getTodoAssignments()) {
+					for (au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO : workOrder.getTodoAssignments()) {
+						if (!StringUtils.isEmpty(assignmentDTO.getToDoName())
+								&& todoDAO.getToDoId(assignmentDTO.getToDoName()) != null
+								&& todoDAO.getToDoId(assignmentDTO.getToDoName()).longValue() == todo.getTodoId().longValue()
+								&& task.getTaskId().equals(assignmentDTO.getWorkOrderId())) {
+							
+							try {
+								mergeToDoAssignment(todo, assignmentDTO);
+							} catch (ParseException e) {
+								logger.error("Parsing date failed: ", e);
+							}
+							continue;
+						}
+					}
+				}
+				workOrderDAO.saveTask(task);
+			}
+		}
+		return workOrder;
+	} 
+
+	private void mergeToDoAssignment(TodoAssignment assignment, ToDoAssignment assignmentDTO) throws ParseException {
+		assignment.setReqdByDt(DateUtils.toDateFromYYYY_MM_DD(assignmentDTO.getReqByDate()));
+		assignment.setCmts(assignmentDTO.getComment());
+		assignment.setStat(assignmentDTO.getStatus());
+		assignment.setSuprtngDocLnk(assignmentDTO.getSupportingDoc());
+		
 	}
 
 }

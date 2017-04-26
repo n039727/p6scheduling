@@ -257,6 +257,30 @@ public class TodoDAOImpl implements TodoDAO {
         
         return listToDo;
 	}
+	
+	
+	@Transactional
+	@Override
+	public TodoAssignment fetchAssignmentWorkOrderNToDo(String workOrderId, String toDoName) {
+		logger.debug("Fetching todo list from TodoAssignment table for task id # {}", workOrderId);
+		Task task = new Task();
+		task.setTaskId(workOrderId);
+		
+		TodoTemplate todo = toDoNameMap.get(toDoName);
+		
+        @SuppressWarnings("unchecked")
+        TodoAssignment todoAssignment = (TodoAssignment)sessionFactory.getCurrentSession()
+                .createCriteria(TodoAssignment.class)
+                .add(Restrictions.eq("task", task))
+                .add(Restrictions.eq("todoId", todo.getTodoId()))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).uniqueResult();
+        
+        sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().clear();
+        
+        return todoAssignment;
+	}
+	
 	@Override
 	public String getToDoName(Long id) {
 		if (toDoMap != null && toDoMap.containsKey(id)) {
@@ -271,6 +295,17 @@ public class TodoDAOImpl implements TodoDAO {
 			return toDoNameMap.get(todoName).getTodoId();
 		}
 		return null;
+	}
+	
+	@Override
+	@Transactional
+	public TodoAssignment saveToDoAssignment(TodoAssignment todoAssign) {
+		logger.info("Entering method saveToDo");
+		if (todoAssign != null) {
+
+			sessionFactory.getCurrentSession().saveOrUpdate(todoAssign);
+		}
+		return todoAssign;
 	}
 
 }
