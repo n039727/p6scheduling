@@ -2,7 +2,7 @@
 	<table class="table table-condensed table-bordered table-striped" style="border-collapse:collapse;">
 		<thead class="query-result-header">
 			<tr>
-				<th>Select
+				<th>Select All
 					<input type="checkbox" ng-model="$ctrl.selectedAll" ng-click="$ctrl.isSelectAll();$ctrl.addRemoveWOOnSelectAll($event, $ctrl.data)" ></th>
 				<th>WO #</th>
 				<th>Planned Start Date</th>
@@ -35,8 +35,8 @@
 	</table>
 </div>	
 <div class="form-group">
-	<div class="btn-group col-md-offset-2">
+	<div class="col-md-offset-9 col-md-2" style="padding:5px">
 		<!--<button type="submit" class="btn btn-warning btn-lg" ng-click="refresh()" disabled>Add Scheduling To-Dos</button>-->
-		<button type="submit" class="btn btn-warning btn-lg" ng-click="$ctrl.show($ctrl.selectedExecPckg)">Create/Update Package</button>
+		<button type="submit" class="btn btn-warning btn-lg" ng-click="$ctrl.showPopup($ctrl.selectedExecPckg)">Create/Update Package</button>
 	</div>
 </div>
