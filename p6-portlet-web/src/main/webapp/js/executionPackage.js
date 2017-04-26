@@ -53,10 +53,10 @@ function executionPackageResultController($scope, $http,ModalService) {
 	};
 	
 
-    ctrl.show = function(wo) {
+    ctrl.showPopup = function(wo) {
         ModalService.showModal({
             templateUrl: '../views/executionPackagePopup.html',
-            controller: "ComplexController",
+            controller: "executionPkgPopupController",
             inputs: {
                 wo: wo,
               }
@@ -74,7 +74,7 @@ function executionPackageResultController($scope, $http,ModalService) {
 	
 }
 
-app.controller('ComplexController', [
+app.controller('executionPkgPopupController', [
 	  '$scope', '$element', 'wo', 'close','$http', 
 	  function($scope, $element, wo, close,$http) {
 			console.log('Create Exc called with WO in popup: ' + JSON.stringify(wo));
