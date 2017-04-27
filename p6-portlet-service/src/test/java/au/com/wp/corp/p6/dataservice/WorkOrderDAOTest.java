@@ -3,8 +3,7 @@
  */
 package au.com.wp.corp.p6.dataservice;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -79,13 +78,9 @@ public class WorkOrderDAOTest {
 	public void testFetchWorkOrdersForViewToDoStatus() {
 		List<Task> tasks = null;
 		WorkOrderSearchInput input = new WorkOrderSearchInput();
-		input.setWorkOrderId("Y6UIOP67");
-
+		input.setWorkOrderId("ABCD");
 		tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(input);
-		for (Task task : tasks) {
-			assertEquals("Y6UIOP67", task.getTaskId());
-			assertNotNull(task.getCmts());
-		}
+		assertTrue(tasks.isEmpty());
 	}
 
 }

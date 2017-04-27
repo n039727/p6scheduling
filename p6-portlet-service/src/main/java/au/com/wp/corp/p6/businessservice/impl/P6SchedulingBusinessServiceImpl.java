@@ -462,7 +462,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	
 	private  String getCurrentDateTimeMS() {
 		java.util.Date dNow = new java.util.Date();
-        SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyyhhmmssMs");
+        SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy-hhmmssMs");
         String datetime = ft.format(dNow);
         return datetime;
     }

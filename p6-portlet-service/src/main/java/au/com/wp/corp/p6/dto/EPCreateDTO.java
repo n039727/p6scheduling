@@ -12,6 +12,7 @@ public class EPCreateDTO {
 	private String workOrderId;
 	private String scheduleDate;
 	private String crewAssigned;
+	
 	public String getWorkOrderId() {
 		return workOrderId;
 	}
