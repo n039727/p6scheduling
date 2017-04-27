@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class DateUtils {
 	
 	private static final Logger logger = LoggerFactory.getLogger(DateUtils.class);
-	private static final SimpleDateFormat DATE_FORMAT_YYYY_MM_DD = new SimpleDateFormat("YYYY-MM-DD");
+	private static final SimpleDateFormat DATE_FORMAT_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 	
 	
 	public static String toStringYYYY_MM_DD(Date dt) {
@@ -33,5 +33,5 @@ public class DateUtils {
 		}
 		return dt;
 	}
-
+	
 }
