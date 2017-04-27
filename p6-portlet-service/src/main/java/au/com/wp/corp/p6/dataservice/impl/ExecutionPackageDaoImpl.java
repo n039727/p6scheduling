@@ -72,8 +72,7 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 
 	@Transactional
 	@Override
-	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO)
-			throws P6DataAccessException {
+	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO){
 		logger.debug("sessionfactory initialized =====" + sessionFactory);
 		ExecutionPackage executionPackage = new ExecutionPackage();
 		logger.debug("Creating Execution Package");

@@ -22,8 +22,7 @@ public interface ExecutionPackageDao extends P6DAOExceptionParser {
 	 * @return
 	 * @throws P6DataAccessException
 	 */
-	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO)
-			throws P6DataAccessException;
+	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO);
 
 	/**
 	 * returns work order details by work order id
