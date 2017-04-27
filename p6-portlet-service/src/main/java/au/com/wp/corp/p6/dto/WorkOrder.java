@@ -10,6 +10,7 @@ public class WorkOrder {
 	
 	private String executionPackage;
 	private List<String> workOrders;
+	private String workOrderId;
 	private String scheduleDate;
 	private String leadCrew;
 	private List<ToDoItem> toDoItems;
@@ -19,6 +20,19 @@ public class WorkOrder {
 	private String depotId;
 	private String meterialReqRef;
 	
+	
+	/**
+	 * @return the workOrderId
+	 */
+	public String getWorkOrderId() {
+		return workOrderId;
+	}
+	/**
+	 * @param workOrderId the workOrderId to set
+	 */
+	public void setWorkOrderId(String workOrderId) {
+		this.workOrderId = workOrderId;
+	}
 	public String getMeterialReqRef() {
 		return meterialReqRef;
 	}

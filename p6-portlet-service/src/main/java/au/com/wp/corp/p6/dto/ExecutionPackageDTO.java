@@ -6,7 +6,7 @@ public class ExecutionPackageDTO {
 	private String exctnPckgNam;
 	private String leadCrew;
 	private String crewNames;
-	private List<EPCreateDTO> createDTO;
+	private List<WorkOrder> workOrders;
 	
 	public String getExctnPckgNam() {
 		return exctnPckgNam;
@@ -26,11 +26,17 @@ public class ExecutionPackageDTO {
 	public void setCrewNames(String crewNames) {
 		this.crewNames = crewNames;
 	}
-	public List<EPCreateDTO> getCreateDTO() {
-		return createDTO;
+	/**
+	 * @return the workOrders
+	 */
+	public List<WorkOrder> getWorkOrders() {
+		return workOrders;
 	}
-	public void setCreateDTO(List<EPCreateDTO> createDTO) {
-		this.createDTO = createDTO;
+	/**
+	 * @param workOrders the workOrders to set
+	 */
+	public void setWorkOrders(List<WorkOrder> workOrders) {
+		this.workOrders = workOrders;
 	}
 	
 	
