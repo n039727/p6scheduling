@@ -5,7 +5,11 @@ package au.com.wp.corp.p6.dataservice;
 
 import static org.junit.Assert.*;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.SessionFactory;
 import org.junit.After;
@@ -26,9 +30,12 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.util.StringUtils;
 
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
+import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
@@ -45,6 +52,9 @@ public class WorkOrderDAOTest {
 
 	@Autowired
 	WorkOrderDAOImpl workOrderDAO;
+	
+	@Autowired
+	ExecutionPackageDao executionPackageDao;
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -82,5 +92,47 @@ public class WorkOrderDAOTest {
 		tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(input);
 		assertTrue(tasks.isEmpty());
 	}
+	
+	/**
+	 * Test method for
+	 * {@link au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl#saveTask(au.com.wp.corp.p6.model.Task)}.
+	 */
+	@Rollback(true)
+	@Test
+	public void testSaveTask() {
+		Task dbTask = new Task();
+		dbTask = prepareTaskBean(dbTask);
+		Task createdTask = workOrderDAO.saveTask(dbTask);	
+		assertEquals(dbTask.getTaskId(), createdTask.getTaskId());
+		
+	}
+	
+	private Task prepareTaskBean(Task dbTask) {
+		
+		dbTask.setTaskId("JunitTest");
+		dbTask.setCmts("Test cmt");
+		dbTask.setCrewId("TestCrew");
+		dbTask.setLeadCrewId("TestLeadCrew");
+		java.util.Date scheduleDate = new java.util.Date();
+		dbTask.setSchdDt(scheduleDate);
+		dbTask.setDepotId("TestDeport");
+		dbTask.setMatrlReqRef("TestMatrReqRef");
+		long currentTime = System.currentTimeMillis();
+		dbTask.setCrtdTs(new Timestamp(currentTime));
+		dbTask.setCrtdUsr("Test"); //TODO update the user name here
+		dbTask.setLstUpdtdTs(new Timestamp(currentTime));
+		dbTask.setLstUpdtdUsr("Test");
+		//TODO will remove after DB constrain change
+		dbTask.setExecutionPackage(executionPackageDao.fetch("PKG1" ));
+		
+		return dbTask;
+	}
+	
+	private  String getCurrentDateTimeMS() {
+		java.util.Date dNow = new java.util.Date();
+        SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy-hhmmssMs");
+        String datetime = ft.format(dNow);
+        return datetime;
+    }
 
 }
