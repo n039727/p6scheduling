@@ -22,11 +22,13 @@ import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.validation.Validator;
 
 /**
+ * Exposes the create / update execution package service
+ * 
  * @author n039126
- *
+ * @version 1.0
  */
 @RestController
-@RequestMapping("/scheduller")
+@RequestMapping("/scheduler")
 public class ExecutionPackageContoller {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExecutionPackageContoller.class);
@@ -35,31 +37,16 @@ public class ExecutionPackageContoller {
 	@Autowired
 	Validator validator;
 
-	@RequestMapping(value = "/executionpackage/merge", method = RequestMethod.POST, produces = {
-			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<ExecutionPackageDTO> mergeExecutionPackages(
-			RequestEntity<ExecutionPackageDTO> executionPackageDTO) throws P6BaseException {
-		validator.validate(executionPackageDTO.getBody());
-		return new ResponseEntity<ExecutionPackageDTO>(executionPackageDTO.getBody(), HttpStatus.CREATED);
-	}
-
 	@RequestMapping(value = "/executionpackage/createOrUpdate", method = RequestMethod.POST, produces = {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<ExecutionPackageDTO> updateExecutionPackages(
+	public ResponseEntity<ExecutionPackageDTO> createOrUpdateExecutionPackages(
 			RequestEntity<ExecutionPackageDTO> executionPackageDTO, HttpServletRequest request) throws P6BaseException {
 		logger.info(" create or update service is called ....");
 		String userName = "N039126";
 		validator.validate(executionPackageDTO.getBody());
 		return new ResponseEntity<ExecutionPackageDTO>(
-				executionPackageService.createOrUpdateExecutionPackage(executionPackageDTO.getBody(), userName), HttpStatus.CREATED);
-	}
-
-	@RequestMapping(value = "/executionpackage/split", method = RequestMethod.POST, produces = {
-			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<ExecutionPackageDTO> splitExecutionPackages(
-			RequestEntity<ExecutionPackageDTO> executionPackageDTO) throws P6BaseException {
-		validator.validate(executionPackageDTO.getBody());
-		return new ResponseEntity<ExecutionPackageDTO>(executionPackageDTO.getBody(), HttpStatus.CREATED);
+				executionPackageService.createOrUpdateExecutionPackage(executionPackageDTO.getBody(), userName),
+				HttpStatus.CREATED);
 	}
 
 }
