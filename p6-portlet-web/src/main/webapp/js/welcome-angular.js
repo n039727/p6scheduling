@@ -85,5 +85,12 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata) {
 		}
 	}
 	
-	
+	 $http({
+			method : "GET",
+			url : '/p6-portal/web/user/name'
+		}).success(function(data) {
+			$scope.userName=data.userName;
+		}).error(function() {
+
+		});
 });
