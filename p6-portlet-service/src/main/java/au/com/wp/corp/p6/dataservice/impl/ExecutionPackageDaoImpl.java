@@ -114,7 +114,7 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 	 * au.com.wp.corp.p6.dataservice.ExecutionPackageDao#getWorkOderbyId(java.
 	 * lang.String)
 	 */
-	@Transactional
+	@org.springframework.transaction.annotation.Transactional
 	@Override
 	public Task getTaskbyId(String taskId) throws P6DataAccessException {
 		logger.debug("fetching Task details with task id # {}", taskId);
@@ -144,7 +144,7 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 	 * @see au.com.wp.corp.p6.dataservice.ExecutionPackageDao#
 	 * createOrUpdateExecPackage(au.com.wp.corp.p6.model.ExecutionPackage)
 	 */
-	@Transactional
+	@org.springframework.transaction.annotation.Transactional
 	@Override
 	public boolean createOrUpdateExecPackage(ExecutionPackage executionPackage) throws P6DataAccessException {
 		logger.debug("inserting or updating the execution package and task details");

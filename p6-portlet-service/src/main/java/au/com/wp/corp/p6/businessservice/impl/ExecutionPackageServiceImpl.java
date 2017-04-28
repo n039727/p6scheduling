@@ -8,12 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
