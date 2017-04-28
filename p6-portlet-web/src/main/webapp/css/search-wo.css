@@ -113,7 +113,12 @@ body {
 }
 
 .error-message{
-	background-color:#ff0000;
+	display:inline;	
+	color:#ff0000;
+	font-weight: bold;
+}
+.success-message{
+	background-color:green;
 	display:inline;	
 	color:#fff;
 	font-weight: bold;

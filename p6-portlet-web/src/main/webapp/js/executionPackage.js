@@ -3,7 +3,7 @@ function executionPackageResultController($scope, $http,ModalService) {
 	var ctrl = this;
 	ctrl.selectedExecPckg = [];
 	console.log('data received in execution package: ' + JSON.stringify(ctrl.data));
-	
+	ctrl.errorMsgVisiable = false;
 	ctrl.addRemoveWOOnSelectAll = function($event, wo){
 		for(var i=0;i<wo.length; i++){
 			ctrl.addRemoveWorkOrder($event,wo[i]);
@@ -54,22 +54,33 @@ function executionPackageResultController($scope, $http,ModalService) {
 	
 
     ctrl.showPopup = function(wo) {
-        ModalService.showModal({
-            templateUrl: '../views/executionPackagePopup.html',
-            controller: "executionPkgPopupController",
-            inputs: {
-                wo: wo,
-              }
-            
-        }).then(function(modal) {
-            modal.element.modal();
-            modal.close.then(function(result) {
-				console.log('Result returned from modal:' + JSON.stringify(result));
-				if (result.status === 'SUCCESS') {
-					ctrl.handleDataChange({event:{eventId:'EXECUTION_PKG_CREATED', eventData:result.data}});
-				}
-            });
-        });
+    	var isValid = false;
+    	if(ctrl.selectedExecPckg.length < 2){
+    		isValid = false;
+    		ctrl.errorMsgVisiable = true;
+    	}else{
+    		isValid = true;
+    		ctrl.errorMsgVisiable = false;
+    		
+    	}
+    	if(isValid){
+	        ModalService.showModal({
+	            templateUrl: '../views/executionPackagePopup.html',
+	            controller: "executionPkgPopupController",
+	            inputs: {
+	                wo: wo,
+	              }
+	            
+	        }).then(function(modal) {
+	            modal.element.modal();
+	            modal.close.then(function(result) {
+					console.log('Result returned from modal:' + JSON.stringify(result));
+					if (result.status === 'SUCCESS') {
+						ctrl.handleDataChange({event:{eventId:'EXECUTION_PKG_CREATED', eventData:result.data}});
+					}
+	            });
+	        });
+    	}
     };
 	
 }
