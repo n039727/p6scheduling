@@ -54,6 +54,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	WorkOrderDAO workOrderDAO;
 	
+	@Autowired
+	DateUtils dateUtils;
 	
 	@Autowired
 	private ExecutionPackageDao executionPackageDao;
@@ -247,7 +249,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			status.setLeadCrew(task.getLeadCrewId());
 
 			if (null != task.getSchdDt()) {
-				status.setScheduleDate(DateUtils.toStringYYYY_MM_DD(task.getSchdDt()));
+				status.setScheduleDate(dateUtils.toStringYYYY_MM_DD(task.getSchdDt()));
 			}
 
 			
@@ -505,7 +507,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	} 
 
 	private void mergeToDoAssignment(TodoAssignment assignment, ToDoAssignment assignmentDTO) throws ParseException {
-		assignment.setReqdByDt(DateUtils.toDateFromYYYY_MM_DD(assignmentDTO.getReqByDate()));
+		assignment.setReqdByDt(dateUtils.toDateFromYYYY_MM_DD(assignmentDTO.getReqByDate()));
 		assignment.setCmts(assignmentDTO.getComment());
 		assignment.setStat(assignmentDTO.getStatus());
 		assignment.setSuprtngDocLnk(assignmentDTO.getSupportingDoc());

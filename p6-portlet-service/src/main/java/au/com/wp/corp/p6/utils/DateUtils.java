@@ -9,23 +9,26 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * @author n039619
  *
  */
+
+@Component
 public class DateUtils {
 	
 	private static final Logger logger = LoggerFactory.getLogger(DateUtils.class);
-	private static final SimpleDateFormat DATE_FORMAT_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
+	private final SimpleDateFormat DATE_FORMAT_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 	
-	private static final SimpleDateFormat DATE_FORMAT_DD_MM_YYYY_TIMESTAMP = new SimpleDateFormat("dd-MM-yyyy_hhmmssMs");
+	private final SimpleDateFormat DATE_FORMAT_DD_MM_YYYY_TIMESTAMP = new SimpleDateFormat("dd-MM-yyyy_hhmmssMs");
 	
-	public static String toStringYYYY_MM_DD(Date dt) {
+	public String toStringYYYY_MM_DD(Date dt) {
 		return DATE_FORMAT_YYYY_MM_DD.format(dt);
 	}
 	
-	public static Date toDateFromYYYY_MM_DD(String dtString) {
+	public Date toDateFromYYYY_MM_DD(String dtString) {
 		Date dt = null;
 		try {
 			dt = DATE_FORMAT_YYYY_MM_DD.parse(dtString);
@@ -36,7 +39,7 @@ public class DateUtils {
 	}
 	
 	
-	public static String getCurrentDateWithTimeStamp (){
+	public String getCurrentDateWithTimeStamp (){
 		return DATE_FORMAT_DD_MM_YYYY_TIMESTAMP.format(new Date());
 		
 	}

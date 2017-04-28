@@ -40,6 +40,9 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	@Autowired
 	ExecutionPackageDao executionPackageDao;
 	
+	@Autowired
+	DateUtils dateUtils;
+	
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.businessservice.IExecutionPackageService#createOrUpdateExecutionPackage(au.com.wp.corp.p6.model.ExecutionPackage)
 	 */
@@ -52,9 +55,9 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		executionPackage.setExctnPckgNam(execPackgDTO.getExctnPckgNam());
 		executionPackage.setLeadCrewId(execPackgDTO.getLeadCrew());
 		final List<WorkOrder> workOrders = execPackgDTO.getWorkOrders();
-		if (workOrders != null && workOrders.size() > 0) {
+		if (workOrders != null && !workOrders.isEmpty()) {
 			logger.debug("work orders size {}", workOrders.size());
-			Set<Task> tasks = new HashSet<Task>();
+			Set<Task> tasks = new HashSet<>();
 			for (WorkOrder workOrder : workOrders) {
 				logger.debug("For each workorder {} corresponding Task is fecthed", workOrder.getWorkOrderId());
 				final Task task = executionPackageDao.getTaskbyId(workOrder.getWorkOrderId());
@@ -81,7 +84,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	
 	
 	private String createExceutionPackageId () {
-		final String execPckgId = DateUtils.getCurrentDateWithTimeStamp();
+		final String execPckgId = dateUtils.getCurrentDateWithTimeStamp();
 		logger.info("execution package id has been created # {} ", execPckgId);
 		return execPckgId;
 	}
