@@ -1,0 +1,75 @@
+<html>
+<head>
+<title>P6 - Login</title>
+<link rel="stylesheet" href="css/bootstrap.css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript">
+	function validateForm() {
+		var x = document.forms["login_form"]["Username"].value;
+		var y = document.forms["login_form"]["password"].value;
+		if (x == null || x == "") {
+			//alert("Name must be filled out");
+			document.getElementById('User_name').focus();
+			$('#usr_validation').html(
+					"Incorrect credentials, please try again.");
+			return false;
+		} else
+
+		if (y == null || y == "") {
+			//alert("Name must be filled out");
+			document.getElementById('User_password').focus();
+			$('#usr_validation').html(
+					"Incorrect credentials, please try again.");
+			return false;
+		}
+	}
+
+	function usrFunction() {
+		var x = document.getElementById("User_name");
+		$('#usr_validation').html("");
+	}
+</script>
+<!-- Custom CSS -->
+<link rel="stylesheet" href="css/login-page.css" />
+
+</head>
+<body>
+	<div class="container col-md-4 col-md-offset-4 vertically-middle">
+		<div class="panel panel-default">
+			<div class="panel-heading login-panel-heading">
+				<h4>Welcome to To-Do Portal - Login</h4>
+			</div>
+			<div class="panel-body">
+				<form name="login_form" id="login_form" method="post"
+					action="j_security_check" align="center"
+					onsubmit="return validateForm()" novalidate="novalidate"
+					class="form-horizontal">
+					<div class="form-group" style="margin-top:1px;">
+						<label class="control-label col-md-2" for="userId">User ID</label>
+						<div class="col-md-8">
+							<input type="text" name="j_username" id="User_name"
+								ng-model="Username" value="" onkeyup="usrFunction()"
+								placeholder="Enter Login ID">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-2" for="pwd">Password</label>
+						<div class="col-md-8">
+							<input type="password" name="j_password" id="User_password"
+								ng-model="password" value="" onkeyup="usrFunction()"
+								placeholder="Enter password">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-md-offset-5 col-md-2">
+							<button type="submit" class="btn btn-warning btn-lg">Login</button>
+						</div>
+					</div>
+					<div>Invalid Username or Pasword </div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

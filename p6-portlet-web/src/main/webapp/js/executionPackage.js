@@ -120,11 +120,11 @@ app.controller('executionPkgPopupController', [
 	  };
 	  $scope.saveExecutionPackage = function() {
 			console.log('$scope.createExecPkgWOs in saveExecutionPackage: ' + JSON.stringify($scope.createExecPkgWOs));
-		  $scope.createExecPkgReq = {createDTO:$scope.createExecPkgWOs,leadCrew:$scope.selectedLeadCrew};
+		  $scope.createExecPkgReq = {workOrders:$scope.createExecPkgWOs,leadCrew:$scope.selectedLeadCrew};
 			console.log('Save execution package called with createExecPkgReq: ' + JSON.stringify($scope.createExecPkgReq));
 			var req = {
 				 method: 'POST',
-				 url: '/p6-portal-service/scheduler/saveExecutionPackages',
+				 url: '/p6-portal-service/scheduler/executionpackage/createOrUpdate',
 				 headers: {
 				   'Content-Type': 'application/json'
 				 },

@@ -3,6 +3,8 @@
  */
 package au.com.wp.corp.p6.scheduling.controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -22,20 +24,25 @@ public class HomeController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ModelAndView home(HttpServletRequest request) {
-		
-		logger.debug("Enter into P6 Scheduling Application ...");
-		
-		return new ModelAndView("redirect:/web/home");
-	}
-
-	@RequestMapping(value = "/web/home", method = RequestMethod.GET)
+	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public String mediahome(HttpServletRequest request) {
 
 		logger.debug("request attributes - is user role 'amr_users_non_prod'- {} , user name- {}, session id - {} ",
-				request.isUserInRole("amr_users_non_prod"), request.getRemoteUser(), request.getSession().getId());
+				request.isUserInRole("p6_portal_users_non_prod"), request.getRemoteUser(), request.getSession().getId());
 		return "welcome";
+	}
+	
+	
+	@RequestMapping("/auth/login")
+	public String login(Map<String, Object> map) {
+
+		return "login";
+	}
+	
+	@RequestMapping("/auth/error")
+	public String error(Map<String, Object> map) {
+
+		return "error";
 	}
 	
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
