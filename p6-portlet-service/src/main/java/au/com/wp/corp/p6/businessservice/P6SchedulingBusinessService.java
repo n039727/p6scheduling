@@ -7,22 +7,23 @@ import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
-import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 
 
 public interface P6SchedulingBusinessService {
 	
-	public List<WorkOrder> retrieveJobs(WorkOrderSearchInput input);
-	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchInput input);
+	public List<WorkOrder> retrieveJobs(WorkOrderSearchRequest input);
+	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input);
 	public List<WorkOrder> saveWorkOrder(WorkOrder workOrder);
 	public List<TaskDTO> listTasks() throws P6BusinessException;
 	public List<ToDoItem> fetchToDos();
-	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query);
+	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query);
 	public WorkOrder saveToDo(WorkOrder workOrder);
 	public List<ExecutionPackageDTO> fetchExecutionPackageList();
 	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) throws P6BusinessException;
-	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchInput body);
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest body);
 	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus body);
+	public List<WorkOrder> search(WorkOrderSearchRequest input);
 
 }

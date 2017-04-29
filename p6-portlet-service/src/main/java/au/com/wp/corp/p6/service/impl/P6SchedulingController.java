@@ -17,49 +17,57 @@ import org.springframework.web.bind.annotation.RestController;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
-import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 
-
-
 @RestController
-public class P6SchedulingController{
+public class P6SchedulingController {
 	private static final Logger logger = LoggerFactory.getLogger(P6SchedulingController.class);
-   
+
 	@Autowired
-    P6SchedulingBusinessService p6Service;
-    
-    @RequestMapping(value = "/retrieveWorkOrders" , 
-    		method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-	public ResponseEntity<List<WorkOrder>> retrieveWorkOrders(RequestEntity<WorkOrderSearchInput> input) {
-    	 return new ResponseEntity<List<WorkOrder>>(p6Service.retrieveWorkOrders(null),HttpStatus.OK);
+	P6SchedulingBusinessService p6Service;
+
+	@RequestMapping(value = "/retrieveWorkOrders", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public ResponseEntity<List<WorkOrder>> retrieveWorkOrders(RequestEntity<WorkOrderSearchRequest> input) {
+		return new ResponseEntity<List<WorkOrder>>(p6Service.retrieveWorkOrders(null), HttpStatus.OK);
 	}
-    @RequestMapping(value = "/retrieveJobs" , 
-    		method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-	public ResponseEntity<List<WorkOrder>> retrieveJobs(RequestEntity<WorkOrderSearchInput> input) {
-    	return new ResponseEntity<List<WorkOrder>>(p6Service.retrieveJobs(null),HttpStatus.OK);
+
+	@RequestMapping(value = "/retrieveJobs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public ResponseEntity<List<WorkOrder>> retrieveJobs(RequestEntity<WorkOrderSearchRequest> input) {
+		return new ResponseEntity<List<WorkOrder>>(p6Service.retrieveJobs(null), HttpStatus.OK);
 	}
-    @RequestMapping(value = "/saveWorkOrder" , 
-    		method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-    		consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
+
+	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
+	@ResponseBody
+	public ResponseEntity<List<WorkOrder>> search(RequestEntity<WorkOrderSearchRequest> request)
+			throws P6BaseException {
+		if (request.getBody() == null) {
+			logger.error(" Invalid request - {}", request.getBody());
+			throw new P6BaseException(" invalid request ");
+		}
+		logger.info("Search String # crews - {} , start date - {}", request.getBody().getCrewList(),
+				request.getBody().getFromDate());
+		return new ResponseEntity<List<WorkOrder>>(p6Service.search(request.getBody()), HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/saveWorkOrder", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
 	public ResponseEntity<List<WorkOrder>> saveWorkOrder(RequestEntity<WorkOrder> workOrder) {
-    	return new ResponseEntity<List<WorkOrder>>(p6Service.saveWorkOrder(workOrder.getBody()),HttpStatus.CREATED);
+		return new ResponseEntity<List<WorkOrder>>(p6Service.saveWorkOrder(workOrder.getBody()), HttpStatus.CREATED);
 	}
-    @RequestMapping(value = "/listTasks" , 
-    		method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-   	public ResponseEntity<List<TaskDTO>> listTasks() throws P6BaseException {
-       	try {
-			return new ResponseEntity<List<TaskDTO>>(p6Service.listTasks(),HttpStatus.CREATED);
+
+	@RequestMapping(value = "/listTasks", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public ResponseEntity<List<TaskDTO>> listTasks() throws P6BaseException {
+		try {
+			return new ResponseEntity<List<TaskDTO>>(p6Service.listTasks(), HttpStatus.CREATED);
 		} catch (P6BusinessException exc) {
 			logger.error("An error occurs while retrieving list of tasks ", exc);
 			throw new P6BaseException(exc);
 		}
-   	}
-	
-}
+	}
 
+}

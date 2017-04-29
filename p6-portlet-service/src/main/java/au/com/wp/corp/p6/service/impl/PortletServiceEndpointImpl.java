@@ -22,7 +22,7 @@ import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
-import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.service.PortletServiceEndpoint;
 import au.com.wp.corp.p6.validation.Validator;
@@ -51,7 +51,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	@RequestMapping(value="/searchWorkOrder", method = RequestMethod.GET,
 			produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
 	@Override
-	public List<WorkOrder> fetchWorkOrdersForAddUpdateScheduling(WorkOrderSearchInput query) {
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateScheduling(WorkOrderSearchRequest query) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -60,7 +60,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 			produces = {MediaType.APPLICATION_JSON_VALUE}, 
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
 	@Override
-	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchInput> query){
+	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchRequest> query){
 		logger.debug("DEPOT_ID>>>>{}", query.getBody().getDepotList());
 		return p6BusinessService.fetchWorkOrdersForViewToDoStatus(query.getBody());
 	}
@@ -69,7 +69,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 			produces = {MediaType.APPLICATION_JSON_VALUE}, 
 			consumes = {MediaType.APPLICATION_JSON_VALUE})
 	@Override
-	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchInput> query){ 
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchRequest> query){ 
 		logger.debug("DEPOT_ID>>>>{}", query.getBody().getDepotList());
 		return p6BusinessService.fetchWorkOrdersForAddUpdateToDo(query.getBody());
 	}

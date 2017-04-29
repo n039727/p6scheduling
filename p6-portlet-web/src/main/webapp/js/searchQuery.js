@@ -6,12 +6,21 @@ function searchQueryController($scope) {
 	
 	this.prepareSearch = function() {
 		console.log('search called');
+		
+		$scope.depots = [];
+		for (var i = 0, l = this.selectedDepotList.length; i < l; i++) {
+			$scope.depots.push (this.selectedDepotList[i].name);
+		}
+		$scope.crews = [];
+		for (var i = 0, l = this.selectedCrewList.length; i < l; i++) {
+			$scope.crews.push (this.selectedCrewList[i].name);
+		}
 		var queryObj = {
-			depots: this.selectedDepotList,
-			crews: this.selectedCrewList,
-			wo: this.wo,
-			scheduleFromDate: this.scheduleFromDate,
-			scheduleToDate: this.scheduleToDate
+			depotList: $scope.depots,
+			crewList: $scope.crews,
+			workOrderId: this.wo,
+			fromDate: this.scheduleFromDate,
+			toDate: this.scheduleToDate
 		};
 		if(this.validateForm()){
 			console.log('queryObject:' + JSON.stringify(queryObj));

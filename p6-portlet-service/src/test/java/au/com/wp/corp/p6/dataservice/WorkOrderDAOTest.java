@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
-import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
@@ -69,13 +69,13 @@ public class WorkOrderDAOTest {
 
 	/**
 	 * Test method for
-	 * {@link au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl#fetchWorkOrdersForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchInput)}.
+	 * {@link au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl#fetchWorkOrdersForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchRequest)}.
 	 */
 	@Rollback(true)
 	@Test
 	public void testFetchWorkOrdersForViewToDoStatus() {
 		List<Task> tasks = null;
-		WorkOrderSearchInput input = new WorkOrderSearchInput();
+		WorkOrderSearchRequest input = new WorkOrderSearchRequest();
 		input.setWorkOrderId("ABCD");
 		tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(input);
 		assertTrue(tasks.isEmpty());

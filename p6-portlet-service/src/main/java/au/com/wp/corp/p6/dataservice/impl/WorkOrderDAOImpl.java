@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
-import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 
@@ -37,7 +37,7 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	 */
 	@Override
 	@Transactional
-	public List<Task> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query) {
+	public List<Task> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) {
 		logger.debug("sessionfactory initialized ====={}",sessionFactory);
 		
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Task.class);

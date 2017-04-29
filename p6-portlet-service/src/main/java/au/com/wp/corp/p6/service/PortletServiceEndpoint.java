@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.WorkOrder;
-import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
@@ -22,14 +22,14 @@ import au.com.wp.corp.p6.dto.ViewToDoStatus;
  */
 public interface PortletServiceEndpoint {
 	
-	List<WorkOrder> fetchWorkOrdersForAddUpdateScheduling(WorkOrderSearchInput query);
-	List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchInput> query);
+	List<WorkOrder> fetchWorkOrdersForAddUpdateScheduling(WorkOrderSearchRequest query);
+	List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchRequest> query);
 	/*List<WorkOrder> fetchWorkOrdersForExecutionPackage(WorkOrderQuery query);*/
 	ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder);
 	
 	List<ToDoItem> fetchToDoItems();
 	ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO) throws P6BaseException;
-	List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchInput> query);
+	List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchRequest> query);
 	ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus);
 
 }

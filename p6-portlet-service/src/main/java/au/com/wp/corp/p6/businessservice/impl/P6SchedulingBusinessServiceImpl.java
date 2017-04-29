@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -33,8 +34,9 @@ import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
-import au.com.wp.corp.p6.dto.WorkOrderSearchInput;
+import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.mock.CreateP6MockData;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
@@ -60,6 +62,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	private ExecutionPackageDao executionPackageDao;
 
+	
+	@Autowired
+	CreateP6MockData mockData;
+	
+	
 	@PostConstruct
 	public void initData() {
 		logger.info("Initializing Datastore..");
@@ -96,7 +103,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		mapStorage.put(workOrder3.getWorkOrders().get(0), workOrder3);
 	}
 
-	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchInput input) {
+	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) {
 		List<WorkOrder> workOrders = new ArrayList<WorkOrder>();
 		/* this code will be replaced will the actual P6 Service call */
 		WorkOrder workOrder1 = new WorkOrder();
@@ -132,8 +139,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return workOrders;
 
 	}
+	
+	@Override
+	public List<WorkOrder> search(WorkOrderSearchRequest input) {
+		return mockData.search(input);
+	}
 
-	public List<WorkOrder> retrieveJobs(WorkOrderSearchInput input) {
+	public List<WorkOrder> retrieveJobs(WorkOrderSearchRequest input) {
 		/*for (WorkOrder workOrder : mapStorage.values()) {
 			List<TodoAssignment> list = todoDAO.fetchToDosByWorkOrder(workOrder);
 			List<ToDoItem> toDoItems = new ArrayList<ToDoItem>();
@@ -208,7 +220,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	@Override
-	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchInput query) {
+	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) {
 
 		List<Task> tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
 		List<ViewToDoStatus> toDoStatuses = new ArrayList<ViewToDoStatus>();
@@ -383,7 +395,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	@Override
-	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchInput query) {
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest query) {
 		
 		List<Task> tasks = null;
 		ExecutionPackage executionPackage = null;
