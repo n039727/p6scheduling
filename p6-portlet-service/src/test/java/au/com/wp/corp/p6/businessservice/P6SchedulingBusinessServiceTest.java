@@ -3,15 +3,12 @@
  */
 package au.com.wp.corp.p6.businessservice;
 
-import static org.junit.Assert.*;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import au.com.wp.corp.p6.businessservice.impl.P6SchedulingBusinessServiceImpl;
