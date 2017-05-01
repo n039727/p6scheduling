@@ -6,14 +6,12 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,13 +26,16 @@ import javax.persistence.TemporalType;
 @NamedQuery(name="TodoAssignment.findAll", query="SELECT t FROM TodoAssignment t")
 public class TodoAssignment implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+/**
 	@Id
 	@SequenceGenerator(name="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR", sequenceName="ASIGNMT_ID" , allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR")
 	@Column(name="ASIGNMT_ID")
 	private long asignmtId;
-
+**/
+	@EmbeddedId
+	private TodoAssignmentPK todoAssignMentPK =  new TodoAssignmentPK();
+	
 	private String cmts;
 
 	@Column(name="CRTD_TS")
@@ -68,24 +69,15 @@ public class TodoAssignment implements Serializable {
 	private ExecutionPackage executionPackage;
 
 	//bi-directional many-to-one association to Task
-	@ManyToOne
-	@JoinColumn(name="TASK_ID")
+	@Column(name="TASK_ID")
 	private Task task;
 
 	//bi-directional many-to-one association to TodoTemplate
 	@ManyToOne
-	@JoinColumn(name="TMPLT_ID")
+	@JoinColumn(name="TMPLT_ID", insertable=false, updatable=false)
 	private TodoTemplate todoTemplate;
 
 	public TodoAssignment() {
-	}
-
-	public long getAsignmtId() {
-		return this.asignmtId;
-	}
-
-	public void setAsignmtId(long asignmtId) {
-		this.asignmtId = asignmtId;
 	}
 
 	public String getCmts() {
@@ -176,12 +168,74 @@ public class TodoAssignment implements Serializable {
 		this.task = task;
 	}
 
+	/**
+	 * @return the todoTemplate
+	 */
 	public TodoTemplate getTodoTemplate() {
-		return this.todoTemplate;
+		return todoTemplate;
 	}
 
+	/**
+	 * @param todoTemplate the todoTemplate to set
+	 */
 	public void setTodoTemplate(TodoTemplate todoTemplate) {
 		this.todoTemplate = todoTemplate;
 	}
 
+
+
+	@Embeddable
+	private class TodoAssignmentPK implements Serializable{
+		
+		private long exctn_Pckg_Id;
+
+		private String task_Id;
+
+		private long tmplt_Id;
+
+		/**
+		 * @return the exctn_Pckg_Id
+		 */
+		public long getExctn_Pckg_Id() {
+			return exctn_Pckg_Id;
+		}
+
+		/**
+		 * @param exctn_Pckg_Id the exctn_Pckg_Id to set
+		 */
+		public void setExctn_Pckg_Id(long exctn_Pckg_Id) {
+			this.exctn_Pckg_Id = exctn_Pckg_Id;
+		}
+
+		/**
+		 * @return the task_Id
+		 */
+		public String getTask_Id() {
+			return task_Id;
+		}
+
+		/**
+		 * @param task_Id the task_Id to set
+		 */
+		public void setTask_Id(String task_Id) {
+			this.task_Id = task_Id;
+		}
+
+		/**
+		 * @return the tmplt_Id
+		 */
+		public long getTmplt_Id() {
+			return tmplt_Id;
+		}
+
+		/**
+		 * @param tmplt_Id the tmplt_Id to set
+		 */
+		public void setTmplt_Id(long tmplt_Id) {
+			this.tmplt_Id = tmplt_Id;
+		}
+
+
+	}
 }
+

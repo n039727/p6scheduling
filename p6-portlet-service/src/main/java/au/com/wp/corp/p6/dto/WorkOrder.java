@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class WorkOrder {
 	
-	private String executionPackage;
+	private String exctnPckgName;
 	private List<String> workOrders;
 	private String workOrderId;
 	private String scheduleDate;
@@ -19,6 +19,9 @@ public class WorkOrder {
 	private String crewNames;
 	private String depotId;
 	private String meterialReqRef;
+	
+	private String actioned;
+	
 	
 	
 	/**
@@ -45,11 +48,18 @@ public class WorkOrder {
 	public void setDepotId(String depotId) {
 		this.depotId = depotId;
 	}
-	public String getExecutionPackage() {
-		return executionPackage;
+	
+	/**
+	 * @return the exctnPckgName
+	 */
+	public String getExctnPckgName() {
+		return exctnPckgName;
 	}
-	public void setExecutionPackage(String executionPackage) {
-		this.executionPackage = executionPackage;
+	/**
+	 * @param exctnPckgName the exctnPckgName to set
+	 */
+	public void setExctnPckgName(String exctnPckgName) {
+		this.exctnPckgName = exctnPckgName;
 	}
 	public List<String> getWorkOrders() {
 		return workOrders;
@@ -93,8 +103,17 @@ public class WorkOrder {
 	public void setCrewNames(String crewNames) {
 		this.crewNames = crewNames;
 	}
+	/**
+	 * @return the actioned
+	 */
+	public String getActioned() {
+		return actioned;
+	}
+	/**
+	 * @param actioned the actioned to set
+	 */
+	public void setActioned(String actioned) {
+		this.actioned = actioned;
+	}
 	
-	
-	
-
 }

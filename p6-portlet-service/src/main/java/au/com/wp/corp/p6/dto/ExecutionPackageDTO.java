@@ -3,17 +3,24 @@ package au.com.wp.corp.p6.dto;
 import java.util.List;
 
 public class ExecutionPackageDTO {
-	private String exctnPckgNam;
+	private String exctnPckgName;
 	private String leadCrew;
 	private String crewNames;
 	private List<WorkOrder> workOrders;
 	
-	public String getExctnPckgNam() {
-		return exctnPckgNam;
+	/**
+	 * @return the exctnPckgName
+	 */
+	public String getExctnPckgName() {
+		return exctnPckgName;
 	}
-	public void setExctnPckgNam(String exctnPckgNam) {
-		this.exctnPckgNam = exctnPckgNam;
+	/**
+	 * @param exctnPckgName the exctnPckgName to set
+	 */
+	public void setExctnPckgName(String exctnPckgName) {
+		this.exctnPckgName = exctnPckgName;
 	}
+	
 	public String getLeadCrew() {
 		return leadCrew;
 	}

@@ -129,11 +129,11 @@ public class TodoDAOImpl implements TodoDAO {
 
 			String depotId = workOrder.getDepotId();
 			String meterialRefs = workOrder.getMeterialReqRef();
-			logger.debug("Execution Package {}", workOrder.getExecutionPackage());
+			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 			@SuppressWarnings("unchecked")
 			List<ExecutionPackage> executionPackage = (List<ExecutionPackage>) getRecordsByField("exctnPckgNam",
 					ExecutionPackage.class,
-					(workOrder.getExecutionPackage() == null ? "PKG1" : workOrder.getExecutionPackage()));
+					(workOrder.getExctnPckgName() == null ? "PKG1" : workOrder.getExctnPckgName()));
 
 			logger.debug("Execution Package retrieved as {}", executionPackage.get(0));
 

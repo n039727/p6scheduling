@@ -50,9 +50,9 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	@Override
 	public ExecutionPackageDTO createOrUpdateExecutionPackage(ExecutionPackageDTO execPackgDTO, String userName) throws P6BusinessException {
 		logger.info("calling create or update execution package with # {}, and user name# {}", execPackgDTO, userName);
-		execPackgDTO.setExctnPckgNam(createExceutionPackageId());
+		execPackgDTO.setExctnPckgName(createExceutionPackageId());
 		ExecutionPackage executionPackage = new ExecutionPackage();
-		executionPackage.setExctnPckgNam(execPackgDTO.getExctnPckgNam());
+		executionPackage.setExctnPckgNam(execPackgDTO.getExctnPckgName());
 		executionPackage.setLeadCrewId(execPackgDTO.getLeadCrew());
 		final List<WorkOrder> workOrders = execPackgDTO.getWorkOrders();
 		if (workOrders != null && !workOrders.isEmpty()) {
@@ -60,14 +60,25 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			Set<Task> tasks = new HashSet<>();
 			for (WorkOrder workOrder : workOrders) {
 				logger.debug("For each workorder {} corresponding Task is fecthed", workOrder.getWorkOrderId());
-				final Task task = executionPackageDao.getTaskbyId(workOrder.getWorkOrderId());
+				Task task = executionPackageDao.getTaskbyId(workOrder.getWorkOrderId());
 				if (task != null) {
 					logger.debug("Task {} is fecthed", task.getTaskId());
 					task.setExecutionPackage(executionPackage);
 					task.setLstUpdtdUsr(userName);
 					task.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
 					tasks.add(task);
-				} 
+				} else {
+					task = new Task();
+					task.setCrewId(workOrder.getCrewNames());
+					task.setTaskId(workOrder.getWorkOrderId());
+					task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
+					task.setExecutionPackage(executionPackage);
+					task.setCrtdUsr(userName);
+					task.setCrtdTs(new Timestamp(System.currentTimeMillis()));
+					task.setLstUpdtdUsr(userName);
+					task.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
+					tasks.add(task);
+				}
 			}
 			executionPackage.setTasks(tasks);
 
@@ -77,7 +88,8 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		executionPackage.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
 		executionPackage.setLstUpdtdUsr(userName);
 		executionPackageDao.createOrUpdateExecPackage(executionPackage);
-		logger.info("execution package has been created with execution package id # {} ", execPackgDTO.getExctnPckgNam());
+		executionPackageDao.createOrUpdateTasks(executionPackage.getTasks());
+		logger.info("execution package has been created with execution package id # {} ", execPackgDTO.getExctnPckgName());
 		return execPackgDTO;
 		
 	}

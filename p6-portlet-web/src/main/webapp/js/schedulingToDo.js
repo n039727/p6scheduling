@@ -87,6 +87,7 @@ function schedulingToDoResultController($scope, $http) {
 
 	ctrl.saveToDo = function(wo){
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
+		wo.crewNames = wo.crewNames.join(',');
 		var req = {
 			 method: 'POST',
 			 url: '/p6-portal-service/scheduler/saveWorkOrder',
@@ -110,8 +111,8 @@ function schedulingToDoResultController($scope, $http) {
 	ctrl.fetchToDoAgainstWO = function(wo) {
 		serviceUrl = "/p6-portal-service/scheduler/fetchWOForAddUpdateToDo";
 		var query = {};
-		if (wo.exctnPckgNam) {
-			query.execPckgName = wo.exctnPckgNam;
+		if (wo.exctnPckgName) {
+			query.execPckgName = wo.exctnPckgName;
 		} else {
 			query.workOrderId = wo.workOrders[0];
 		}

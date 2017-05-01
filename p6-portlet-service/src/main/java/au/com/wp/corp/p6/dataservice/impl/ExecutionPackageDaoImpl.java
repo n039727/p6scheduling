@@ -76,7 +76,7 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 		logger.debug("sessionfactory initialized =====" + sessionFactory);
 		ExecutionPackage executionPackage = new ExecutionPackage();
 		logger.debug("Creating Execution Package");
-		executionPackage.setExctnPckgNam(executionPackageDTO.getExctnPckgNam());
+		executionPackage.setExctnPckgNam(executionPackageDTO.getExctnPckgName());
 		executionPackage.setLeadCrewId(executionPackageDTO.getLeadCrew());
 		List<WorkOrder> workOrders = executionPackageDTO.getWorkOrders();
 		if (workOrders != null && workOrders.size() > 0) {
@@ -161,5 +161,31 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 		getSession().clear();
 		return status;
 	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see au.com.wp.corp.p6.dataservice.ExecutionPackageDao#
+	 * createOrUpdateExecPackage(au.com.wp.corp.p6.model.ExecutionPackage)
+	 */
+	@org.springframework.transaction.annotation.Transactional
+	@Override
+	public boolean createOrUpdateTasks(Set<Task> tasks) throws P6DataAccessException {
+		logger.debug("inserting or updating the execution package and task details");
+		boolean status = Boolean.FALSE;
+		for ( Task task : tasks)
+		try {
+			getSession().saveOrUpdate(task);
+			status = Boolean.TRUE;
+		} catch (Exception e) {
+			parseException(e);
+		}
+		logger.debug("inserted or updated the execution package and task details");
+		getSession().flush();
+		getSession().clear();
+		return status;
+	}
+
 
 }

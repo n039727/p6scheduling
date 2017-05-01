@@ -120,6 +120,7 @@ public class TodoTemplate implements Serializable {
 		this.todoNam = todoNam;
 	}
 
+	
 	public List<TodoAssignment> getTodoAssignments() {
 		return this.todoAssignments;
 	}
@@ -127,7 +128,7 @@ public class TodoTemplate implements Serializable {
 	public void setTodoAssignments(List<TodoAssignment> todoAssignments) {
 		this.todoAssignments = todoAssignments;
 	}
-
+	
 	public TodoAssignment addTodoAssignment(TodoAssignment todoAssignment) {
 		getTodoAssignments().add(todoAssignment);
 		todoAssignment.setTodoTemplate(this);

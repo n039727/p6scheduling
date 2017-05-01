@@ -22,6 +22,8 @@ public class DateUtils {
 	private static final Logger logger = LoggerFactory.getLogger(DateUtils.class);
 	private final SimpleDateFormat DATE_FORMAT_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 	
+	private final SimpleDateFormat DATE_FORMAT_DD_MM_YYYY = new SimpleDateFormat("dd/MM/yyyy");
+	
 	private final SimpleDateFormat DATE_FORMAT_DD_MM_YYYY_TIMESTAMP = new SimpleDateFormat("dd-MM-yyyy_hhmmssMs");
 	
 	public String toStringYYYY_MM_DD(Date dt) {
@@ -42,6 +44,17 @@ public class DateUtils {
 	public String getCurrentDateWithTimeStamp (){
 		return DATE_FORMAT_DD_MM_YYYY_TIMESTAMP.format(new Date());
 		
+	}
+	
+	
+	public Date toDateFromDD_MM_YYYY (final String dtString ){
+		Date dt = null;
+		try {
+			dt = DATE_FORMAT_DD_MM_YYYY.parse(dtString);
+		} catch (ParseException e) {
+			logger.error("Error parsing date: " + dtString, e);
+		}
+		return dt;
 	}
 	
 }

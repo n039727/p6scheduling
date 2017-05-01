@@ -17,7 +17,7 @@ function executionPackageResultController($scope, $http,ModalService) {
 				if(!ctrl.selectedExecPckg)
 					ctrl.selectedExecPckg = [];
 					
-				ctrl.selectedExecPckg.push({leadCrew:wo.leadCrew, workOrders:[wo.workOrders[0]],scheduleDate:wo.scheduleDate});
+				ctrl.selectedExecPckg.push({leadCrew:wo.crewNames, workOrders:[wo.workOrders[0]],scheduleDate:wo.scheduleDate});
 				console.log('WO after adding execution pckg: ' + JSON.stringify(ctrl.selectedExecPckg));
 			}
 			
@@ -96,8 +96,10 @@ app.controller('executionPkgPopupController', [
 			if(wo){
 				for(i=0; i<wo.length;i++) {  
 					$scope.woList.push(wo[i].workOrders[0]);
-					$scope.leadCrewList.push(wo[i].leadCrew);
-					$scope.createExecPkgWOs.push({workOrderId:wo[i].workOrders[0],scheduleDate:wo[i].scheduleDate,crewAssigned:wo[i].leadCrew });
+					if ($scope.leadCrewList.indexOf(wo[i].leadCrew) == -1){
+						$scope.leadCrewList.push(wo[i].leadCrew);
+					}
+					$scope.createExecPkgWOs.push({workOrderId:wo[i].workOrders[0],scheduleDate:wo[i].scheduleDate,crewNames:wo[i].crewNames });
 					$scope.scheduleDate = wo[i].scheduleDate;
 				}
 			}
@@ -137,7 +139,7 @@ app.controller('executionPkgPopupController', [
 				close({
 					status: 'SUCCESS',
 					data: {
-						exctnPckgNam: response.data.exctnPckgNam, 
+						exctnPckgName: response.data.exctnPckgName, 
 						workOrders:$scope.wo, 
 						leadCrew:$scope.selectedLeadCrew, 
 						crewNames: $scope.leadCrews,

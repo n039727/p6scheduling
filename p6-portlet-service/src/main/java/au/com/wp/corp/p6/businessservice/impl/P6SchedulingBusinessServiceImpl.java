@@ -106,7 +106,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		List<WorkOrder> workOrders = new ArrayList<WorkOrder>();
 		/* this code will be replaced will the actual P6 Service call */
 		WorkOrder workOrder1 = new WorkOrder();
-		workOrder1.setExecutionPackage("test execution 1");
+		workOrder1.setExctnPckgName("test execution 1");
 		workOrder1.setLeadCrew("MOST1");
 		workOrder1.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
 		workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
@@ -119,7 +119,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 		workOrders.add(workOrder1);
 		WorkOrder workOrder2 = new WorkOrder();
-		workOrder2.setExecutionPackage("test execution 1");
+		workOrder2.setExctnPckgName("test execution 1");
 		workOrder2.setLeadCrew("MOST1");
 		workOrder2.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
 		workOrder2.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
@@ -127,7 +127,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrders.add(workOrder2);
 
 		WorkOrder workOrder3 = new WorkOrder();
-		workOrder3.setExecutionPackage("test execution 1");
+		workOrder3.setExctnPckgName("test execution 1");
 		workOrder3.setLeadCrew("MOST1");
 		workOrder3.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
 		workOrder3.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
@@ -314,6 +314,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	private void prepareToDoAssignmentList(Task updatedTask, WorkOrder workOrder) {
+		
 		if (null != updatedTask && null != updatedTask.getTodoAssignments())
 			for (Iterator<TodoAssignment> itr = updatedTask.getTodoAssignments().iterator(); itr.hasNext();) {
 				TodoAssignment todo = itr.next();
@@ -346,6 +347,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				TodoAssignment todoAssignment = new TodoAssignment();
 				todoAssignment.setTask(updatedTask);
 				todoAssignment.setExecutionPackage(updatedTask.getExecutionPackage());
+				logger.debug("Todo id for #{} - {}", item.getToDoName(), todoDAO.getToDoId(item.getToDoName()));
 				todoAssignment.setTodoId(todoDAO.getToDoId(item.getToDoName()));
 				todos.add(todoAssignment);
 				updatedTask.setTodoAssignments(todos);
@@ -375,15 +377,14 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		dbTask.setSchdDt(scheduleDate);
 		dbTask.setDepotId(workOrder.getDepotId());
 		dbTask.setMatrlReqRef(workOrder.getMeterialReqRef());
-		dbTask.setExecutionPackage(executionPackageDao.fetch(
-				StringUtils.isEmpty(workOrder.getExecutionPackage()) ? "PKG1" : workOrder.getExecutionPackage()));
-		logger.debug("Execution Package {}", workOrder.getExecutionPackage());
+		dbTask.setExecutionPackage(executionPackageDao.fetch(workOrder.getExctnPckgName()));
+		logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		return dbTask;
 	}
 
 	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO)
 			throws P6BusinessException {
-		executionPackageDTO.setExctnPckgNam(getCurrentDateTimeMS());
+		executionPackageDTO.setExctnPckgName(getCurrentDateTimeMS());
 		executionPackageDTO = executionPackageDao.saveExecutionPackage(executionPackageDTO);
 		return executionPackageDTO;
 	}
@@ -427,7 +428,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			} else {
 				workOrder = new WorkOrder();
 				if (!"PKG1".equals(executionPkg))
-					workOrder.setExecutionPackage(executionPkg);
+					workOrder.setExctnPckgName(executionPkg);
 				else
 					executionPkg = task.getTaskId();
 				// TODO to decide the user to populate the comment
@@ -463,7 +464,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 		List<WorkOrder> workOrders = new ArrayList<WorkOrder>(workOrderMap.values());
 		for (WorkOrder workOrder : workOrders) {
-			String executionPkg = workOrder.getExecutionPackage();
+			String executionPkg = workOrder.getExctnPckgName();
 			if (StringUtils.isEmpty(executionPkg)) {
 				executionPkg = workOrder.getWorkOrders().get(0);
 			}

@@ -69,9 +69,9 @@ public class ExecutionPackageDaoTest {
 	public void testSaveExecutionPackage() {
 		ExecutionPackageDTO executionPackageDTO = new ExecutionPackageDTO();
 		String name = getCurrentDateTimeMS();
-		executionPackageDTO.setExctnPckgNam(name);
+		executionPackageDTO.setExctnPckgName(name);
 		executionPackageDTO = executionPackageDao.saveExecutionPackage(executionPackageDTO);
-		assertEquals(executionPackageDTO.getExctnPckgNam(), name);
+		assertEquals(executionPackageDTO.getExctnPckgName(), name);
 	}
 	
 	private  String getCurrentDateTimeMS() {

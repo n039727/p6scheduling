@@ -51,6 +51,9 @@ public class ExecutionPackage implements Serializable {
 
 	@Column(name="LST_UPDTD_USR")
 	private String lstUpdtdUsr;
+	
+	@Column(name="ACTN_FLG")
+	private String actioned = "N";
 
 	//bi-directional many-to-one association to Task
 	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
@@ -163,4 +166,19 @@ public class ExecutionPackage implements Serializable {
 		return todoAssignment;
 	}
 
+	/**
+	 * @return the actioned
+	 */
+	public String getActioned() {
+		return actioned;
+	}
+
+	/**
+	 * @param actioned the actioned to set
+	 */
+	public void setActioned(String actioned) {
+		this.actioned = actioned;
+	}
+
+	
 }
