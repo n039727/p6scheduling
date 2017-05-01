@@ -11,70 +11,70 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 
 /**
  * The persistent class for the TODO_ASSIGNMENT database table.
  * 
  */
 @Entity
-@Table(name="TODO_ASSIGNMENT")
-@NamedQuery(name="TodoAssignment.findAll", query="SELECT t FROM TodoAssignment t")
+@Table(name = "TODO_ASSIGNMENT")
+@NamedQuery(name = "TodoAssignment.findAll", query = "SELECT t FROM TodoAssignment t")
 public class TodoAssignment implements Serializable {
 	private static final long serialVersionUID = 1L;
-/**
-	@Id
-	@SequenceGenerator(name="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR", sequenceName="ASIGNMT_ID" , allocationSize=1)
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR")
-	@Column(name="ASIGNMT_ID")
-	private long asignmtId;
-**/
+	/**
+	 * @Id @SequenceGenerator(name="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR",
+	 *     sequenceName="ASIGNMT_ID" , allocationSize=1)
+	 * @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR") @Column(name="ASIGNMT_ID")
+	 *                                                   private long asignmtId;
+	 **/
 	@EmbeddedId
-	private TodoAssignmentPK todoAssignMentPK =  new TodoAssignmentPK();
-	
+	private TodoAssignmentPK todoAssignMentPK = new TodoAssignmentPK();
+
 	private String cmts;
 
-	@Column(name="CRTD_TS")
+	@Column(name = "CRTD_TS")
 	private Timestamp crtdTs;
 
-	@Column(name="CRTD_USR")
+	@Column(name = "CRTD_USR")
 	private String crtdUsr;
 
-	@Column(name="LST_UPDTD_TS")
+	@Column(name = "LST_UPDTD_TS")
 	private Timestamp lstUpdtdTs;
 
-	@Column(name="LST_UPDTD_USR")
+	@Column(name = "LST_UPDTD_USR")
 	private String lstUpdtdUsr;
 
 	@Temporal(TemporalType.DATE)
-	@Column(name="REQD_BY_DT")
+	@Column(name = "REQD_BY_DT")
 	private Date reqdByDt;
 
-	@Column(name="STAT")
+	@Column(name = "STAT")
 	private String stat;
 
-	@Column(name="SUPRTNG_DOC_LNK")
+	@Column(name = "SUPRTNG_DOC_LNK")
 	private String suprtngDocLnk;
 
-	@Column(name="TODO_ID")
+	@Column(name = "TODO_ID")
 	private BigDecimal todoId;
 
-	//bi-directional many-to-one association to ExecutionPackage
+	// bi-directional many-to-one association to ExecutionPackage
 	@ManyToOne
-	@JoinColumn(name="EXCTN_PCKG_ID")
+	@JoinColumn(name = "EXCTN_PCKG_ID")
 	private ExecutionPackage executionPackage;
 
-	//bi-directional many-to-one association to Task
-	@Column(name="TASK_ID")
+	// bi-directional many-to-one association to Task
+	@ManyToOne
+	@JoinColumn(name = "TASK_ID")
 	private Task task;
 
-	//bi-directional many-to-one association to TodoTemplate
+	// bi-directional many-to-one association to TodoTemplate
 	@ManyToOne
-	@JoinColumn(name="TMPLT_ID", insertable=false, updatable=false)
+	@JoinColumn(name = "TMPLT_ID", insertable = false, updatable = false)
 	private TodoTemplate todoTemplate;
 
 	public TodoAssignment() {
@@ -176,22 +176,39 @@ public class TodoAssignment implements Serializable {
 	}
 
 	/**
-	 * @param todoTemplate the todoTemplate to set
+	 * @param todoTemplate
+	 *            the todoTemplate to set
 	 */
 	public void setTodoTemplate(TodoTemplate todoTemplate) {
 		this.todoTemplate = todoTemplate;
 	}
 
-
-
 	@Embeddable
-	private class TodoAssignmentPK implements Serializable{
-		
+	private class TodoAssignmentPK implements Serializable {
+
 		private long exctn_Pckg_Id;
 
 		private String task_Id;
 
 		private long tmplt_Id;
+		
+		private BigDecimal todo_Id;
+		
+
+		/**
+		 * @return the todo_Id
+		 */
+		public BigDecimal getTodo_Id() {
+			return todo_Id;
+		}
+
+		/**
+		 * @param todo_Id the todo_Id to set
+		 */
+		public void setTodo_Id(BigDecimal todo_Id) {
+			this.todo_Id = todo_Id;
+		}
+		
 
 		/**
 		 * @return the exctn_Pckg_Id
@@ -201,7 +218,8 @@ public class TodoAssignment implements Serializable {
 		}
 
 		/**
-		 * @param exctn_Pckg_Id the exctn_Pckg_Id to set
+		 * @param exctn_Pckg_Id
+		 *            the exctn_Pckg_Id to set
 		 */
 		public void setExctn_Pckg_Id(long exctn_Pckg_Id) {
 			this.exctn_Pckg_Id = exctn_Pckg_Id;
@@ -215,7 +233,8 @@ public class TodoAssignment implements Serializable {
 		}
 
 		/**
-		 * @param task_Id the task_Id to set
+		 * @param task_Id
+		 *            the task_Id to set
 		 */
 		public void setTask_Id(String task_Id) {
 			this.task_Id = task_Id;
@@ -229,13 +248,33 @@ public class TodoAssignment implements Serializable {
 		}
 
 		/**
-		 * @param tmplt_Id the tmplt_Id to set
+		 * @param tmplt_Id
+		 *            the tmplt_Id to set
 		 */
 		public void setTmplt_Id(long tmplt_Id) {
 			this.tmplt_Id = tmplt_Id;
 		}
 
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof TodoAssignmentPK) {
+				TodoAssignmentPK todoAssignPK = (TodoAssignmentPK) obj;
+
+				if ((todoAssignPK.getExctn_Pckg_Id() == this.exctn_Pckg_Id)
+						&& (todoAssignPK.task_Id != null && todoAssignPK.task_Id.equals(this.task_Id))
+						&& (todoAssignPK.tmplt_Id == this.tmplt_Id) &&  todoAssignPK.todo_Id.compareTo(this.todo_Id) == 0) {
+						return true;
+				}
+			}
+
+			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			return 100*7;
+		}
+		
 
 	}
 }
-
