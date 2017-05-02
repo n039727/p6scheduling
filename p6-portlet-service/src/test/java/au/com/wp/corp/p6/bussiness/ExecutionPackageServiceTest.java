@@ -93,10 +93,12 @@ public class ExecutionPackageServiceTest {
 		WorkOrder workOrder = null;
 		workOrder = new WorkOrder();
 		workOrder.setWorkOrderId("WO1231");
+		workOrder.setCrewNames("CREW1");
 		workOrders.add(workOrder);
 
 		Task task = new Task();
 		task.setTaskId("WO1231");
+		task.setCrewId("CREW1");
 		tasks.add(task);
 		Mockito.when(executionPckgDao.getTaskbyId("WO1231")).thenReturn(task);
 		execPckg.setWorkOrders(workOrders);
@@ -131,10 +133,12 @@ public class ExecutionPackageServiceTest {
 		for (int i = 0; i < 10; i++) {
 			workOrder = new WorkOrder();
 			workOrder.setWorkOrderId("WO123" + i);
+			workOrder.setCrewNames("CREW"+i);
 			workOrders.add(workOrder);
 
 			Task task = new Task();
 			task.setTaskId("WO123" + i);
+			task.setCrewId("CREW"+i);
 			tasks.add(task);
 			Mockito.when(executionPckgDao.getTaskbyId("WO123" + i)).thenThrow(P6DataAccessException.class);
 		}
