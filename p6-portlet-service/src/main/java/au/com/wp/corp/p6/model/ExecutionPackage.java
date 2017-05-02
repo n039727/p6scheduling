@@ -2,6 +2,7 @@ package au.com.wp.corp.p6.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -54,6 +55,9 @@ public class ExecutionPackage implements Serializable {
 	
 	@Column(name="ACTN_FLG")
 	private String actioned = "N";
+	
+	@Column(name="SCHD_STRT_DT")
+	private Date scheduledStartDate;
 
 	//bi-directional many-to-one association to Task
 	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
@@ -65,6 +69,24 @@ public class ExecutionPackage implements Serializable {
 
 	public ExecutionPackage() {
 	}
+
+	
+	/**
+	 * @return the scheduledStartDate
+	 */
+	public Date getScheduledStartDate() {
+		return scheduledStartDate;
+	}
+
+
+	/**
+	 * @param scheduledStartDate the scheduledStartDate to set
+	 */
+	public void setScheduledStartDate(Date scheduledStartDate) {
+		this.scheduledStartDate = scheduledStartDate;
+	}
+
+
 
 	public long getExctnPckgId() {
 		return this.exctnPckgId;

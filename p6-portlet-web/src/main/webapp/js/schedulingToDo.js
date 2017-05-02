@@ -87,7 +87,6 @@ function schedulingToDoResultController($scope, $http) {
 
 	ctrl.saveToDo = function(wo){
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
-		wo.crewNames = wo.crewNames.join(',');
 		var req = {
 			 method: 'POST',
 			 url: '/p6-portal-service/scheduler/saveWorkOrder',

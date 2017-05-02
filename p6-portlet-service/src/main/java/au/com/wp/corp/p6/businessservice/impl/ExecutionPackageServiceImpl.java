@@ -36,31 +36,44 @@ import au.com.wp.corp.p6.utils.DateUtils;
 public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExecutionPackageServiceImpl.class);
-	
+
 	@Autowired
 	ExecutionPackageDao executionPackageDao;
-	
+
 	@Autowired
 	DateUtils dateUtils;
-	
-	/* (non-Javadoc)
-	 * @see au.com.wp.corp.p6.businessservice.IExecutionPackageService#createOrUpdateExecutionPackage(au.com.wp.corp.p6.model.ExecutionPackage)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see au.com.wp.corp.p6.businessservice.IExecutionPackageService#
+	 * createOrUpdateExecutionPackage(au.com.wp.corp.p6.model.ExecutionPackage)
 	 */
 	@Transactional
 	@Override
-	public ExecutionPackageDTO createOrUpdateExecutionPackage(ExecutionPackageDTO execPackgDTO, String userName) throws P6BusinessException {
+	public ExecutionPackageDTO createOrUpdateExecutionPackage(ExecutionPackageDTO execPackgDTO, String userName)
+			throws P6BusinessException {
 		logger.info("calling create or update execution package with # {}, and user name# {}", execPackgDTO, userName);
 		execPackgDTO.setExctnPckgName(createExceutionPackageId());
 		ExecutionPackage executionPackage = new ExecutionPackage();
 		executionPackage.setExctnPckgNam(execPackgDTO.getExctnPckgName());
 		executionPackage.setLeadCrewId(execPackgDTO.getLeadCrew());
 		final List<WorkOrder> workOrders = execPackgDTO.getWorkOrders();
+		final StringBuilder crewNames = new StringBuilder();
+
 		if (workOrders != null && !workOrders.isEmpty()) {
 			logger.debug("work orders size {}", workOrders.size());
 			Set<Task> tasks = new HashSet<>();
+			String scheduledStartDate = "";
 			for (WorkOrder workOrder : workOrders) {
 				logger.debug("For each workorder {} corresponding Task is fecthed", workOrder.getWorkOrderId());
+				if (null != crewNames.toString() && !crewNames.toString().contains(workOrder.getCrewNames())){
+					crewNames.append(crewNames.length() > 0 ? "," : "");
+					crewNames.append(workOrder.getCrewNames());
+				}
+				logger.debug("crew names added --- {} ", crewNames.toString());
 				Task task = executionPackageDao.getTaskbyId(workOrder.getWorkOrderId());
+				scheduledStartDate = workOrder.getScheduleDate();
 				if (task != null) {
 					logger.debug("Task {} is fecthed", task.getTaskId());
 					task.setExecutionPackage(executionPackage);
@@ -81,24 +94,26 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 				}
 			}
 			executionPackage.setTasks(tasks);
-
+			execPackgDTO.setCrewNames(crewNames.toString());
+			executionPackage.setScheduledStartDate(dateUtils.toDateFromDD_MM_YYYY(scheduledStartDate));
 		}
+
 		executionPackage.setCrtdTs(new Timestamp(System.currentTimeMillis()));
 		executionPackage.setCrtdUsr(userName);
 		executionPackage.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
 		executionPackage.setLstUpdtdUsr(userName);
 		executionPackageDao.createOrUpdateExecPackage(executionPackage);
 		executionPackageDao.createOrUpdateTasks(executionPackage.getTasks());
-		logger.info("execution package has been created with execution package id # {} ", execPackgDTO.getExctnPckgName());
+		logger.info("execution package has been created with execution package id # {} ",
+				execPackgDTO.getExctnPckgName());
 		return execPackgDTO;
-		
+
 	}
-	
-	
-	private String createExceutionPackageId () {
+
+	private String createExceutionPackageId() {
 		final String execPckgId = dateUtils.getCurrentDateWithTimeStamp();
 		logger.info("execution package id has been created # {} ", execPckgId);
 		return execPckgId;
 	}
-	
+
 }
