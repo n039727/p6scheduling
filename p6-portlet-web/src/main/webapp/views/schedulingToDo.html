@@ -72,13 +72,13 @@
 											<td>{{todo}}</td>
 											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
 											<td>
-												<!--<select class="form-control" >
+												<select class="form-control" >
 													<option ng-if="$ctrl.calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
-												</select>-->
-												<oi-select oi-options="workOrder in wo.workOrders"
+												</select>
+												<!--<oi-select oi-options="workOrder in wo.workOrders"
 													ng-model="bundle"
 													multiple
-													placeholder="Select">
+													placeholder="Select">-->
 												</oi-select>
 												<!--<div>{{bundle}}</div>-->
 											</td>
