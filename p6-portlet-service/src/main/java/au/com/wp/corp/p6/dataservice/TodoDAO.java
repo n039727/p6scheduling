@@ -17,5 +17,6 @@ public interface TodoDAO {
 	BigDecimal getToDoId(String todoName);
 	TodoAssignment fetchAssignmentWorkOrderNToDo(String workOrderId, String toDoName);
 	TodoAssignment saveToDoAssignment(TodoAssignment todoAssign);
+	TodoTemplate getTodoTemplate(String todoName);
 	
 }

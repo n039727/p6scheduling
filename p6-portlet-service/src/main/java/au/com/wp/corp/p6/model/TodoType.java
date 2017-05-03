@@ -38,8 +38,8 @@ public class TodoType implements Serializable {
 	private String typDesc;
 
 	//bi-directional many-to-one association to TodoTemplate
-	@OneToMany(mappedBy="todoType")
-	private List<TodoTemplate> todoTemplates;
+	//@OneToMany(mappedBy="todoType")
+	//private List<TodoTemplate> todoTemplates;
 
 	public TodoType() {
 	}
@@ -91,7 +91,7 @@ public class TodoType implements Serializable {
 	public void setTypDesc(String typDesc) {
 		this.typDesc = typDesc;
 	}
-
+/**
 	public List<TodoTemplate> getTodoTemplates() {
 		return this.todoTemplates;
 	}
@@ -113,5 +113,5 @@ public class TodoType implements Serializable {
 
 		return todoTemplate;
 	}
-
+**/
 }
