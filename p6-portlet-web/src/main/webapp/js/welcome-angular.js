@@ -71,7 +71,7 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata) {
 		console.log('data == ' + JSON.stringify(query))
 		$http({
 			method : 'POST',
-			url : '/p6-portal-service/search',
+			url : '/p6-portal-service/scheduler/search',
 			data : JSON.stringify(query),
 			headers : {
 				'Content-Type' : 'application/json'

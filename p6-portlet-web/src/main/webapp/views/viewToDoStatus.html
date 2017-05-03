@@ -21,13 +21,14 @@
 			</td>
 			<td>{{wo.workOrders[0]}}</td>
 			<td>{{wo.scheduleDate}}</td>
-			<td>{{wo.leadCrew}}</td>
+			<td>{{wo.crewNames}}</td>
 			<td> 
-				<select class="form-control" id="lead-crew-select" disabled>
+				{{wo.leadCrew}}
+				<!-- <select class="form-control" id="lead-crew-select" disabled>
 					<option>&nbsp;</option>
-				</select> 
+				</select>  -->
 			</td>
-<!-- 			<td>{{wo.executionPackage}}</td> -->
+			<td>{{wo.executionPackage}}</td>
 			<td></td>
 		</tr>
 		<tr ng-repeat-end>
