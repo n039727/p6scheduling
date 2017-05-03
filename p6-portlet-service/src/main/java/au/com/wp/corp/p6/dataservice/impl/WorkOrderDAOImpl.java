@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -57,8 +58,8 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	@Override
 	@Transactional
 	public Task saveTask(Task task) {
-		sessionFactory.getCurrentSession().flush();
-		sessionFactory.getCurrentSession().clear();
+		//sessionFactory.getCurrentSession().flush();
+		//sessionFactory.getCurrentSession().clear();
 		try {
 			long currentTime = System.currentTimeMillis();
 			if (task.getCrtdTs() != null) {
@@ -76,7 +77,7 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 					}
 					todo.setLstUpdtdTs(new Timestamp(currentTime));
 					todo.setLstUpdtdUsr("Test"); //TODO update the user name here
-					
+					sessionFactory.getCurrentSession().saveOrUpdate(todo);
 				}
 			}
 			

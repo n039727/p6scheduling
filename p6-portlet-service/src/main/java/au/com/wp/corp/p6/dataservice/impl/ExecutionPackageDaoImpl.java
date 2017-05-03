@@ -65,7 +65,7 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 		 * { // TODO Throw exception }
 		 */
 
-		logger.debug("returning package as: " + retValue.getExctnPckgId());
+		logger.debug("returning package as: {} ", retValue.getExctnPckgId());
 
 		return retValue;
 	}

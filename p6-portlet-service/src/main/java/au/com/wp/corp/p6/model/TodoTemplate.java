@@ -45,13 +45,13 @@ public class TodoTemplate implements Serializable {
 	private String todoNam;
 
 	//bi-directional many-to-one association to TodoAssignment
-	@OneToMany(mappedBy="todoTemplate")
-	private List<TodoAssignment> todoAssignments;
+	//@OneToMany(mappedBy="todoTemplate")
+	//private List<TodoAssignment> todoAssignments;
 
 	//bi-directional many-to-one association to TodoType
-	@ManyToOne
-	@JoinColumn(name="TYP_ID")
-	private TodoType todoType;
+	//@ManyToOne
+	//@JoinColumn(name="TYP_ID")
+	//private TodoType todoType;
 
 	public TodoTemplate() {
 	}
@@ -120,7 +120,7 @@ public class TodoTemplate implements Serializable {
 		this.todoNam = todoNam;
 	}
 
-	
+	/**
 	public List<TodoAssignment> getTodoAssignments() {
 		return this.todoAssignments;
 	}
@@ -143,6 +143,7 @@ public class TodoTemplate implements Serializable {
 		return todoAssignment;
 	}
 
+
 	public TodoType getTodoType() {
 		return this.todoType;
 	}
@@ -150,5 +151,7 @@ public class TodoTemplate implements Serializable {
 	public void setTodoType(TodoType todoType) {
 		this.todoType = todoType;
 	}
+	
+	**/
 
 }

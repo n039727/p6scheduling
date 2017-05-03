@@ -17,7 +17,7 @@ function executionPackageResultController($scope, $http,ModalService) {
 				if(!ctrl.selectedExecPckg)
 					ctrl.selectedExecPckg = [];
 					
-				ctrl.selectedExecPckg.push({leadCrew:wo.crewNames, workOrders:[wo.workOrders[0]],scheduleDate:wo.scheduleDate});
+				ctrl.selectedExecPckg.push({leadCrew:wo.crewNames,crewNames:wo.crewNames, workOrders:[wo.workOrders[0]],scheduleDate:wo.scheduleDate});
 				console.log('WO after adding execution pckg: ' + JSON.stringify(ctrl.selectedExecPckg));
 			}
 			
@@ -142,7 +142,7 @@ app.controller('executionPkgPopupController', [
 						exctnPckgName: response.data.exctnPckgName, 
 						workOrders:$scope.wo, 
 						leadCrew:$scope.selectedLeadCrew, 
-						crewNames: $scope.leadCrews,
+						crewNames: response.data.crewNames,
 						scheduleDate: $scope.scheduleDate,
 						toDoItems:[]
 						}

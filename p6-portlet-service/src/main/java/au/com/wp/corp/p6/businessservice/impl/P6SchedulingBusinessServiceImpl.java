@@ -276,7 +276,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				assignmentDTO.setStatus(assignment.getStat());
 				assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
 				assignmentDTO.setWorkOrderId(task.getTaskId());
-				assignmentDTO.setToDoName(todoDAO.getToDoName(assignment.getTodoId().longValue()));
+				assignmentDTO.setToDoName(todoDAO.getToDoName(assignment.getTodoAssignMentPK().getTodoId().longValue()));
 				assignmentDTOs.add(assignmentDTO);
 			}
 			status.setTodoAssignments(assignmentDTOs);
@@ -319,11 +319,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			for (Iterator<TodoAssignment> itr = updatedTask.getTodoAssignments().iterator(); itr.hasNext();) {
 				TodoAssignment todo = itr.next();
 				boolean found = false;
-				logger.debug("todo.getTodoId(): " + todo.getTodoId());
+				logger.debug("todo.getTodoId(): " + todo.getTodoAssignMentPK().getTodoId());
 				for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
 					ToDoItem item = itrToDo.next();
 					logger.debug("item.getTodoName(): " + item.getToDoName());
-					if (item.getToDoName().equals(todoDAO.getToDoName(todo.getTodoId().longValue())) // TODO
+					if (item.getToDoName().equals(todoDAO.getToDoName(todo.getTodoAssignMentPK().getTodoId().longValue())) // TODO
 																										// check
 																										// on
 																										// long
@@ -345,10 +345,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
 				ToDoItem item = itrToDo.next();
 				TodoAssignment todoAssignment = new TodoAssignment();
-				todoAssignment.setTask(updatedTask);
-				todoAssignment.setExecutionPackage(updatedTask.getExecutionPackage());
+				todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
+				//todoAssignment.setExecutionPackage(updatedTask.getExecutionPackage());
 				logger.debug("Todo id for #{} - {}", item.getToDoName(), todoDAO.getToDoId(item.getToDoName()));
-				todoAssignment.setTodoId(todoDAO.getToDoId(item.getToDoName()));
+				todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(item.getToDoName()));
 				todos.add(todoAssignment);
 				updatedTask.setTodoAssignments(todos);
 			}
@@ -445,15 +445,15 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 			if (task.getTodoAssignments() != null) {
 				for (TodoAssignment todo : task.getTodoAssignments()) {
-					Long todoId = todo.getTodoId().longValue();
+					Long todoId = todo.getTodoAssignMentPK().getTodoId().longValue();
 					if (toDoMap.containsKey(todoId)) {
-						toDoMap.get(todoId).getWorkOrders().add(todo.getTask().getTaskId());
+						toDoMap.get(todoId).getWorkOrders().add(todo.getTodoAssignMentPK().getTask().getTaskId());
 					} else {
 						ToDoItem item = new ToDoItem();
 						item.setTodoId(String.valueOf(todoId));
 						item.setToDoName(todoDAO.getToDoName(todoId));
 						List<String> workOrders = new ArrayList<String>();
-						workOrders.add(todo.getTask().getTaskId());
+						workOrders.add(todo.getTodoAssignMentPK().getTask().getTaskId());
 						item.setWorkOrders(workOrders);
 						toDoMap.put(todoId, item);
 					}
@@ -499,7 +499,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					for (au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO : workOrder.getTodoAssignments()) {
 						if (!StringUtils.isEmpty(assignmentDTO.getToDoName())
 								&& todoDAO.getToDoId(assignmentDTO.getToDoName()) != null
-								&& todoDAO.getToDoId(assignmentDTO.getToDoName()).longValue() == todo.getTodoId()
+								&& todoDAO.getToDoId(assignmentDTO.getToDoName()).longValue() == todo.getTodoAssignMentPK().getTodoId()
 										.longValue()
 								&& task.getTaskId().equals(assignmentDTO.getWorkOrderId())) {
 

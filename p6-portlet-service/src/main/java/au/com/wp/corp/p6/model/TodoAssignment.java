@@ -1,17 +1,14 @@
 package au.com.wp.corp.p6.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -59,23 +56,30 @@ public class TodoAssignment implements Serializable {
 	@Column(name = "SUPRTNG_DOC_LNK")
 	private String suprtngDocLnk;
 
-	@Column(name = "TODO_ID")
-	private BigDecimal todoId;
-
 	// bi-directional many-to-one association to ExecutionPackage
-	@ManyToOne
-	@JoinColumn(name = "EXCTN_PCKG_ID")
-	private ExecutionPackage executionPackage;
+	//@ManyToOne
+	//@JoinColumn(name = "EXCTN_PCKG_ID")
+	//private ExecutionPackage executionPackage;
 
-	// bi-directional many-to-one association to Task
-	@ManyToOne
-	@JoinColumn(name = "TASK_ID")
-	private Task task;
 
 	// bi-directional many-to-one association to TodoTemplate
-	@ManyToOne
-	@JoinColumn(name = "TMPLT_ID", insertable = false, updatable = false)
-	private TodoTemplate todoTemplate;
+	//@ManyToOne
+	//@JoinColumn(name = "TMPLT_ID", insertable = false, updatable = false)
+//	private TodoTemplate todoTemplate;
+
+	/**
+	 * @return the todoAssignMentPK
+	 */
+	public TodoAssignmentPK getTodoAssignMentPK() {
+		return todoAssignMentPK;
+	}
+
+	/**
+	 * @param todoAssignMentPK the todoAssignMentPK to set
+	 */
+	public void setTodoAssignMentPK(TodoAssignmentPK todoAssignMentPK) {
+		this.todoAssignMentPK = todoAssignMentPK;
+	}
 
 	public TodoAssignment() {
 	}
@@ -144,137 +148,5 @@ public class TodoAssignment implements Serializable {
 		this.suprtngDocLnk = suprtngDocLnk;
 	}
 
-	public BigDecimal getTodoId() {
-		return this.todoId;
-	}
 
-	public void setTodoId(BigDecimal todoId) {
-		this.todoId = todoId;
-	}
-
-	public ExecutionPackage getExecutionPackage() {
-		return this.executionPackage;
-	}
-
-	public void setExecutionPackage(ExecutionPackage executionPackage) {
-		this.executionPackage = executionPackage;
-	}
-
-	public Task getTask() {
-		return this.task;
-	}
-
-	public void setTask(Task task) {
-		this.task = task;
-	}
-
-	/**
-	 * @return the todoTemplate
-	 */
-	public TodoTemplate getTodoTemplate() {
-		return todoTemplate;
-	}
-
-	/**
-	 * @param todoTemplate
-	 *            the todoTemplate to set
-	 */
-	public void setTodoTemplate(TodoTemplate todoTemplate) {
-		this.todoTemplate = todoTemplate;
-	}
-
-	@Embeddable
-	private class TodoAssignmentPK implements Serializable {
-
-		private long exctn_Pckg_Id;
-
-		private String task_Id;
-
-		private long tmplt_Id;
-		
-		private BigDecimal todo_Id;
-		
-
-		/**
-		 * @return the todo_Id
-		 */
-		public BigDecimal getTodo_Id() {
-			return todo_Id;
-		}
-
-		/**
-		 * @param todo_Id the todo_Id to set
-		 */
-		public void setTodo_Id(BigDecimal todo_Id) {
-			this.todo_Id = todo_Id;
-		}
-		
-
-		/**
-		 * @return the exctn_Pckg_Id
-		 */
-		public long getExctn_Pckg_Id() {
-			return exctn_Pckg_Id;
-		}
-
-		/**
-		 * @param exctn_Pckg_Id
-		 *            the exctn_Pckg_Id to set
-		 */
-		public void setExctn_Pckg_Id(long exctn_Pckg_Id) {
-			this.exctn_Pckg_Id = exctn_Pckg_Id;
-		}
-
-		/**
-		 * @return the task_Id
-		 */
-		public String getTask_Id() {
-			return task_Id;
-		}
-
-		/**
-		 * @param task_Id
-		 *            the task_Id to set
-		 */
-		public void setTask_Id(String task_Id) {
-			this.task_Id = task_Id;
-		}
-
-		/**
-		 * @return the tmplt_Id
-		 */
-		public long getTmplt_Id() {
-			return tmplt_Id;
-		}
-
-		/**
-		 * @param tmplt_Id
-		 *            the tmplt_Id to set
-		 */
-		public void setTmplt_Id(long tmplt_Id) {
-			this.tmplt_Id = tmplt_Id;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj instanceof TodoAssignmentPK) {
-				TodoAssignmentPK todoAssignPK = (TodoAssignmentPK) obj;
-
-				if ((todoAssignPK.getExctn_Pckg_Id() == this.exctn_Pckg_Id)
-						&& (todoAssignPK.task_Id != null && todoAssignPK.task_Id.equals(this.task_Id))
-						&& (todoAssignPK.tmplt_Id == this.tmplt_Id) &&  todoAssignPK.todo_Id.compareTo(this.todo_Id) == 0) {
-						return true;
-				}
-			}
-
-			return false;
-		}
-		
-		@Override
-		public int hashCode() {
-			return 100*7;
-		}
-		
-
-	}
 }
