@@ -377,7 +377,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		dbTask.setSchdDt(scheduleDate);
 		dbTask.setDepotId(workOrder.getDepotId());
 		dbTask.setMatrlReqRef(workOrder.getMeterialReqRef());
-		dbTask.setExecutionPackage(executionPackageDao.fetch(workOrder.getExctnPckgName()));
+		if ( null != workOrder.getExctnPckgName())
+			dbTask.setExecutionPackage(executionPackageDao.fetch(workOrder.getExctnPckgName()));
 		logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		return dbTask;
 	}
