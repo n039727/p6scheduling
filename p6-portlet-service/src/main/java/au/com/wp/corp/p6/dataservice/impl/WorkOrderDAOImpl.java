@@ -62,7 +62,7 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 		//sessionFactory.getCurrentSession().clear();
 		try {
 			long currentTime = System.currentTimeMillis();
-			if (task.getCrtdTs() != null) {
+			if (task.getCrtdTs() == null) {
 				task.setCrtdTs(new Timestamp(currentTime));
 				task.setCrtdUsr("Test"); //TODO update the user name here
 			}
