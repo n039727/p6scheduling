@@ -18,6 +18,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.ordering.antlr.GeneratedOrderByFragmentRendererTokenTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,14 +185,14 @@ public class TodoDAOImpl implements TodoDAO {
 							// {}",toDoName,workInTodo);
 							TodoAssignment todoAssignment = new TodoAssignment();
 							todoAssignment.setCmts(toDoItem.getComments());
-							todoAssignment.setExecutionPackage(executionPackage.get(0));
+							//todoAssignment.setExecutionPackage(executionPackage.get(0));
 							todoAssignment.setReqdByDt(toDoItem.getReqdByDate());
 							todoAssignment.setStat(toDoItem.getStatus());
 							todoAssignment.setSuprtngDocLnk(toDoItem.getSupportingDocLink());
 
-							todoAssignment.setTodoTemplate(todoTemplateRecord.get(0));
-							todoAssignment.setTodoId(todoTemplateRecord.get(0).getTodoId());
-							todoAssignment.setTask(task);
+							//todoAssignment.setTodoTemplate(todoTemplateRecord.get(0));
+							todoAssignment.getTodoAssignMentPK().setTodoId(todoTemplateRecord.get(0).getTodoId());
+							todoAssignment.getTodoAssignMentPK().setTask(task);
 							todoAssignment.setCrtdTs(new Timestamp(System.currentTimeMillis()));
 							todoAssignment.setCrtdUsr("test user");
 							todoAssignment.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
@@ -283,14 +284,22 @@ public class TodoDAOImpl implements TodoDAO {
 	
 	@Override
 	public String getToDoName(Long id) {
+		fetchAllToDos();
 		if (toDoMap != null && toDoMap.containsKey(id)) {
 			return toDoMap.get(id).getTodoNam();
 		}
 		return null;
 	}
+	
+	@Override
+	public TodoTemplate getTodoTemplate ( String todoName) {
+		fetchAllToDos();
+		return  toDoNameMap.get(todoName);
+	}
 
 	@Override
 	public BigDecimal getToDoId(String todoName) {
+		fetchAllToDos();
 		if (toDoNameMap != null && toDoNameMap.containsKey(todoName)) {
 			return toDoNameMap.get(todoName).getTodoId();
 		}

@@ -68,7 +68,7 @@ public class Task implements Serializable {
 
 	//bi-directional many-to-one association to TodoAssignment
 
-	@OneToMany(mappedBy="task",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, orphanRemoval=true)
+	@OneToMany(mappedBy="todoAssignMentPK.task",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, orphanRemoval=true)
 	private Set<TodoAssignment> todoAssignments;
 
 
@@ -181,14 +181,14 @@ public class Task implements Serializable {
 
 	public TodoAssignment addTodoAssignment(TodoAssignment todoAssignment) {
 		getTodoAssignments().add(todoAssignment);
-		todoAssignment.setTask(this);
+		todoAssignment.getTodoAssignMentPK().setTask(this);
 
 		return todoAssignment;
 	}
 
 	public TodoAssignment removeTodoAssignment(TodoAssignment todoAssignment) {
 		getTodoAssignments().remove(todoAssignment);
-		todoAssignment.setTask(null);
+		todoAssignment.getTodoAssignMentPK().setTask(null);
 
 		return todoAssignment;
 	}
