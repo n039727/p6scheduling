@@ -34,6 +34,7 @@ public class TaskDTO {
 
 	private long executionPackageId;
 
+	private String actioned;
 
 	public String getTaskId() {
 		return taskId;
@@ -129,6 +130,14 @@ public class TaskDTO {
 
 	public void setExecutionPackageId(long executionPackageId) {
 		this.executionPackageId = executionPackageId;
+	}
+
+	public String getActioned() {
+		return actioned;
+	}
+
+	public void setActioned(String actioned) {
+		this.actioned = actioned;
 	}
 
 	

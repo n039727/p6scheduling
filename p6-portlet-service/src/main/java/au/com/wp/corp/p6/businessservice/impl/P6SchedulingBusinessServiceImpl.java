@@ -58,6 +58,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	@Autowired
 	CreateP6MockData mockData;
+	private static String ACTIONED_Y = "Y";
+	private static String ACTIONED_N = "N";
 
 	
 
@@ -252,6 +254,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		if (workOrder.getWorkOrders() != null) {
 			for (String workOrderId : workOrder.getWorkOrders()) {
 				Task task = prepareTaskFromWorkOrderId(workOrderId, workOrder);
+				if(null != task.getExecutionPackage()){
+					logger.debug("task.getExecutionPackage()>> {}", task.getExecutionPackage().getActioned());
+				}
 				workOrderDAO.saveTask(task);
 			}
 		}
@@ -319,20 +324,28 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		dbTask.setCmts(workOrder.getSchedulingToDoComment());
 		dbTask.setCrewId(workOrder.getCrewNames());
 		dbTask.setLeadCrewId(workOrder.getLeadCrew());
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		java.util.Date scheduleDate = null;
-		try {
-			scheduleDate = simpleDateFormat.parse(workOrder.getScheduleDate());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(null != workOrder.getScheduleDate()){
+			scheduleDate = dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate());
 		}
 		dbTask.setSchdDt(scheduleDate);
 		dbTask.setDepotId(workOrder.getDepotId());
 		dbTask.setMatrlReqRef(workOrder.getMeterialReqRef());
-		if ( null != workOrder.getExctnPckgName())
-			dbTask.setExecutionPackage(executionPackageDao.fetch(workOrder.getExctnPckgName()));
-		logger.debug("Execution Package {}", workOrder.getExctnPckgName());
+		if ( null != workOrder.getExctnPckgName()){
+			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
+			if(null != executionPackage){
+				executionPackage.setActioned(ACTIONED_Y);
+				dbTask.setExecutionPackage(executionPackage); 
+				dbTask.setActioned(ACTIONED_N);
+			}
+			else{
+				dbTask.setActioned(ACTIONED_Y);
+			}
+			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
+		}
+		else{
+			dbTask.setActioned(ACTIONED_Y);
+		}
 		return dbTask;
 	}
 
