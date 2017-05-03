@@ -62,7 +62,7 @@ public class Task implements Serializable {
 	private Date schdDt;
 
 	//bi-directional many-to-one association to ExecutionPackage
-	@ManyToOne(cascade=CascadeType.PERSIST)
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="EXCTN_PCKG_ID")
 	private ExecutionPackage executionPackage;
 
@@ -70,8 +70,13 @@ public class Task implements Serializable {
 
 	@OneToMany(mappedBy="todoAssignMentPK.task",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, orphanRemoval=true)
 	private Set<TodoAssignment> todoAssignments;
+	
+	@Column(name="ACTN_FLG")
+	private String actioned = "N";
 
-
+	@Column(name="ACTN_FLG")
+	private String actioned = "N";
+	
 	public Task() {
 	}
 
@@ -191,6 +196,29 @@ public class Task implements Serializable {
 		todoAssignment.getTodoAssignMentPK().setTask(null);
 
 		return todoAssignment;
+	}
+	
+	/**
+	 * @return the actioned
+	 */
+	public String getActioned() {
+		return actioned;
+	}
+
+	/**
+	 * @param actioned the actioned to set
+	 */
+	public void setActioned(String actioned) {
+		this.actioned = actioned;
+	}
+
+	
+	public String getActioned() {
+		return actioned;
+	}
+
+	public void setActioned(String actioned) {
+		this.actioned = actioned;
 	}
 
 }
