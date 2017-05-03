@@ -103,4 +103,16 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 		return new ResponseEntity<ExecutionPackageDTO>(p6BusinessService.saveExecutionPackage(executionPackageDTO.getBody()),HttpStatus.CREATED);
 	}
 
+	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
+	@ResponseBody
+	public ResponseEntity<List<WorkOrder>> search(RequestEntity<WorkOrderSearchRequest> request)
+			throws P6BaseException {
+		if (request.getBody() == null) {
+			logger.error(" Invalid request - {}", request.getBody());
+			throw new P6BaseException(" invalid request ");
+		}
+		logger.info("Search String # crews - {} , start date - {}", request.getBody().getCrewList(),
+				request.getBody().getFromDate());
+		return new ResponseEntity<List<WorkOrder>>(p6BusinessService.search(request.getBody()), HttpStatus.OK);
+	}
 }

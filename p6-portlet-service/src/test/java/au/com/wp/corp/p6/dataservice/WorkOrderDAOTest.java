@@ -112,7 +112,7 @@ public class WorkOrderDAOTest {
 		dbTask.setLstUpdtdUsr("Test");
 		//TODO will remove after DB constrain change
 		dbTask.setExecutionPackage(executionPackageDao.fetch("PKG1" ));
-		
+		dbTask.setActioned("Y");
 		return dbTask;
 	}
 	

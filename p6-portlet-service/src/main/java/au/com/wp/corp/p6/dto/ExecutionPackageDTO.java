@@ -7,6 +7,7 @@ public class ExecutionPackageDTO {
 	private String leadCrew;
 	private String crewNames;
 	private List<WorkOrder> workOrders;
+	private String actioned;
 	
 	/**
 	 * @return the exctnPckgName
@@ -44,6 +45,12 @@ public class ExecutionPackageDTO {
 	 */
 	public void setWorkOrders(List<WorkOrder> workOrders) {
 		this.workOrders = workOrders;
+	}
+	public String getActioned() {
+		return actioned;
+	}
+	public void setActioned(String actioned) {
+		this.actioned = actioned;
 	}
 	
 	
