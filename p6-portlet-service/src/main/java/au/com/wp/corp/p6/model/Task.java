@@ -74,8 +74,8 @@ public class Task implements Serializable {
 	@Column(name="ACTN_FLG")
 	private String actioned = "N";
 
-	@Column(name="ACTN_FLG")
-	private String actioned = "N";
+	/*@Column(name="ACTN_FLG")
+	private String actioned = "N";*/
 	
 	public Task() {
 	}
@@ -213,12 +213,12 @@ public class Task implements Serializable {
 	}
 
 	
-	public String getActioned() {
+	/*public String getActioned() {
 		return actioned;
 	}
 
 	public void setActioned(String actioned) {
 		this.actioned = actioned;
-	}
+	}*/
 
 }
