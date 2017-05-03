@@ -86,6 +86,13 @@ function schedulingToDoResultController($scope, $http) {
 	};
 
 	ctrl.saveToDo = function(wo){
+		// populate updated to do assignments
+		if (wo && wo.toDoItems) {
+			for (var i = 0; i< wo.toDoItems.length; i++) {
+				wo.toDoItems[i].workOrders = ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, wo.toDoItems[i].toDoName)];
+			}
+		}
+		
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		var req = {
 			 method: 'POST',
@@ -132,8 +139,25 @@ function schedulingToDoResultController($scope, $http) {
 			wo.toDoItems = [];
 			wo.toDoItems = response.data[0].toDoItems;
 			wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
+			ctrl.populateToDoBindings(wo, wo.toDoItems);
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
 		});
+	}
+	
+	ctrl.toDoBindingVar = {};
+	
+	ctrl.populateToDoBindings = function(workOrder) {
+			ctrl.toDoBindingVar = {};
+			if (workOrder && workOrder.toDoItems) {
+				for (var i = 0; i< workOrder.toDoItems.length; i++) {
+					ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(workOrder, workOrder.toDoItems[i].toDoName)] = workOrder.toDoItems[i].workOrders;
+				}
+			}
+			console.log("toDoBindingVar: " + JSON.stringify(ctrl.toDoBindingVar));
+	}
+	
+	ctrl.getWorkOrderToDoKey = function(workOrder, todoName) {
+		return (angular.isDefined(workOrder.exctnPckgName)?workOrder.exctnPckgName:workOrder.workOrders[0]) + "-" + todoName;
 	}
 	
 }
