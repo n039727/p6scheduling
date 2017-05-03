@@ -1,20 +1,15 @@
 package au.com.wp.corp.p6.businessservice.impl;
 
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -64,106 +59,64 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	CreateP6MockData mockData;
 
-	@PostConstruct
-	public void initData() {
-		logger.info("Initializing Datastore..");
-		mapStorage = new ConcurrentHashMap<String, WorkOrder>();
-		WorkOrder workOrder1 = new WorkOrder();
-		workOrder1.setLeadCrew("MOST1");
-		workOrder1.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
-		workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP97" }));
-
-		/*
-		 * ToDoItem toDoItems = new ToDoItem(); toDoItems.setTodoName("ENAR");
-		 * toDoItems.setWorkOrders(workOrder1.getWorkOrders());
-		 * workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
-		 */
-
-		mapStorage.put(workOrder1.getWorkOrders().get(0), workOrder1);
-
-		WorkOrder workOrder2 = new WorkOrder();
-		workOrder2.setLeadCrew("MOST2");
-		workOrder2.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
-		workOrder2.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67" }));
-
-		/*
-		 * toDoItems = new ToDoItem(); toDoItems.setTodoName("ESA");
-		 * toDoItems.setWorkOrders(workOrder2.getWorkOrders());
-		 * workOrder2.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
-		 */
-
-		mapStorage.put(workOrder2.getWorkOrders().get(0), workOrder2);
-
-		WorkOrder workOrder3 = new WorkOrder();
-		workOrder3.setLeadCrew("MOST3");
-		workOrder3.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
-		workOrder3.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP87" }));
-		/* this code will be replaced will the actual P6 Service call */
-		mapStorage.put(workOrder3.getWorkOrders().get(0), workOrder3);
-	}
+	
 
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) {
-		List<WorkOrder> workOrders = new ArrayList<WorkOrder>();
-		/* this code will be replaced will the actual P6 Service call */
-		WorkOrder workOrder1 = new WorkOrder();
-		workOrder1.setExctnPckgName("test execution 1");
-		workOrder1.setLeadCrew("MOST1");
-		workOrder1.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
-		workOrder1.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
-
-		ToDoItem toDoItems = new ToDoItem();
-		toDoItems.setToDoName("ENAR");
-		toDoItems.setWorkOrders(workOrder1.getWorkOrders());
-
-		workOrder1.setToDoItems(Arrays.asList(new ToDoItem[] { toDoItems }));
-
-		workOrders.add(workOrder1);
-		WorkOrder workOrder2 = new WorkOrder();
-		workOrder2.setExctnPckgName("test execution 1");
-		workOrder2.setLeadCrew("MOST1");
-		workOrder2.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
-		workOrder2.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
-
-		workOrders.add(workOrder2);
-
-		WorkOrder workOrder3 = new WorkOrder();
-		workOrder3.setExctnPckgName("test execution 1");
-		workOrder3.setLeadCrew("MOST1");
-		workOrder3.setScheduleDate(String.valueOf(Date.valueOf(LocalDate.now())));
-		workOrder3.setWorkOrders(Arrays.asList(new String[] { "Y6UIOP67", "Y6UIOP70", "Y6UIOP97" }));
-
-		workOrders.add(workOrder3);
-
-		/* this code will be replaced will the actual P6 Service call */
-		return workOrders;
+		return mockData.search(input);
 
 	}
-
+ 
 	@Override
 	public List<WorkOrder> search(WorkOrderSearchRequest input) {
-		return mockData.search(input);
+		List<WorkOrder> mockWOData = mockData.search(input);
+		Map<String,WorkOrder> mapOfExecutionPkgWO = new HashMap<String,WorkOrder>();
+		List<WorkOrder> ungroupedWorkorders = new ArrayList<WorkOrder>();
+		for (WorkOrder workOrder : mockWOData) {
+			List<String> workOrderNamesinGroup = new ArrayList<String>();
+			if (workOrder.getWorkOrders() != null) {
+				for (String workOrderId : workOrder.getWorkOrders()) {
+					Task dbTask = workOrderDAO.fetch(workOrderId);
+					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
+					if (dbTask.getExecutionPackage() != null) {
+						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());
+						String dbWOExecPkg = dbTask.getExecutionPackage().getExctnPckgNam();
+						if (mapOfExecutionPkgWO.containsKey(dbWOExecPkg)) {
+							WorkOrder workOrdersalreadyinGroup = mapOfExecutionPkgWO.get(dbWOExecPkg);
+							if(!workOrdersalreadyinGroup.getWorkOrders().contains(workOrderId)){
+								workOrdersalreadyinGroup.getWorkOrders().add(workOrderId);
+							}
+						} else {
+							WorkOrder workOrderNew = new WorkOrder();
+							workOrderNew.setScheduleDate(dateUtils.toStringDD_MM_YYYY(dbTask.getSchdDt()));
+							workOrderNew.setCrewNames(dbTask.getCrewId());
+							workOrderNew.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
+							workOrderNew.setExctnPckgName(dbWOExecPkg);
+							workOrderNamesinGroup.add(dbTask.getTaskId());
+							workOrderNew.setWorkOrders(workOrderNamesinGroup);
+							mapOfExecutionPkgWO.put(dbWOExecPkg, workOrderNew);
+						}
+					}else{
+						//create separate work order list
+						WorkOrder workOrderNew = new WorkOrder();
+						workOrderNew.setScheduleDate(dateUtils.toStringDD_MM_YYYY(dbTask.getSchdDt()));
+						workOrderNew.setCrewNames(dbTask.getCrewId());
+						workOrderNew.setLeadCrew(dbTask.getLeadCrewId());
+						workOrderNamesinGroup.add(dbTask.getTaskId());
+						workOrderNew.setWorkOrders(workOrderNamesinGroup);
+						ungroupedWorkorders.add(workOrderNew);
+					}
+				}
+			}
+		}
+		logger.debug("final grouped work orders size {}",mapOfExecutionPkgWO.values().size());
+		logger.debug("final grouped work orders = {}",mapOfExecutionPkgWO.values());
+		List<WorkOrder> workorders = new ArrayList<WorkOrder> (mapOfExecutionPkgWO.values());
+		workorders.addAll(ungroupedWorkorders);
+		return workorders;
 	}
 
 	public List<WorkOrder> retrieveJobs(WorkOrderSearchRequest input) {
-		/*
-		 * for (WorkOrder workOrder : mapStorage.values()) {
-		 * List<TodoAssignment> list = todoDAO.fetchToDosByWorkOrder(workOrder);
-		 * List<ToDoItem> toDoItems = new ArrayList<ToDoItem>();
-		 * 
-		 * for (TodoAssignment todoTemplate : list) { ToDoItem toDoItem = new
-		 * ToDoItem();
-		 * toDoItem.setTodoName(todoTemplate.getTodoTemplate().getTodoNam());
-		 * toDoItem.setWorkOrders(workOrder.getWorkOrders());
-		 * toDoItems.add(toDoItem); } workOrder.setToDoItems(toDoItems);
-		 * WorkOrderSearchInput workOrderSearchInput = new
-		 * WorkOrderSearchInput();
-		 * workOrderSearchInput.setWorkOrderId(workOrder.getWorkOrders().get(0))
-		 * ; List<Task> taskList =
-		 * workOrderDAO.fetchWorkOrdersForViewToDoStatus(workOrderSearchInput);
-		 * for (Task task : taskList)
-		 * workOrder.setSchedulingToDoComment(task.getCmts());
-		 * mapStorage.put(workOrder.getWorkOrders().get(0), workOrder); }
-		 */
+		
 		return new ArrayList<WorkOrder>(mapStorage.values());
 
 	}

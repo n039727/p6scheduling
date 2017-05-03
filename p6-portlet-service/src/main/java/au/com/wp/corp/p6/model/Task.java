@@ -71,7 +71,9 @@ public class Task implements Serializable {
 	@OneToMany(mappedBy="todoAssignMentPK.task",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, orphanRemoval=true)
 	private Set<TodoAssignment> todoAssignments;
 
-
+	@Column(name="ACTN_FLG")
+	private String actioned = "N";
+	
 	public Task() {
 	}
 
@@ -191,6 +193,15 @@ public class Task implements Serializable {
 		todoAssignment.getTodoAssignMentPK().setTask(null);
 
 		return todoAssignment;
+	}
+
+	
+	public String getActioned() {
+		return actioned;
+	}
+
+	public void setActioned(String actioned) {
+		this.actioned = actioned;
 	}
 
 }
