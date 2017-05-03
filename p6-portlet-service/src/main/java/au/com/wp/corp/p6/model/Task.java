@@ -68,7 +68,7 @@ public class Task implements Serializable {
 
 	//bi-directional many-to-one association to TodoAssignment
 
-	@OneToMany(mappedBy="todoAssignMentPK.task",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, orphanRemoval=false)
+	@OneToMany(mappedBy="todoAssignMentPK.task",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, orphanRemoval=true)
 	private Set<TodoAssignment> todoAssignments;
 
 
