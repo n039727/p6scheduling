@@ -93,6 +93,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 							workOrderNew.setScheduleDate(dateUtils.toStringDD_MM_YYYY(dbTask.getSchdDt()));
 							workOrderNew.setCrewNames(dbTask.getCrewId());
 							workOrderNew.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
+							workOrderNew.setActioned(dbTask.getExecutionPackage().getActioned());
 							workOrderNew.setExctnPckgName(dbWOExecPkg);
 							workOrderNamesinGroup.add(dbTask.getTaskId());
 							workOrderNew.setWorkOrders(workOrderNamesinGroup);
@@ -104,6 +105,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 						workOrderNew.setWorkOrders(workOrder.getWorkOrders());
 						workOrderNew.setCrewNames(workOrder.getCrewNames());
 						workOrderNew.setScheduleDate(workOrder.getScheduleDate());
+						workOrderNew.setActioned(dbTask.getActioned());
 						workOrderNamesinGroup.add(dbTask.getTaskId());
 						ungroupedWorkorders.add(workOrderNew);
 					}
@@ -174,13 +176,20 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Override
 	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) {
 
-		List<Task> tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
+		List<Task> tasks = null;
 		List<ViewToDoStatus> toDoStatuses = new ArrayList<ViewToDoStatus>();
 		Map<String, ViewToDoStatus> taskIdWOMap = new HashMap<String, ViewToDoStatus>();
+		ExecutionPackage executionPackage = null;
+		if (null != query && null != query.getExecPckgName()) {
+			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
+			tasks = new ArrayList<Task>(executionPackage.getTasks());
+		} else {
+			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
+		}
 		for (Task task : tasks) {
 			ViewToDoStatus status = null;
 			String key = null;
-			if (task.getExecutionPackage() != null && "PKG1".equals(task.getExecutionPackage().getExctnPckgNam())) {
+			if (task.getExecutionPackage() != null) {
 				key = task.getExecutionPackage().getExctnPckgNam();
 			} else {
 				key = task.getTaskId();
@@ -204,7 +213,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 			status.setSchedulingComment(task.getCmts());
 
-			if (task.getExecutionPackage() != null && "PKG1".equals(task.getExecutionPackage().getExctnPckgNam())) {
+			if (task.getExecutionPackage() != null) {
 				status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
 			}
 
