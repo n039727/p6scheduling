@@ -68,7 +68,7 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			}
 			task.setLstUpdtdTs(new Timestamp(currentTime));
 			task.setLstUpdtdUsr("Test"); //TODO update the user name here
-					
+			//sessionFactory.getCurrentSession().saveOrUpdate(task);		
 			if (task.getTodoAssignments() != null) {
 				for (TodoAssignment todo: task.getTodoAssignments()) {
 					if (todo.getCrtdTs() == null) {
@@ -77,11 +77,13 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 					}
 					todo.setLstUpdtdTs(new Timestamp(currentTime));
 					todo.setLstUpdtdUsr("Test"); //TODO update the user name here
-					sessionFactory.getCurrentSession().saveOrUpdate(todo);
+					//sessionFactory.getCurrentSession().saveOrUpdate(todo);
 				}
 			}
 			
 			sessionFactory.getCurrentSession().saveOrUpdate(task);
+			sessionFactory.getCurrentSession().flush();
+			sessionFactory.getCurrentSession().clear();
 		} catch (HibernateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
