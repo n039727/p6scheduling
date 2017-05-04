@@ -28,9 +28,9 @@
 					<label class="control-label col-md-1" for="pwd">Planned Start Date</label>
 					<div class="col-md-5" > From
 					
-						<md-datepicker md-current-view="month" ng-model="$ctrl.scheduleFromDate" md-placeholder="DD/MM/YYYY" ></md-datepicker>
+						<md-datepicker md-current-view="month" ng-change="$ctrl.formatScheduleFromdate()"  ng-model="$ctrl.scheduleFromDate" md-placeholder="DD/MM/YYYY" ></md-datepicker>
 						 &nbsp;&nbsp;To
-						<md-datepicker md-current-view="month" ng-model="$ctrl.scheduleToDate" md-placeholder="DD/MM/YYYY"></md-datepicker>
+						<md-datepicker md-current-view="month" ng-change="$ctrl.formatScheduleTodate()" ng-model="$ctrl.scheduleToDate" md-placeholder="DD/MM/YYYY"></md-datepicker>
 					</div>
 					<div class="col-md-offset-5" ng-show="$ctrl.showErrorMsg">
 							<p class="error-message" >Planned Start From Date is required</p>
