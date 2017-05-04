@@ -19,12 +19,7 @@
 			<td>{{wo.workOrders.join(',')}}</td>
 			<td>{{wo.scheduleDate}}</td>
 			<td>{{wo.crewNames}}</td>
-			<td> 
-				{{wo.leadCrew}}
-				<!-- <select class="form-control" id="lead-crew-select" disabled>
-					<option>&nbsp;</option>
-				</select>  -->
-			</td>
+			<td>{{wo.leadCrew}}</td>
 			<td>{{wo.exctnPckgName}}</td>
 		</tr>
 		<tr ng-repeat-end>
@@ -48,7 +43,6 @@
 											<td>{{todo.toDoName}}</td>
 											<td>{{todo.workOrderId}}</td>
 											<td>
-												<!--<md-datepicker ng-init="date = (todo.reqByDate | toDate)" ng-model="date" ng-change="todo.reqByDate = date.toISOString()" md-placeholder="DD/MM/YYYY"></md-datepicker>-->
 												<md-datepicker ng-model="todo.reqByDt" md-placeholder="DD/MM/YYYY"></md-datepicker>
 											</td>
 											<td><input type="text" class="form-control" ng-model="todo.comment"></td>

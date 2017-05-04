@@ -93,6 +93,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 							workOrderNew.setScheduleDate(dateUtils.toStringDD_MM_YYYY(dbTask.getSchdDt()));
 							workOrderNew.setCrewNames(dbTask.getCrewId());
 							workOrderNew.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
+							workOrderNew.setActioned(dbTask.getExecutionPackage().getActioned());
 							workOrderNew.setExctnPckgName(dbWOExecPkg);
 							workOrderNamesinGroup.add(dbTask.getTaskId());
 							workOrderNew.setWorkOrders(workOrderNamesinGroup);
@@ -104,10 +105,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 						workOrderNew.setWorkOrders(workOrder.getWorkOrders());
 						workOrderNew.setCrewNames(workOrder.getCrewNames());
 						workOrderNew.setScheduleDate(workOrder.getScheduleDate());
-						workOrderNew.setCrewNames(dbTask.getCrewId());
-						workOrderNew.setLeadCrew(dbTask.getLeadCrewId());
+						workOrderNew.setActioned(dbTask.getActioned());
 						workOrderNamesinGroup.add(dbTask.getTaskId());
-						workOrderNew.setWorkOrders(workOrderNamesinGroup);
 						ungroupedWorkorders.add(workOrderNew);
 					}
 				}
@@ -177,13 +176,20 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Override
 	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) {
 
-		List<Task> tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
+		List<Task> tasks = null;
 		List<ViewToDoStatus> toDoStatuses = new ArrayList<ViewToDoStatus>();
 		Map<String, ViewToDoStatus> taskIdWOMap = new HashMap<String, ViewToDoStatus>();
+		ExecutionPackage executionPackage = null;
+		if (null != query && null != query.getExecPckgName()) {
+			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
+			tasks = new ArrayList<Task>(executionPackage.getTasks());
+		} else {
+			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
+		}
 		for (Task task : tasks) {
 			ViewToDoStatus status = null;
 			String key = null;
-			if (task.getExecutionPackage() != null && "PKG1".equals(task.getExecutionPackage().getExctnPckgNam())) {
+			if (task.getExecutionPackage() != null) {
 				key = task.getExecutionPackage().getExctnPckgNam();
 			} else {
 				key = task.getTaskId();
@@ -207,7 +213,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 			status.setSchedulingComment(task.getCmts());
 
-			if (task.getExecutionPackage() != null && "PKG1".equals(task.getExecutionPackage().getExctnPckgNam())) {
+			if (task.getExecutionPackage() != null) {
 				status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
 			}
 
@@ -269,7 +275,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	private Task prepareTaskFromWorkOrderId(String workOrderId, WorkOrder workOrder) {
 		Task dbTask = workOrderDAO.fetch(workOrderId);
-		Task updatedTask = prepareTaskBean(dbTask, workOrder);
+		Task updatedTask = prepareTaskBean(dbTask, workOrder,workOrderId);
 		prepareToDoAssignmentList(updatedTask, workOrder);
 		return updatedTask;
 	}
@@ -305,23 +311,27 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			// Set the new values
 			for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
 				ToDoItem item = itrToDo.next();
-				TodoAssignment todoAssignment = new TodoAssignment();
-				todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
-				//todoAssignment.setExecutionPackage(updatedTask.getExecutionPackage());
-				logger.debug("Todo id for #{} - {}", item.getToDoName(), todoDAO.getToDoId(item.getToDoName()));
-				todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(item.getToDoName()));
-				todos.add(todoAssignment);
-				updatedTask.setTodoAssignments(todos);
+				if (null != item.getWorkOrders() && item.getWorkOrders().contains(updatedTask.getTaskId())) {
+					TodoAssignment todoAssignment = new TodoAssignment();
+					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
+					//todoAssignment.setExecutionPackage(updatedTask.getExecutionPackage());
+					logger.debug("Todo id for #{} - {}", item.getToDoName(), todoDAO.getToDoId(item.getToDoName()));
+					todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(item.getToDoName()));
+					todos.add(todoAssignment);
+					updatedTask.setTodoAssignments(todos);
+				}
 			}
 		}
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments().size());
 		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
 	}
 
-	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder) {
+	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder, String workOrderId) {
 		// create new Task if not there in DB
 		if (dbTask == null) {
 			dbTask = new Task();
+			dbTask.setTaskId(workOrderId);
+			
 		}
 
 		dbTask.setCmts(workOrder.getSchedulingToDoComment());

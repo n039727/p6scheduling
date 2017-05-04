@@ -21,17 +21,9 @@
 			<td>{{wo.workOrders.join(',')}}</td>
 			<td>{{wo.scheduleDate}}</td>
 			<td>{{wo.crewNames}}</td>
-			<td> 
-				<!--<select class="form-control" id="lead-crew-select" disabled>
-					<option>&nbsp;</option>
-				</select>-->
-				{{wo.leadCrew}}
-			</td>
+			<td> {{wo.leadCrew}}</td>
 			<td>{{wo.exctnPckgName}}</td>
-			<td> <span ng-if="wo.workOrders.length > 0"></span>
-				<span ng-if="wo.workOrders.length == 0"></span>
-			</td>
-			
+			<td>{{wo.actioned}}</td>
 		</tr>
 		<tr ng-repeat-end>
 			<td colspan="12" class="hiddenRow">

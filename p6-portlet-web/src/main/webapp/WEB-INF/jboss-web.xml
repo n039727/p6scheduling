@@ -1,4 +1,0 @@
-<jboss-web>
-    <!-- It's needed to override default security domain JBoss (that uses ApplicationRealm) -->
-    <security-domain>java:/jaas/active-directory</security-domain>
-</jboss-web> 
