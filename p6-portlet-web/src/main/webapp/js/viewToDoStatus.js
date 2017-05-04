@@ -67,7 +67,11 @@ function viewToDoStatusController($scope, $http) {
 			wo.todoAssignments = response.data[0].todoAssignments;
 			if (wo.todoAssignments) {
 				for (var i =0; i<wo.todoAssignments.length; i++) {
-					wo.todoAssignments[i].reqByDt = new Date(wo.todoAssignments[i].reqByDate);
+					console.log("req by date for fetchWOForTODOStatus: " + JSON.stringify(wo.todoAssignments[i].reqByDate));
+					
+					if(wo.todoAssignments[i].reqByDate !== null ){					
+						wo.todoAssignments[i].reqByDt = new Date(wo.todoAssignments[i].reqByDate);
+					}
 				}
 			}
 			wo.schedulingComment = response.data[0].schedulingComment;
