@@ -78,6 +78,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			if (workOrder.getWorkOrders() != null) {
 				for (String workOrderId : workOrder.getWorkOrders()) {
 					Task dbTask = workOrderDAO.fetch(workOrderId);
+					dbTask = dbTask == null ? new Task() : dbTask;
 					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
 					if (dbTask.getExecutionPackage() != null) {
 						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());
@@ -100,7 +101,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					}else{
 						//create separate work order list
 						WorkOrder workOrderNew = new WorkOrder();
-						workOrderNew.setScheduleDate(dateUtils.toStringDD_MM_YYYY(dbTask.getSchdDt()));
+						workOrderNew.setWorkOrders(workOrder.getWorkOrders());
+						workOrderNew.setCrewNames(workOrder.getCrewNames());
+						workOrderNew.setScheduleDate(workOrder.getScheduleDate());
 						workOrderNew.setCrewNames(dbTask.getCrewId());
 						workOrderNew.setLeadCrew(dbTask.getLeadCrewId());
 						workOrderNamesinGroup.add(dbTask.getTaskId());

@@ -4,6 +4,7 @@
 package au.com.wp.corp.p6.businessservice;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -13,8 +14,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -22,10 +23,13 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.businessservice.impl.P6SchedulingBusinessServiceImpl;
+import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
+import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.test.config.AppConfig;
+import au.com.wp.corp.p6.utils.DateUtils;
 
 /**
  * @author N039603
@@ -35,11 +39,19 @@ import au.com.wp.corp.p6.test.config.AppConfig;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class P6SchedulingBusinessServiceTest {
 
-	//@Mock
-	//WorkOrderDAOImpl workOrderDAO;
+	@Mock
+	WorkOrderDAOImpl workOrderDAO;
+	
+	@Mock
+	DateUtils dateUtils;
+	
+	@Mock
+	ExecutionPackageDao executionPackageDao;
+	
+	@Mock
+	TodoDAO todoDAO;
 
-	//@InjectMocks
-	@Autowired
+	@InjectMocks
 	P6SchedulingBusinessServiceImpl p6SchedulingBusinessService;
 
 	/**
@@ -193,7 +205,7 @@ public class P6SchedulingBusinessServiceTest {
 		toDoItem.setWorkOrders(workOrders);
 		toDoItems.add(toDoItem);
 		order.setToDoItems(toDoItems);
-		
+		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(order.getScheduleDate())).thenReturn(new Date());
 		p6SchedulingBusinessService.saveToDo(order);
 	}
 
