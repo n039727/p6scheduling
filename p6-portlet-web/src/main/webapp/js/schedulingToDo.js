@@ -45,7 +45,10 @@ function schedulingToDoResultController($scope, $http) {
 					wo.toDoItems.push({toDoName:todo, workOrders:[wo.workOrders[0]]});
 					console.log('WO after adding To Do: ' + JSON.stringify(wo));
 				}
-					
+				if (angular.isDefined(wo.workOrderIdDisplayArray) 
+						&& wo.workOrderIdDisplayArray.length > 0) {
+					ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, todo)] = [wo.workOrderIdDisplayArray[0]];	
+				}
 			} else {
 				var index = findToDo(wo.toDoItems, todo);
 				if (index > -1) {
@@ -137,9 +140,13 @@ function schedulingToDoResultController($scope, $http) {
 		$http(req).then(function (response) {
 			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			wo.toDoItems = [];
-			wo.toDoItems = response.data[0].toDoItems;
-			wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
+			wo.schedulingToDoComment = "";
+			if (response.data[0] && response.data[0].toDoItems) {
+				wo.toDoItems = response.data[0].toDoItems;
+				wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
+			}
 			ctrl.populateToDoBindings(wo, wo.toDoItems);
+			ctrl.populateWorkOrderDisplayList(wo);
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
 		});
 	}
@@ -158,6 +165,21 @@ function schedulingToDoResultController($scope, $http) {
 	
 	ctrl.getWorkOrderToDoKey = function(workOrder, todoName) {
 		return (angular.isDefined(workOrder.exctnPckgName)?workOrder.exctnPckgName:workOrder.workOrders[0]) + "-" + todoName;
+	}
+	
+	ctrl.populateWorkOrderDisplayList = function(wo) {
+		wo.workOrderIdDisplayArray = [];
+		if (angular.isDefined(wo) 
+				&& angular.isDefined(wo.workOrders)) {
+			if (wo.workOrders.length > 1) {
+				wo.workOrderIdDisplayArray.push("ALL");
+			} 
+			for (var i = 0; i < wo.workOrders.length; i++) {
+				wo.workOrderIdDisplayArray.push(wo.workOrders[i]);
+			}
+		} 
+		
+		console.log('Work Order Id List: ' + wo.workOrderIdDisplayArray);
 	}
 	
 }
