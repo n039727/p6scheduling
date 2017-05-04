@@ -104,10 +104,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 						workOrderNew.setWorkOrders(workOrder.getWorkOrders());
 						workOrderNew.setCrewNames(workOrder.getCrewNames());
 						workOrderNew.setScheduleDate(workOrder.getScheduleDate());
-						workOrderNew.setCrewNames(dbTask.getCrewId());
-						workOrderNew.setLeadCrew(dbTask.getLeadCrewId());
 						workOrderNamesinGroup.add(dbTask.getTaskId());
-						workOrderNew.setWorkOrders(workOrderNamesinGroup);
 						ungroupedWorkorders.add(workOrderNew);
 					}
 				}
