@@ -97,39 +97,11 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata) {
 			ctrl.workOrders = data;
 			ctrl.resultVisible = true;
 			ctrl.savedMsgVisible = false;
-			if(ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE'){
-				console.log('called function for execution:');
-				ctrl.displayOnExecPkg(data);
-			}
 		});
 	};
 
 	ctrl.activeContext = 'ADD_SCHEDULING_TODO';
 
-	ctrl.displayOnExecPkg = function(data){
-		ctrl.tempData = [];
-		if(data.length > 0){
-			for(var i=0;i<data.length; i++){
-				if(data[i].workOrders.length > 1){
-					workOrderList = [];
-					crewNames = [];
-					workOrderList = data[i].workOrders;
-					crewNames = data[i].crewNames.split(',');
-					scheduleFromDate = data[i].scheduleDate;
-					leadCrew = data[i].leadCrew;
-					execPkgName = data[i].exctnPckgName;
-					for(var j=0;j< workOrderList.length;j++){
-						ctrl.tempData.push({exctnPckgName:execPkgName,workOrders:[workOrderList[j]],scheduleDate:scheduleFromDate,crewNames:crewNames[j]});
-					}
-				}else{
-					ctrl.tempData.push(data[i]);
-				}	
-			}
-		}
-		console.log('ctrl.tempData: ' + JSON.stringify(ctrl.tempData));
-		ctrl.workOrders = ctrl.tempData;
-		console.log('ctrl.data: ' + JSON.stringify(ctrl.workOrders));
-	};
 	
 	ctrl.handleContext = function(context) {
 		console.log('handle context called with context: ' + context);
