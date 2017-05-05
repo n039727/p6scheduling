@@ -24,6 +24,7 @@ import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
+import au.com.wp.corp.p6.mock.CreateP6MockData;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 
@@ -38,6 +39,8 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 	@Autowired
 	SessionFactory sessionFactory;
 
+	@Autowired
+	CreateP6MockData mockData;
 	/*
 	 * (non-Javadoc)
 	 * 

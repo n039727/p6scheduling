@@ -28,6 +28,7 @@ import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.WorkOrder;
+import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.test.config.AppConfig;
 import au.com.wp.corp.p6.utils.DateUtils;
 
@@ -53,7 +54,7 @@ public class P6SchedulingBusinessServiceTest {
 
 	@InjectMocks
 	P6SchedulingBusinessServiceImpl p6SchedulingBusinessService;
-
+ 
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -130,7 +131,12 @@ public class P6SchedulingBusinessServiceTest {
 		inputWorkOrder = populateWorkOrder(inputWorkOrder);
 		outputWorkOrder = populateWorkOrder(outputWorkOrder);
 
-		outputWorkOrder = p6SchedulingBusinessService.saveToDo(inputWorkOrder);
+		try {
+			outputWorkOrder = p6SchedulingBusinessService.saveToDo(inputWorkOrder);
+		} catch (P6BusinessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Assert.assertEquals(outputWorkOrder.getCrewNames(), inputWorkOrder.getCrewNames());
 	}
 
@@ -206,7 +212,12 @@ public class P6SchedulingBusinessServiceTest {
 		toDoItems.add(toDoItem);
 		order.setToDoItems(toDoItems);
 		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(order.getScheduleDate())).thenReturn(new Date());
-		p6SchedulingBusinessService.saveToDo(order);
+		try {
+			p6SchedulingBusinessService.saveToDo(order);
+		} catch (P6BusinessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
