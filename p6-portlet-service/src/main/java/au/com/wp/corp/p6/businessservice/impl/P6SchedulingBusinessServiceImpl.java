@@ -62,7 +62,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	private static String ACTIONED_N = "N";
 
 	
-
+	@Override
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) {
 		return mockData.search(input);
 
@@ -71,10 +71,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Override
 	public List<WorkOrder> search(WorkOrderSearchRequest input) throws P6BusinessException {
 		List<WorkOrder> mockWOData = mockData.search(input);
-		Map<String,WorkOrder> mapOfExecutionPkgWO = new HashMap<String,WorkOrder>();
-		List<WorkOrder> ungroupedWorkorders = new ArrayList<WorkOrder>();
+		Map<String,WorkOrder> mapOfExecutionPkgWO = new HashMap<>();
+		List<WorkOrder> ungroupedWorkorders = new ArrayList<>();
 		for (WorkOrder workOrder : mockWOData) {
-			List<String> workOrderNamesinGroup = new ArrayList<String>();
+			List<String> workOrderNamesinGroup = new ArrayList<>();
 			if (workOrder.getWorkOrders() != null) {
 				for (String workOrderId : workOrder.getWorkOrders()) {
 					Task dbTask = workOrderDAO.fetch(workOrderId);
@@ -89,6 +89,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 								workOrdersalreadyinGroup.getWorkOrders().add(workOrderId);
 							}
 						} else {
+							
 							WorkOrder workOrderNew = new WorkOrder();
 							workOrderNew.setScheduleDate(dateUtils.toStringDD_MM_YYYY(dbTask.getSchdDt()));
 							workOrderNew.setCrewNames(dbTask.getCrewId());
@@ -114,7 +115,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 		logger.debug("final grouped work orders size {}",mapOfExecutionPkgWO.values().size());
 		logger.debug("final grouped work orders = {}",mapOfExecutionPkgWO.values());
-		List<WorkOrder> workorders = new ArrayList<WorkOrder> (mapOfExecutionPkgWO.values());
+		List<WorkOrder> workorders = new ArrayList<> (mapOfExecutionPkgWO.values());
 		workorders.addAll(ungroupedWorkorders);
 		return workorders;
 	}
