@@ -10,7 +10,6 @@ import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -108,3 +107,4 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	}
 
 }
+

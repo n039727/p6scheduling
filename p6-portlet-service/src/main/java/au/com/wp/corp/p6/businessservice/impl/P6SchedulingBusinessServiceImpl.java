@@ -279,7 +279,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	private Task prepareTaskFromWorkOrderId(String workOrderId, WorkOrder workOrder) throws P6BusinessException {
 		Task dbTask = workOrderDAO.fetch(workOrderId);
-		Task updatedTask = prepareTaskBean(dbTask, workOrder);
+		Task updatedTask = prepareTaskBean(dbTask, workOrder,workOrderId);
 		prepareToDoAssignmentList(updatedTask, workOrder);
 		return updatedTask;
 	}
@@ -315,23 +315,27 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			// Set the new values
 			for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
 				ToDoItem item = itrToDo.next();
-				TodoAssignment todoAssignment = new TodoAssignment();
-				todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
-				//todoAssignment.setExecutionPackage(updatedTask.getExecutionPackage());
-				logger.debug("Todo id for #{} - {}", item.getToDoName(), todoDAO.getToDoId(item.getToDoName()));
-				todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(item.getToDoName()));
-				todos.add(todoAssignment);
-				updatedTask.setTodoAssignments(todos);
+				if (null != item.getWorkOrders() && item.getWorkOrders().contains(updatedTask.getTaskId())) {
+					TodoAssignment todoAssignment = new TodoAssignment();
+					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
+					//todoAssignment.setExecutionPackage(updatedTask.getExecutionPackage());
+					logger.debug("Todo id for #{} - {}", item.getToDoName(), todoDAO.getToDoId(item.getToDoName()));
+					todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(item.getToDoName()));
+					todos.add(todoAssignment);
+					updatedTask.setTodoAssignments(todos);
+				}
 			}
 		}
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments().size());
 		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
 	}
 
-	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder) {
+	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder, String workOrderId) {
 		// create new Task if not there in DB
 		if (dbTask == null) {
 			dbTask = new Task();
+			dbTask.setTaskId(workOrderId);
+			
 		}
 
 		dbTask.setCmts(workOrder.getSchedulingToDoComment());
