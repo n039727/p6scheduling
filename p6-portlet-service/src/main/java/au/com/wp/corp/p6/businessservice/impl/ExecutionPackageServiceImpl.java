@@ -85,7 +85,9 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					logger.debug("Task {} is fecthed", task.getTaskId());
 					if(null != task.getExecutionPackage()){
 						logger.debug("Old Execution fatched {} for the  task {}", task.getExecutionPackage().getExctnPckgNam(), task.getTaskId());
-						executionPackages.add(task.getExecutionPackage());
+						ExecutionPackage oldExecutionPackage = task.getExecutionPackage();
+						oldExecutionPackage.getTasks().remove(task);
+						executionPackages.add(oldExecutionPackage);
 					}
 					task.setExecutionPackage(executionPackage);
 					task.setLstUpdtdUsr(userName);
