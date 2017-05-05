@@ -3,8 +3,13 @@
  */
 package au.com.wp.corp.p6.businessservice;
 
+import java.util.List;
+
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.WorkOrder;
+import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
 
 /**
  * ExecutionPackageService performs following tasks regarding the execution
@@ -26,5 +31,7 @@ public interface IExecutionPackageService {
 	 * @throws P6BusinessException
 	 */
 	public ExecutionPackageDTO createOrUpdateExecutionPackage(ExecutionPackageDTO executionPackageDTO, String user) throws P6BusinessException;
+
+	List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6DataAccessException;
 
 }

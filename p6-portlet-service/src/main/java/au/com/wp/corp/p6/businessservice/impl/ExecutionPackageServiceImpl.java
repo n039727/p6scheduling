@@ -16,9 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
+import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
+import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
+import au.com.wp.corp.p6.mock.CreateP6MockData;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.utils.DateUtils;
@@ -39,10 +43,13 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 
 	@Autowired
 	ExecutionPackageDao executionPackageDao;
+	@Autowired
+	WorkOrderDAO workOrderDao;
 
 	@Autowired
 	DateUtils dateUtils;
-
+	@Autowired
+	CreateP6MockData mockData;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -72,7 +79,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					crewNames.append(workOrder.getCrewNames());
 				}
 				logger.debug("crew names added --- {} ", crewNames.toString());
-				Task task = executionPackageDao.getTaskbyId(workOrder.getWorkOrderId());
+				Task task = workOrderDao.fetch(workOrder.getWorkOrderId());
 				scheduledStartDate = workOrder.getScheduleDate();
 				if (task != null) {
 					logger.debug("Task {} is fecthed", task.getTaskId());
@@ -115,5 +122,25 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		logger.info("execution package id has been created # {} ", execPckgId);
 		return execPckgId;
 	}
-
+	@Override
+	public List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6DataAccessException {
+		List<WorkOrder> mockWOData = mockData.search(input);
+		for (WorkOrder workOrder : mockWOData) {
+			if (workOrder.getWorkOrders() != null) {
+				for (String workOrderId : workOrder.getWorkOrders()) {
+					Task dbTask = workOrderDao.fetch(workOrderId);
+					dbTask = dbTask == null ? new Task() : dbTask;
+					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
+					if (dbTask.getExecutionPackage() != null) {
+						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());
+						String dbWOExecPkg = dbTask.getExecutionPackage().getExctnPckgNam();
+						workOrder.setExctnPckgName(dbWOExecPkg);
+					}
+					
+				}
+			}
+		}
+		logger.debug("final grouped work orders size {}",mockWOData.size());
+		return mockWOData;
+	}
 }

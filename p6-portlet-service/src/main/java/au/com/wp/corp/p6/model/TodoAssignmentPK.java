@@ -18,6 +18,13 @@ import javax.persistence.ManyToOne;
 @Embeddable
 public class TodoAssignmentPK implements Serializable {
 
+	
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Column(name = "TODO_ID")
 	private BigDecimal todoId;
 
@@ -42,6 +49,36 @@ public class TodoAssignmentPK implements Serializable {
 		this.todoId = todoId;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((task == null) ? 0 : task.hashCode());
+		result = prime * result + ((todoId == null) ? 0 : todoId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TodoAssignmentPK other = (TodoAssignmentPK) obj;
+		if (task == null) {
+			if (other.task != null)
+				return false;
+		} else if (!task.equals(other.task))
+			return false;
+		if (todoId == null) {
+			if (other.todoId != null)
+				return false;
+		} else if (!todoId.equals(other.todoId))
+			return false;
+		return true;
+	}
 }
 
 

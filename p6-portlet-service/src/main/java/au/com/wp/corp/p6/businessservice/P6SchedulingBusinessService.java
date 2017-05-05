@@ -9,6 +9,7 @@ import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
 
 
 public interface P6SchedulingBusinessService {
@@ -19,11 +20,11 @@ public interface P6SchedulingBusinessService {
 	public List<TaskDTO> listTasks() throws P6BusinessException;
 	public List<ToDoItem> fetchToDos();
 	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query);
-	public WorkOrder saveToDo(WorkOrder workOrder);
+	public WorkOrder saveToDo(WorkOrder workOrder) throws P6BusinessException;
 	public List<ExecutionPackageDTO> fetchExecutionPackageList();
 	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) throws P6BusinessException;
 	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest body);
-	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus body);
-	public List<WorkOrder> search(WorkOrderSearchRequest input);
+	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus body) throws P6BusinessException;
+	public List<WorkOrder> search(WorkOrderSearchRequest input) throws P6BusinessException;
 
 }

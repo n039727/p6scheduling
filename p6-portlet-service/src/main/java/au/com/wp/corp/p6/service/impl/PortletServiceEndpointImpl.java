@@ -24,6 +24,7 @@ import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
+import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.service.PortletServiceEndpoint;
 import au.com.wp.corp.p6.validation.Validator;
 
@@ -80,7 +81,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
     		consumes = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     @Override
-	public ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) {
+	public ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) throws P6BusinessException {
     	return new ResponseEntity<WorkOrder>(p6BusinessService.saveToDo(workOrder.getBody()),HttpStatus.CREATED);
 	}
 	
@@ -90,7 +91,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
     		consumes = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     @Override
-	public ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus) {
+	public ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus) throws P6BusinessException {
     	return new ResponseEntity<ViewToDoStatus>(p6BusinessService.saveViewToDoStatus(viewToDoStatus.getBody()),HttpStatus.CREATED);
 	}
 
