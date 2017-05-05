@@ -55,6 +55,7 @@ function schedulingToDoResultController($scope, $http) {
 					wo.toDoItems.splice(index, 1);
 					console.log('WO after removing To Do: ' + JSON.stringify(wo));
 				}
+				ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, todo)] = [];
 			}
 				//wo.todos.remove(todo);
 			
@@ -116,6 +117,24 @@ function schedulingToDoResultController($scope, $http) {
 		});
 		ctrl.handleDataChange({event:{eventId:'SCHEDULING_TODO_SAVED'}});
 	};
+	
+	ctrl.updateBindingVarOnSelect= function(wo, todoName) {
+		console.log('update binding var is called: ' + todoName);
+		var key = ctrl.getWorkOrderToDoKey(wo, todoName);
+		var selectedValArray = ctrl.toDoBindingVar[key];
+		if (angular.isDefined(selectedValArray)) {
+			var allIndex = selectedValArray.indexOf('ALL');
+			if (allIndex > -1 && allIndex < selectedValArray.length - 1) {
+				selectedValArray.splice(allIndex, 1);
+				console.log('ALL is removed from key: ' + key);
+			} else if (allIndex > -1 && allIndex == selectedValArray.length - 1) {
+				selectedValArray = ['ALL'];
+			} else if (selectedValArray.length == wo.workOrders.length) {
+				selectedValArray = ['ALL'];
+			}
+			ctrl.toDoBindingVar[key] = selectedValArray;
+		}
+	}
 	
 	ctrl.fetchToDoAgainstWO = function(wo) {
 		serviceUrl = "/p6-portal-service/scheduler/fetchWOForAddUpdateToDo";

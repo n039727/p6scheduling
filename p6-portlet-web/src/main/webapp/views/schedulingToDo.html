@@ -50,6 +50,7 @@
 												-->
 												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
+													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
 													multiple
 													placeholder="Select">
 												</oi-select>
@@ -74,8 +75,9 @@
 												<!--<select class="form-control" >
 													<option ng-if="$ctrl.calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
 												</select>-->
-												<oi-select oi-options="workOrderId for workOrderId in wo.wo.workOrderIdDisplayArray"
+												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
+													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
 													multiple
 													placeholder="Select">
 												</oi-select>
