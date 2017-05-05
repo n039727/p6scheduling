@@ -69,9 +69,15 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata) {
 
 	ctrl.reload = function(query, success) {
 		console.log('data == ' + JSON.stringify(query))
+		var serviceUrl = "";
+		if (ctrl.activeContext === 'CREATE_EXECUTION_PACKAGE') {
+			serviceUrl = "/p6-portal-service/executionpackage/searchByExecutionPackage";
+		} else {
+			serviceUrl = "/p6-portal-service/scheduler/search";
+		}
 		$http({
 			method : 'POST',
-			url : '/p6-portal-service/scheduler/search',
+			url : serviceUrl,
 			data : JSON.stringify(query),
 			headers : {
 				'Content-Type' : 'application/json'
