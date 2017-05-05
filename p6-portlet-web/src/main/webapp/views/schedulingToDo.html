@@ -23,7 +23,10 @@
 			<td>{{wo.crewNames}}</td>
 			<td> {{wo.leadCrew}}</td>
 			<td>{{wo.exctnPckgName}}</td>
-			<td>{{wo.actioned}}</td>
+			
+			<td> <span ng-if="wo.actioned == 'Y'">Yes</span>
+				<span ng-if="wo.actioned == 'N'"></span>
+			</td>
 		</tr>
 		<tr ng-repeat-end>
 			<td colspan="12" class="hiddenRow">
