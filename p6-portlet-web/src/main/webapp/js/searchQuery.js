@@ -3,18 +3,16 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	var ctrl = this;
 	ctrl.showErrorMsg = false;
 	console.log('Meta Data passed from parent: ' + JSON.stringify(this.metadata));
-	this.formatScheduleFromdate = function(){
-	    $mdDateLocale.formatDate = function(date) {
-	    	return $filter('date')(ctrl.scheduleFromDate, "dd/MM/yyyy");
-	    };
-	};
-	this.formatScheduleTodate = function(){
-	    $mdDateLocale.formatDate = function(date) {
-	    	return $filter('date')(ctrl.scheduleToDate, "dd/MM/yyyy");
-	    };
-	};
 	// FORMAT THE DATE FOR THE DATEPICKER
+	$mdDateLocale.formatDate = function(date) {
+    	if(angular.isDefined(date) && date !== null){
+    		return $filter('date')(date, "dd/MM/yyyy");
+    	}else{
+    		return null;
+    	}
+    };
 
+	
 	this.prepareSearch = function() {
 		
 		console.log('search called');
