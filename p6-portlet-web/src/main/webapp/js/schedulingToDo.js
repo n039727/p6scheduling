@@ -93,7 +93,13 @@ function schedulingToDoResultController($scope, $http) {
 		// populate updated to do assignments
 		if (wo && wo.toDoItems) {
 			for (var i = 0; i< wo.toDoItems.length; i++) {
-				wo.toDoItems[i].workOrders = ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, wo.toDoItems[i].toDoName)];
+				var boundWorkOrders = ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, wo.toDoItems[i].toDoName)];
+				if (boundWorkOrders) {
+					if (boundWorkOrders.indexOf('ALL') > -1) {
+						boundWorkOrders = wo.workOrders;
+					}
+					wo.toDoItems[i].workOrders = boundWorkOrders;
+				}
 			}
 		}
 		
@@ -176,7 +182,11 @@ function schedulingToDoResultController($scope, $http) {
 			ctrl.toDoBindingVar = {};
 			if (workOrder && workOrder.toDoItems) {
 				for (var i = 0; i< workOrder.toDoItems.length; i++) {
-					ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(workOrder, workOrder.toDoItems[i].toDoName)] = workOrder.toDoItems[i].workOrders;
+					var boundWorkOrders = workOrder.toDoItems[i].workOrders;
+					if (angular.isDefined(boundWorkOrders) && angular.isDefined(workOrder) && boundWorkOrders.length == workOrder.workOrders.length) {
+						boundWorkOrders = ['ALL'];
+					}
+					ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(workOrder, workOrder.toDoItems[i].toDoName)] = boundWorkOrders;
 				}
 			}
 			console.log("toDoBindingVar: " + JSON.stringify(ctrl.toDoBindingVar));

@@ -51,6 +51,7 @@
 												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
 													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
+													ng-disabled="!$ctrl.calculateEnable(wo, todo)"
 													multiple
 													placeholder="Select">
 												</oi-select>
@@ -77,6 +78,7 @@
 												</select>-->
 												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
+													ng-disabled="!$ctrl.calculateEnable(wo, todo)"
 													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
 													multiple
 													placeholder="Select">
