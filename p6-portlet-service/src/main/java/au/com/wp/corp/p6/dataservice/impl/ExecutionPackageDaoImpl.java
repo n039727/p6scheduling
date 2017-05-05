@@ -189,6 +189,27 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 		getSession().clear();
 		return status;
 	}
+	
+	/* (non-Javadoc)
+	 * @see au.com.wp.corp.p6.dataservice.ExecutionPackageDao#deleteExecPackage(au.com.wp.corp.p6.model.ExecutionPackage)
+	 */
+	@org.springframework.transaction.annotation.Transactional
+	@Override
+	public boolean deleteExecPackage(ExecutionPackage executionPackage) throws P6DataAccessException {
+		logger.debug("Deleting the empty execution package");
+		boolean status = Boolean.FALSE;
+
+		try {
+			getSession().delete(executionPackage);
+			status = Boolean.TRUE;
+		} catch (Exception e) {
+			parseException(e);
+		}
+		logger.debug("deleted the execution package");
+		getSession().flush();
+		getSession().clear();
+		return status;
+	}
 
 
 }

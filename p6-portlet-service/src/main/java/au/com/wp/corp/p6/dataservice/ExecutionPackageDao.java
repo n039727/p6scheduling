@@ -54,5 +54,12 @@ public interface ExecutionPackageDao extends P6DAOExceptionParser {
 	 * @throws P6DataAccessException
 	 */
 	public boolean createOrUpdateTasks(Set<Task> tasks) throws P6DataAccessException;
+	
+	/**
+	 * @param executionPackage
+	 * @return
+	 * @throws P6DataAccessException
+	 */
+	public boolean deleteExecPackage(ExecutionPackage executionPackage) throws P6DataAccessException;
 
 }
