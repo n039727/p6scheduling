@@ -3,6 +3,7 @@
  */
 package au.com.wp.corp.p6.dataservice;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -26,6 +27,10 @@ public interface P6DAOExceptionParser extends P6ExceptionMapper{
 		
 		if ( exc instanceof NullPointerException ){
 			throw new P6DataAccessException (UNIQUE_CONSTRAINT_VIOLATION_1001, exc);
+		}
+		
+		if ( exc instanceof HibernateException ){
+			throw new P6DataAccessException (DB_LOOKUP_OR_UPDATE_ERROR_2001, exc);
 		}
 	}
 	

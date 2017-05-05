@@ -69,7 +69,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
  
 	@Override
-	public List<WorkOrder> search(WorkOrderSearchRequest input) {
+	public List<WorkOrder> search(WorkOrderSearchRequest input) throws P6BusinessException {
 		List<WorkOrder> mockWOData = mockData.search(input);
 		Map<String,WorkOrder> mapOfExecutionPkgWO = new HashMap<String,WorkOrder>();
 		List<WorkOrder> ungroupedWorkorders = new ArrayList<WorkOrder>();
@@ -119,8 +119,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return workorders;
 	}
 
+	
+
+	
+
 	public List<WorkOrder> retrieveJobs(WorkOrderSearchRequest input) {
-		
+
 		return new ArrayList<WorkOrder>(mapStorage.values());
 
 	}
@@ -255,7 +259,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	 */
 
 	@Override
-	public WorkOrder saveToDo(WorkOrder workOrder) {
+	public WorkOrder saveToDo(WorkOrder workOrder) throws P6BusinessException {
 
 		if (workOrder == null)
 			throw new IllegalArgumentException("Work Order canot be null");
@@ -273,7 +277,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return workOrder;
 	}
 
-	private Task prepareTaskFromWorkOrderId(String workOrderId, WorkOrder workOrder) {
+	private Task prepareTaskFromWorkOrderId(String workOrderId, WorkOrder workOrder) throws P6BusinessException {
 		Task dbTask = workOrderDAO.fetch(workOrderId);
 		Task updatedTask = prepareTaskBean(dbTask, workOrder);
 		prepareToDoAssignmentList(updatedTask, workOrder);
@@ -457,7 +461,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	@Override
-	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus workOrder) {
+	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus workOrder) throws P6BusinessException {
 
 		if (workOrder != null) {
 

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.businessservice.impl.ExecutionPackageServiceImpl;
 import au.com.wp.corp.p6.dataservice.impl.ExecutionPackageDaoImpl;
+import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6BusinessException;
@@ -49,6 +50,9 @@ public class ExecutionPackageServiceTest {
 
 	@Mock
 	ExecutionPackageDaoImpl executionPckgDao;
+	
+	@Mock
+	WorkOrderDAOImpl workOrderDao;
 
 	@Mock
 	DateUtils dateUtils;
@@ -100,7 +104,7 @@ public class ExecutionPackageServiceTest {
 		task.setTaskId("WO1231");
 		task.setCrewId("CREW1");
 		tasks.add(task);
-		Mockito.when(executionPckgDao.getTaskbyId("WO1231")).thenReturn(task);
+		Mockito.when(workOrderDao.fetch("WO1231")).thenReturn(task);
 		execPckg.setWorkOrders(workOrders);
 		ExecutionPackage execPackage = new ExecutionPackage();
 		execPackage.setTasks(tasks);
@@ -140,7 +144,7 @@ public class ExecutionPackageServiceTest {
 			task.setTaskId("WO123" + i);
 			task.setCrewId("CREW"+i);
 			tasks.add(task);
-			Mockito.when(executionPckgDao.getTaskbyId("WO123" + i)).thenThrow(P6DataAccessException.class);
+			Mockito.when(workOrderDao.fetch("WO123" + i)).thenThrow(P6DataAccessException.class);
 		}
 		execPckg.setWorkOrders(workOrders);
 		ExecutionPackage execPackage = new ExecutionPackage();

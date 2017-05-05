@@ -24,6 +24,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
@@ -90,7 +91,13 @@ public class WorkOrderDAOTest {
 	public void testSaveTask() {
 		Task dbTask = new Task();
 		dbTask = prepareTaskBean(dbTask);
-		Task createdTask = workOrderDAO.saveTask(dbTask);	
+		Task createdTask = null;
+		try {
+			createdTask = workOrderDAO.saveTask(dbTask);
+		} catch (P6DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		assertEquals(dbTask.getTaskId(), createdTask.getTaskId());
 		
 	}

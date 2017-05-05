@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 
@@ -57,9 +59,7 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	
 	@Override
 	@Transactional
-	public Task saveTask(Task task) {
-		//sessionFactory.getCurrentSession().flush();
-		//sessionFactory.getCurrentSession().clear();
+	public Task saveTask(Task task) throws P6DataAccessException {
 		try {
 			long currentTime = System.currentTimeMillis();
 			if (task.getCrtdTs() == null) {
@@ -84,33 +84,27 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			sessionFactory.getCurrentSession().saveOrUpdate(task);
 		} catch (HibernateException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			parseException(e);
 		}
 		return task;
 	}
 
 	@Override
 	@Transactional
-	public Task fetch(String workOrderId) {
+	public Task fetch(String workOrderId) throws P6DataAccessException {
 		logger.debug("sessionfactory initialized ====={}",sessionFactory);
-		
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Task.class);
-        
-		logger.debug("Input TASK_ID>>>>{}", workOrderId);
-		criteria.add(Restrictions.eq("taskId", workOrderId));
-		criteria.setFetchSize(1);
- 
-		@SuppressWarnings("unchecked")
-		List<Task> listTask = (List<Task>) criteria
-                  .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-		/* This list size should always be 1*/
-		logger.info("size={}",listTask.size());
-		if (listTask != null && listTask.size() == 1) {
-			return listTask.get(0);
-		} else {
-			// TODO throw exception
+		Task task = null;
+		try{
+			task= (Task) sessionFactory.getCurrentSession().get(Task.class,workOrderId);
+		} catch (HibernateException e) {
+			parseException(e);
 		}
-        return null;
+        return task;
+	}
+
+	@Override
+	public Session getSession() {
+		return sessionFactory.getCurrentSession();
 	}
 
 }
