@@ -1,12 +1,14 @@
 /**
  * 
  */
-package au.com.wp.corp.p6.businessservice;
+package au.com.wp.corp.p6.bussiness;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -34,6 +36,7 @@ import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.mock.CreateP6MockData;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
+import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.test.config.AppConfig;
 import au.com.wp.corp.p6.utils.DateUtils;
 
@@ -106,11 +109,13 @@ public class P6SchedulingBusinessServiceTest {
 		Assert.assertNotNull(outputWorkOrder);
 		Assert.assertEquals(workOrder.getCrewNames(), outputWorkOrder.getCrewNames());
 		Assert.assertEquals(workOrder.getWorkOrderId(), outputWorkOrder.getWorkOrderId());
-		//Assert.assertEquals(task.getActioned(), outputWorkOrder.getActioned());
+		// Assert.assertEquals(task.getActioned(),
+		// outputWorkOrder.getActioned());
 	}
 
 	/**
-	 * Saving newly created work order with  todos
+	 * Add todos
+	 * Saving newly created work order with todos  
 	 * 
 	 * @throws P6BusinessException
 	 */
@@ -132,13 +137,12 @@ public class P6SchedulingBusinessServiceTest {
 		toDoItem.setWorkOrders(workOrderIds);
 		toDoItems.add(toDoItem);
 		workOrder.setToDoItems(toDoItems);
-		
-		
+
 		Task task = new Task();
 		task.setTaskId("WO11");
 		task.setActioned("Y");
 		task.setCrewId("CRW1");
-
+		
 		Mockito.when(workOrderDAO.fetch(workOrder.getWorkOrderId())).thenReturn(task);
 		Mockito.when(todoDAO.getToDoId("ESA")).thenReturn(new BigDecimal(1));
 		WorkOrder outputWorkOrder = p6SchedulingBusinessService.saveToDo(workOrder);
@@ -146,16 +150,17 @@ public class P6SchedulingBusinessServiceTest {
 		Assert.assertNotNull(outputWorkOrder);
 		Assert.assertEquals(workOrder.getCrewNames(), outputWorkOrder.getCrewNames());
 		Assert.assertEquals(workOrder.getWorkOrderId(), outputWorkOrder.getWorkOrderId());
-	//	Assert.assertEquals(task.getActioned(), outputWorkOrder.getActioned());
-		
-		for ( ToDoItem todo : outputWorkOrder.getToDoItems()){
+		// Assert.assertEquals(task.getActioned(),
+		// outputWorkOrder.getActioned());
+
+		for (ToDoItem todo : outputWorkOrder.getToDoItems()) {
 			Assert.assertEquals("ESA", todo.getToDoName());
 		}
-		
+
 	}
-	
+
 	/**
-	 * Saving newly created work order with  todos
+	 * Saving newly created work order with todos and execution package
 	 * 
 	 * @throws P6BusinessException
 	 */
@@ -171,7 +176,7 @@ public class P6SchedulingBusinessServiceTest {
 		workOrder.setCrewNames("CRW1");
 		workOrder.setScheduleDate("28/04/2017");
 		workOrder.setExctnPckgName("28-04-2017_122345");
-		
+
 		ExecutionPackage excPckg = new ExecutionPackage();
 		excPckg.setExctnPckgId(123456L);
 		excPckg.setExctnPckgNam(workOrder.getExctnPckgName());
@@ -182,8 +187,7 @@ public class P6SchedulingBusinessServiceTest {
 		toDoItem.setWorkOrders(workOrderIds);
 		toDoItems.add(toDoItem);
 		workOrder.setToDoItems(toDoItems);
-		
-		
+
 		Task task = new Task();
 		task.setTaskId("WO11");
 		task.setActioned("Y");
@@ -197,17 +201,66 @@ public class P6SchedulingBusinessServiceTest {
 		Assert.assertNotNull(outputWorkOrder);
 		Assert.assertEquals(workOrder.getCrewNames(), outputWorkOrder.getCrewNames());
 		Assert.assertEquals(workOrder.getWorkOrderId(), outputWorkOrder.getWorkOrderId());
-	//	Assert.assertEquals(task.getActioned(), outputWorkOrder.getActioned());
-		
-		for ( ToDoItem todo : outputWorkOrder.getToDoItems()){
+		// Assert.assertEquals(task.getActioned(),
+		// outputWorkOrder.getActioned());
+
+		for (ToDoItem todo : outputWorkOrder.getToDoItems()) {
 			Assert.assertEquals("ESA", todo.getToDoName());
 		}
+
+	}
+	
+	/**
+	 * Update todos
+	 * Saving newly created work order with todos  
+	 * 
+	 * @throws P6BusinessException
+	 */
+	@Test
+	@Rollback(true)
+	public void testSaveToDo_3() throws P6BusinessException {
+		WorkOrder workOrder = new WorkOrder();
+
+		List<String> workOrderIds = new ArrayList<>();
+		workOrderIds.add("WO11");
+		workOrder.setWorkOrders(workOrderIds);
+		workOrder.setWorkOrderId("WO11");
+		workOrder.setCrewNames("CRW1");
+		workOrder.setScheduleDate("28/04/2017");
+
+		List<ToDoItem> toDoItems = new ArrayList<>();
+		ToDoItem toDoItem = new ToDoItem();
+		toDoItem.setToDoName("ESA");
+		toDoItem.setWorkOrders(workOrderIds);
+		toDoItems.add(toDoItem);
+		workOrder.setToDoItems(toDoItems);
+
+		Task task = new Task();
+		task.setTaskId("WO11");
+		task.setActioned("Y");
+		task.setCrewId("CRW1");
+		TodoAssignment todoAssignment = new TodoAssignment();
+		todoAssignment.getTodoAssignMentPK().setTask(task);
+		todoAssignment.getTodoAssignMentPK().setTodoId(new BigDecimal(2));
+		Set<TodoAssignment> todos = new HashSet<>();
+		task.setTodoAssignments(todos);
 		
+		Mockito.when(workOrderDAO.fetch(workOrder.getWorkOrderId())).thenReturn(task);
+		Mockito.when(todoDAO.getToDoId("ESA")).thenReturn(new BigDecimal(1));
+		WorkOrder outputWorkOrder = p6SchedulingBusinessService.saveToDo(workOrder);
+
+		Assert.assertNotNull(outputWorkOrder);
+		Assert.assertEquals(workOrder.getCrewNames(), outputWorkOrder.getCrewNames());
+		Assert.assertEquals(workOrder.getWorkOrderId(), outputWorkOrder.getWorkOrderId());
+		// Assert.assertEquals(task.getActioned(),
+		// outputWorkOrder.getActioned());
+
+		for (ToDoItem todo : outputWorkOrder.getToDoItems()) {
+			Assert.assertEquals("ESA", todo.getToDoName());
+		}
+
 	}
 
-	
-	
-	
 	/**
 	 * {"exctnPckgName":"03-05-2017_09160757","workOrders":["Y6UIOP01","Y6UIOP02","Y6UIOP03"],"leadCrew":"MOST1",
 	 * "crewNames":"MOST1","scheduleDate":"28/04/2017","toDoItems":[{"toDoName":"ESA","workOrders":["Y6UIOP01"]},

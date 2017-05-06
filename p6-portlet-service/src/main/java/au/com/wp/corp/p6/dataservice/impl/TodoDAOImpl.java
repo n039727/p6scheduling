@@ -18,7 +18,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.ordering.antlr.GeneratedOrderByFragmentRendererTokenTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ public class TodoDAOImpl implements TodoDAO {
 	
 	@Transactional
 	public List<TodoTemplate> fetchAllToDos() {
-		
+
 		if (toDoMap == null) {
 			synchronized (lock) {
 				if (toDoMap == null) {
@@ -119,7 +118,7 @@ public class TodoDAOImpl implements TodoDAO {
 			String schedulingComments = workOrder.getSchedulingToDoComment();
 			String crewNames = workOrder.getCrewNames();
 			String leadCrew = workOrder.getLeadCrew();
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-mm-yyyy");
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			Date scheduleDate = null;
 			try {
 				scheduleDate = simpleDateFormat.parse(workOrder.getScheduleDate());

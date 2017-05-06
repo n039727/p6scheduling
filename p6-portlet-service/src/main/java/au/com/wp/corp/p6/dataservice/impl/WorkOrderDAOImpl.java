@@ -82,7 +82,6 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			
 			sessionFactory.getCurrentSession().saveOrUpdate(task);
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
 			parseException(e);
 		}
 		return task;
