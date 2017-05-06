@@ -327,7 +327,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				}
 			}
 		}
-		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments().size());
+		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
 		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
 	}
 
