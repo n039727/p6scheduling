@@ -51,7 +51,15 @@ function viewToDoStatusController($scope, $http) {
 	ctrl.fetchToDoAgainstWO = function(wo) {
 		serviceUrl = "/p6-portal-service/scheduler/fetchWOForTODOStatus";
 		console.log('fetching To-Dos for work order: ' + wo.workOrders[0]);
-		var query = {workOrderId:wo.workOrders[0]};
+		console.log('wo.exctnPckgName: ' + wo.exctnPckgName);
+		var query = {};
+		if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
+			query = {execPckgName:wo.exctnPckgName};
+		}else{
+			query = {workOrderId:wo.workOrders[0]};
+			
+		}
+		console.log('request fetching To-Dos for work order: ' + JSON.stringify(query));
 		var req = {
 				method: 'POST',
 				url: serviceUrl,
