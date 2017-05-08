@@ -184,7 +184,9 @@ function schedulingToDoResultController($scope, $http) {
 				for (var i = 0; i< workOrder.toDoItems.length; i++) {
 					var boundWorkOrders = workOrder.toDoItems[i].workOrders;
 					if (angular.isDefined(boundWorkOrders) && angular.isDefined(workOrder) && boundWorkOrders.length == workOrder.workOrders.length) {
-						boundWorkOrders = ['ALL'];
+						if (boundWorkOrders.length > 1) {
+								boundWorkOrders = ['ALL'];
+						}
 					}
 					ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(workOrder, workOrder.toDoItems[i].toDoName)] = boundWorkOrders;
 				}
