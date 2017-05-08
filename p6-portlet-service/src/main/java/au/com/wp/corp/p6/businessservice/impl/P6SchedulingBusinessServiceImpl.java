@@ -203,7 +203,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			if (!taskIdWOMap.containsKey(key)) {
 				taskIdWOMap.put(key, new ViewToDoStatus());
 			}
-
+			
+			logger.debug("Key for fetch todo >>>{}", key);
+			
 			status = taskIdWOMap.get(key);
 
 			if (status.getWorkOrders() == null) {
@@ -248,10 +250,15 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				assignmentDTO.setToDoName(todoDAO.getToDoName(assignment.getTodoAssignMentPK().getTodoId().longValue()));
 				assignmentDTOs.add(assignmentDTO);
 			}
-			status.setTodoAssignments(assignmentDTOs);
-			toDoStatuses.add(status);
+			if (status.getTodoAssignments() == null) {
+				status.setTodoAssignments(new ArrayList<ToDoAssignment>());
+			}
+			status.getTodoAssignments().addAll(assignmentDTOs);
+			logger.debug("Size of ToDoAssignment for task>>>{}", status.getTodoAssignments().size());
+			
+			//toDoStatuses.add(status);
 		}
-		return toDoStatuses;
+		return new ArrayList<ViewToDoStatus>(taskIdWOMap.values());
 	}
 
 	/*

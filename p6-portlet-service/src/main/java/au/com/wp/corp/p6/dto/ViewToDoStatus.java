@@ -67,6 +67,12 @@ public class ViewToDoStatus {
 	public void setTodoAssignments(List<ToDoAssignment> todoAssignments) {
 		this.todoAssignments = todoAssignments;
 	}
+	@Override
+	public String toString() {
+		return "ViewToDoStatus [executionPackage=" + executionPackage + ", workOrders=" + workOrders + ", scheduleDate="
+				+ scheduleDate + ", crewAssigned=" + crewAssigned + ", leadCrew=" + leadCrew + ", schedulingComment="
+				+ schedulingComment + ", deportComment=" + deportComment + ", todoAssignments=" + todoAssignments + "]";
+	}
 	
 	
 	

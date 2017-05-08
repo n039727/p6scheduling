@@ -70,5 +70,10 @@ public class ToDoAssignment {
 	public void setToDoAssignmentId(Long toDoAssignmentId) {
 		this.toDoAssignmentId = toDoAssignmentId;
 	}
-	
+	@Override
+	public String toString() {
+		return "ToDoAssignment [toDoAssignmentId=" + toDoAssignmentId + ", workOrderId=" + workOrderId + ", toDoName="
+				+ toDoName + ", reqByDate=" + reqByDate + ", comment=" + comment + ", status=" + status
+				+ ", supportingDoc=" + supportingDoc + "]";
+	}
 }
