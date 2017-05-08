@@ -3,14 +3,16 @@
  */
 package au.com.wp.corp.p6.dataservice;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,11 +23,13 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.transaction.annotation.Transactional;
 
-import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.Task;
+import au.com.wp.corp.p6.model.TodoAssignment;
+import au.com.wp.corp.p6.model.TodoAssignmentPK;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
 /**
@@ -40,8 +44,8 @@ import au.com.wp.corp.p6.test.config.AppConfig;
 public class WorkOrderDAOTest {
 
 	@Autowired
-	WorkOrderDAOImpl workOrderDAO;
-	
+	WorkOrderDAO workOrderDAO;
+
 	@Autowired
 	ExecutionPackageDao executionPackageDao;
 
@@ -72,6 +76,7 @@ public class WorkOrderDAOTest {
 	 * Test method for
 	 * {@link au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl#fetchWorkOrdersForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchRequest)}.
 	 */
+	@Transactional
 	@Rollback(true)
 	@Test
 	public void testFetchWorkOrdersForViewToDoStatus() {
@@ -81,29 +86,28 @@ public class WorkOrderDAOTest {
 		tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(input);
 		assertTrue(tasks.isEmpty());
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl#saveTask(au.com.wp.corp.p6.model.Task)}.
+	 * 
+	 * @throws P6DataAccessException
 	 */
+	@Transactional
 	@Rollback(true)
 	@Test
-	public void testSaveTask() {
+	public void testSaveTask() throws P6DataAccessException {
 		Task dbTask = new Task();
 		dbTask = prepareTaskBean(dbTask);
 		Task createdTask = null;
-		try {
-			createdTask = workOrderDAO.saveTask(dbTask);
-		} catch (P6DataAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		assertEquals(dbTask.getTaskId(), createdTask.getTaskId());
-		
+		createdTask = workOrderDAO.saveTask(dbTask);
+		Assert.assertNotNull(createdTask);
+		Assert.assertEquals(dbTask.getTaskId(), createdTask.getTaskId());
+
 	}
-	
+
 	private Task prepareTaskBean(Task dbTask) {
-		
+
 		dbTask.setTaskId("JunitTest");
 		dbTask.setCmts("Test cmt");
 		dbTask.setCrewId("TestCrew");
@@ -113,21 +117,30 @@ public class WorkOrderDAOTest {
 		dbTask.setDepotId("TestDeport");
 		dbTask.setMatrlReqRef("TestMatrReqRef");
 		long currentTime = System.currentTimeMillis();
-		dbTask.setCrtdTs(new Timestamp(currentTime));
-		dbTask.setCrtdUsr("Test"); //TODO update the user name here
+		// dbTask.setCrtdTs(new Timestamp(currentTime));
+		dbTask.setCrtdUsr("Test");
 		dbTask.setLstUpdtdTs(new Timestamp(currentTime));
 		dbTask.setLstUpdtdUsr("Test");
-		//TODO will remove after DB constrain change
-		dbTask.setExecutionPackage(executionPackageDao.fetch("PKG1" ));
+		dbTask.setExecutionPackage(executionPackageDao.fetch("PKG1"));
 		dbTask.setActioned("Y");
+		TodoAssignment todoAssignment = new TodoAssignment();
+		TodoAssignmentPK todoAssignmentPK = new TodoAssignmentPK();
+		todoAssignmentPK.setTask(dbTask);
+		todoAssignmentPK.setTodoId(new BigDecimal("1"));
+		todoAssignment.setTodoAssignMentPK(todoAssignmentPK);
+		Set<TodoAssignment> todoAssignments = new HashSet<>();
+		todoAssignments.add(todoAssignment);
+		dbTask.setTodoAssignments(todoAssignments);
+
 		return dbTask;
 	}
-	
-	private  String getCurrentDateTimeMS() {
-		java.util.Date dNow = new java.util.Date();
-        SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy-hhmmssMs");
-        String datetime = ft.format(dNow);
-        return datetime;
-    }
+
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFetch() throws P6DataAccessException {
+		Task task = workOrderDAO.fetch("WO11");
+		Assert.assertNull(task);
+	}
 
 }

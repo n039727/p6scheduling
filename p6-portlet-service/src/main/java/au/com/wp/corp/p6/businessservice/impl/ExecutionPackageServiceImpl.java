@@ -67,7 +67,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		executionPackage.setLeadCrewId(execPackgDTO.getLeadCrew());
 		final List<WorkOrder> workOrders = execPackgDTO.getWorkOrders();
 		final StringBuilder crewNames = new StringBuilder();
-
+		Set<ExecutionPackage> executionPackages = new HashSet<>();
 		if (workOrders != null && !workOrders.isEmpty()) {
 			logger.debug("work orders size {}", workOrders.size());
 			Set<Task> tasks = new HashSet<>();
@@ -83,6 +83,12 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 				scheduledStartDate = workOrder.getScheduleDate();
 				if (task != null) {
 					logger.debug("Task {} is fecthed", task.getTaskId());
+					if(null != task.getExecutionPackage()){
+						logger.debug("Old Execution fatched {} for the  task {}", task.getExecutionPackage().getExctnPckgNam(), task.getTaskId());
+						ExecutionPackage oldExecutionPackage = task.getExecutionPackage();
+						oldExecutionPackage.getTasks().remove(task);
+						executionPackages.add(oldExecutionPackage);
+					}
 					task.setExecutionPackage(executionPackage);
 					task.setLstUpdtdUsr(userName);
 					task.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
@@ -111,10 +117,32 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		executionPackage.setLstUpdtdUsr(userName);
 		executionPackageDao.createOrUpdateExecPackage(executionPackage);
 		executionPackageDao.createOrUpdateTasks(executionPackage.getTasks());
+		updateOldExecutionPackages(executionPackages);
 		logger.info("execution package has been created with execution package id # {} ",
 				execPackgDTO.getExctnPckgName());
 		return execPackgDTO;
 
+	}
+	
+	private void updateOldExecutionPackages(Set<ExecutionPackage> executionPackages) throws P6BusinessException{
+		if(null != executionPackages){
+			logger.debug("Number of old Execution package>> {} ", executionPackages.size());
+			for (ExecutionPackage executionPackage : executionPackages) {
+				Set<Task> tasks = executionPackage.getTasks();
+				if(null == tasks || tasks.isEmpty()){
+					//Delete the empty old execution package
+					logger.debug("No tasks exists for the  Execution package>> {} ", executionPackage.getExctnPckgNam());
+					executionPackageDao.deleteExecPackage(executionPackage);
+				}
+				else{
+					//update the action as N for the old execution package
+					logger.debug("Updating the Actioned field as N for the  Execution package>> {} ", executionPackage.getExctnPckgNam());
+					executionPackage.setActioned("N");
+					executionPackageDao.createOrUpdateExecPackage(executionPackage);
+				}
+				
+			}
+		}
 	}
 
 	private String createExceutionPackageId() {

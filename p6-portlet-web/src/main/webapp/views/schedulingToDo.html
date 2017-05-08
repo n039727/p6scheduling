@@ -23,7 +23,10 @@
 			<td>{{wo.crewNames}}</td>
 			<td> {{wo.leadCrew}}</td>
 			<td>{{wo.exctnPckgName}}</td>
-			<td>{{wo.actioned}}</td>
+			
+			<td> <span ng-if="wo.actioned == 'Y'">Yes</span>
+				<span ng-if="wo.actioned == 'N'"></span>
+			</td>
 		</tr>
 		<tr ng-repeat-end>
 			<td colspan="12" class="hiddenRow">
@@ -50,6 +53,8 @@
 												-->
 												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
+													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
+													ng-disabled="!$ctrl.calculateEnable(wo, todo)"
 													multiple
 													placeholder="Select">
 												</oi-select>
@@ -74,8 +79,10 @@
 												<!--<select class="form-control" >
 													<option ng-if="$ctrl.calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
 												</select>-->
-												<oi-select oi-options="workOrderId for workOrderId in wo.wo.workOrderIdDisplayArray"
+												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
+													ng-disabled="!$ctrl.calculateEnable(wo, todo)"
+													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
 													multiple
 													placeholder="Select">
 												</oi-select>

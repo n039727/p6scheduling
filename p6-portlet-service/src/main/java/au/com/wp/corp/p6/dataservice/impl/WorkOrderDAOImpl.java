@@ -76,13 +76,11 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 					}
 					todo.setLstUpdtdTs(new Timestamp(currentTime));
 					todo.setLstUpdtdUsr("Test"); //TODO update the user name here
-					sessionFactory.getCurrentSession().saveOrUpdate(todo);
 				}
 			}
 			
 			sessionFactory.getCurrentSession().saveOrUpdate(task);
 		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
 			parseException(e);
 		}
 		return task;

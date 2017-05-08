@@ -62,7 +62,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	private static String ACTIONED_N = "N";
 
 	
-
+	@Override
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) {
 		return mockData.search(input);
 
@@ -71,10 +71,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Override
 	public List<WorkOrder> search(WorkOrderSearchRequest input) throws P6BusinessException {
 		List<WorkOrder> mockWOData = mockData.search(input);
-		Map<String,WorkOrder> mapOfExecutionPkgWO = new HashMap<String,WorkOrder>();
-		List<WorkOrder> ungroupedWorkorders = new ArrayList<WorkOrder>();
+		Map<String,WorkOrder> mapOfExecutionPkgWO = new HashMap<>();
+		List<WorkOrder> ungroupedWorkorders = new ArrayList<>();
 		for (WorkOrder workOrder : mockWOData) {
-			List<String> workOrderNamesinGroup = new ArrayList<String>();
+			List<String> workOrderNamesinGroup = new ArrayList<>();
 			if (workOrder.getWorkOrders() != null) {
 				for (String workOrderId : workOrder.getWorkOrders()) {
 					Task dbTask = workOrderDAO.fetch(workOrderId);
@@ -89,6 +89,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 								workOrdersalreadyinGroup.getWorkOrders().add(workOrderId);
 							}
 						} else {
+							
 							WorkOrder workOrderNew = new WorkOrder();
 							workOrderNew.setScheduleDate(dateUtils.toStringDD_MM_YYYY(dbTask.getSchdDt()));
 							workOrderNew.setCrewNames(dbTask.getCrewId());
@@ -114,7 +115,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 		logger.debug("final grouped work orders size {}",mapOfExecutionPkgWO.values().size());
 		logger.debug("final grouped work orders = {}",mapOfExecutionPkgWO.values());
-		List<WorkOrder> workorders = new ArrayList<WorkOrder> (mapOfExecutionPkgWO.values());
+		List<WorkOrder> workorders = new ArrayList<> (mapOfExecutionPkgWO.values());
 		workorders.addAll(ungroupedWorkorders);
 		return workorders;
 	}
@@ -202,7 +203,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			if (!taskIdWOMap.containsKey(key)) {
 				taskIdWOMap.put(key, new ViewToDoStatus());
 			}
-
+			
+			logger.debug("Key for fetch todo >>>{}", key);
+			
 			status = taskIdWOMap.get(key);
 
 			if (status.getWorkOrders() == null) {
@@ -247,10 +250,15 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				assignmentDTO.setToDoName(todoDAO.getToDoName(assignment.getTodoAssignMentPK().getTodoId().longValue()));
 				assignmentDTOs.add(assignmentDTO);
 			}
-			status.setTodoAssignments(assignmentDTOs);
-			toDoStatuses.add(status);
+			if (status.getTodoAssignments() == null) {
+				status.setTodoAssignments(new ArrayList<ToDoAssignment>());
+			}
+			status.getTodoAssignments().addAll(assignmentDTOs);
+			logger.debug("Size of ToDoAssignment for task>>>{}", status.getTodoAssignments().size());
+			
+			//toDoStatuses.add(status);
 		}
-		return toDoStatuses;
+		return new ArrayList<ViewToDoStatus>(taskIdWOMap.values());
 	}
 
 	/*
@@ -300,7 +308,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 																										// long
 																										// ID
 							&& item.getWorkOrders().contains(updatedTask.getTaskId())) {
-						itrToDo.remove();
+						item.getWorkOrders().remove(updatedTask.getTaskId());
+						if (item.getWorkOrders().isEmpty()) {
+							itrToDo.remove();
+						}
 						found = true;
 						break;
 					}
@@ -326,7 +337,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				}
 			}
 		}
-		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments().size());
+		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
 		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
 	}
 
