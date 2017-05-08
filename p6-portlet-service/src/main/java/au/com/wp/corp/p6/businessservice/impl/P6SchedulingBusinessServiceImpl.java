@@ -308,7 +308,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 																										// long
 																										// ID
 							&& item.getWorkOrders().contains(updatedTask.getTaskId())) {
-						itrToDo.remove();
+						item.getWorkOrders().remove(updatedTask.getTaskId());
+						if (item.getWorkOrders().isEmpty()) {
+							itrToDo.remove();
+						}
 						found = true;
 						break;
 					}
