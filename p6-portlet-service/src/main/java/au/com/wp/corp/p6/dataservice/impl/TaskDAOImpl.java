@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
-import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 
 @Repository
@@ -49,16 +48,6 @@ public class TaskDAOImpl implements TaskDAO {
 		}
 
 		return listTasks;
-	}
-
-	@Transactional
-	@Override
-	public List<ExecutionPackage> listExecutionPackages() {
-		logger.debug("sessionfactory initialized =====" + sessionFactory);
-		List<ExecutionPackage> listExecPakgs = (List<ExecutionPackage>) sessionFactory.getCurrentSession()
-				.createCriteria(ExecutionPackage.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-
-		return listExecPakgs;
 	}
 	
 }
