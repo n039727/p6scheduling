@@ -55,19 +55,7 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ExecutionPackage.class);
 		criteria.add(Restrictions.eq("exctnPckgNam", name));
 		criteria.setFetchSize(1);
-
-		// List<ExecutionPackage> retValue = (List<ExecutionPackage>)
-		// criteria.list();
 		ExecutionPackage retValue = (ExecutionPackage) criteria.uniqueResult();
-		/*
-		 * List<ExecutionPackage> retValue = (List<ExecutionPackage>)
-		 * criteria.list(); logger.debug("retValue ====={}", retValue);
-		 * logger.debug("retValue ====={}", retValue); ExecutionPackage pkg =
-		 * null; if (retValue != null && retValue.size() == 1) {
-		 * logger.debug("retValue is not empty"); pkg = retValue.get(0); } else
-		 * { // TODO Throw exception }
-		 */
-
 		logger.debug("returning package as: {} ", retValue.getExctnPckgId());
 
 		return retValue;
