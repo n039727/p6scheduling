@@ -121,7 +121,7 @@ public class WorkOrderDAOTest {
 		dbTask.setCrtdUsr("Test");
 		dbTask.setLstUpdtdTs(new Timestamp(currentTime));
 		dbTask.setLstUpdtdUsr("Test");
-		dbTask.setExecutionPackage(executionPackageDao.fetch("PKG1"));
+		//dbTask.setExecutionPackage(executionPackageDao.fetch("PKG1"));
 		dbTask.setActioned("Y");
 		TodoAssignment todoAssignment = new TodoAssignment();
 		TodoAssignmentPK todoAssignmentPK = new TodoAssignmentPK();

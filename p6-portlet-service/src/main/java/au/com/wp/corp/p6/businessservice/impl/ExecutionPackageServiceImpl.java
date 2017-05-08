@@ -163,6 +163,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());
 						String dbWOExecPkg = dbTask.getExecutionPackage().getExctnPckgNam();
 						workOrder.setExctnPckgName(dbWOExecPkg);
+						workOrder.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
 					}
 					
 				}

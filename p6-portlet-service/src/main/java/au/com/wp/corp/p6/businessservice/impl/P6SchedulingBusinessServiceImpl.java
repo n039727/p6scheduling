@@ -294,7 +294,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	private void prepareToDoAssignmentList(Task updatedTask, WorkOrder workOrder) {
 		
-		if (null != updatedTask && null != updatedTask.getTodoAssignments())
+		if (updatedTask == null)
+			return;
+		
+		if (null != updatedTask.getTodoAssignments()) {
 			for (Iterator<TodoAssignment> itr = updatedTask.getTodoAssignments().iterator(); itr.hasNext();) {
 				TodoAssignment todo = itr.next();
 				boolean found = false;
@@ -320,7 +323,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					itr.remove();
 				}
 			}
-
+		}	
+		
 		if (null != workOrder && null != workOrder.getToDoItems()) {
 			Set<TodoAssignment> todos = new HashSet<>();
 			// Set the new values
@@ -333,12 +337,17 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					logger.debug("Todo id for #{} - {}", item.getToDoName(), todoDAO.getToDoId(item.getToDoName()));
 					todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(item.getToDoName()));
 					todos.add(todoAssignment);
-					updatedTask.setTodoAssignments(todos);
 				}
 			}
+			if (updatedTask.getTodoAssignments() == null) {
+				updatedTask.setTodoAssignments(new HashSet<TodoAssignment>());
+			}
+			updatedTask.getTodoAssignments().addAll(todos);
 		}
+	
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
 		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
+		
 	}
 
 	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder, String workOrderId) {
@@ -415,14 +424,14 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 			WorkOrder workOrder = null;
 			Map<Long, ToDoItem> toDoMap = null;
-			if (!"PKG1".equals(executionPkg) && workOrderMap.containsKey(executionPkg)) {
+			if (!StringUtils.isEmpty(executionPkg) && workOrderMap.containsKey(executionPkg)) {
 				workOrder = workOrderMap.get(executionPkg);
 				workOrder.setCrewNames(workOrder.getCrewNames() + "," + task.getCrewId());
 				workOrder.getWorkOrders().add(task.getTaskId());
 				toDoMap = workOrderToDoMap.get(executionPkg);
 			} else {
 				workOrder = new WorkOrder();
-				if (!"PKG1".equals(executionPkg))
+				if (!StringUtils.isEmpty(executionPkg))
 					workOrder.setExctnPckgName(executionPkg);
 				else
 					executionPkg = task.getTaskId();
