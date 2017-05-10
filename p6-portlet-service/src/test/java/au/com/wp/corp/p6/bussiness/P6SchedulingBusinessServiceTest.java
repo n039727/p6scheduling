@@ -30,6 +30,7 @@ import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ToDoItem;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
@@ -50,7 +51,7 @@ public class P6SchedulingBusinessServiceTest {
 
 	@Mock
 	WorkOrderDAOImpl workOrderDAO;
-
+ 
 	@Mock
 	DateUtils dateUtils;
 
@@ -59,6 +60,9 @@ public class P6SchedulingBusinessServiceTest {
 
 	@Mock
 	TodoDAO todoDAO;
+	
+	@Mock
+	UserTokenRequest userTokenRequest;
 
 	@InjectMocks
 	P6SchedulingBusinessServiceImpl p6SchedulingBusinessService;
@@ -361,6 +365,7 @@ public class P6SchedulingBusinessServiceTest {
 		task.setExecutionPackage(excPckg);
 
 		Mockito.when(workOrderDAO.fetch(workOrder.getWorkOrderId())).thenReturn(task);
+		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
 		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
 		Assert.assertNotNull(workOrders);
 		Assert.assertEquals(1, workOrders.size());
@@ -402,8 +407,8 @@ public class P6SchedulingBusinessServiceTest {
 		task.setCrewId("CRW1");
 		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
 		task.setSchdDt(new Date());
-
 		Mockito.when(workOrderDAO.fetch(workOrder.getWorkOrderId())).thenReturn(task);
+		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
 		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
 		Assert.assertNotNull(workOrders);
 		Assert.assertEquals(1, workOrders.size());

@@ -42,6 +42,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	@Autowired
 	Validator validator;
 	
+	
 	@RequestMapping(value="/fetchToDos", method = RequestMethod.GET,
 			produces = {MediaType.APPLICATION_JSON_VALUE})
 	@Override

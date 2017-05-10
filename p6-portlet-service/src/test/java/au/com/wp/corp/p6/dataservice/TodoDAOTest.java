@@ -3,10 +3,8 @@
  */
 package au.com.wp.corp.p6.dataservice;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.validator.cfg.defs.AssertFalseDef;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,8 +18,6 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.dataservice.impl.TodoDAOImpl;
-import au.com.wp.corp.p6.dto.ToDoItem;
-import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.model.TodoTemplate;
 import au.com.wp.corp.p6.test.config.AppConfig;
 

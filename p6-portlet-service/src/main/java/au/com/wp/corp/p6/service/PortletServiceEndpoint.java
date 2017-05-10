@@ -10,11 +10,11 @@ import org.springframework.http.ResponseEntity;
 
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
+import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
-import au.com.wp.corp.p6.dto.ViewToDoStatus;
 
 /**
  * @author n039619
