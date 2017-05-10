@@ -71,6 +71,7 @@
 			<url-pattern>/web/css/*</url-pattern>
 			<url-pattern>/web/js/bootstrap.js</url-pattern>
 			<url-pattern>/web/js/jquery.js</url-pattern>
+			<url-pattern>/web/images/*</url-pattern>
 		</web-resource-collection>
 		<user-data-constraint>
 			<transport-guarantee>NONE</transport-guarantee>

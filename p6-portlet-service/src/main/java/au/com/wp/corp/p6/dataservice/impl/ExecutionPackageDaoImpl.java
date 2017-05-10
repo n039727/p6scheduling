@@ -165,12 +165,13 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 	public boolean createOrUpdateTasks(Set<Task> tasks) throws P6DataAccessException {
 		logger.debug("inserting or updating the execution package and task details");
 		boolean status = Boolean.FALSE;
-		for ( Task task : tasks)
-		try {
-			getSession().saveOrUpdate(task);
-			status = Boolean.TRUE;
-		} catch (Exception e) {
-			parseException(e);
+		for ( Task task : tasks){
+			try {
+				getSession().saveOrUpdate(task);
+				status = Boolean.TRUE;
+			} catch (Exception e) {
+				parseException(e);
+			}
 		}
 		logger.debug("inserted or updated the execution package and task details");
 		getSession().flush();

@@ -35,40 +35,53 @@
 
 </head>
 <body>
-	<div class="container col-md-4 col-md-offset-4 vertically-middle">
-		<div class="panel panel-default">
-			<div class="panel-heading login-panel-heading">
-				<h4>Welcome to To-Do Portal - Login</h4>
+	<div>
+		<header title="Western Power">
+			<div id="Header">
+				<div class="header">
+					<h2>To-Do Portal</h2>
+				</div>
+				<div class="Right"></div>
 			</div>
-			<div class="panel-body">
-				<form name="login_form" id="login_form" method="post"
-					action="j_security_check" align="center"
-					onsubmit="return validateForm()" novalidate="novalidate"
-					class="form-horizontal">
-					<div class="form-group" style="margin-top:1px;">
-						<label class="control-label col-md-2" for="userId">User ID</label>
-						<div class="col-md-8">
-							<input type="text" name="j_username" id="User_name"
-								ng-model="Username" value="" onkeyup="usrFunction()"
-								placeholder="Enter Login ID">
-						</div>
+		</header>
+		<section>
+			<div class="container col-md-4 col-md-offset-4 vertically-middle">
+				<div class="panel panel-default">
+					<div class="panel-heading login-panel-heading">
+						<h4>Welcome to To-Do Portal - Login</h4>
 					</div>
-					<div class="form-group">
-						<label class="control-label col-md-2" for="pwd">Password</label>
-						<div class="col-md-8">
-							<input type="password" name="j_password" id="User_password"
-								ng-model="password" value="" onkeyup="usrFunction()"
-								placeholder="Enter password">
-						</div>
+					<div class="panel-body">
+						<form name="login_form" id="login_form" method="post"
+							action="j_security_check" align="center"
+							onsubmit="return validateForm()" novalidate="novalidate"
+							class="form-horizontal">
+							<div class="form-group" style="margin-top: 1px;">
+								<label class="control-label col-md-2" for="userId">User
+									ID</label>
+								<div class="col-md-8">
+									<input type="text" name="j_username" id="User_name"
+										ng-model="Username" value="" onkeyup="usrFunction()"
+										placeholder="Enter Login ID">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-2" for="pwd">Password</label>
+								<div class="col-md-8">
+									<input type="password" name="j_password" id="User_password"
+										ng-model="password" value="" onkeyup="usrFunction()"
+										placeholder="Enter password">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-offset-5 col-md-2">
+									<button type="submit" class="btn btn-warning btn-lg">Login</button>
+								</div>
+							</div>
+						</form>
 					</div>
-					<div class="form-group">
-						<div class="col-md-offset-5 col-md-2">
-							<button type="submit" class="btn btn-warning btn-lg">Login</button>
-						</div>
-					</div>
-				</form>
+				</div>
 			</div>
-		</div>
+		</section>
 	</div>
 </body>
 </html>
