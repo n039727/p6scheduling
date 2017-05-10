@@ -8,7 +8,11 @@
 	background-color:#f0ad4e !important;
 	color:#ffffff !important;
 }
-
+.login-button-position{
+  position: relative;
+  margin-left:8px;	
+  left: 20px;  
+}
 body {
 	background-color: #FFFFFF;/*#428bca;*/
 }
