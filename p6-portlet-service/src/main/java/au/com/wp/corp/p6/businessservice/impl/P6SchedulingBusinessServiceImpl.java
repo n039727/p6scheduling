@@ -14,12 +14,11 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
@@ -344,8 +343,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			logger.debug("isSameReqByDate to be added for this todo {}",isNotSameReqByDate);
 			boolean isNotSameStatus = status.add(strStatus);
 			logger.debug("isNotSameStatus to be added for this todo {}",isNotSameStatus);
-			comments.add(toDoAssignment.getComment());
-			supDocLinks.add(toDoAssignment.getSupportingDoc());
+			comments.add(toDoAssignment.getComment()==null?"":toDoAssignment.getComment());
+			supDocLinks.add(toDoAssignment.getSupportingDoc()==null?"":toDoAssignment.getSupportingDoc());
 		});
 		
 		singleMergedTodo.setWorkOrders(Arrays.asList(workOrders.toArray(new String[workOrders.size()])));
@@ -353,8 +352,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			singleMergedTodo.setReqByDate(requiredByDate.iterator().next());
 			singleMergedTodo.setStatus(status.iterator().next());
 		}
-		singleMergedTodo.setComment(StringUtils.collectionToCommaDelimitedString(comments));
-		singleMergedTodo.setSupportingDoc(StringUtils.collectionToCommaDelimitedString(supDocLinks));
+		singleMergedTodo.setComment(StringUtils.join(comments.toArray(new String[comments.size()])));
+		singleMergedTodo.setSupportingDoc(StringUtils.join(supDocLinks.toArray(new String[supDocLinks.size()])));
 		return singleMergedTodo;
 	}
 
