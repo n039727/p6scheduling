@@ -34,8 +34,9 @@ public class UserTokenFilter implements Filter {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		Principal principal = httpServletRequest.getUserPrincipal();
 		String userName = "";
+		//logger.debug("requesting path for {}",httpServletRequest.getRequestURI());
 		if(principal != null){
-			userName = principal.getName();
+			userName = httpServletRequest.getRemoteUser();
 			userTokenRequest.setUserPrincipal(userName);
 			logger.debug("User logged in as {}", userName);
 		}
@@ -45,7 +46,8 @@ public class UserTokenFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		 LoggerFactory.getLogger(getClass()).info("UserTokenFilter initiated");
+		logger = LoggerFactory.getLogger(getClass());
+		logger.info("UserTokenFilter initiated");
 		
 	}
 

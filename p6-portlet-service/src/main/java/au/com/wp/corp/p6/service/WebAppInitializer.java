@@ -28,8 +28,9 @@ public class WebAppInitializer implements WebApplicationInitializer {
 		dynamic.addMapping("/");
 		dynamic.setLoadOnStartup(1);
 		logger.debug("Started up web application");
-		javax.servlet.FilterRegistration.Dynamic filter = servletContext.addFilter("userTokenfilter", UserTokenFilter.class);
-		filter.addMappingForUrlPatterns(null, true, "/*");
+		servletContext.addFilter("userTokenfilter", UserTokenFilter.class).
+								addMappingForUrlPatterns(null, true, "/*");
+		
 	    logger.debug("Filter for User token registered up web application");
 	}
 }

@@ -72,6 +72,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			logger.debug("work orders size {}", workOrders.size());
 			Set<Task> tasks = new HashSet<>();
 			String scheduledStartDate = "";
+			
 			for (WorkOrder workOrder : workOrders) {
 				logger.debug("For each workorder {} corresponding Task is fecthed", workOrder.getWorkOrderId());
 				if (null != crewNames.toString() && !crewNames.toString().contains(workOrder.getCrewNames())){
@@ -127,7 +128,10 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	private void updateOldExecutionPackages(Set<ExecutionPackage> executionPackages) throws P6BusinessException{
 		if(null != executionPackages){
 			logger.debug("Number of old Execution package>> {} ", executionPackages.size());
+			String OldExePkgleadCrew = "";
+			boolean crewMatches = Boolean.FALSE;
 			for (ExecutionPackage executionPackage : executionPackages) {
+				OldExePkgleadCrew = executionPackage.getLeadCrewId();
 				Set<Task> tasks = executionPackage.getTasks();
 				if(null == tasks || tasks.isEmpty()){
 					//Delete the empty old execution package
@@ -135,6 +139,16 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					executionPackageDao.deleteExecPackage(executionPackage);
 				}
 				else{
+					//update the lead crew as null
+					for(Task task : tasks){
+						if(task.getCrewId().equals(OldExePkgleadCrew)){
+							crewMatches = Boolean.TRUE;
+							break;
+						}
+					}
+					if(!crewMatches){
+						executionPackage.setLeadCrewId(null);
+					}
 					//update the action as N for the old execution package
 					logger.debug("Updating the Actioned field as N for the  Execution package>> {} ", executionPackage.getExctnPckgNam());
 					executionPackage.setActioned("N");

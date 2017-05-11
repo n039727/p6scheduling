@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ibatis.scripting.xmltags.WhereSqlNode;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

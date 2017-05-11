@@ -27,6 +27,7 @@ import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -61,6 +62,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	private static String ACTIONED_Y = "Y";
 	private static String ACTIONED_N = "N";
 
+	@Autowired
+	UserTokenRequest userTokenRequest;
 	
 	@Override
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) {
@@ -70,6 +73,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
  
 	@Override
 	public List<WorkOrder> search(WorkOrderSearchRequest input) throws P6BusinessException {
+		logger.debug("User logged in as ======================================={}",userTokenRequest.getUserPrincipal());
+
 		List<WorkOrder> mockWOData = mockData.search(input);
 		Map<String,WorkOrder> mapOfExecutionPkgWO = new HashMap<>();
 		List<WorkOrder> ungroupedWorkorders = new ArrayList<>();

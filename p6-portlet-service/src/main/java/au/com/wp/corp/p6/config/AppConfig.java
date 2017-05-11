@@ -11,7 +11,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import au.com.wp.corp.p6.aspect.P6PortalLoggingAspect;
-import au.com.wp.corp.p6.dto.UserTokenRequest;
 
 @Configuration
 @EnableWebMvc
@@ -71,12 +69,6 @@ public class AppConfig {
 	    return transactionManager;
 	}
 	
-	@Bean(name = "userTokenRequest")
-	@Scope("request")
-	public UserTokenRequest getUserTokenRequest(
-	        SessionFactory sessionFactory) {
-	    UserTokenRequest userTokenRequest = new UserTokenRequest();
-	    return userTokenRequest;
-	}
+	
 
 }

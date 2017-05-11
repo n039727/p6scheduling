@@ -26,7 +26,7 @@
 		<servlet-name>portletWebController</servlet-name>
 		<url-pattern>/web/*</url-pattern>
 	</servlet-mapping>
-
+	
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<realm-name>active-directory</realm-name>

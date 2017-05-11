@@ -62,5 +62,5 @@ public class AppConfig {
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager(sessionFactory);
 		return transactionManager;
 	}
-
+	
 }
