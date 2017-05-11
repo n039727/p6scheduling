@@ -39,7 +39,7 @@
 		<header title="Western Power">
 			<div id="Header">
 				<div class="header">
-					<h2>To-Do Portal</h2>
+					<h1>To-Do Portal</h1>
 				</div>
 				<div class="Right"></div>
 			</div>
@@ -50,7 +50,7 @@
 					<div class="panel-heading login-panel-heading">
 						<h4>Welcome to To-Do Portal - Login</h4>
 					</div>
-					<div class="panel-body">
+					<div class="panel-body login-panel-body">
 						<form name="login_form" id="login_form" method="post"
 							action="j_security_check" align="center"
 							onsubmit="return validateForm()" novalidate="novalidate"
@@ -61,7 +61,7 @@
 								<div class="col-md-8">
 									<input type="text" name="j_username" id="User_name"
 										ng-model="Username" value="" onkeyup="usrFunction()"
-										placeholder="Enter Login ID">
+										placeholder="Enter User ID">
 								</div>
 							</div>
 							<div class="form-group">
@@ -69,12 +69,12 @@
 								<div class="col-md-8">
 									<input type="password" name="j_password" id="User_password"
 										ng-model="password" value="" onkeyup="usrFunction()"
-										placeholder="Enter password">
+										placeholder="Enter Password">
 								</div>
 							</div>
 							<div class="form-group">
-								<div class="col-md-offset-5 col-md-2">
-									<button type="submit" class="btn btn-warning btn-lg">Login</button>
+								<div class="col-md-offset-4 col-md-2" >
+									<button type="submit" class="btn btn-warning btn-lg login-button-position">Login</button>
 								</div>
 							</div>
 						</form>

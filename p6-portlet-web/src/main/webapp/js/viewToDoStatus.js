@@ -72,7 +72,7 @@ function viewToDoStatusController($scope, $http) {
 		$http(req).then(function (response) {
 			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			wo.todoAssignments = [];
-			wo.todoAssignments = response.data[0].todoAssignments;
+			wo.todoAssignments = response.data.todoAssignments;
 			if (wo.todoAssignments) {
 				for (var i =0; i<wo.todoAssignments.length; i++) {
 					console.log("req by date for fetchWOForTODOStatus: " + JSON.stringify(wo.todoAssignments[i].reqByDate));
@@ -82,7 +82,7 @@ function viewToDoStatusController($scope, $http) {
 					}
 				}
 			}
-			wo.schedulingComment = response.data[0].schedulingComment;
+			wo.schedulingComment = response.data.schedulingComment;
 			
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
 			

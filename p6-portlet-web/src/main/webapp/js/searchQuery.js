@@ -5,11 +5,16 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	console.log('Meta Data passed from parent: ' + JSON.stringify(this.metadata));
 	// FORMAT THE DATE FOR THE DATEPICKER
 	$mdDateLocale.formatDate = function(date) {
+   	 console.log('date in formatDate: ' + JSON.stringify(date));
     	if(angular.isDefined(date) && date !== null){
     		return $filter('date')(date, "dd/MM/yyyy");
     	}else{
     		return null;
     	}
+    };
+    $mdDateLocale.parseDate = function(dateString) {
+    	 var m = moment(dateString, 'DD/MM/YYYY', false);
+    	 return m.isValid() ? m.toDate() : new Date(NaN);
     };
 
 	

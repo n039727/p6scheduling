@@ -11,6 +11,8 @@
 		<!--Angular Material -->
 		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css"/>
 		<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+    	<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+		
         <!-- Latest compiled and minified CSS 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		-->
@@ -56,9 +58,9 @@
     </head>
 	<body ng-controller="toDoPortalCOntroller as vm">
 		<nav class="navbar navbar-default navbar-static-top navbar-top-fixed container col-md-12">
-			<div class="nav navbar-nav"><a href="#" class="navbar-top-link"><h4>Home</h4></a></div>
-			<div class="nav navbar-nav navbar-right"><h4>&nbsp;</h4></div>
-			<div class="nav navbar-nav navbar-right"><span><h4>Welcome {{userName}} &nbsp;</h4><a href="/p6-portal/web/logout" class="navbar-top-link"><h4>Logout&nbsp;</h4></a><span></div>
+			<div class="header-left col-md-4"><h3>Welcome {{userName}}, &nbsp;&nbsp;<a class="navbar-top-link" href="/p6-portal/web/logout">Logout</a></h3></div>
+			<div class="header-middle col-md-4"><h1>To-Do Portal</h1></div>
+			<div class="header-right col-md-4"><div id="logo"></div>
 		</nav>
 		<search-query metadata="vm.metadata" search="vm.search(query)"></search-query>
 		
