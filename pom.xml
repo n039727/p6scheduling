@@ -8,6 +8,7 @@
 	<version>0.1-SNAPSHOT</version>
 
 	<modules>
+		<module>p6-wsmodel</module>	
 		<module>p6-portlet-service</module>
 		<module>p6-portlet-web</module>
 		<module>p6-portlet-app</module>

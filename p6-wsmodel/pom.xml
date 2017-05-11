@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>au.com.wp.corp.p6.scheduling</groupId>
+		<artifactId>p6-scheduling</artifactId>
+		<version>0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>p6-wsmodel</artifactId>
+	<name>p6-wsmodel</name>
+	<description>Contains model objects for P6 webservice </description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.jvnet.jax-ws-commons</groupId>
+				<artifactId>jaxws-maven-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<vmArgs>
+						<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
+					</vmArgs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>auth</id>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<!-- Keep generated files -->
+							<keep>true</keep>
+							<!-- Package name -->
+							<packageName>au.com.wp.corp.p6.wsclient.auth</packageName>
+							<!-- generated source files destination -->
+							<sourceDestDir>target/generated/src/main/java</sourceDestDir>
+							<wsdlDirectory>src/main/resources/wsdl/auth</wsdlDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>activity</id>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<!-- Keep generated files -->
+							<keep>true</keep>
+							<!-- Package name -->
+							<packageName>au.com.wp.corp.p6.wsclient.activity</packageName>
+							<!-- generated source files destination -->
+							<sourceDestDir>target/generated/src/main/java</sourceDestDir>
+							<wsdlDirectory>src/main/resources/wsdl/activity</wsdlDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

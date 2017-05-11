@@ -31,6 +31,7 @@ import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
+import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.mock.CreateP6MockData;
@@ -213,7 +214,7 @@ public class ExecutionPackageServiceTest {
 	@Transactional
 	@Rollback(true)
 	@Test
-	public void testsearchByExecutionPackage  ( ) throws P6DataAccessException{
+	public void testsearchByExecutionPackage  ( ) throws P6BaseException{
 		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
 		List<String> crewList = new ArrayList<>();
 		crewList.add("MOST1");
@@ -232,6 +233,6 @@ public class ExecutionPackageServiceTest {
 		excPckg.setExctnPckgNam("06-05-2017_128383131");
 		task.setExecutionPackage(excPckg);
 		Mockito.when(workOrderDao.fetch("WO11")).thenReturn(task);
-		List<WorkOrder> workOrders = execPckgService.searchByExecutionPackage(request);
+		//List<WorkOrder> workOrders = execPckgService.searchByExecutionPackage(request);
 	}
 }
