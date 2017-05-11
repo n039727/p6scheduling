@@ -1,17 +1,58 @@
+.btn-warning,
+.btn-warning:hover,
+.btn-warning:active,
+.btn-warning:visited,
+.btn-warning:focus {
+    background-color: #f37420;
+    border-color: #f37420;
+}
+
 .row-expander {
 	background-color:#fee6c1 !important;
+	padding: 0px !important;
 }
 body {
-	background-color:  #fee6c1;/*#428bca ;*/
+	background-color: #FFFFFF;/*#428bca;*/
+	font-family: "Calibri";
 }
+
+#logo  {
+	background: url(../images/WesternPower.png);
+	width: 200px;
+	height: 30px;
+	margin: 15px;
+	float: right;
+}
+
 .navbar-top-fixed {
-	background-color:#f0ad4e;
-	color:#ffffff;
+	background-color:#f37420; /*#f0ad4e;*/
+	background: url(../images/Header.png);
+	color:#000000;
+	padding: 5px 5px 5px 5px;
 }
 .navbar-top-link {
-	background-color:#f0ad4e !important;
-	color:#ffffff !important;
+	/*background-color:#f0ad4e !important;*/
+	color:#000000 !important;
 }
+
+.header-left {
+	text-align: left;
+}
+.header-middle {
+	padding: 5px 5px 5px 5px;
+	margin: 0px;
+	text-align: center;
+}
+.header-middle  h1 {
+	margin: 0px !important;
+}
+
+.header-right {
+	text-align: right;
+	display:inline-block;
+}
+
+
 .container-endless {
 	padding:0px;
 	overflow:hidden;
@@ -33,7 +74,7 @@ body {
 	margin-top:10px;
 }
 .search-query-panel-heading {
-	background-color:#f0ad4e !important;
+	background-color:#f37420 !important;
 	color:#ffffff !important;
 }
 .side-panel {
@@ -55,11 +96,11 @@ body {
 	border:0px;
 }
 .side-panel-heading {
-	background-color:#f0ad4e !important;
+	background-color:#f37420 !important;
 	color:#ffffff !important;
 }
 .side-panel-heading-disabled {
-	background-color:#f3d4a4 !important;
+	background-color:#d3641c !important;
 	color:#ffffff !important;
 }
 .side-panel-body-container {
@@ -76,8 +117,14 @@ body {
 	margin:0px;
 	border:0px;
 }
+
+.query-result-panel.panel-body {
+	padding-top:0px !important;
+	margin:0px;
+	border:0px;
+}
 .query-result-header {
-	background-color:f0ad4e;
+	background-color:f37420;
 	border:2px;
 }
 .panel-standard-to-do {
@@ -85,11 +132,11 @@ body {
 	margin:0px;
 }
 .panel-standard-to-do-heading {
-	background-color:#f0ad4e !important;
+	background-color:#f37420 !important;
 	color:#ffffff !important;
 }
 .standard-to-do-header {
-	background-color:#f0ad4e;
+	background-color:#f37420;
 	border:2px;
 	color:#ffffff;
 }
@@ -101,15 +148,15 @@ body {
 	padding: 6px 20px 6px 70px;
 	margin: 30px 10px 10px -70px;
 	color: #ffffff;
-	background-color: #f0ad4e;
+	background-color: #f37420;
 	text-shadow: 0px 1px 2px #bbb;
-	-webkit-box-shadow: 0px 2px 4px #f0ad4e;
-	-moz-box-shadow: 0px  2px 4px #f0ad4e;
-	box-shadow: 0px 2px 4px #f0ad4e;
+	-webkit-box-shadow: 0px 2px 4px #f37420;
+	-moz-box-shadow: 0px  2px 4px #f37420;
+	box-shadow: 0px 2px 4px #f37420;
 	
 }
 .dialog-background-color {
-	background-color:#f0ad4e !important;
+	background-color:#f37420 !important;
 }
 
 .error-message{
@@ -124,6 +171,6 @@ body {
 	font-weight: bold;
 }
 .active-context{
-	background-color:#f0ad4e !important;
+	background-color:#f37420 !important;
 	
 }

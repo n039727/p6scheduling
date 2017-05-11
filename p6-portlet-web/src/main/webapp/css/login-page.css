@@ -5,12 +5,19 @@
 }
 
 .login-panel-heading {
-	background-color:#f0ad4e !important;
+	background-color: #f37420 !important; /*#f0ad4e*/
 	color:#ffffff !important;
+	font-size:20px;
+}
+
+.login-panel-body {
+	background-color: #f8d7ca !important; /*#f0ad4e*/
+	font-size:16px;
 }
 
 body {
 	background-color: #FFFFFF;/*#428bca;*/
+	font-family: "Calibri";
 }
 
 #Header .Left h2 {
@@ -40,4 +47,13 @@ body {
 	width: 97%;
 	float: left;
 	text-align: right;
+}
+
+.btn-warning,
+.btn-warning:hover,
+.btn-warning:active,
+.btn-warning:visited,
+.btn-warning:focus {
+    background-color: #f37420;
+    border-color: #f37420;
 }
