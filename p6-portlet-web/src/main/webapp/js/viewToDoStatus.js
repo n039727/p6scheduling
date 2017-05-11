@@ -77,7 +77,7 @@ function viewToDoStatusController($scope, $http) {
 				for (var i =0; i<wo.todoAssignments.length; i++) {
 					console.log("req by date for fetchWOForTODOStatus: " + JSON.stringify(wo.todoAssignments[i].reqByDate));
 					
-					if(wo.todoAssignments[i].reqByDate !== null ){					
+					if(angular.isDefined(wo.todoAssignments[i].reqByDate) && wo.todoAssignments[i].reqByDate !== null ){					
 						wo.todoAssignments[i].reqByDt = new Date(wo.todoAssignments[i].reqByDate);
 					}
 				}
