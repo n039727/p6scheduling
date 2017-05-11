@@ -26,6 +26,32 @@ public class DateUtils {
 	
 	private final  SimpleDateFormat DATE_FORMAT_DD_MM_YYYY_TIMESTAMP = new SimpleDateFormat("dd-MM-yyyy_hhmmssMs");
 	
+	
+	public String convertDate ( String date )  {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		Date d = new Date();
+		try {
+			d = sdf.parse(date);
+		} catch (ParseException e) {
+			logger.error("Exception while convertDate>>{}", e);
+		}
+		
+		return DATE_FORMAT_YYYY_MM_DD.format(d);
+	}
+	
+	public String convertDateDDMMYYYY ( String date )  {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		Date d = new Date();
+		try {
+			d = sdf.parse(date);
+		} catch (ParseException e) {
+			logger.error("Exception while convertDate>>{}", e);
+		}
+		
+		return DATE_FORMAT_DD_MM_YYYY.format(d);
+	}
+	
+	
 	public  String toStringYYYY_MM_DD(Date dt) {
 		return DATE_FORMAT_YYYY_MM_DD.format(dt);
 	}

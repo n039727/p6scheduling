@@ -14,11 +14,11 @@ import au.com.wp.corp.p6.exception.P6BusinessException;
 public interface P6SchedulingBusinessService {
 	
 	public List<WorkOrder> retrieveJobs(WorkOrderSearchRequest input);
-	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input);
+	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException;
 	public List<WorkOrder> saveWorkOrder(WorkOrder workOrder);
 	public List<TaskDTO> listTasks() throws P6BusinessException;
 	public List<ToDoItem> fetchToDos();
-	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query);
+	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query);
 	public WorkOrder saveToDo(WorkOrder workOrder) throws P6BusinessException;
 	public List<ExecutionPackageDTO> fetchExecutionPackageList();
 	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO) throws P6BusinessException;

@@ -41,7 +41,7 @@
 									<tbody>
 										<tr ng-repeat="todo in wo.todoAssignments">
 											<td>{{todo.toDoName}}</td>
-											<td>{{todo.workOrderId}}</td>
+											<td>{{todo.workOrders.join(',')}}</td>
 											<td>
 												<md-datepicker ng-model="todo.reqByDt" md-placeholder="DD/MM/YYYY"></md-datepicker>
 											</td>

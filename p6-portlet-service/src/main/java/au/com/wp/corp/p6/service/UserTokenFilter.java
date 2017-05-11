@@ -1,7 +1,6 @@
 package au.com.wp.corp.p6.service;
 
 import java.io.IOException;
-import java.security.Principal;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,14 +31,13 @@ public class UserTokenFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-		Principal principal = httpServletRequest.getUserPrincipal();
+		//Principal principal = httpServletRequest.getUserPrincipal();
 		String userName = "";
 		//logger.debug("requesting path for {}",httpServletRequest.getRequestURI());
-		if(principal != null){
-			userName = httpServletRequest.getRemoteUser();
-			userTokenRequest.setUserPrincipal(userName);
-			logger.debug("User logged in as {}", userName);
-		}
+		userName = httpServletRequest.getRemoteUser();
+		
+		logger.debug("User logged in as {}", userName==null?"":userName);
+		if (userTokenRequest != null)  userTokenRequest.setUserPrincipal(userName) ; 
 		
 		chain.doFilter(request, response);
 	}
