@@ -118,8 +118,9 @@ body {
 	border:0px;
 }
 
-.query-result-panel.panel-body {
+.result-container {
 	padding-top:0px !important;
+	padding-right:0px !important;
 	margin:0px;
 	border:0px;
 }
