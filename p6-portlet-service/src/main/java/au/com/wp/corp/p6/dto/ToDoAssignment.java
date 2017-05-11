@@ -3,6 +3,8 @@
  */
 package au.com.wp.corp.p6.dto;
 
+import java.util.List;
+
 /**
  * @author N039603
  *
@@ -16,6 +18,7 @@ public class ToDoAssignment {
 	private String comment;
 	private String status;
 	private String supportingDoc;
+	private List<String> workOrders;
 	public String getToDoName() {
 		return toDoName;
 	}
@@ -69,6 +72,12 @@ public class ToDoAssignment {
 	 */
 	public void setToDoAssignmentId(Long toDoAssignmentId) {
 		this.toDoAssignmentId = toDoAssignmentId;
+	}
+	public List<String> getWorkOrders() {
+		return workOrders;
+	}
+	public void setWorkOrders(List<String> workOrders) {
+		this.workOrders = workOrders;
 	}
 	@Override
 	public String toString() {

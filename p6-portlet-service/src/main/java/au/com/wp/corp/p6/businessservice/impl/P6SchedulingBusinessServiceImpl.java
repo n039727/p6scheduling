@@ -3,6 +3,8 @@ package au.com.wp.corp.p6.businessservice.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -184,12 +186,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	@Override
-	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) {
+	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) {
 
 		List<Task> tasks = null;
-		List<ViewToDoStatus> toDoStatuses = new ArrayList<ViewToDoStatus>();
 		Map<String, ViewToDoStatus> taskIdWOMap = new HashMap<String, ViewToDoStatus>();
+		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> mapOfToDoIdWorkOrders = new HashMap<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>>();
 		ExecutionPackage executionPackage = null;
+		ViewToDoStatus returnedVal = new ViewToDoStatus();
 		if (null != query && null != query.getExecPckgName()) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
 			tasks = new ArrayList<Task>(executionPackage.getTasks());
@@ -201,8 +204,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			String key = null;
 			if (task.getExecutionPackage() != null) {
 				key = task.getExecutionPackage().getExctnPckgNam();
+				returnedVal.setExecutionPackage(key);
 			} else {
 				key = task.getTaskId();
+				returnedVal.setExecutionPackage("");
 			}
 
 			if (!taskIdWOMap.containsKey(key)) {
@@ -234,25 +239,47 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			if (null != task.getSchdDt()) {
 				status.setScheduleDate(dateUtils.toStringYYYY_MM_DD(task.getSchdDt()));
 			}
-
-			// TODO
+			returnedVal.setSchedulingComment(task.getCmts());
+			
+			// TO DO
 			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
 
 			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
 			if (null != toDoEntities) {
 				logger.debug("Size of ToDoAssignment for task>>>{}", toDoEntities.size());
 			}
+			logger.debug("task id for each entry {}",task.getTaskId());
 			for (TodoAssignment assignment : toDoEntities) {
 				au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO = new au.com.wp.corp.p6.dto.ToDoAssignment();
-
+				String workOrderId = task.getTaskId();
+				long todoId = assignment.getTodoAssignMentPK().getTodoId().longValue();
+				String toDoName = todoDAO.getToDoName(todoId);
+				logger.debug("work order associated to each todo {} {}",toDoName,workOrderId);
 				assignmentDTO.setComment(assignment.getCmts());
 				if (null != assignment.getReqdByDt()) {
 					assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
 				}
 				assignmentDTO.setStatus(assignment.getStat());
 				assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
-				assignmentDTO.setWorkOrderId(task.getTaskId());
-				assignmentDTO.setToDoName(todoDAO.getToDoName(assignment.getTodoAssignMentPK().getTodoId().longValue()));
+				assignmentDTO.setWorkOrderId(workOrderId);
+				assignmentDTO.setToDoName(toDoName);
+				if (mapOfToDoIdWorkOrders.containsKey(toDoName)) { 
+					/*	global map update against each todo across all tasks */
+					logger.debug("retrived todoname =={} as key in global map with  list of AssignmentDto {}", toDoName,
+							mapOfToDoIdWorkOrders.get(toDoName)
+									.size());
+					mapOfToDoIdWorkOrders.get(toDoName).add(assignmentDTO);
+					
+				} else {
+					/*new entry added for this todo*/
+					logger.debug("added  todoname =={} as key in global map with  entry  of AssignmentDto {}", toDoName,
+							workOrderId);
+					List<au.com.wp.corp.p6.dto.ToDoAssignment> assignments = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
+					assignments.add(assignmentDTO);
+					/*List<String> listOfWorkOrders = new ArrayList<String>();
+					listOfWorkOrders.add(workOrderId)*/;
+					mapOfToDoIdWorkOrders.put(toDoName, assignments);
+				}
 				assignmentDTOs.add(assignmentDTO);
 			}
 			if (status.getTodoAssignments() == null) {
@@ -263,7 +290,72 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			
 			//toDoStatuses.add(status);
 		}
-		return new ArrayList<ViewToDoStatus>(taskIdWOMap.values());
+		Map<String,ToDoAssignment> mapOfGroupedTodoRecord = getGroupedTodoIwthWorkOrders(taskIdWOMap.values(),mapOfToDoIdWorkOrders);
+		List<ToDoAssignment> listOfTodoAssignments = new ArrayList<ToDoAssignment>(mapOfGroupedTodoRecord.values());
+		returnedVal.setTodoAssignments(listOfTodoAssignments);
+		return returnedVal; 
+	}
+
+	/**
+	 * Method to go through all the view to status's TodoAssignment entry 
+	 * and update the list of workorders
+	 * @param values
+	 * @param mapOfToDoIdWorkOrders
+	 */
+	private Map<String,ToDoAssignment> getGroupedTodoIwthWorkOrders(Collection<ViewToDoStatus> values,
+			Map<String, List<ToDoAssignment>> mapOfToDoIdWorkOrders) {
+
+		Map<String, ToDoAssignment> todoMap = new HashMap<String, ToDoAssignment>();
+		mapOfToDoIdWorkOrders.forEach((todoName, assignments) -> {
+		   logger.debug("Merging for ToDo name {}, total assignments records count {}", todoName,
+				   assignments.size());
+			ToDoAssignment groupedTodoAssignment = groupTodoAssinmentRecord(assignments);
+			String todo = groupedTodoAssignment.getToDoName();
+			logger.debug("Adding to merged records for todo {} , merged {}", todo,
+					groupedTodoAssignment.getWorkOrders().toArray());
+			todoMap.put(todo, groupedTodoAssignment);
+		});
+			
+		return todoMap;
+	}
+	/**
+	 * To merge multiple ToDo records in single Todo records 
+	 * for display
+	 * @param assignments
+	 * @return
+	 */
+	private ToDoAssignment groupTodoAssinmentRecord(List<ToDoAssignment> assignments) {
+		ToDoAssignment singleMergedTodo = new ToDoAssignment();
+		Set<String> workOrders = new HashSet<>();
+		Set<String> requiredByDate = new HashSet<>();
+		Set<String> status = new HashSet<String>();
+		List<String> comments = new ArrayList<String>();
+		List<String> supDocLinks = new ArrayList<String>();
+		//String toDoName ;
+		assignments.forEach(toDoAssignment->{
+			String toDoName = toDoAssignment.getToDoName();
+			singleMergedTodo.setToDoName(toDoName); //single todo name
+			logger.debug("Grouping for ToDo = {}",toDoName);
+			workOrders.add(toDoAssignment.getWorkOrderId());
+			logger.debug("workOrder for this todo = {}",toDoAssignment.getWorkOrderId());
+			String reqByDate = toDoAssignment.getReqByDate() == null ? "" :toDoAssignment.getReqByDate();
+			String strStatus = toDoAssignment.getStatus() == null ? "": toDoAssignment.getStatus();
+			boolean isNotSameReqByDate = requiredByDate.add(reqByDate);
+			logger.debug("isSameReqByDate to be added for this todo {}",isNotSameReqByDate);
+			boolean isNotSameStatus = status.add(strStatus);
+			logger.debug("isNotSameStatus to be added for this todo {}",isNotSameStatus);
+			comments.add(toDoAssignment.getComment());
+			supDocLinks.add(toDoAssignment.getSupportingDoc());
+		});
+		
+		singleMergedTodo.setWorkOrders(Arrays.asList(workOrders.toArray(new String[workOrders.size()])));
+		if(requiredByDate.size() > 1 && status.size() > 1){
+			singleMergedTodo.setReqByDate(requiredByDate.iterator().next());
+			singleMergedTodo.setStatus(status.iterator().next());
+		}
+		singleMergedTodo.setComment(StringUtils.collectionToCommaDelimitedString(comments));
+		singleMergedTodo.setSupportingDoc(StringUtils.collectionToCommaDelimitedString(supDocLinks));
+		return singleMergedTodo;
 	}
 
 	/*
@@ -506,11 +598,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			for (Task task : taskList) {
 				for (TodoAssignment todo : task.getTodoAssignments()) {
 					for (au.com.wp.corp.p6.dto.ToDoAssignment assignmentDTO : workOrder.getTodoAssignments()) {
+						
 						if (!StringUtils.isEmpty(assignmentDTO.getToDoName())
 								&& todoDAO.getToDoId(assignmentDTO.getToDoName()) != null
 								&& todoDAO.getToDoId(assignmentDTO.getToDoName()).longValue() == todo.getTodoAssignMentPK().getTodoId()
 										.longValue()
-								&& task.getTaskId().equals(assignmentDTO.getWorkOrderId())) {
+								&& assignmentDTO.getWorkOrders().contains(task.getTaskId())) {
 
 							try {
 								mergeToDoAssignment(todo, assignmentDTO);

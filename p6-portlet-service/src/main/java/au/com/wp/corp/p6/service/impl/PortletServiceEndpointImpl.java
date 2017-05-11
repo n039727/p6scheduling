@@ -35,77 +35,64 @@ import au.com.wp.corp.p6.validation.Validator;
 @RestController
 @RequestMapping(value="/scheduler")
 public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(PortletServiceEndpointImpl.class);
 	@Autowired
 	private P6SchedulingBusinessService p6BusinessService;
 	@Autowired
 	Validator validator;
-	
-	
-	@RequestMapping(value="/fetchToDos", method = RequestMethod.GET,
-			produces = {MediaType.APPLICATION_JSON_VALUE})
+
+	@RequestMapping(value = "/fetchToDos", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
 	public List<ToDoItem> fetchToDoItems() {
 		return p6BusinessService.fetchToDos();
 	}
-	
-	@RequestMapping(value="/searchWorkOrder", method = RequestMethod.GET,
-			produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+
+	@RequestMapping(value = "/fetchWOForTODOStatus", method = RequestMethod.POST, produces = {
+			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public List<WorkOrder> fetchWorkOrdersForAddUpdateScheduling(WorkOrderSearchRequest query) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@RequestMapping(value="/fetchWOForTODOStatus", method = RequestMethod.POST,
-			produces = {MediaType.APPLICATION_JSON_VALUE}, 
-			consumes = {MediaType.APPLICATION_JSON_VALUE})
-	@Override
-	public List<ViewToDoStatus> fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchRequest> query){
+	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchRequest> query) {
 		logger.debug("DEPOT_ID>>>>{}", query.getBody().getDepotList());
 		return p6BusinessService.fetchWorkOrdersForViewToDoStatus(query.getBody());
 	}
-	
-	@RequestMapping(value="/fetchWOForAddUpdateToDo", method = RequestMethod.POST,
-			produces = {MediaType.APPLICATION_JSON_VALUE}, 
-			consumes = {MediaType.APPLICATION_JSON_VALUE})
+
+	@RequestMapping(value = "/fetchWOForAddUpdateToDo", method = RequestMethod.POST, produces = {
+			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchRequest> query){ 
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchRequest> query) {
 		logger.debug("DEPOT_ID>>>>{}", query.getBody().getDepotList());
 		return p6BusinessService.fetchWorkOrdersForAddUpdateToDo(query.getBody());
 	}
-	
-	@RequestMapping(value = "/saveWorkOrder" , 
-    		method = RequestMethod.POST, 
-    		produces = {MediaType.APPLICATION_JSON_VALUE}, 
-    		consumes = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseBody
-    @Override
-	public ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) throws P6BusinessException {
-    	return new ResponseEntity<WorkOrder>(p6BusinessService.saveToDo(workOrder.getBody()),HttpStatus.CREATED);
-	}
-	
-	@RequestMapping(value = "/saveWorkOrderForViewToDoStatus" , 
-    		method = RequestMethod.POST, 
-    		produces = {MediaType.APPLICATION_JSON_VALUE}, 
-    		consumes = {MediaType.APPLICATION_JSON_VALUE})
-    @ResponseBody
-    @Override
-	public ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus) throws P6BusinessException {
-    	return new ResponseEntity<ViewToDoStatus>(p6BusinessService.saveViewToDoStatus(viewToDoStatus.getBody()),HttpStatus.CREATED);
-	}
 
-	@RequestMapping(value="/saveExecutionPackages", method = RequestMethod.POST,
-			produces = {MediaType.APPLICATION_JSON_VALUE}, 
-			consumes = {MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/saveWorkOrder", method = RequestMethod.POST, produces = {
+			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
 	@Override
-	public ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO)throws P6BaseException{
-		validator.validate(executionPackageDTO.getBody()); 
-		return new ResponseEntity<ExecutionPackageDTO>(p6BusinessService.saveExecutionPackage(executionPackageDTO.getBody()),HttpStatus.CREATED);
+	public ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) throws P6BusinessException {
+		return new ResponseEntity<WorkOrder>(p6BusinessService.saveToDo(workOrder.getBody()), HttpStatus.CREATED);
 	}
 
-	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
+	@RequestMapping(value = "/saveWorkOrderForViewToDoStatus", method = RequestMethod.POST, produces = {
+			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
+	@Override
+	public ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus)
+			throws P6BusinessException {
+		return new ResponseEntity<ViewToDoStatus>(p6BusinessService.saveViewToDoStatus(viewToDoStatus.getBody()),
+				HttpStatus.CREATED);
+	}
+
+	@RequestMapping(value = "/saveExecutionPackages", method = RequestMethod.POST, produces = {
+			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@Override
+	public ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(
+			RequestEntity<ExecutionPackageDTO> executionPackageDTO) throws P6BaseException {
+		validator.validate(executionPackageDTO.getBody());
+		return new ResponseEntity<ExecutionPackageDTO>(
+				p6BusinessService.saveExecutionPackage(executionPackageDTO.getBody()), HttpStatus.CREATED);
+	}
+
+	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<List<WorkOrder>> search(RequestEntity<WorkOrderSearchRequest> request)
 			throws P6BaseException {
@@ -117,4 +104,5 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 				request.getBody().getFromDate());
 		return new ResponseEntity<List<WorkOrder>>(p6BusinessService.search(request.getBody()), HttpStatus.OK);
 	}
+
 }
