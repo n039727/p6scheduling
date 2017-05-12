@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
@@ -194,9 +194,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		ViewToDoStatus returnedVal = new ViewToDoStatus();
 		if (null != query && null != query.getExecPckgName()) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
-			tasks = new ArrayList<Task>(executionPackage.getTasks());
-		} else {
-			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
+			tasks = new ArrayList<Task>(executionPackage.getTasks()); //multiple tasks
+		} else { 
+			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query); //single task
 		}
 		for (Task task : tasks) {
 			ViewToDoStatus status = null;
@@ -217,7 +217,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			
 			status = taskIdWOMap.get(key);
 
-			if (status.getWorkOrders() == null) {
+			/*if (status.getWorkOrders() == null) {
 				status.setWorkOrders(new ArrayList<String>());
 			}
 			status.getWorkOrders().add(task.getTaskId());
@@ -237,7 +237,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 			if (null != task.getSchdDt()) {
 				status.setScheduleDate(dateUtils.toStringYYYY_MM_DD(task.getSchdDt()));
-			}
+			}*/
 			returnedVal.setSchedulingComment(task.getCmts());
 			
 			// TO DO
@@ -256,7 +256,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				logger.debug("work order associated to each todo {} {}",toDoName,workOrderId);
 				assignmentDTO.setComment(assignment.getCmts());
 				if (null != assignment.getReqdByDt()) {
-					assignmentDTO.setReqByDate(assignment.getReqdByDt().toString());
+					assignmentDTO.setReqByDate(dateUtils.toStringDD_MM_YYYY(assignment.getReqdByDt()));
 				}
 				assignmentDTO.setStatus(assignment.getStat());
 				assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
@@ -289,7 +289,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			
 			//toDoStatuses.add(status);
 		}
-		Map<String,ToDoAssignment> mapOfGroupedTodoRecord = getGroupedTodoIwthWorkOrders(taskIdWOMap.values(),mapOfToDoIdWorkOrders);
+		Map<String,ToDoAssignment> mapOfGroupedTodoRecord = getGroupedTodowithWorkOrders(mapOfToDoIdWorkOrders);
 		List<ToDoAssignment> listOfTodoAssignments = new ArrayList<ToDoAssignment>(mapOfGroupedTodoRecord.values());
 		returnedVal.setTodoAssignments(listOfTodoAssignments);
 		return returnedVal; 
@@ -301,8 +301,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	 * @param values
 	 * @param mapOfToDoIdWorkOrders
 	 */
-	private Map<String,ToDoAssignment> getGroupedTodoIwthWorkOrders(Collection<ViewToDoStatus> values,
-			Map<String, List<ToDoAssignment>> mapOfToDoIdWorkOrders) {
+	private Map<String,ToDoAssignment> getGroupedTodowithWorkOrders(Map<String, List<ToDoAssignment>> mapOfToDoIdWorkOrders) {
 
 		Map<String, ToDoAssignment> todoMap = new HashMap<String, ToDoAssignment>();
 		mapOfToDoIdWorkOrders.forEach((todoName, assignments) -> {
@@ -331,8 +330,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		List<String> comments = new ArrayList<String>();
 		List<String> supDocLinks = new ArrayList<String>();
 		//String toDoName ;
-		assignments.forEach(toDoAssignment->{
+		logger.debug("before starting loop for assignments size = {}",assignments);
+		for (Iterator<ToDoAssignment> iterator = assignments.iterator(); iterator.hasNext();) {
+			ToDoAssignment toDoAssignment = (ToDoAssignment) iterator.next();
 			String toDoName = toDoAssignment.getToDoName();
+			logger.debug("todo name {}",toDoName);
 			singleMergedTodo.setToDoName(toDoName); //single todo name
 			logger.debug("Grouping for ToDo = {}",toDoName);
 			workOrders.add(toDoAssignment.getWorkOrderId());
@@ -345,13 +347,32 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			logger.debug("isNotSameStatus to be added for this todo {}",isNotSameStatus);
 			comments.add(toDoAssignment.getComment()==null?"":toDoAssignment.getComment());
 			supDocLinks.add(toDoAssignment.getSupportingDoc()==null?"":toDoAssignment.getSupportingDoc());
-		});
+		}
+		/*assignments.forEach(toDoAssignment->{
+			String toDoName = toDoAssignment.getToDoName();
+			logger.debug("todo name {}",toDoName);
+			singleMergedTodo.setToDoName(toDoName); //single todo name
+			logger.debug("Grouping for ToDo = {}",toDoName);
+			workOrders.add(toDoAssignment.getWorkOrderId());
+			logger.debug("workOrder for this todo = {}",toDoAssignment.getWorkOrderId());
+			String reqByDate = toDoAssignment.getReqByDate() == null ? "" :toDoAssignment.getReqByDate();
+			String strStatus = toDoAssignment.getStatus() == null ? "": toDoAssignment.getStatus();
+			boolean isNotSameReqByDate = requiredByDate.add(reqByDate);
+			logger.debug("isSameReqByDate to be added for this todo {}",isNotSameReqByDate);
+			boolean isNotSameStatus = status.add(strStatus);
+			logger.debug("isNotSameStatus to be added for this todo {}",isNotSameStatus);
+			comments.add(toDoAssignment.getComment()==null?"":toDoAssignment.getComment());
+			supDocLinks.add(toDoAssignment.getSupportingDoc()==null?"":toDoAssignment.getSupportingDoc());
+		});*/
 		
 		singleMergedTodo.setWorkOrders(Arrays.asList(workOrders.toArray(new String[workOrders.size()])));
-		if(requiredByDate.size() > 1 && status.size() > 1){
-			singleMergedTodo.setReqByDate(requiredByDate.iterator().next());
+		if((requiredByDate.size() > 1) && (status.size() > 1)){
+			singleMergedTodo.setReqByDate("");
 			singleMergedTodo.setStatus(status.iterator().next());
 		}
+		
+		singleMergedTodo.setReqByDate(requiredByDate.iterator().next());
+		singleMergedTodo.setStatus(status.iterator().next());
 		singleMergedTodo.setComment(StringUtils.join(comments.toArray(new String[comments.size()])));
 		singleMergedTodo.setSupportingDoc(StringUtils.join(supDocLinks.toArray(new String[supDocLinks.size()])));
 		return singleMergedTodo;
@@ -620,7 +641,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	private void mergeToDoAssignment(TodoAssignment assignment, ToDoAssignment assignmentDTO) throws ParseException {
-		assignment.setReqdByDt(dateUtils.toDateFromYYYY_MM_DD(assignmentDTO.getReqByDate()));
+		assignment.setReqdByDt(dateUtils.toDateFromDD_MM_YYYY(assignmentDTO.getReqByDate()));
 		assignment.setCmts(assignmentDTO.getComment());
 		assignment.setStat(assignmentDTO.getStatus());
 		assignment.setSuprtngDocLnk(assignmentDTO.getSupportingDoc());
