@@ -14,7 +14,7 @@ import au.com.wp.corp.p6.exception.P6BusinessException;
 public interface P6SchedulingBusinessService {
 	
 	public List<WorkOrder> retrieveJobs(WorkOrderSearchRequest input);
-	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input);
+	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException;
 	public List<WorkOrder> saveWorkOrder(WorkOrder workOrder);
 	public List<TaskDTO> listTasks() throws P6BusinessException;
 	public List<ToDoItem> fetchToDos();

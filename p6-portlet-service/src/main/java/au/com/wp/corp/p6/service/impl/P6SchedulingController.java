@@ -30,7 +30,7 @@ public class P6SchedulingController {
 
 	@RequestMapping(value = "/retrieveWorkOrders", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public ResponseEntity<List<WorkOrder>> retrieveWorkOrders(RequestEntity<WorkOrderSearchRequest> input) {
+	public ResponseEntity<List<WorkOrder>> retrieveWorkOrders(RequestEntity<WorkOrderSearchRequest> input) throws P6BaseException {
 		return new ResponseEntity<List<WorkOrder>>(p6Service.retrieveWorkOrders(null), HttpStatus.OK);
 	}
 

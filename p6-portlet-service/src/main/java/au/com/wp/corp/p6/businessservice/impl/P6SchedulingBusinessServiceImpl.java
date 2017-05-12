@@ -34,11 +34,14 @@ import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.mock.CreateP6MockData;
+import au.com.wp.corp.p6.model.ActivitySearchRequest;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
 import au.com.wp.corp.p6.utils.DateUtils;
+import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
+import au.com.wp.corp.p6.wsclient.cleint.impl.P6WSClientImpl;
 
 @Service
 public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService {
@@ -66,20 +69,31 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	UserTokenRequest userTokenRequest;
 	
+	@Autowired
+	P6WSClient p6wsClient;
+	
+	
 	@Override
-	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) {
-		return mockData.search(input);
+	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException{
+		logger.info("input date # {} ", input.getFromDate());
+		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+		searchRequest.setCrewList(input.getCrewList());
+		searchRequest.setPlannedStartDate(dateUtils.convertDate(input.getFromDate()));
+		p6wsClient = new P6WSClientImpl();
+		List<WorkOrder> workOrders = p6wsClient.searchWorkOrder(searchRequest);
+		
+		logger.info("list of work orders from P6# {}", workOrders);
+		return workOrders;
 
 	}
  
 	@Override
 	public List<WorkOrder> search(WorkOrderSearchRequest input) throws P6BusinessException {
 		logger.debug("User logged in as ======================================={}",userTokenRequest.getUserPrincipal());
-
-		List<WorkOrder> mockWOData = mockData.search(input);
+		List<WorkOrder> listWOData = retrieveWorkOrders(input);
 		Map<String,WorkOrder> mapOfExecutionPkgWO = new HashMap<>();
 		List<WorkOrder> ungroupedWorkorders = new ArrayList<>();
-		for (WorkOrder workOrder : mockWOData) {
+		for (WorkOrder workOrder : listWOData) {
 			List<String> workOrderNamesinGroup = new ArrayList<>();
 			if (workOrder.getWorkOrders() != null) {
 				for (String workOrderId : workOrder.getWorkOrders()) {
@@ -111,7 +125,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 						WorkOrder workOrderNew = new WorkOrder();
 						workOrderNew.setWorkOrders(workOrder.getWorkOrders());
 						workOrderNew.setCrewNames(workOrder.getCrewNames());
-						workOrderNew.setScheduleDate(workOrder.getScheduleDate());
+						workOrderNew.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
 						workOrderNew.setActioned(dbTask.getActioned());
 						workOrderNamesinGroup.add(dbTask.getTaskId());
 						ungroupedWorkorders.add(workOrderNew);

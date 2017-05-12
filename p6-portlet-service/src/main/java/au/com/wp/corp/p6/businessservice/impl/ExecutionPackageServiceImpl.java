@@ -15,11 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
+import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
+import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.mock.CreateP6MockData;
@@ -48,8 +50,10 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 
 	@Autowired
 	DateUtils dateUtils;
+	
 	@Autowired
-	CreateP6MockData mockData;
+	P6SchedulingBusinessService p6SchedulingService;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -165,8 +169,8 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		return execPckgId;
 	}
 	@Override
-	public List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6DataAccessException {
-		List<WorkOrder> mockWOData = mockData.search(input);
+	public List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6BaseException {
+		List<WorkOrder> mockWOData = p6SchedulingService.retrieveWorkOrders(input);
 		for (WorkOrder workOrder : mockWOData) {
 			if (workOrder.getWorkOrders() != null) {
 				for (String workOrderId : workOrder.getWorkOrders()) {
@@ -179,7 +183,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 						workOrder.setExctnPckgName(dbWOExecPkg);
 						workOrder.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
 					}
-					
+					workOrder.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
 				}
 			}
 		}
