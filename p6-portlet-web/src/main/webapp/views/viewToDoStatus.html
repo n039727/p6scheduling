@@ -8,6 +8,7 @@
 			<th>Crew Assigned</th>
 			<th>Lead Crew</th>
 			<th>Execution Package</th>
+			<th ng-if="$ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'">Completed ?</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -21,6 +22,7 @@
 			<td>{{wo.crewNames}}</td>
 			<td>{{wo.leadCrew}}</td>
 			<td>{{wo.exctnPckgName}}</td>
+			<td ng-if="$ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'">{{wo.completed}}</td>
 		</tr>
 		<tr ng-repeat-end>
 			<td colspan="12" class="hiddenRow">
