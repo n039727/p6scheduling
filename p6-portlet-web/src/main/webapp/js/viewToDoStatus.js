@@ -24,7 +24,12 @@ function viewToDoStatusController($scope, $http) {
 		
 		if (wo.todoAssignments) {
 			for (var i =0; i<wo.todoAssignments.length; i++) {
-				wo.todoAssignments[i].reqByDate = ctrl.formatDate(wo.todoAssignments[i].reqByDt);
+				if(angular.isDefined(wo.todoAssignments[i].reqByDt) && wo.todoAssignments[i].reqByDt !== null){
+					wo.todoAssignments[i].reqByDate = ctrl.formatDate(wo.todoAssignments[i].reqByDt);
+				}else{
+					wo.todoAssignments[i].reqByDate = "";
+					
+				}
 			}
 		}
 		
