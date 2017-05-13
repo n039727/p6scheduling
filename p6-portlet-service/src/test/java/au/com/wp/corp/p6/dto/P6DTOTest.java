@@ -144,7 +144,7 @@ public class P6DTOTest {
 		List<String> crewAssigned = new ArrayList<>();
 		todoStatus.setCrewAssigned(crewAssigned);
 		todoStatus.setDeportComment("Depot comments");
-		todoStatus.setExecutionPackage("28-04-2017_12222294");
+		todoStatus.setExctnPckgName("28-04-2017_12222294");
 		todoStatus.setLeadCrew("CREW1");
 		todoStatus.setScheduleDate("28/04/2017");
 		todoStatus.setSchedulingComment("Scheduler comments");
@@ -155,7 +155,7 @@ public class P6DTOTest {
 		
 		Assert.assertEquals(crewAssigned, todoStatus.getCrewAssigned());
 		Assert.assertEquals("Depot comments", todoStatus.getDeportComment());
-		Assert.assertEquals("28-04-2017_12222294", todoStatus.getExecutionPackage());
+		Assert.assertEquals("28-04-2017_12222294", todoStatus.getExctnPckgName());
 		Assert.assertEquals("CREW1", todoStatus.getLeadCrew());
 		Assert.assertEquals("28/04/2017", todoStatus.getScheduleDate());
 		Assert.assertEquals("Scheduler comments", todoStatus.getSchedulingComment());

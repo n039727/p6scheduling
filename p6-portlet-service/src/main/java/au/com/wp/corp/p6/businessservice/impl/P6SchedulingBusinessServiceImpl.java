@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -202,7 +203,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) {
 
 		List<Task> tasks = null;
-		Map<String, ViewToDoStatus> taskIdWOMap = new HashMap<String, ViewToDoStatus>();
+		//Map<String, ViewToDoStatus> taskIdWOMap = new HashMap<String, ViewToDoStatus>();
 		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> mapOfToDoIdWorkOrders = new HashMap<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>>();
 		ExecutionPackage executionPackage = null;
 		ViewToDoStatus returnedVal = new ViewToDoStatus();
@@ -217,41 +218,16 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			String key = null;
 			if (task.getExecutionPackage() != null) {
 				key = task.getExecutionPackage().getExctnPckgNam();
-				returnedVal.setExecutionPackage(key);
+				returnedVal.setExctnPckgName(key);
 			} else {
 				key = task.getTaskId();
-				returnedVal.setExecutionPackage("");
+				returnedVal.setExctnPckgName("");
 			}
 
-			if (!taskIdWOMap.containsKey(key)) {
-				taskIdWOMap.put(key, new ViewToDoStatus());
-			}
+			
 			
 			logger.debug("Key for fetch todo >>>{}", key);
 			
-			status = taskIdWOMap.get(key);
-
-			/*if (status.getWorkOrders() == null) {
-				status.setWorkOrders(new ArrayList<String>());
-			}
-			status.getWorkOrders().add(task.getTaskId());
-
-			if (status.getCrewAssigned() == null) {
-				status.setCrewAssigned(new ArrayList<String>());
-			}
-			status.getCrewAssigned().add(task.getCrewId());
-
-			status.setSchedulingComment(task.getCmts());
-
-			if (task.getExecutionPackage() != null) {
-				status.setExecutionPackage(task.getExecutionPackage().getExctnPckgNam());
-			}
-
-			status.setLeadCrew(task.getLeadCrewId());
-
-			if (null != task.getSchdDt()) {
-				status.setScheduleDate(dateUtils.toStringYYYY_MM_DD(task.getSchdDt()));
-			}*/
 			returnedVal.setSchedulingComment(task.getCmts());
 			
 			// TO DO
@@ -295,13 +271,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				}
 				assignmentDTOs.add(assignmentDTO);
 			}
-			if (status.getTodoAssignments() == null) {
+			/*if (status.getTodoAssignments() == null) {
 				status.setTodoAssignments(new ArrayList<ToDoAssignment>());
 			}
 			status.getTodoAssignments().addAll(assignmentDTOs);
 			logger.debug("Size of ToDoAssignment for task>>>{}", status.getTodoAssignments().size());
 			
-			//toDoStatuses.add(status);
+			//toDoStatuses.add(status);*/
 		}
 		Map<String,ToDoAssignment> mapOfGroupedTodoRecord = getGroupedTodowithWorkOrders(mapOfToDoIdWorkOrders);
 		List<ToDoAssignment> listOfTodoAssignments = new ArrayList<ToDoAssignment>(mapOfGroupedTodoRecord.values());
@@ -341,8 +317,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		Set<String> workOrders = new HashSet<>();
 		Set<String> requiredByDate = new HashSet<>();
 		Set<String> status = new HashSet<String>();
-		List<String> comments = new ArrayList<String>();
-		List<String> supDocLinks = new ArrayList<String>();
+		Set<String> comments = new HashSet<String>();
+		Set<String> supDocLinks = new HashSet<String>();
 		//String toDoName ;
 		logger.debug("before starting loop for assignments size = {}",assignments);
 		for (Iterator<ToDoAssignment> iterator = assignments.iterator(); iterator.hasNext();) {
@@ -387,8 +363,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		
 		singleMergedTodo.setReqByDate(requiredByDate.iterator().next());
 		singleMergedTodo.setStatus(status.iterator().next());
-		singleMergedTodo.setComment(StringUtils.join(comments.toArray(new String[comments.size()])));
-		singleMergedTodo.setSupportingDoc(StringUtils.join(supDocLinks.toArray(new String[supDocLinks.size()])));
+		if (ArrayUtils.isNotEmpty(comments.toArray(new String[comments.size()]))){
+			singleMergedTodo.setComment(StringUtils.join(comments.toArray(new String[comments.size()]),","));
+		}
+		if (ArrayUtils.isNotEmpty(supDocLinks.toArray(new String[supDocLinks.size()]))){
+			singleMergedTodo.setSupportingDoc(StringUtils.join(supDocLinks.toArray(new String[supDocLinks.size()]),","));
+		}
+		
 		return singleMergedTodo;
 	}
 
@@ -621,9 +602,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		if (workOrder != null) {
 
 			List<Task> taskList = new ArrayList<Task>();
-			if (!StringUtils.isEmpty(workOrder.getExecutionPackage())
-					&& !workOrder.getExecutionPackage().equals("PKG1")) {
-				ExecutionPackage pkg = executionPackageDao.fetch(workOrder.getExecutionPackage());
+			if (!StringUtils.isEmpty(workOrder.getExctnPckgName())
+					&& !workOrder.getExctnPckgName().equals("PKG1")) {
+				ExecutionPackage pkg = executionPackageDao.fetch(workOrder.getExctnPckgName());
 				taskList.addAll(pkg.getTasks());
 			} else {
 				taskList.add(workOrderDAO.fetch(workOrder.getWorkOrders().get(0)));
@@ -644,7 +625,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 							} catch (ParseException e) {
 								logger.error("Parsing date failed: ", e);
 							}
-							continue;
+							
 						}
 					}
 				}
@@ -655,7 +636,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	private void mergeToDoAssignment(TodoAssignment assignment, ToDoAssignment assignmentDTO) throws ParseException {
-		assignment.setReqdByDt(dateUtils.toDateFromDD_MM_YYYY(assignmentDTO.getReqByDate()));
+		if(!"".equalsIgnoreCase(assignmentDTO.getReqByDate())){
+			assignment.setReqdByDt(dateUtils.toDateFromDD_MM_YYYY(assignmentDTO.getReqByDate()));
+		}
 		assignment.setCmts(assignmentDTO.getComment());
 		assignment.setStat(assignmentDTO.getStatus());
 		assignment.setSuprtngDocLnk(assignmentDTO.getSupportingDoc());

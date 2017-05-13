@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class ViewToDoStatus {
 
-	private String executionPackage;
+	private String exctnPckgName;
 	private List<String> workOrders;
 	private String scheduleDate;
 	private List<String> crewAssigned;
@@ -23,12 +23,13 @@ public class ViewToDoStatus {
 	private String schedulingComment;
 	private String deportComment;
 	private List<ToDoAssignment> todoAssignments;
-	public String getExecutionPackage() {
-		return executionPackage;
+	public String getExctnPckgName() {
+		return exctnPckgName;
 	}
-	public void setExecutionPackage(String executionPackage) {
-		this.executionPackage = executionPackage;
+	public void setExctnPckgName(String exctnPckgName) {
+		this.exctnPckgName = exctnPckgName;
 	}
+	
 	public List<String> getWorkOrders() {
 		return workOrders;
 	}
@@ -73,7 +74,7 @@ public class ViewToDoStatus {
 	}
 	@Override
 	public String toString() {
-		return "ViewToDoStatus [executionPackage=" + executionPackage + ", workOrders=" + workOrders + ", scheduleDate="
+		return "ViewToDoStatus [executionPackage=" + exctnPckgName + ", workOrders=" + workOrders + ", scheduleDate="
 				+ scheduleDate + ", crewAssigned=" + crewAssigned + ", leadCrew=" + leadCrew + ", schedulingComment="
 				+ schedulingComment + ", deportComment=" + deportComment + ", todoAssignments=" + todoAssignments + "]";
 	}
