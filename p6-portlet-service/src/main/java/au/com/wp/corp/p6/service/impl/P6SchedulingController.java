@@ -34,12 +34,6 @@ public class P6SchedulingController {
 		return new ResponseEntity<List<WorkOrder>>(p6Service.retrieveWorkOrders(null), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/retrieveJobs", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public ResponseEntity<List<WorkOrder>> retrieveJobs(RequestEntity<WorkOrderSearchRequest> input) {
-		return new ResponseEntity<List<WorkOrder>>(p6Service.retrieveJobs(null), HttpStatus.OK);
-	}
-
 	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
 	@ResponseBody
 	public ResponseEntity<List<WorkOrder>> search(RequestEntity<WorkOrderSearchRequest> request)
@@ -51,12 +45,6 @@ public class P6SchedulingController {
 		logger.info("Search String # crews - {} , start date - {}", request.getBody().getCrewList(),
 				request.getBody().getFromDate());
 		return new ResponseEntity<List<WorkOrder>>(p6Service.search(request.getBody()), HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/saveWorkOrder", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody
-	public ResponseEntity<List<WorkOrder>> saveWorkOrder(RequestEntity<WorkOrder> workOrder) {
-		return new ResponseEntity<List<WorkOrder>>(p6Service.saveWorkOrder(workOrder.getBody()), HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/listTasks", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

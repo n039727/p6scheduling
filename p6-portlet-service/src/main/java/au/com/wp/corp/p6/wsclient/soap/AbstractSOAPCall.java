@@ -9,7 +9,7 @@ import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 
 /**
- *
+ * Calls the web service 
  * @author n039126
  * @version 1.0
  * @param <T>

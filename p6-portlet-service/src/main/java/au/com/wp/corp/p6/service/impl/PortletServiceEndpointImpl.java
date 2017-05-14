@@ -82,6 +82,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 				HttpStatus.CREATED);
 	}
 
+	/**
 	@RequestMapping(value = "/saveExecutionPackages", method = RequestMethod.POST, produces = {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
@@ -91,6 +92,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 		return new ResponseEntity<ExecutionPackageDTO>(
 				p6BusinessService.saveExecutionPackage(executionPackageDTO.getBody()), HttpStatus.CREATED);
 	}
+	**/
 
 	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody

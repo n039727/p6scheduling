@@ -34,7 +34,6 @@ import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
-import au.com.wp.corp.p6.mock.CreateP6MockData;
 import au.com.wp.corp.p6.model.ActivitySearchRequest;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
@@ -42,12 +41,10 @@ import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
 import au.com.wp.corp.p6.utils.DateUtils;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
-import au.com.wp.corp.p6.wsclient.cleint.impl.P6WSClientImpl;
 
 @Service
 public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService {
 
-	private Map<String, WorkOrder> mapStorage = null;
 	private static final Logger logger = LoggerFactory.getLogger(P6SchedulingBusinessServiceImpl.class);
 	@Autowired
 	TaskDAO taskDAO;
@@ -62,8 +59,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	private ExecutionPackageDao executionPackageDao;
 
-	@Autowired
-	CreateP6MockData mockData;
 	private static String ACTIONED_Y = "Y";
 	private static String ACTIONED_N = "N";
 
@@ -80,7 +75,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
 		searchRequest.setCrewList(input.getCrewList());
 		searchRequest.setPlannedStartDate(dateUtils.convertDate(input.getFromDate()));
-		p6wsClient = new P6WSClientImpl();
 		List<WorkOrder> workOrders = p6wsClient.searchWorkOrder(searchRequest);
 		
 		logger.info("list of work orders from P6# {}", workOrders);
@@ -141,29 +135,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return workorders;
 	}
 
-	
 
-	
-
-	public List<WorkOrder> retrieveJobs(WorkOrderSearchRequest input) {
-
-		return new ArrayList<WorkOrder>(mapStorage.values());
-
-	}
-
-	public List<WorkOrder> saveWorkOrder(WorkOrder workOrder) {
-		logger.debug("work order == {}", workOrder);
-		if (mapStorage.containsKey(workOrder.getWorkOrders().get(0))) {
-			mapStorage.put(workOrder.getWorkOrders().get(0), workOrder);
-		}
-		List<WorkOrder> listofJobs = new ArrayList<WorkOrder>(mapStorage.values());
-		return listofJobs;
-	}
-
+	@Override
 	@Transactional
 	public List<TaskDTO> listTasks() throws P6BusinessException {
 		List<Task> taskList = taskDAO.listTasks();
-		List<TaskDTO> tasks = new ArrayList<TaskDTO>();
+		List<TaskDTO> tasks = new ArrayList<>();
 		for (Task task2 : taskList) {
 			TaskDTO taskDTO = new TaskDTO();
 			taskDTO.setTaskId(task2.getTaskId());
@@ -181,7 +158,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	public List<ToDoItem> fetchToDos() {
 
 		List<TodoTemplate> toDoTemplateList = todoDAO.fetchAllToDos();
-		List<ToDoItem> toDos = new ArrayList<ToDoItem>();
+		List<ToDoItem> toDos = new ArrayList<>();
 		for (TodoTemplate toDo : toDoTemplateList) {
 			ToDoItem item = new ToDoItem();
 			item.setCrtdTs(toDo.getCrtdTs().toString());
@@ -504,10 +481,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return executionPackageDTO;
 	}
 
-	public List<ExecutionPackageDTO> fetchExecutionPackageList() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest query) {

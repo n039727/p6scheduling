@@ -95,4 +95,19 @@ public class ActivitySearchRequest {
 		this.depotList = depotList;
 	}
 
+	@Override
+	public boolean equals (Object obj) {
+		if ( obj instanceof ActivitySearchRequest) {
+			ActivitySearchRequest sr = (ActivitySearchRequest)obj;
+			return sr.getPlannedStartDate().equals(this.getPlannedStartDate());
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode (){
+		return 100;
+	}
+	
 }

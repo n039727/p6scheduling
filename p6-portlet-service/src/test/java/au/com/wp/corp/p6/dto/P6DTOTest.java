@@ -133,6 +133,7 @@ public class P6DTOTest {
 		Assert.assertEquals(new Long(12345), tda.getToDoAssignmentId());
 		Assert.assertEquals("ESA", tda.getToDoName());
 		Assert.assertEquals("WO11", tda.getWorkOrderId());
+		Assert.assertNotNull(tda.toString());
 	}
 	
 	/**
@@ -161,6 +162,7 @@ public class P6DTOTest {
 		Assert.assertEquals("Scheduler comments", todoStatus.getSchedulingComment());
 		Assert.assertEquals(tdas, todoStatus.getTodoAssignments());
 		Assert.assertEquals(workOrders, todoStatus.getWorkOrders());
+		Assert.assertNotNull(todoStatus.toString());
 	}
 	
 	/**

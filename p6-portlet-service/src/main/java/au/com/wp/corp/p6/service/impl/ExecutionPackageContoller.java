@@ -60,7 +60,7 @@ public class ExecutionPackageContoller {
 			throws P6BaseException {
 		if (request.getBody() == null) {
 			logger.error(" Invalid request - {}", request.getBody());
-			throw new P6BaseException(" invalid request ");
+			throw new P6BaseException("invalid request");
 		}
 		logger.info("Search String # crews - {} , start date - {}", request.getBody().getCrewList(),
 				request.getBody().getFromDate());
