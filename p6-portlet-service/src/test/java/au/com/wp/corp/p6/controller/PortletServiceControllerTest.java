@@ -148,7 +148,6 @@ public class PortletServiceControllerTest {
 
 		ViewToDoStatus request = new ViewToDoStatus();
 		request.setDeportComment("test comments depot");
-		request.setExecutionPackage("15-05-2017_1243467");
 		request.setSchedulingComment("test comments scheduler");
 		request.setScheduleDate("15/05/2017");
 		List<String> workOrders = new ArrayList<>();
