@@ -40,6 +40,7 @@ import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
 import au.com.wp.corp.p6.utils.DateUtils;
+import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 
 @Service
@@ -103,6 +104,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 							if(!workOrdersalreadyinGroup.getWorkOrders().contains(workOrderId)){
 								workOrdersalreadyinGroup.getWorkOrders().add(workOrderId);
 							}
+							workOrdersalreadyinGroup.setCompleted(convertBooleanToString(
+									convertStringToBoolean(workOrdersalreadyinGroup.getCompleted())
+											&& getCompletedStatus(dbTask)));
 						} else {
 							
 							WorkOrder workOrderNew = new WorkOrder();
@@ -113,6 +117,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 							workOrderNew.setExctnPckgName(dbWOExecPkg);
 							workOrderNamesinGroup.add(dbTask.getTaskId());
 							workOrderNew.setWorkOrders(workOrderNamesinGroup);
+							workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
 							mapOfExecutionPkgWO.put(dbWOExecPkg, workOrderNew);
 						}
 					}else{
@@ -122,6 +127,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 						workOrderNew.setCrewNames(workOrder.getCrewNames());
 						workOrderNew.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
 						workOrderNew.setActioned(dbTask.getActioned());
+						workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
 						workOrderNamesinGroup.add(dbTask.getTaskId());
 						ungroupedWorkorders.add(workOrderNew);
 					}
@@ -135,6 +141,26 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return workorders;
 	}
 
+	public boolean convertStringToBoolean(String completed) {
+		return P6Constant.ACTIONED_Y.equals(completed);
+	}
+
+	public String convertBooleanToString(boolean isCompleted) {
+		return isCompleted ? P6Constant.ACTIONED_Y: P6Constant.ACTIONED_N;
+	}
+
+	private boolean getCompletedStatus(Task task) {
+		Set<TodoAssignment> toDos = task.getTodoAssignments();
+		if(null == toDos){
+			return Boolean.FALSE;
+		}
+		for (TodoAssignment todo : toDos) {
+			if (!P6Constant.STATUS_COMPLETED.equalsIgnoreCase(todo.getStat())) {
+				return Boolean.FALSE;
+			}
+		}
+		return Boolean.TRUE;
+	}
 
 	@Override
 	@Transactional
