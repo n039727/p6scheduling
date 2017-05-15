@@ -2,8 +2,6 @@ function schedulingToDoResultController($scope, $http) {
 	var ctrl = this;
 	
 	console.log('data received: ' + JSON.stringify(ctrl.data));
-	console.log('active context: ' + JSON.stringify(ctrl.activeContext));
-	
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
 		
@@ -19,9 +17,6 @@ function schedulingToDoResultController($scope, $http) {
 		
 	};
 	
-	//ctrl.todoGrp1 = ["ESA","DEC Permit","DBYD","Gas Permit","Rail Permit","Water Permit","ENAR"];
-	//ctrl.todoGrp2 = ["Traffic","Lay Down Area Arrangements","Fibre Optics","Inductions (Mine Site)","Specialised Plant / Equipment Availability","Additional Trades","Others"];
-	//console.log('fetch todoList:' + JSON.stringify(ctrl.metadata));
 	
 	ctrl.todoGrp1 = [];
 	ctrl.todoGrp2 = [];
@@ -57,8 +52,6 @@ function schedulingToDoResultController($scope, $http) {
 				}
 				ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, todo)] = [];
 			}
-				//wo.todos.remove(todo);
-			
 	};
 	
 	function findToDo(toDoList, todoName) {
@@ -73,19 +66,13 @@ function schedulingToDoResultController($scope, $http) {
 	}
 	
 	ctrl.calculateEnable = function(wo, todo) {
-		//console.log('Work Order: ');
-		//console.log(JSON.stringify(wo));
 		if (wo.toDoItems) {
 			for(i=0; i < wo.toDoItems.length; i++) {
-				//console.log('Comparing ' + wo.toDoItems[i].toDoName + ' with ' + todo);
 				if (wo.toDoItems[i].toDoName == todo) {
-					//console.log('returning true');
 					return true;
 				}
 			}
 		}
-		
-		//console.log('returning false');
 		return false;
 	};
 
@@ -117,7 +104,7 @@ function schedulingToDoResultController($scope, $http) {
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			//alert("Scheduling TO DO saved for " + wo.workOrders[0]);
+			wo.actioned = 'Y';
 			ctrl.savedMsgVisible = true;
 			
 		});

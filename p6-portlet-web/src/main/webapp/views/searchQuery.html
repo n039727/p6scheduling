@@ -32,8 +32,8 @@
 						 &nbsp;&nbsp;To
 						<md-datepicker md-current-view="month"  ng-model="$ctrl.scheduleToDate" md-placeholder="DD/MM/YYYY"></md-datepicker>
 					</div>
-					<div class="col-md-offset-5" ng-show="$ctrl.showErrorMsg">
-							<p class="error-message" >Planned Start From Date is required</p>
+					<div class="col-md-offset-5" ng-show="$ctrl.isValidationErr">
+							<p class="error-message" >{{$ctrl.showErrorMsg}}</p>
 					</div>
 
 					<!--<div class="col-md-3"> 

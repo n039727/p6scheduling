@@ -1,6 +1,7 @@
 function viewToDoStatusController($scope, $http) {
 	var ctrl = this;
 	
+	console.log('$ctrl.activeContext in view: ' + JSON.stringify(ctrl.activeContext));
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	
 	ctrl.toggleExpansion  = function($event, wo) {
