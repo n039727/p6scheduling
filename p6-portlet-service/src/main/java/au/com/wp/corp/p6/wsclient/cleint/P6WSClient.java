@@ -15,5 +15,10 @@ import au.com.wp.corp.p6.model.ActivitySearchRequest;
  *
  */
 public interface P6WSClient {
+	
+	public static final String WS_AUTH_SERVICE_CALL_TIME = "P6_WS_AUTH_SERVICE_CALL_TIME";
+	public static final String AND = " AND ";
+	public static final String OR = " OR ";
+	
 	public List<WorkOrder> searchWorkOrder (ActivitySearchRequest searchRequest) throws P6ServiceException;
 }

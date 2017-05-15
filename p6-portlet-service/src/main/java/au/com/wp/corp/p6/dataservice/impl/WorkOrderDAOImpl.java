@@ -47,10 +47,11 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
         
 		logger.debug("Input TASK_ID>>>>{}", query.getWorkOrderId());
 		criteria.add(Restrictions.eq("taskId", query.getWorkOrderId()));
- 
+		
 		@SuppressWarnings("unchecked")
 		List<Task> listTask = (List<Task>) criteria
                   .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+		criteria.setFetchSize(1);
 		/* This list size should always be 1*/
 		logger.info("size={}",listTask.size());
         return listTask;

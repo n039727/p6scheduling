@@ -24,7 +24,12 @@ function viewToDoStatusController($scope, $http) {
 		
 		if (wo.todoAssignments) {
 			for (var i =0; i<wo.todoAssignments.length; i++) {
-				wo.todoAssignments[i].reqByDate = ctrl.formatDate(wo.todoAssignments[i].reqByDt);
+				if(angular.isDefined(wo.todoAssignments[i].reqByDt) && wo.todoAssignments[i].reqByDt !== null){
+					wo.todoAssignments[i].reqByDate = ctrl.formatDate(wo.todoAssignments[i].reqByDt);
+				}else{
+					wo.todoAssignments[i].reqByDate = "";
+					
+				}
 			}
 		}
 		
@@ -77,7 +82,7 @@ function viewToDoStatusController($scope, $http) {
 				for (var i =0; i<wo.todoAssignments.length; i++) {
 					console.log("req by date for fetchWOForTODOStatus: " + JSON.stringify(wo.todoAssignments[i].reqByDate));
 					
-					if(angular.isDefined(wo.todoAssignments[i].reqByDate) && wo.todoAssignments[i].reqByDate !== null ){					
+					if(angular.isDefined(wo.todoAssignments[i].reqByDate) && wo.todoAssignments[i].reqByDate !== null && wo.todoAssignments[i].reqByDate !== ""){					
 						wo.todoAssignments[i].reqByDt = new Date(wo.todoAssignments[i].reqByDate);
 					}
 				}
@@ -97,7 +102,7 @@ function viewToDoStatusController($scope, $http) {
 			if (month.length < 2) month = '0' + month;
 			if (day.length < 2) day = '0' + day;
 
-			return [year, month, day].join('-');
+			return [day, month, year].join('/');
 		}
 	}
 	

@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
+import javax.xml.ws.handler.Handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import au.com.wp.corp.p6.wsclient.activity.ActivityPortType;
 import au.com.wp.corp.p6.wsclient.activity.IntegrationFault;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
+import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
 
 /**
  * @author n039126
@@ -57,7 +59,7 @@ public class ActivityService extends AbstractSOAPCall<List<Activity>> {
 				new QName("http://xmlns.oracle.com/Primavera/P6/WS/Activity/V1", "ActivityService"));
 		servicePort = Service.getActivityPort();
 		bp = (BindingProvider) servicePort;
-
+		
 		Map<String, List<String>> headers = (Map<String, List<String>>) bp.getRequestContext()
 				.get("javax.xml.ws.http.request.headers");
 		if (headers == null) {
@@ -68,6 +70,11 @@ public class ActivityService extends AbstractSOAPCall<List<Activity>> {
 		logger.debug("WS_COOKIE == "+ CacheManager.getWsHeaders().get("WS_COOKIE"));
 		
 		headers.put("cookie", CacheManager.getWsHeaders().get("WS_COOKIE"));
+		
+		final List<Handler> handlerChain = bp.getBinding().getHandlerChain();
+        handlerChain.add(new SOAPLoggingHandler(trackingId));
+        bp.getBinding().setHandlerChain(handlerChain);
+
 
 	}
 
