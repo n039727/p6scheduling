@@ -1,7 +1,7 @@
 <div class="container search-query-container col-md-offset-1 col-md-10">
 	<div class="panel panel-default">
 		<div class="panel-heading search-query-panel-heading"><h4>Search Work Orders</h4></div>
-		<div class="panel-body">
+		<div class="search-panel-body">
 			<form class="form-horizontal" >
 
 				<div class="form-group">
@@ -26,7 +26,7 @@
 						<input class="form-control" ng-model="$ctrl.wo" id="wo"/>
 					</div>
 					<label class="control-label col-md-1" for="pwd">Planned Start Date</label>
-					<div class="col-md-5" > From
+					<div class="col-md-5 " > From
 					
 						<md-datepicker md-current-view="month"   ng-model="$ctrl.scheduleFromDate" md-placeholder="DD/MM/YYYY" ></md-datepicker>
 						 &nbsp;&nbsp;To
@@ -36,17 +36,13 @@
 							<p class="error-message" >{{$ctrl.showErrorMsg}}</p>
 					</div>
 
-					<!--<div class="col-md-3"> 
-					</div>-->
 				</div>
 				<div class="form-group">
 					<div class="col-md-offset-5 col-md-2" style="padding:4px">
-						<!--<button type="submit" style='margin-right:16px' class="btn btn-warning btn-lg" ng-click="$ctrl.refresh()">Refresh</button>-->
 						<button type="submit" class="btn btn-warning btn-block" ng-click="$ctrl.prepareSearch()"><h4>Search</h4></button>
 					</div>
 				</div>
 			</form>
-			
 		</div>
 	</div>
 </div>
