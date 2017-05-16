@@ -42,6 +42,7 @@ import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
 import au.com.wp.corp.p6.utils.DateUtils;
+import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 
 @Service
@@ -90,7 +91,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		Map<String,WorkOrder> mapOfExecutionPkgWO = new HashMap<>();
 		List<WorkOrder> ungroupedWorkorders = new ArrayList<>();
 		for (WorkOrder workOrder : listWOData) {
-			List<String> workOrderNamesinGroup = new ArrayList<>();
+			//List<String> workOrderNamesinGroup = new ArrayList<>();
 			if (workOrder.getWorkOrders() != null) {
 				for (String workOrderId : workOrder.getWorkOrders()) {
 					Task dbTask = workOrderDAO.fetch(workOrderId);
@@ -106,18 +107,17 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 								if(!workOrdersalreadyinGroup.getWorkOrders().contains(workOrderId)){
 									workOrdersalreadyinGroup.getWorkOrders().add(workOrderId);
 								}
+								workOrdersalreadyinGroup.setCompleted(convertBooleanToString(
+										convertStringToBoolean(workOrdersalreadyinGroup.getCompleted())
+												&& getCompletedStatus(dbTask)));
 							} else {
-								WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask.getExecutionPackage(),dbTask.getActioned());
+								WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask);
+								workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
 								mapOfExecutionPkgWO.put(dbWOExecPkg, workOrderNew);
 							}
 					}else{
 						//create separate work order list
-						WorkOrder workOrderNew = new WorkOrder();
-						workOrderNew.setWorkOrders(workOrder.getWorkOrders());
-						workOrderNew.setCrewNames(workOrder.getCrewNames());
-						workOrderNew.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
-						workOrderNew.setActioned(dbTask.getActioned());
-						workOrderNamesinGroup.add(dbTask.getTaskId());
+						WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask);
 						ungroupedWorkorders.add(workOrderNew);
 					}
 				}
@@ -130,25 +130,50 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return workorders;
 	}
 
+	public boolean convertStringToBoolean(String completed) {
+		return P6Constant.ACTIONED_Y.equals(completed);
+	}
 
-	private WorkOrder prepareWorkOrder(WorkOrder workOrder, ExecutionPackage executionPackage, String actioned) {
-		WorkOrder workOrderNew = new WorkOrder();
-		if (executionPackage != null) {
-			Set<Task> tasks = executionPackage.getTasks();
-			List<String> workOrderNamesinGroup = new ArrayList<String>();
+	public String convertBooleanToString(boolean isCompleted) {
+		return isCompleted ? P6Constant.ACTIONED_Y: P6Constant.ACTIONED_N;
+	}
 
-			workOrderNew.setWorkOrders(workOrder.getWorkOrders());
-			workOrderNew.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
-			workOrderNew.setCrewNames(workOrder.getCrewNames());
-			workOrderNew.setLeadCrew(workOrder.getLeadCrew());
-			workOrderNew.setActioned(actioned);
-
-			workOrderNew.setExctnPckgName(executionPackage.getExctnPckgNam());
-			for (Task dbTask : tasks) {
-				workOrderNamesinGroup.add(dbTask.getTaskId());
-			}
-			workOrderNew.setWorkOrders(workOrderNamesinGroup);
+	private boolean getCompletedStatus(Task task) {
+		Set<TodoAssignment> toDos = task.getTodoAssignments();
+		if(null == toDos){
+			return Boolean.FALSE;
 		}
+		for (TodoAssignment todo : toDos) {
+			if (!P6Constant.STATUS_COMPLETED.equalsIgnoreCase(todo.getStat())) {
+				return Boolean.FALSE;
+			}
+		}
+		return Boolean.TRUE;
+	}
+
+	private WorkOrder prepareWorkOrder(WorkOrder workOrder, Task dbTask) {
+		WorkOrder workOrderNew = new WorkOrder();
+		workOrderNew.setWorkOrders(workOrder.getWorkOrders());
+		workOrderNew.setCrewNames(workOrder.getCrewNames());
+		workOrderNew.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
+		workOrderNew.setActioned(dbTask.getActioned());
+		workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
+		workOrderNew.setLeadCrew(workOrder.getLeadCrew());
+		/*
+		 * TODO : code is commented for retrieving extra work orders 
+		 * those are present in execution package
+		 * List<String> workOrderNamesinGroup = new ArrayList<String>();
+
+		 * if (dbTask.getExecutionPackage() != null) {
+			Set<Task> tasks = dbTask.getExecutionPackage().getTasks();
+			workOrderNew.setExctnPckgName(dbTask.getExecutionPackage().getExctnPckgNam());
+			for (Task dbTaskTemp : tasks) {
+				workOrderNamesinGroup.add(dbTaskTemp.getTaskId());
+			}
+		} else {
+			workOrderNamesinGroup = workOrder.getWorkOrders();
+		}*/
+
 		return workOrderNew;
 
 	}
