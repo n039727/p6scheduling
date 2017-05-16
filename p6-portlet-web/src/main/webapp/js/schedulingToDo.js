@@ -1,6 +1,6 @@
 function schedulingToDoResultController($scope, $http) {
 	var ctrl = this;
-	
+	ctrl.successSavedMsg = "";
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
@@ -105,6 +105,11 @@ function schedulingToDoResultController($scope, $http) {
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
 			wo.actioned = 'Y';
+			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
+				ctrl.successSavedMsg = "Package has been saved successfully";
+			}else{
+				ctrl.successSavedMsg = "Work order task has been saved successfully";
+			}
 			ctrl.savedMsgVisible = true;
 			
 		});
