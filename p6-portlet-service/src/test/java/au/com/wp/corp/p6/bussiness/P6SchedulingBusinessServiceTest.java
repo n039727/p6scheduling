@@ -5,6 +5,9 @@ package au.com.wp.corp.p6.bussiness;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -297,6 +300,7 @@ public class P6SchedulingBusinessServiceTest {
 	 */
 
 	@Test
+	@Rollback(true)
 	public void testSearch() throws P6BusinessException {
 		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
 		request.setFromDate("2017-04-28T00:00:00.000Z");
@@ -333,6 +337,7 @@ public class P6SchedulingBusinessServiceTest {
 	 */
 
 	@Test
+	@Rollback(true)
 	public void testSearch_1() throws P6BusinessException {
 		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
 		request.setFromDate("2017-04-28T00:00:00.000Z");
@@ -361,20 +366,31 @@ public class P6SchedulingBusinessServiceTest {
 
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
 		searchRequest.setPlannedStartDate("2017-04-28");
-		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-04-28");
+		Mockito.when(dateUtils.convertDate(Mockito.any())).thenReturn("2017-04-28");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+		try {
+			Mockito.when(dateUtils.toDateFromDD_MM_YYYY(Mockito.any())).thenReturn(dateFormat.parse("2017-04-28"));
+			Mockito.when(dateUtils.toDateFromYYYY_MM_DD(Mockito.any())).thenReturn(dateFormat.parse("2017-04-28"));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
 
 		Task task = new Task();
 		task.setTaskId("W11");
 		task.setActioned("Y");
 		task.setCrewId("CRW1");
-		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
+		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(Mockito.any())).thenReturn(new Date());
 		task.setSchdDt(new Date());
 		ExecutionPackage excPckg = new ExecutionPackage();
 		excPckg.setExctnPckgId(123456L);
 		excPckg.setExctnPckgNam("28-04-2017_12345678");
 		task.setExecutionPackage(excPckg);
-
+		Set<Task> tasks = new HashSet<Task>();
+		tasks.add(task);
+		excPckg.setTasks(tasks);
 		Mockito.when(workOrderDAO.fetch(workOrder.getWorkOrderId())).thenReturn(task);
 		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
 		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
@@ -382,7 +398,7 @@ public class P6SchedulingBusinessServiceTest {
 		for (WorkOrder _workOrder : workOrders) {
 			Assert.assertEquals("W11", _workOrder.getWorkOrders().get(0));
 			Assert.assertEquals("CRW1", _workOrder.getCrewNames());
-			Assert.assertEquals("28-04-2017_12345678", _workOrder.getExctnPckgName());
+			Assert.assertNull(_workOrder.getExctnPckgName());
 		}
 
 	}
@@ -395,6 +411,7 @@ public class P6SchedulingBusinessServiceTest {
 	 */
 
 	@Test
+	@Rollback(true)
 	public void testSearch_2() throws P6BusinessException {
 		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
 		request.setFromDate("2017-04-28'T'00:00:00.000Z");

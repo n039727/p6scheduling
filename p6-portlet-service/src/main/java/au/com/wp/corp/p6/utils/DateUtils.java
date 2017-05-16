@@ -22,7 +22,7 @@ public class DateUtils {
 	private  final Logger logger = LoggerFactory.getLogger(DateUtils.class);
 	private final  SimpleDateFormat DATE_FORMAT_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 	
-	private final  SimpleDateFormat DATE_FORMAT_DD_MM_YYYY = new SimpleDateFormat("dd/MM/yyyy");
+	private final  SimpleDateFormat DATE_FORMAT_DD_MM_YYYY = new SimpleDateFormat("dd-MM-yyyy");
 	
 	private final  SimpleDateFormat DATE_FORMAT_DD_MM_YYYY_TIMESTAMP = new SimpleDateFormat("dd-MM-yyyy_hhmmssMs");
 	
