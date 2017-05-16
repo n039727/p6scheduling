@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
+import au.com.wp.corp.p6.dto.Crew;
+import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.model.ActivitySearchRequest;
@@ -21,6 +23,7 @@ import au.com.wp.corp.p6.utils.CacheManager;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
+import au.com.wp.corp.p6.wsclient.resource.Resource;
 
 /**
  * 
@@ -49,6 +52,11 @@ public class P6WSClientImpl implements P6WSClient {
 	
 	@Value ("${P6_DB_INSTANCE}")
 	private int p6DBInstance;
+	
+	@Value("${P6_RESOURCE_SERVICE_WSDL}")
+	private String resourceServiceWSDL;
+	
+	
 
 	/*
 	 * (non-Javadoc)
@@ -122,6 +130,53 @@ public class P6WSClientImpl implements P6WSClient {
 
 		return workOrders;
 	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see au.com.wp.corp.p6.wsclient.cleint.P6WSClient#searchCrew(au.com.wp.corp.p6.dto.ResourceSearchRequest)
+	 */
+	@Override
+	public List<Crew> searchCrew(ResourceSearchRequest searchRequest) throws P6ServiceException {
+		logger.info("Calling resource service in P6 Webservice ...");
+		final RequestTrackingId trackingId = new RequestTrackingId();
+		getAuthenticated(trackingId);
+
+		if (null == searchRequest) {
+			throw new P6ServiceException("NO_SEARCH_CRITERIA_FOUND");
+		}
+
+		final StringBuilder filter = new StringBuilder();
+		if (null != searchRequest.getResourceType()) {
+				
+				filter.append("ResourceType = ");
+				filter.append("'" + searchRequest.getResourceType() + "'");
+				
+		}
+
+		logger.debug("filter criteria for crew search # {} ", filter.toString());
+
+		final ResourceService resourceService = new ResourceService(trackingId, resourceServiceWSDL,
+				filter.length() > 0 ? filter.toString() : null, null);
+
+		final Holder<List<Resource>> resources = resourceService.run();
+		final List<Crew> crews = new ArrayList<Crew>();
+		logger.debug("list of crew from P6 # {}", crews);
+		if (null != crews) {
+			logger.debug("size of cres list from P6 # {}", crews.size());
+			for (Resource resource : resources.value) {
+				Crew crew = new Crew();
+				crew.setCrewId(resource.getId());;
+				crew.setCrewName(resource.getName());
+				
+				crews.add(crew);
+			}
+		}
+
+		return crews;
+	}
+
+
 
 	/**
 	 * @param trackingId

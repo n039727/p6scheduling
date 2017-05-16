@@ -58,6 +58,22 @@
 							<wsdlDirectory>src/main/resources/wsdl/activity</wsdlDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>resource</id>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<!-- Keep generated files -->
+							<keep>true</keep>
+							<!-- Package name -->
+							<packageName>au.com.wp.corp.p6.wsclient.resource</packageName>
+							<!-- generated source files destination -->
+							<sourceDestDir>target/generated/src/main/java</sourceDestDir>
+							<wsdlDirectory>src/main/resources/wsdl/resource</wsdlDirectory>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>
