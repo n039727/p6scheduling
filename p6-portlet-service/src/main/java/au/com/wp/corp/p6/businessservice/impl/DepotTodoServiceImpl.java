@@ -26,7 +26,9 @@ import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
+import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
+import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
@@ -82,7 +84,6 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 
 			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
 
-			//List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
 			if (null != toDoEntities) {
 				logger.debug("Size of ToDoAssignment for task>>>{}", toDoEntities.size());
 				logger.debug("task id for each entry {}",task.getTaskId());
@@ -114,7 +115,6 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 						assignments.add(assignmentDTO);
 						toDoAssignments.put(toDoName, assignments);
 					}
-					//assignmentDTOs.add(assignmentDTO);
 				}
 			}
 			
@@ -238,6 +238,114 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		assignment.setStat(assignmentDTO.getStatus());
 		assignment.setSuprtngDocLnk(assignmentDTO.getSupportingDoc());
 
+	}
+	
+	@Override
+	public WorkOrder saveDepotToDo(WorkOrder workOrder) throws P6BusinessException {
+
+		if (workOrder == null)
+			throw new IllegalArgumentException("Work Order canot be null");
+
+		if (workOrder.getWorkOrders() != null) {
+			for (String workOrderId : workOrder.getWorkOrders()) {
+				Task task = prepareTaskFromWorkOrderId(workOrderId, workOrder);
+				if(null != task.getExecutionPackage()){
+					logger.debug("task.getExecutionPackage()>> {}", task.getExecutionPackage().getActioned());
+				}
+				workOrderDAO.saveTask(task);
+			}
+		}
+
+		return workOrder;
+	}
+	
+	private Task prepareTaskFromWorkOrderId(String workOrderId, WorkOrder workOrder) throws P6BusinessException {
+		Task dbTask = workOrderDAO.fetch(workOrderId);
+		Task updatedTask = prepareTaskBean(dbTask, workOrder,workOrderId);
+		prepareToDoAssignmentList(updatedTask, workOrder);
+		return updatedTask;
+	}
+	
+	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder, String workOrderId) {
+		// create new Task if not there in DB
+		if (dbTask == null) {
+			dbTask = new Task();
+			dbTask.setTaskId(workOrderId);
+			
+		}
+
+		dbTask.setCmts(workOrder.getSchedulingToDoComment());
+		dbTask.setCrewId(workOrder.getCrewNames());
+		dbTask.setLeadCrewId(workOrder.getLeadCrew());
+		java.util.Date scheduleDate = null;
+		if(null != workOrder.getScheduleDate()){
+			scheduleDate = dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate());
+		}
+		dbTask.setSchdDt(scheduleDate);
+		dbTask.setDepotId(workOrder.getDepotId());
+		dbTask.setMatrlReqRef(workOrder.getMeterialReqRef());
+		if ( null != workOrder.getExctnPckgName()){
+			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
+			if(null != executionPackage){
+				dbTask.setExecutionPackage(executionPackage);
+			}
+
+			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
+		}
+		return dbTask;
+	}
+	
+	private void prepareToDoAssignmentList(Task updatedTask, WorkOrder workOrder) {
+		
+		if (updatedTask == null)
+			return;
+		
+		if (null != updatedTask.getTodoAssignments()) {
+			for (Iterator<TodoAssignment> itr = updatedTask.getTodoAssignments().iterator(); itr.hasNext();) {
+				TodoAssignment todo = itr.next();
+				boolean found = false;
+				logger.debug("todo.getTodoId(): " + todo.getTodoAssignMentPK().getTodoId());
+				for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
+					ToDoItem item = itrToDo.next();
+					logger.debug("item.getTodoName(): " + item.getToDoName());
+					if (item.getToDoName().equals(todoDAO.getToDoName(todo.getTodoAssignMentPK().getTodoId().longValue())) 
+							&& item.getWorkOrders().contains(updatedTask.getTaskId())) {
+						item.getWorkOrders().remove(updatedTask.getTaskId());
+						if (item.getWorkOrders().isEmpty()) {
+							itrToDo.remove();
+						}
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					itr.remove();
+				}
+			}
+		}	
+		
+		if (null != workOrder && null != workOrder.getToDoItems()) {
+			Set<TodoAssignment> todos = new HashSet<>();
+			// Set the new values
+			for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
+				ToDoItem item = itrToDo.next();
+				if (null != item.getWorkOrders() && item.getWorkOrders().contains(updatedTask.getTaskId())) {
+					TodoAssignment todoAssignment = new TodoAssignment();
+					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
+					logger.debug("Todo id for #{} - {}", item.getToDoName(), todoDAO.getToDoId(item.getToDoName()));
+					todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(item.getToDoName()));
+					todos.add(todoAssignment);
+				}
+			}
+			if (updatedTask.getTodoAssignments() == null) {
+				updatedTask.setTodoAssignments(new HashSet<TodoAssignment>());
+			}
+			updatedTask.getTodoAssignments().addAll(todos);
+		}
+	
+		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
+		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
+		
 	}
 
 }
