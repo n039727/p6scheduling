@@ -20,7 +20,7 @@ import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 
 public class AuthenticationService extends AbstractSOAPCall<Boolean> {
-	private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
+	private static final Logger logger = LoggerFactory.getLogger(ActivityServiceCall.class);
 	
 	private BindingProvider bp;
 	private AuthenticationServicePortType servicePort;

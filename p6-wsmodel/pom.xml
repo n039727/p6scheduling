@@ -39,7 +39,9 @@
 							<packageName>au.com.wp.corp.p6.wsclient.auth</packageName>
 							<!-- generated source files destination -->
 							<sourceDestDir>target/generated/src/main/java</sourceDestDir>
-							<wsdlDirectory>src/main/resources/wsdl/auth</wsdlDirectory>
+							<wsdlUrls>
+								<wsdlUrl>http://sdc-tssgt01:8206/p6ws/services/AuthenticationService?wsdl</wsdlUrl>
+							</wsdlUrls>
 						</configuration>
 					</execution>
 					<execution>
@@ -55,7 +57,9 @@
 							<packageName>au.com.wp.corp.p6.wsclient.activity</packageName>
 							<!-- generated source files destination -->
 							<sourceDestDir>target/generated/src/main/java</sourceDestDir>
-							<wsdlDirectory>src/main/resources/wsdl/activity</wsdlDirectory>
+							<wsdlUrls>
+								<wsdlUrl>http://sdc-tssgt01:8206/p6ws/services/ActivityService?wsdl</wsdlUrl>
+							</wsdlUrls>
 						</configuration>
 					</execution>
 					<execution>
@@ -71,7 +75,9 @@
 							<packageName>au.com.wp.corp.p6.wsclient.resource</packageName>
 							<!-- generated source files destination -->
 							<sourceDestDir>target/generated/src/main/java</sourceDestDir>
-							<wsdlDirectory>src/main/resources/wsdl/resource</wsdlDirectory>
+							<wsdlUrls>
+								<wsdlUrl>http://sdc-tssgt01:8206/p6ws/services/ResourceService?wsdl</wsdlUrl>
+							</wsdlUrls>
 						</configuration>
 					</execution>
 				</executions>
