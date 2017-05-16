@@ -2,7 +2,9 @@ package au.com.wp.corp.p6.businessservice;
 
 import java.util.List;
 
+import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
@@ -22,5 +24,6 @@ public interface P6SchedulingBusinessService {
 	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest body);
 	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus body) throws P6BusinessException;
 	public List<WorkOrder> search(WorkOrderSearchRequest input) throws P6BusinessException;
+	public List<Crew> retrieveCrews(ResourceSearchRequest input) throws P6BusinessException;
 
 }

@@ -25,7 +25,9 @@ import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
+import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
@@ -80,6 +82,17 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		
 		logger.info("list of work orders from P6# {}", workOrders);
 		return workOrders;
+
+	}
+	
+	@Override
+	public List<Crew> retrieveCrews(ResourceSearchRequest input) throws P6BusinessException{
+		logger.info("input ResourceType() # {} ", input.getResourceType());
+
+		List<Crew> crews = p6wsClient.searchCrew(input);
+		
+		logger.info("list of crews orders from P6# {}", crews);
+		return crews;
 
 	}
  
