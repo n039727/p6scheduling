@@ -90,6 +90,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		List<WorkOrder> listWOData = retrieveWorkOrders(input);
 		Map<String,WorkOrder> mapOfExecutionPkgWO = new HashMap<>();
 		List<WorkOrder> ungroupedWorkorders = new ArrayList<>();
+		List<Task> tasksForUpdate = new ArrayList<Task>();
 		for (WorkOrder workOrder : listWOData) {
 			//List<String> workOrderNamesinGroup = new ArrayList<>();
 			if (workOrder.getWorkOrders() != null) {
@@ -97,7 +98,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					Task dbTask = workOrderDAO.fetch(workOrderId);
 					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
 					dbTask = dbTask == null ? new Task() : dbTask;
-					dbTask.setSchdDt(dateUtils.toDateFromYYYY_MM_DD(workOrder.getScheduleDate()));
+					
+					
 					updateTaskAgainstExecutionPackage(dbTask.getExecutionPackage());
 					if (dbTask.getExecutionPackage() != null) {
 						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());
@@ -107,27 +109,40 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 								if(!workOrdersalreadyinGroup.getWorkOrders().contains(workOrderId)){
 									workOrdersalreadyinGroup.getWorkOrders().add(workOrderId);
 								}
-								workOrdersalreadyinGroup.setCompleted(convertBooleanToString(
+								/*workOrdersalreadyinGroup.setCompleted(convertBooleanToString(
 										convertStringToBoolean(workOrdersalreadyinGroup.getCompleted())
-												&& getCompletedStatus(dbTask)));
+												&& getCompletedStatus(dbTask)));*/
 							} else {
-								WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask);
+								WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask,tasksForUpdate);
 								workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
 								mapOfExecutionPkgWO.put(dbWOExecPkg, workOrderNew);
 							}
 					}else{
 						//create separate work order list
-						WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask);
+						WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask,tasksForUpdate);
 						ungroupedWorkorders.add(workOrderNew);
 					}
 				}
 			}
 		}
+		/*synchronization of task*/
+		updateTasksInDB(tasksForUpdate);
 		logger.debug("final grouped work orders size {}",mapOfExecutionPkgWO.values().size());
 		logger.debug("final grouped work orders = {}",mapOfExecutionPkgWO.values());
 		List<WorkOrder> workorders = new ArrayList<> (mapOfExecutionPkgWO.values());
 		workorders.addAll(ungroupedWorkorders);
+		
 		return workorders;
+	}
+
+	private void updateTasksInDB(List<Task> tasksForUpdate) throws P6BusinessException {
+		if(tasksForUpdate != null && tasksForUpdate.size() >0){
+			for (Iterator<Task> iterator = tasksForUpdate.iterator(); iterator.hasNext();) {
+				Task task = (Task) iterator.next();
+				workOrderDAO.saveTask(task);
+			}
+		}
+		
 	}
 
 	public boolean convertStringToBoolean(String completed) {
@@ -151,14 +166,27 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return Boolean.TRUE;
 	}
 
-	private WorkOrder prepareWorkOrder(WorkOrder workOrder, Task dbTask) {
+	private WorkOrder prepareWorkOrder(WorkOrder workOrder, Task dbTask, List<Task> tasksForUpdate) {
+		Date scheduledDateForWorkOrder = dateUtils.toDateFromYYYY_MM_DD(workOrder.getScheduleDate());
+		Date scheduledDateInTask = dbTask.getSchdDt();
+		String crewAssignedForWorkOrder = workOrder.getCrewNames();
+		String crewAssignedForTask = dbTask.getCrewId();
+		String leadCrewWorkOrder = workOrder.getLeadCrew();
+		String leadCrewForTask = dbTask.getLeadCrewId();
+		
 		WorkOrder workOrderNew = new WorkOrder();
 		workOrderNew.setWorkOrders(workOrder.getWorkOrders());
-		workOrderNew.setCrewNames(workOrder.getCrewNames());
+		workOrderNew.setCrewNames(crewAssignedForWorkOrder);
 		workOrderNew.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
 		workOrderNew.setActioned(dbTask.getActioned());
 		workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
-		workOrderNew.setLeadCrew(workOrder.getLeadCrew());
+		workOrderNew.setLeadCrew(leadCrewWorkOrder);
+		if((scheduledDateForWorkOrder.compareTo(scheduledDateInTask) != 0)
+				|| (!crewAssignedForWorkOrder.equalsIgnoreCase(crewAssignedForTask))
+				|| (!leadCrewWorkOrder.equalsIgnoreCase(leadCrewForTask))){
+			tasksForUpdate.add(dbTask);
+		}
+		
 		/*
 		 * TODO : code is commented for retrieving extra work orders 
 		 * those are present in execution package
@@ -214,7 +242,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				}
 				if (!StringUtils.contains(crewPresent, executionPackage.getLeadCrewId())) {
 					executionPackage.setLeadCrewId("");
-					//there are no crew assigned field
 				}
 				executionPackageDao.createOrUpdateExecPackage(executionPackage);
 			}
