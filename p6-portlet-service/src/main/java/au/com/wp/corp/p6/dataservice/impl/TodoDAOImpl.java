@@ -9,13 +9,19 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import au.com.wp.corp.p6.dataservice.TodoDAO;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
+import au.com.wp.corp.p6.model.ExecutionPackage;
+import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoTemplate;
 
 @Repository
@@ -37,7 +43,7 @@ public class TodoDAOImpl implements TodoDAO {
 			synchronized (lock) {
 				if (toDoMap == null) {
 					@SuppressWarnings("unchecked")
-					List<TodoTemplate> listToDo = (List<TodoTemplate>) sessionFactory.getCurrentSession()
+					List<TodoTemplate> listToDo = (List<TodoTemplate>) getSession()
 							.createCriteria(TodoTemplate.class)
 							.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 					toDoMap = new HashMap<Long, TodoTemplate>();
@@ -73,28 +79,45 @@ public class TodoDAOImpl implements TodoDAO {
 		return null;
 	}
 	
+	@Override
 	@Transactional
 	public List<TodoTemplate> fetchToDoForGratestToDoId() {
 
-		if (toDoMap == null) {
-			synchronized (lock) {
-				if (toDoMap == null) {
-					@SuppressWarnings("unchecked")
-					List<TodoTemplate> listToDo = (List<TodoTemplate>) sessionFactory.getCurrentSession()
-							.createCriteria(TodoTemplate.class)
-							.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-					toDoMap = new HashMap<Long, TodoTemplate>();
-					toDoNameMap = new HashMap<String, TodoTemplate>();
-					for (TodoTemplate todo:listToDo) {
-						toDoMap.put(todo.getTodoId().longValue(), todo);
-						toDoNameMap.put(todo.getTodoNam(), todo);
-					}
-				}
-			}
-		}
+		 Criteria criteria = getSession().createCriteria(TodoTemplate.class);
+		 criteria.setProjection(Projections.max("todoId"));
+			
+			@SuppressWarnings("unchecked")
+			List<TodoTemplate> toDos = (List<TodoTemplate>) criteria
+	                  .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+			criteria.setFetchSize(1);
+			/* This list size should always be 1*/
+			logger.info("size={}",toDos.size());
 
-		return new ArrayList<TodoTemplate>(toDoMap.values());
+			return toDos;
 		
+	}
+	
+	@Transactional
+	@Override
+	public boolean createToDo(TodoTemplate todoTemplate) throws P6DataAccessException {
+		logger.debug("inserting or updating the execution package and task details");
+		boolean status = Boolean.FALSE;
+
+		try {
+			getSession().saveOrUpdate(todoTemplate);
+			status = Boolean.TRUE;
+		} catch (Exception e) {
+			parseException(e);
+		}
+		logger.debug("inserted or updated the execution package and task details");
+		getSession().flush();
+		getSession().clear();
+		return status;
+	}
+
+	@Override
+	public Session getSession() {
+		return sessionFactory.getCurrentSession();
 	}
 
 }
