@@ -25,10 +25,12 @@
 			<td>{{wo.crewNames}}</td>
 			<td>{{wo.leadCrew}}</td>
 			<td>{{wo.exctnPckgName}}</td>
-			<td ng-if="$ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'">{{wo.completed}}</td>
+			<td ng-if="$ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'">
+				<span ng-show="wo.completed == 'Y'">Yes</span>
+			</td>
 			<td ng-if="$ctrl.activeContext == 'VIEW_TODO_STATUS'">
-				<span ng-if="wo.actioned == 'Y'">Yes</span>
-				<span ng-if="wo.actioned == 'N'"></span>
+				<span ng-show="wo.actioned == 'Y'">Yes</span>
+				<!-- <span ng-if="wo.actioned == 'N'"></span> -->
 			</td>
 		</tr>
 		<tr ng-repeat-end>
@@ -76,8 +78,8 @@
 								<label for="comment">Depot To-Do Comment</label>
 								<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.depotToDoComment}}</textarea> 
 							</div>
-							<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-9 " >
-								<b>Package has been saved successfully</b>
+							<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-8 " >
+								<p class="success-message" >{{$ctrl.successSavedMsg}}</p>
 							</div>
 							<div class="col-md-offset-9 col-md-2" style="padding:5px">
 								<button id="save-to-do-1" class="btn btn-warning btn-block" ng-click="$ctrl.saveToDo(wo)">

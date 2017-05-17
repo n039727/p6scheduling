@@ -1,5 +1,6 @@
-function viewToDoStatusController($scope, $http) {
+function viewToDoStatusController($scope,restTemplate) {
 	var ctrl = this;
+	ctrl.successSavedMsg = "";
 	
 	console.log('$ctrl.activeContext in view: ' + JSON.stringify(ctrl.activeContext));
 	console.log('data received: ' + JSON.stringify(ctrl.data));
@@ -17,10 +18,6 @@ function viewToDoStatusController($scope, $http) {
 		}
 	};
 	
-	//ctrl.todoGrp1 = ["ESA","DEC Permit","DBYD","Gas Permit","Rail Permit","Water Permit","ENAR"];
-	//ctrl.todoGrp2 = ["Traffic","Lay Down Area Arrangements","Fibre Optics","Inductions (Mine Site)","Specialised Plant / Equipment Availability","Additional Trades","Others"];
-		
-
 	ctrl.saveToDo = function(wo){
 		
 		if (wo.todoAssignments) {
@@ -34,30 +31,53 @@ function viewToDoStatusController($scope, $http) {
 			}
 		}
 		
+		if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
+			serviceUrl = "/p6-portal-service/scheduler/saveWorkOrderForViewToDoStatus";
+		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){
+			serviceUrl = "/p6-portal-service/depot/updateTodo";
+			
+		}
+		console.log('serviceUrl in Save To Do called with WO: ' + JSON.stringify(serviceUrl));
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		
 		var req = {
 			 method: 'POST',
-			 url: '/p6-portal-service/scheduler/saveWorkOrderForViewToDoStatus',
+			 url: serviceUrl,
 			 headers: {
 			   'Content-Type': 'application/json'
 			 },
 			 data: JSON.stringify(wo)
 		};
-		$http(req).then(function (response) {
+/*		$http(req).then(function (response) {
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			//alert("Scheduling TO DO saved for " + wo.workOrders[0]);
 			ctrl.savedMsgVisible = true;
-		});
+		});*/
+		restTemplate.callService(req, function (response) {
+			console.log("Received data from server");
+			$scope.fetchedData = response.data;
+			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
+			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
+				ctrl.successSavedMsg = "Package has been saved successfully";
+			}else{
+				ctrl.successSavedMsg = "Work order task has been saved successfully";
+			}
+			ctrl.savedMsgVisible = true;
+			
+		}, null);
+		
 		ctrl.handleDataChange({event: {eventId:'TO_DO_DETAILS_SAVED'}});
 	};
 	
 	ctrl.fetchToDoAgainstWO = function(wo) {
-		serviceUrl = "/p6-portal-service/scheduler/fetchWOForTODOStatus";
+		if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
+			serviceUrl = "/p6-portal-service/scheduler/fetchWOForTODOStatus";
+		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){
+			serviceUrl = "/p6-portal-service/depot/viewTodo";
+		}
 		console.log('fetching To-Dos for work order: ' + wo.workOrders[0]);
-		console.log('wo.exctnPckgName: ' + wo.exctnPckgName);
+		console.log('serviceUrl: ' + serviceUrl);
 		var query = {};
 		if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
 			query = {execPckgName:wo.exctnPckgName};
@@ -73,26 +93,38 @@ function viewToDoStatusController($scope, $http) {
 				   'Content-Type': 'application/json'
 				},
 				data: JSON.stringify(query)
-
-			};
-		$http(req).then(function (response) {
+		};
+	/*	$http(req).then(function (response) {
 			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			wo.todoAssignments = [];
 			wo.todoAssignments = response.data.todoAssignments;
 			if (wo.todoAssignments) {
 				for (var i =0; i<wo.todoAssignments.length; i++) {
 					console.log("req by date for fetchWOForTODOStatus: " + JSON.stringify(wo.todoAssignments[i].reqByDate));
-					
 					if(angular.isDefined(wo.todoAssignments[i].reqByDate) && wo.todoAssignments[i].reqByDate !== null && wo.todoAssignments[i].reqByDate !== ""){					
 						wo.todoAssignments[i].reqByDt = new Date(wo.todoAssignments[i].reqByDate);
 					}
 				}
 			}
 			wo.schedulingComment = response.data.schedulingComment;
-			
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
-			
-		});
+		});*/
+		restTemplate.callService(req, function (response) {
+			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
+			wo.todoAssignments = [];
+			wo.todoAssignments = response.data.todoAssignments;
+			if (wo.todoAssignments) {
+				for (var i =0; i<wo.todoAssignments.length; i++) {
+					console.log("req by date for fetchWOForTODOStatus: " + JSON.stringify(wo.todoAssignments[i].reqByDate));
+					if(angular.isDefined(wo.todoAssignments[i].reqByDate) && wo.todoAssignments[i].reqByDate !== null && wo.todoAssignments[i].reqByDate !== ""){					
+						wo.todoAssignments[i].reqByDt = new Date(wo.todoAssignments[i].reqByDate);
+					}
+				}
+			}
+			wo.schedulingComment = response.data.schedulingComment;
+			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
+		}, null);
+		
 		
 	ctrl.formatDate = function(date) {
 			var d = new Date(date),
