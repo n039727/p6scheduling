@@ -23,6 +23,7 @@ public class ToDoItem {
 	private Date reqdByDate ;
 	private String status;
 	private String supportingDocLink;
+	private long typeId;
 	
 	public String getStatus() {
 		return status;
@@ -102,5 +103,17 @@ public class ToDoItem {
 	}
 	public void setTmpltId(String tmpltId) {
 		this.tmpltId = tmpltId;
+	}
+	/**
+	 * @return the typeId
+	 */
+	public long getTypeId() {
+		return typeId;
+	}
+	/**
+	 * @param typeId the typeId to set
+	 */
+	public void setTypeId(long typeId) {
+		this.typeId = typeId;
 	}
 }

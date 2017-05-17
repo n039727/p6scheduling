@@ -23,6 +23,19 @@ public class ToDoAssignment {
 	private String status;
 	private String supportingDoc;
 	private List<String> workOrders;
+	private long typeId;
+	/**
+	 * @return the typeId
+	 */
+	public long getTypeId() {
+		return typeId;
+	}
+	/**
+	 * @param typeId the typeId to set
+	 */
+	public void setTypeId(long typeId) {
+		this.typeId = typeId;
+	}
 	public String getToDoName() {
 		return toDoName;
 	}

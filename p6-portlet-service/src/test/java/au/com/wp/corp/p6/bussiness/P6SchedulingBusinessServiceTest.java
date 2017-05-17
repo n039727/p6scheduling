@@ -4,6 +4,7 @@
 package au.com.wp.corp.p6.bussiness;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,6 +36,7 @@ import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.impl.TaskDAOImpl;
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
+import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -43,6 +45,7 @@ import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
+import au.com.wp.corp.p6.model.TodoTemplate;
 import au.com.wp.corp.p6.test.config.AppConfig;
 import au.com.wp.corp.p6.utils.DateUtils;
 import au.com.wp.corp.p6.wsclient.cleint.impl.P6WSClientImpl;
@@ -450,7 +453,7 @@ public class P6SchedulingBusinessServiceTest {
 
 	}
 	
-	/*@Test
+	@Test
 	public void testFetchToDos () throws P6BusinessException{
 		List<TodoTemplate> toDoTemplateList = new ArrayList<>();
 		TodoTemplate toDo = new TodoTemplate();
@@ -464,8 +467,8 @@ public class P6SchedulingBusinessServiceTest {
 		toDoTemplateList.add(toDo);
 		
 		Mockito.when(todoDAO.fetchAllToDos()).thenReturn(toDoTemplateList);
-		
-		List<ToDoItem> toDos =  p6SchedulingBusinessService.fetchMetadata();
+		MetadataDTO metadataDTO=  p6SchedulingBusinessService.fetchMetadata();
+		List<ToDoItem> toDos = metadataDTO.getToDoItems();
 		
 		Assert.assertNotNull(toDos);
 		
@@ -478,7 +481,7 @@ public class P6SchedulingBusinessServiceTest {
 			Assert.assertEquals(toDo.getCrtdTs().toString(), item.getCrtdTs());
 			
 		}
-	}*/
+	}
 	
 	@Test
 	public void testFetchWorkOrdersForAddUpdateToDo () {

@@ -306,6 +306,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			item.setTmpltDesc(toDo.getTmpltDesc());
 			item.setTmpltId(String.valueOf(toDo.getTmpltId()));
 			item.setToDoName(toDo.getTodoNam());
+			item.setTypeId(toDo.getTypeId());
 			toDos.add(item);
 		}
 		ResourceSearchRequest resourceSearchRequest = new ResourceSearchRequest();

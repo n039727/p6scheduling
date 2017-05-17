@@ -104,6 +104,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
 					assignmentDTO.setWorkOrderId(workOrderId);
 					assignmentDTO.setToDoName(toDoName);
+					assignmentDTO.setTypeId(todoDAO.getTypeId(toDoName));
 					
 					if (toDoAssignments.containsKey(toDoName)) { 
 						logger.debug("retrived todoname =={} and size of AssignmentDto {}", toDoName,
@@ -337,12 +338,13 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				if(null == todoId){
 					//create new TODO
 					TodoTemplate newToDo = addTodo(item);
+					todoId = newToDo.getTodoId();
 				}
 				if (null != item.getWorkOrders() && item.getWorkOrders().contains(updatedTask.getTaskId())) {
 					TodoAssignment todoAssignment = new TodoAssignment();
 					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
-					logger.debug("Todo id for #{} - {}", item.getToDoName(), todoDAO.getToDoId(item.getToDoName()));
-					todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(item.getToDoName()));
+					logger.debug("Todo id for #{} - {}", item.getToDoName(), todoId);
+					todoAssignment.getTodoAssignMentPK().setTodoId(todoId);
 					todos.add(todoAssignment);
 				}
 			}
@@ -365,12 +367,22 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		todoTemplate.setLstUpdtdUsr("N039603");
 		todoTemplate.setTmpltDesc(item.getToDoName());
 		todoTemplate.setTodoNam(item.getToDoName());
-		//todoTemplate.setTodoId(todoId);
-		
-		
-		
-		
-		
+		todoTemplate.setTypeId(2);
+		List<TodoTemplate> lastRecFromDB = todoDAO.fetchToDoForGratestToDoId();
+		if(null != lastRecFromDB && lastRecFromDB.size()>0){
+			if(null != lastRecFromDB.get(0).getTodoId()){
+				int toDoId = lastRecFromDB.get(0).getTodoId().intValue();
+				toDoId = toDoId+1;
+				todoTemplate.setTodoId(new BigDecimal(toDoId));
+			}
+			else{
+				todoTemplate.setTodoId(new BigDecimal(Math.random()));
+			}
+		}
+		else{//TODO
+			todoTemplate.setTodoId(new BigDecimal(Math.random()));
+		}
+
 		return todoTemplate;
 		
 	}
