@@ -45,7 +45,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 
 	@RequestMapping(value = "/fetchMetadata", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public MetadataDTO  fetchToDoItems()throws P6BusinessException {
+	public MetadataDTO  fetchMetadata()throws P6BusinessException {
 		return p6BusinessService.fetchMetadata();
 	}
 
