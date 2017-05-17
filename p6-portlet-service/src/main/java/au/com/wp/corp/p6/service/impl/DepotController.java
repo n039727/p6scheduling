@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import au.com.wp.corp.p6.businessservice.DepotTodoService;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
+import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.validation.Validator;
@@ -49,6 +50,18 @@ public class DepotController {
 		}
 		
 		return new ResponseEntity<ViewToDoStatus>(dpotTodoService.UpdateDepotToDo(request.getBody()), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/addTodo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
+	@ResponseBody
+	public ResponseEntity<WorkOrder> saveDepotToDo(RequestEntity<WorkOrder> request)
+			throws P6BaseException {
+		if (request.getBody() == null) {
+			logger.error(" Invalid request - {}", request.getBody());
+			throw new P6BaseException("invalid request");
+		}
+		
+		return new ResponseEntity<WorkOrder>(dpotTodoService.saveDepotToDo(request.getBody()), HttpStatus.OK);
 	}
 
 }
