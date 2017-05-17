@@ -1,10 +1,12 @@
 package au.com.wp.corp.p6.service;
 
 import java.io.IOException;
+import java.security.Principal;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -13,14 +15,21 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import au.com.wp.corp.p6.dto.UserTokenRequest;
 
+@Component("userTokenFilter")
 public class UserTokenFilter implements Filter {
-	private Logger logger = null;
+	private static Logger logger = LoggerFactory.getLogger(UserTokenFilter.class);
 	
 	@Autowired
-	UserTokenRequest userTokenRequest;
+	private UserTokenRequest userTokenRequest;
+	
+	private static final String AUTH_TOKEN_HEADER = "AUTH_TOKEN";
+	
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
@@ -31,24 +40,22 @@ public class UserTokenFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-		//Principal principal = httpServletRequest.getUserPrincipal();
-		String userName = "";
-		//logger.debug("requesting path for {}",httpServletRequest.getRequestURI());
-		userName = httpServletRequest.getRemoteUser();
+//		Principal userPrincipal = httpServletRequest.getUserPrincipal();
 		
-		logger.debug("User logged in as {}", userName==null?"":userName);
-		if (userTokenRequest != null)  userTokenRequest.setUserPrincipal(userName) ; 
+		String authToken = httpServletRequest.getHeader(AUTH_TOKEN_HEADER);
+//		logger.debug("User logged in as {}", userPrincipal==null ? userPrincipal :userPrincipal.getName());
+//		logger.debug("User logged in (Remote User) as {}", httpServletRequest.getRemoteUser());
+		logger.debug("User logged in (From token) as {}", authToken);
+		
+		userTokenRequest.setUserPrincipal(authToken);
 		
 		chain.doFilter(request, response);
 	}
+	
 
 	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-		logger = LoggerFactory.getLogger(getClass());
-		logger.info("UserTokenFilter initiated");
-		
+	public void init(FilterConfig filterConfig) throws ServletException {
 	}
-
 	
 	
 	

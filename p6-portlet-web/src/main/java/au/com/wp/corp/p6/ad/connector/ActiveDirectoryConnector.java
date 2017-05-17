@@ -37,6 +37,7 @@ public class ActiveDirectoryConnector {
 	public ActiveDirectoryConnector() {
 		try {
 			dirContext = (InitialDirContext) new InitialContext().lookup("java:/active-directory");
+			logger.debug("Active directory connector created: " + dirContext);
 		} catch (NamingException e) {
 			logger.error("an error occurs while creating initial context  ", e );
 		}
@@ -68,6 +69,8 @@ public class ActiveDirectoryConnector {
 		} catch (NamingException e) {
 			logger.error(e.getMessage());
 		}
+		
+		logger.debug("Active directory connector created: " + dirContext);
 
 		// default domain base for search
 		domainBase = getDomainBase(domainController);
@@ -100,8 +103,11 @@ public class ActiveDirectoryConnector {
 		String base = (null == searchBase) ? domainBase : getDomainBase(searchBase); // for
 																						// eg.:
 																						// "DC=myjeeva,DC=com";
-
-		return this.dirContext.search(base, filter, this.searchCtls);
+		NamingEnumeration<SearchResult> result = this.dirContext.search(base, filter, this.searchCtls);
+		
+		logger.debug("User searched: " + result);
+		return result;
+		//return this.dirContext.search(base, filter, this.searchCtls);
 	}
 
 	/**
@@ -134,6 +140,7 @@ public class ActiveDirectoryConnector {
 		} else if (searchBy.equals("username")) {
 			filter += "(samaccountname=" + searchValue + "))";
 		}
+		logger.debug("Filter: " + filter);
 		return filter;
 	}
 
