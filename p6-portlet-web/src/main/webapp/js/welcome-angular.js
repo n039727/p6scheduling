@@ -96,7 +96,7 @@ function fetchMetaData(app) {
 			});
 }
 
-app.controller("toDoPortalCOntroller", function($scope, $http, metadata, restTemplate) {
+app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) {
 
 	var ctrl = this;
 	console.log('metadata: ' + JSON.stringify(metadata));
@@ -120,23 +120,6 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata, restTem
 				'Content-Type' : 'application/json'
 			}
 		};
-		/*$http({
-			method : 'POST',
-			url : serviceUrl,
-			data : JSON.stringify(query),
-			headers : {
-				'Content-Type' : 'application/json'
-			}
-
-		}).then(
-				function(response) {
-					console.log("Received data from server");
-					ctrl.fetchedData = response.data;
-					console.log("Data from server: "
-							+ JSON.stringify(ctrl.fetchedData));
-					success(response.data);
-
-				});*/
 		restTemplate.callService(config, function(response) {
 					console.log("Received data from server");
 					ctrl.fetchedData = response.data;
@@ -177,15 +160,7 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata, restTem
 			ctrl.savedMsgVisible = false;
 		}
 	}
-
-	/*$http({
-		method : "GET",
-		url : '/p6-portal/web/user/name'
-	}).success(function(data) {
-		$scope.userName = data.userName;
-	}).error(function() {
-
-	});*/
+	
 	restTemplate.callService({
 		method : "GET",
 		url : '/p6-portal/web/user/name'
