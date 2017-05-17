@@ -35,6 +35,7 @@ import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.impl.TaskDAOImpl;
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
+import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -451,7 +452,7 @@ public class P6SchedulingBusinessServiceTest {
 
 	}
 	
-	/*@Test
+	@Test
 	public void testFetchToDos () throws P6BusinessException{
 		List<TodoTemplate> toDoTemplateList = new ArrayList<>();
 		TodoTemplate toDo = new TodoTemplate();
@@ -465,8 +466,8 @@ public class P6SchedulingBusinessServiceTest {
 		toDoTemplateList.add(toDo);
 		
 		Mockito.when(todoDAO.fetchAllToDos()).thenReturn(toDoTemplateList);
-		
-		List<ToDoItem> toDos =  p6SchedulingBusinessService.fetchMetadata();
+		MetadataDTO metadataDTO=  p6SchedulingBusinessService.fetchMetadata();
+		List<ToDoItem> toDos = metadataDTO.getToDoItems();
 		
 		Assert.assertNotNull(toDos);
 		
@@ -479,7 +480,7 @@ public class P6SchedulingBusinessServiceTest {
 			Assert.assertEquals(toDo.getCrtdTs().toString(), item.getCrtdTs());
 			
 		}
-	}*/
+	}
 	
 	@Test
 	public void testFetchWorkOrdersForAddUpdateToDo () {

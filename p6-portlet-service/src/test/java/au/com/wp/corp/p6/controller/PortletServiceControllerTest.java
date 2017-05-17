@@ -67,12 +67,12 @@ public class PortletServiceControllerTest {
 		mockMvc = MockMvcBuilders.standaloneSetup(portletServiceEndpoint).build();
 	}
 
-	/*@Test
+	@Test
 	public void testFetchToDoItems() throws Exception {
-		ResultActions actions = mockMvc.perform(get("/scheduler/fetchToDos")
+		ResultActions actions = mockMvc.perform(get("/scheduler/fetchMetadata")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(status().isOk());
-	}*/
+	}
 
 	@Test
 	public void testFetchWorkOrdersForViewToDoStatus() throws Exception {
