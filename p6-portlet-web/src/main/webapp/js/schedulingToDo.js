@@ -89,7 +89,11 @@ function schedulingToDoResultController($scope, $http) {
 				}
 			}
 		}
-		
+		if(wo && wo.toDoItems.length == 0){
+			wo.actioned = 'N';
+		}else if(wo && wo.toDoItems.length > 0){
+			wo.actioned = 'Y';
+		}
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		var req = {
 			 method: 'POST',
@@ -104,7 +108,6 @@ function schedulingToDoResultController($scope, $http) {
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			wo.actioned = 'Y';
 			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
 				ctrl.successSavedMsg = "Package has been saved successfully";
 			}else{
