@@ -28,6 +28,7 @@ import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
@@ -255,7 +256,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	@Override
-	public List<ToDoItem> fetchToDos() {
+	public MetadataDTO fetchMetadata() throws P6BusinessException{
 
 		List<TodoTemplate> toDoTemplateList = todoDAO.fetchAllToDos();
 		List<ToDoItem> toDos = new ArrayList<>();
@@ -272,7 +273,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			item.setToDoName(toDo.getTodoNam());
 			toDos.add(item);
 		}
-		return toDos;
+		ResourceSearchRequest resourceSearchRequest = new ResourceSearchRequest();
+		resourceSearchRequest.setResourceType("Labor");
+		List<Crew> crews = retrieveCrews(resourceSearchRequest);
+		MetadataDTO metadataDTO = new MetadataDTO();
+		metadataDTO.setCrews(crews);
+		metadataDTO.setToDoItems(toDos);
+		return metadataDTO;
 	}
 
 	@Override

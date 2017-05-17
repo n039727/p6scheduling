@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -42,10 +43,10 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	@Autowired
 	Validator validator;
 
-	@RequestMapping(value = "/fetchToDos", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/fetchMetadata", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public List<ToDoItem> fetchToDoItems() {
-		return p6BusinessService.fetchToDos();
+	public MetadataDTO  fetchToDoItems()throws P6BusinessException {
+		return p6BusinessService.fetchMetadata();
 	}
 
 	@RequestMapping(value = "/fetchWOForTODOStatus", method = RequestMethod.POST, produces = {

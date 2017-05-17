@@ -3,6 +3,8 @@
  */
 package au.com.wp.corp.p6.businessservice.impl;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +36,7 @@ import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
+import au.com.wp.corp.p6.model.TodoTemplate;
 import au.com.wp.corp.p6.utils.DateUtils;
 
 /**
@@ -329,6 +332,12 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			// Set the new values
 			for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
 				ToDoItem item = itrToDo.next();
+				//to persist new user define TODO
+				BigDecimal todoId = todoDAO.getToDoId(item.getToDoName());
+				if(null == todoId){
+					//create new TODO
+					TodoTemplate newToDo = addTodo(item);
+				}
 				if (null != item.getWorkOrders() && item.getWorkOrders().contains(updatedTask.getTaskId())) {
 					TodoAssignment todoAssignment = new TodoAssignment();
 					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
@@ -345,6 +354,24 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
 		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
+		
+	}
+	
+	private TodoTemplate addTodo(ToDoItem item){
+		TodoTemplate todoTemplate = new TodoTemplate();
+		todoTemplate.setCrtdTs(new Timestamp(System.currentTimeMillis()));
+		todoTemplate.setCrtdUsr("N039603");
+		todoTemplate.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
+		todoTemplate.setLstUpdtdUsr("N039603");
+		todoTemplate.setTmpltDesc(item.getToDoName());
+		todoTemplate.setTodoNam(item.getToDoName());
+		//todoTemplate.setTodoId(todoId);
+		
+		
+		
+		
+		
+		return todoTemplate;
 		
 	}
 
