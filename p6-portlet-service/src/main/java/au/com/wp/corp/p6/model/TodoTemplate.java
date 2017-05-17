@@ -50,6 +50,9 @@ public class TodoTemplate implements Serializable {
 
 	@Column(name="TODO_NAM")
 	private String todoNam;
+	
+	@Column(name="TYP_ID")
+	private long typeId;
 
 	//bi-directional many-to-one association to TodoAssignment
 	//@OneToMany(mappedBy="todoTemplate")
@@ -125,6 +128,20 @@ public class TodoTemplate implements Serializable {
 
 	public void setTodoNam(String todoNam) {
 		this.todoNam = todoNam;
+	}
+
+	/**
+	 * @return the typeId
+	 */
+	public long getTypeId() {
+		return typeId;
+	}
+
+	/**
+	 * @param typeId the typeId to set
+	 */
+	public void setTypeId(long typeId) {
+		this.typeId = typeId;
 	}
 
 	/**

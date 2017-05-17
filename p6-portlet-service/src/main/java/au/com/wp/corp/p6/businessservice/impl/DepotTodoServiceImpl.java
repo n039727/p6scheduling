@@ -104,6 +104,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					assignmentDTO.setSupportingDoc(assignment.getSuprtngDocLnk());
 					assignmentDTO.setWorkOrderId(workOrderId);
 					assignmentDTO.setToDoName(toDoName);
+					assignmentDTO.setTypeId(todoDAO.getTypeId(toDoName));
 					
 					if (toDoAssignments.containsKey(toDoName)) { 
 						logger.debug("retrived todoname =={} and size of AssignmentDto {}", toDoName,
@@ -366,18 +367,22 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		todoTemplate.setLstUpdtdUsr("N039603");
 		todoTemplate.setTmpltDesc(item.getToDoName());
 		todoTemplate.setTodoNam(item.getToDoName());
+		todoTemplate.setTypeId(2);
 		List<TodoTemplate> lastRecFromDB = todoDAO.fetchToDoForGratestToDoId();
 		if(null != lastRecFromDB && lastRecFromDB.size()>0){
-			todoTemplate.setTodoId(lastRecFromDB.get(0).getTodoId());
+			if(null != lastRecFromDB.get(0).getTodoId()){
+				int toDoId = lastRecFromDB.get(0).getTodoId().intValue();
+				toDoId = toDoId+1;
+				todoTemplate.setTodoId(new BigDecimal(toDoId));
+			}
+			else{
+				todoTemplate.setTodoId(new BigDecimal(Math.random()));
+			}
 		}
 		else{//TODO
-			todoTemplate.setTodoId(new BigDecimal("15"));
+			todoTemplate.setTodoId(new BigDecimal(Math.random()));
 		}
-		
-		
-		
-		
-		
+
 		return todoTemplate;
 		
 	}

@@ -12,7 +12,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Repository;
 
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
-import au.com.wp.corp.p6.model.ExecutionPackage;
-import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoTemplate;
 
 @Repository
@@ -75,6 +72,15 @@ public class TodoDAOImpl implements TodoDAO {
 		fetchAllToDos();
 		if (toDoNameMap != null && toDoNameMap.containsKey(todoName)) {
 			return toDoNameMap.get(todoName).getTodoId();
+		}
+		return null;
+	}
+	
+	@Override
+	public Long getTypeId(String todoName) {
+		fetchAllToDos();
+		if (toDoNameMap != null && toDoNameMap.containsKey(todoName)) {
+			return toDoNameMap.get(todoName).getTypeId();
 		}
 		return null;
 	}
