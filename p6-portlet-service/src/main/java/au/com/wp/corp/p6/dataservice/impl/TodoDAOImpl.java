@@ -72,5 +72,29 @@ public class TodoDAOImpl implements TodoDAO {
 		}
 		return null;
 	}
+	
+	@Transactional
+	public List<TodoTemplate> fetchToDoForGratestToDoId() {
+
+		if (toDoMap == null) {
+			synchronized (lock) {
+				if (toDoMap == null) {
+					@SuppressWarnings("unchecked")
+					List<TodoTemplate> listToDo = (List<TodoTemplate>) sessionFactory.getCurrentSession()
+							.createCriteria(TodoTemplate.class)
+							.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+					toDoMap = new HashMap<Long, TodoTemplate>();
+					toDoNameMap = new HashMap<String, TodoTemplate>();
+					for (TodoTemplate todo:listToDo) {
+						toDoMap.put(todo.getTodoId().longValue(), todo);
+						toDoNameMap.put(todo.getTodoNam(), todo);
+					}
+				}
+			}
+		}
+
+		return new ArrayList<TodoTemplate>(toDoMap.values());
+		
+	}
 
 }

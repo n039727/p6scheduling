@@ -108,7 +108,7 @@ public class P6WSClientImpl implements P6WSClient {
 		
 		logger.debug("filter criteria for search # {} ", filter.toString());
 
-		final ActivityService activityService = new ActivityService(trackingId, activityServiceWSDL,
+		final ActivityServiceCall activityService = new ActivityServiceCall(trackingId, activityServiceWSDL,
 				filter.length() > 0 ? filter.toString() : null);
 
 		final Holder<List<Activity>> activities = activityService.run();

@@ -6,11 +6,11 @@
 	<display-name>Archetype Created Web Application</display-name>
 	<error-page>
 		<error-code>403</error-code>
-		<location>/auth/error.html</location>
+		<location>/web/auth/error</location>
 	</error-page>
 	<error-page>
 		<error-code>405</error-code>
-		<location>/auth/error.html</location>
+		<location>/web/auth/error</location>
 	</error-page>
 
 	<servlet>
@@ -27,7 +27,18 @@
 		<url-pattern>/web/*</url-pattern>
 	</servlet-mapping>
 	
-<!-- 	<login-config>
+	
+	<filter>
+		<filter-name>AuthFilter</filter-name>
+		<filter-class>au.com.wp.corp.p6.scheduling.auth.WebAuthFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<servlet-name>portletWebController</servlet-name>
+	</filter-mapping>
+	
+	<login-config>
 		<auth-method>FORM</auth-method>
 		<realm-name>active-directory</realm-name>
 		<form-login-config>
@@ -79,5 +90,5 @@
 	</security-constraint>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
-	</welcome-file-list> -->
+	</welcome-file-list>
 </web-app>

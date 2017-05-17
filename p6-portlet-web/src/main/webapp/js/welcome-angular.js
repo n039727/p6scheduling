@@ -17,7 +17,44 @@ Array.prototype.unique = function() {
 		}
 	}
 	return arr;
-}
+};
+
+app.service('restTemplate', function($http) {
+	this.authToken = "";
+	var restTemplate = this;
+	this.callService = function(config, successCallback, errorCallback) {
+		if (!angular.isDefined(config)) {
+			return;
+		}
+		
+		if (!angular.isDefined(config.headers)) {
+			config.headers = {};
+		}
+		config.headers.AUTH_TOKEN = restTemplate.authToken;
+		console.log("Calling rest service: " + config.url + " with authToken: " + restTemplate.authToken);
+		
+		$http(config).then(function(response) {
+			console.log("Response Headers : ");
+			console.log(response.headers());
+			if (response.headers('AUTH_TOKEN') == null) {
+				console.log('response auth token has not been set');
+			} else {
+				restTemplate.authToken = response.headers('AUTH_TOKEN');
+				console.log("Auth Token has been set as " + restTemplate.authToken);
+			}
+			
+			if(angular.isDefined(successCallback)) {
+					successCallback(response);
+			}
+			
+		  }, function(response) {
+				console.log("Error occurred while consuming rest service");
+				if(angular.isDefined(errorCallback)) {
+					errorCallback(response);
+				}
+		  });
+	}
+});
 
 function bootstrapApplication() {
 	angular.element(document).ready(function() {
@@ -59,7 +96,7 @@ function fetchMetaData(app) {
 			});
 }
 
-app.controller("toDoPortalCOntroller", function($scope, $http, metadata) {
+app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) {
 
 	var ctrl = this;
 	console.log('metadata: ' + JSON.stringify(metadata));
@@ -75,23 +112,22 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata) {
 		} else {
 			serviceUrl = "/p6-portal-service/scheduler/search";
 		}
-		$http({
+		var config = {
 			method : 'POST',
 			url : serviceUrl,
 			data : JSON.stringify(query),
 			headers : {
 				'Content-Type' : 'application/json'
 			}
-
-		}).then(
-				function(response) {
+		};
+		restTemplate.callService(config, function(response) {
 					console.log("Received data from server");
 					ctrl.fetchedData = response.data;
 					console.log("Data from server: "
 							+ JSON.stringify(ctrl.fetchedData));
 					success(response.data);
 
-				});
+				}, null);
 	};
 
 	ctrl.search = function(query) {
@@ -124,13 +160,11 @@ app.controller("toDoPortalCOntroller", function($scope, $http, metadata) {
 			ctrl.savedMsgVisible = false;
 		}
 	}
-
-	$http({
+	
+	restTemplate.callService({
 		method : "GET",
 		url : '/p6-portal/web/user/name'
-	}).success(function(data) {
-		$scope.userName = data.userName;
-	}).error(function() {
-
-	});
+	}, function(response) {
+		$scope.userName = response.data.userName;
+	}, null);
 });

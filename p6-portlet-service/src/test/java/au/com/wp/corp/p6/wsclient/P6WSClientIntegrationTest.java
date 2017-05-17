@@ -14,6 +14,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import au.com.wp.corp.p6.dto.Crew;
+import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.model.ActivitySearchRequest;
@@ -47,6 +49,21 @@ public class P6WSClientIntegrationTest {
 			Assert.assertNotNull(workOrder.getCrewNames());
 			Assert.assertNotNull(workOrder.getWorkOrders());
 			Assert.assertNotNull(workOrder.getScheduleDate());
+		}
+		
+	}
+	
+	@Test
+	public void testsearchCrew () throws P6ServiceException {
+		ResourceSearchRequest request = new ResourceSearchRequest();
+		request.setResourceType("Labor");
+		List<Crew> crews =  p6WSClient.searchCrew(request);
+		Assert.assertNotNull(crews);
+		for ( Crew crew : crews)
+		{
+			Assert.assertNotNull(crew.getCrewId());
+			Assert.assertNotNull(crew.getCrewName());
+			
 		}
 		
 	}

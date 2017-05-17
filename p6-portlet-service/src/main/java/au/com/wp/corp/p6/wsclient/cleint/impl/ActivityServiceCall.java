@@ -20,27 +20,28 @@ import org.slf4j.LoggerFactory;
 
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.utils.CacheManager;
+import au.com.wp.corp.p6.wsclient.activity.ActivityService;
+import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
+import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
+import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.activity.ActivityFieldType;
 import au.com.wp.corp.p6.wsclient.activity.ActivityPortType;
 import au.com.wp.corp.p6.wsclient.activity.IntegrationFault;
-import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
-import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
-import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
 
 /**
  * @author n039126
  *
  */
-public class ActivityService extends AbstractSOAPCall<List<Activity>> {
-	private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
+public class ActivityServiceCall extends AbstractSOAPCall<List<Activity>> {
+	private static final Logger logger = LoggerFactory.getLogger(ActivityServiceCall.class);
 	
 	private BindingProvider bp;
 	private ActivityPortType servicePort;
 	private String endPoint; 
 	private String filter;
 	
-	public ActivityService(final RequestTrackingId trackingId, String endPoint, String filter) {
+	public ActivityServiceCall(final RequestTrackingId trackingId, String endPoint, String filter) {
 		super(trackingId);
 		this.filter = filter;
 		this.endPoint = endPoint;
@@ -54,7 +55,8 @@ public class ActivityService extends AbstractSOAPCall<List<Activity>> {
 		} catch (MalformedURLException e) {
 			throw new P6ServiceException(e);
 		}
-		au.com.wp.corp.p6.wsclient.activity.ActivityService Service = new au.com.wp.corp.p6.wsclient.activity.ActivityService(
+		
+		ActivityService Service = new ActivityService(
 				wsdlURL,
 				new QName("http://xmlns.oracle.com/Primavera/P6/WS/Activity/V1", "ActivityService"));
 		servicePort = Service.getActivityPort();

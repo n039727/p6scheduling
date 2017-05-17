@@ -1,5 +1,5 @@
 
-function executionPackageResultController($scope, $http,ModalService) {
+function executionPackageResultController($scope, ModalService) {
 	var ctrl = this;
 	ctrl.selectedExecPckg = [];
 	console.log('data received in execution package: ' + JSON.stringify(ctrl.data));
@@ -86,8 +86,8 @@ function executionPackageResultController($scope, $http,ModalService) {
 }
 
 app.controller('executionPkgPopupController', [
-	  '$scope', '$element', 'wo', 'close','$http', 
-	  function($scope, $element, wo, close,$http) {
+	  '$scope', '$element', 'wo', 'close','restTemplate', 
+	  function($scope, $element, wo, close, restTemplate) {
 			console.log('Create Exc called with WO in popup: ' + JSON.stringify(wo));
 			
 			$scope.createExecPkgWOs = [];
@@ -132,7 +132,7 @@ app.controller('executionPkgPopupController', [
 				 },
 				 data: JSON.stringify($scope.createExecPkgReq)
 			};
-			$http(req).then(function (response) {
+			/*$http(req).then(function (response) {
 				console.log("Received data from server");
 				console.log("Data for execution package from server: " + JSON.stringify(response.data));
 				
@@ -148,7 +148,24 @@ app.controller('executionPkgPopupController', [
 						}
 				}, 500); // close, but give 500ms for bootstrap to animate
 		  
-			});
+			});*/
+			restTemplate.callService(req, function (response) {
+				console.log("Received data from server");
+				console.log("Data for execution package from server: " + JSON.stringify(response.data));
+				
+				close({
+					status: 'SUCCESS',
+					data: {
+						exctnPckgName: response.data.exctnPckgName, 
+						workOrders:$scope.wo, 
+						leadCrew:$scope.selectedLeadCrew, 
+						crewNames: response.data.crewNames,
+						scheduleDate: $scope.scheduleDate,
+						toDoItems:[]
+						}
+				}, 500); // close, but give 500ms for bootstrap to animate
+		  
+			}, null);
 			
 		 	
 	  };

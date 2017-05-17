@@ -451,7 +451,7 @@ public class P6SchedulingBusinessServiceTest {
 
 	}
 	
-	@Test
+	/*@Test
 	public void testFetchToDos () throws P6BusinessException{
 		List<TodoTemplate> toDoTemplateList = new ArrayList<>();
 		TodoTemplate toDo = new TodoTemplate();
@@ -466,7 +466,7 @@ public class P6SchedulingBusinessServiceTest {
 		
 		Mockito.when(todoDAO.fetchAllToDos()).thenReturn(toDoTemplateList);
 		
-		List<ToDoItem> toDos =  p6SchedulingBusinessService.fetchToDos();
+		List<ToDoItem> toDos =  p6SchedulingBusinessService.fetchMetadata();
 		
 		Assert.assertNotNull(toDos);
 		
@@ -479,7 +479,7 @@ public class P6SchedulingBusinessServiceTest {
 			Assert.assertEquals(toDo.getCrtdTs().toString(), item.getCrtdTs());
 			
 		}
-	}
+	}*/
 	
 	@Test
 	public void testFetchWorkOrdersForAddUpdateToDo () {

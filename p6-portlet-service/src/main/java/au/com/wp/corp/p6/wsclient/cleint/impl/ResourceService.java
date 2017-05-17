@@ -25,7 +25,7 @@ import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
 
 public class ResourceService extends AbstractSOAPCall<List<Resource>> {
-	private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
+	private static final Logger logger = LoggerFactory.getLogger(ResourceService.class);
 	
 	private BindingProvider bp;
 	private ResourcePortType servicePort;
