@@ -80,6 +80,24 @@
 							</wsdlUrls>
 						</configuration>
 					</execution>
+					<execution>
+						<id>udfvalue</id>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<!-- Keep generated files -->
+							<keep>true</keep>
+							<!-- Package name -->
+							<packageName>au.com.wp.corp.p6.wsclient.udfvalue</packageName>
+							<!-- generated source files destination -->
+							<sourceDestDir>target/generated/src/main/java</sourceDestDir>
+							<wsdlUrls>
+								<wsdlUrl>http://sdc-tssgt01:8206/p6ws/services/UDFValueService?wsdl</wsdlUrl>
+							</wsdlUrls>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>

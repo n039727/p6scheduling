@@ -28,20 +28,21 @@ import au.com.wp.corp.p6.wsclient.activity.IntegrationFault;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
+import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse;
 
 /**
  * @author n039126
  *
  */
-public class ActivityServiceCall extends AbstractSOAPCall<List<Activity>> {
-	private static final Logger logger = LoggerFactory.getLogger(ActivityServiceCall.class);
+public class UDFValueServiceCall extends AbstractSOAPCall<CreateUDFValuesResponse> {
+	private static final Logger logger = LoggerFactory.getLogger(UDFValueServiceCall.class);
 	
 	private BindingProvider bp;
 	private ActivityPortType servicePort;
 	private String endPoint; 
 	private String filter;
 	
-	public ActivityServiceCall(final RequestTrackingId trackingId, String endPoint, String filter) {
+	public UDFValueServiceCall(final RequestTrackingId trackingId, String endPoint, String filter) {
 		super(trackingId);
 		this.filter = filter;
 		this.endPoint = endPoint;
@@ -81,7 +82,8 @@ public class ActivityServiceCall extends AbstractSOAPCall<List<Activity>> {
 	}
 
 	@Override
-	protected Holder<List<Activity>> command() throws P6ServiceException {
+	protected Holder<CreateUDFValuesResponse> command() throws P6ServiceException {
+		CreateUDFValuesResponse createUDFValuesResponse = new CreateUDFValuesResponse();
 		
 		List<ActivityFieldType> fields = new ArrayList<>();
 		
@@ -105,7 +107,7 @@ public class ActivityServiceCall extends AbstractSOAPCall<List<Activity>> {
 			throw new P6ServiceException(e);
 		}
 		
-		return new Holder<>(activities);
+		return new Holder<>(createUDFValuesResponse);
 	}
 
 	@Override

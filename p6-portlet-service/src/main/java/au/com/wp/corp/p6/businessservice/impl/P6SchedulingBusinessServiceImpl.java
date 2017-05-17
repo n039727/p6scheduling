@@ -26,6 +26,7 @@ import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
+import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.MetadataDTO;
@@ -39,7 +40,6 @@ import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
-import au.com.wp.corp.p6.model.ActivitySearchRequest;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
@@ -112,7 +112,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					Task dbTask = workOrderDAO.fetch(workOrderId);
 					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
 					dbTask = dbTask == null ? new Task() : dbTask;
-					updateTaskAgainstExecutionPackage(dbTask.getExecutionPackage());
+					updateExecutionPackage(dbTask.getExecutionPackage(),tasksForUpdate);
 					if (dbTask.getExecutionPackage() != null) {
 						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());
 						String dbWOExecPkg = dbTask.getExecutionPackage().getExctnPckgNam();
@@ -193,7 +193,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrderNew.setActioned(dbTask.getActioned());
 		workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
 		workOrderNew.setLeadCrew(leadCrewWorkOrder);
-		
+		if (dbTask.getExecutionPackage() != null) {
+			workOrderNew.setExctnPckgName(dbTask.getExecutionPackage().getExctnPckgNam());
+		}
 		if (scheduledDateForWorkOrder != null && scheduledDateInTask != null) {
 			if ((scheduledDateForWorkOrder.compareTo(scheduledDateInTask) != 0)
 					|| (!crewAssignedForWorkOrder.equalsIgnoreCase(crewAssignedForTask))
@@ -227,16 +229,16 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	/**
 	 * Updates to remove task from execution package.
 	 * @param executionPackage
+	 * @param tasksForUpdate 
 	 * @throws P6DataAccessException
 	 */
-	private void updateTaskAgainstExecutionPackage(ExecutionPackage executionPackage) throws P6DataAccessException {
+	private void updateExecutionPackage(ExecutionPackage executionPackage, List<Task> tasksForUpdate) throws P6DataAccessException {
 		if (executionPackage != null) {
 			Set<Task> tasks = executionPackage.getTasks();
 			StringBuilder crewPresent = new StringBuilder();
 			if (tasks != null) {
 				for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext();) {
 					Task taskAttahced = (Task) iterator.next();
-				
 					Date plannedStartDate = taskAttahced.getSchdDt();
 					String crewAssignedToTask = taskAttahced.getCrewId();
 					logger.debug("crew assigned to this task{}", crewAssignedToTask);
@@ -246,13 +248,15 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 						Date dateOfExectnPkg = dateUtils.toDateFromDD_MM_YYYY(strNames[0]);
 						logger.debug("planned start date {} for task {}", plannedStartDate, taskAttahced.getTaskId());
 						logger.debug("date {} for package  {}", dateOfExectnPkg, executionPackageName);
-						if (dateOfExectnPkg.compareTo(plannedStartDate) != 0) {
-							logger.debug("removing task {} from execution package", taskAttahced.getTaskId(),
-									executionPackageName);
-							iterator.remove();
-							taskAttahced.setExecutionPackage(null);
-						} else {
-							crewPresent.append(crewAssignedToTask);
+						if(plannedStartDate != null){
+							if (dateOfExectnPkg.compareTo(plannedStartDate) != 0) {
+								logger.debug("removing task {} from execution package", taskAttahced.getTaskId(),
+										executionPackageName);
+								taskAttahced.setExecutionPackage(null);
+								tasksForUpdate.add(taskAttahced);
+							} else {
+								crewPresent.append(crewAssignedToTask);
+							}
 						}
 
 					}

@@ -4,21 +4,26 @@
 package au.com.wp.corp.p6.wsclient.cleint.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.ws.Holder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
+import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
+import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.Crew;
+import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
-import au.com.wp.corp.p6.model.ActivitySearchRequest;
 import au.com.wp.corp.p6.utils.CacheManager;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
@@ -56,7 +61,7 @@ public class P6WSClientImpl implements P6WSClient {
 	@Value("${P6_RESOURCE_SERVICE_WSDL}")
 	private String resourceServiceWSDL;
 	
-	
+	Map<String, Integer> workOrderIdMap = new HashMap<String, Integer>();
 
 	/*
 	 * (non-Javadoc)
@@ -123,6 +128,7 @@ public class P6WSClientImpl implements P6WSClient {
 				workOrder.setScheduleDate(activity.getPlannedStartDate().toString());
 				List<String> wos = new ArrayList<>();
 				wos.add(activity.getId());
+				workOrderIdMap.put(activity.getId(), activity.getObjectId());
 				workOrder.setWorkOrders(wos);
 				workOrders.add(workOrder);
 			}
@@ -196,6 +202,14 @@ public class P6WSClientImpl implements P6WSClient {
 		}
 
 		return false;
+	}
+
+
+
+	@Override
+	public ExecutionPackageDTO createExecutionPackage(ResourceSearchRequest searchRequest) throws P6ServiceException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
