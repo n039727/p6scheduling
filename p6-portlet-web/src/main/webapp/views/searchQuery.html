@@ -14,7 +14,7 @@
 					</div>
 					<label class="control-label col-md-1" for="userId">Crew</label>
 					<div class="col-md-4">
-						<oi-select oi-options="crew.name for crew in $ctrl.metadata.crewList track by crew.id"
+						<oi-select oi-options="crew.crewId for crew in $ctrl.metadata.crewList"
 							ng-model="$ctrl.selectedCrewList"
 							multiple
 							placeholder="Select"></oi-select>
