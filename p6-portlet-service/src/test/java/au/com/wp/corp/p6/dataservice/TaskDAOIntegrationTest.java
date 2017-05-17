@@ -17,22 +17,20 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import au.com.wp.corp.p6.dataservice.impl.TodoDAOImpl;
-import au.com.wp.corp.p6.model.TodoTemplate;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
+import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
 /**
- * 
  * @author n039126
- * @version 1.0
+ *
  */
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { AppConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class TodoDAOTest {
+public class TaskDAOIntegrationTest {
 
 	@Autowired
-	TodoDAOImpl todoDAOImpl;
-
+	TaskDAO taskDao;
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -41,29 +39,15 @@ public class TodoDAOTest {
 		MockitoAnnotations.initMocks(this);
 	}
 
-	/**
-	 * test case to verify whether application able to fetch all todo template
-	 * value
-	 */
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void tetsFetchAllToDos() {
-		List<TodoTemplate> todoTemps = todoDAOImpl.fetchAllToDos();
-		Assert.assertNotNull(todoTemps);
-		for (TodoTemplate todoTemplate : todoTemps) {
-			Assert.assertNotNull(todoTemplate);
-			Assert.assertNotNull(todoTemplate.getCrtdUsr());
-			Assert.assertNotNull(todoTemplate.getLstUpdtdUsr());
-			Assert.assertNotNull(todoTemplate.getTmpltDesc());
-			Assert.assertNotNull(todoTemplate.getTodoNam());
-			Assert.assertNotNull(todoTemplate.getCrtdTs());
-			Assert.assertNotNull(todoTemplate.getLstUpdtdTs());
-			Assert.assertNotNull(todoTemplate.getTmpltId());
-			Assert.assertNotNull(todoTemplate.getTodoId());
-
+	public void testListTasks () throws P6DataAccessException {
+		List<Task> tasks = taskDao.listTasks();
+		Assert.assertNotNull(tasks);
+		for ( Task task : tasks ){
+			Assert.assertNotNull(task.getTaskId());
 		}
-
 	}
 	
 }

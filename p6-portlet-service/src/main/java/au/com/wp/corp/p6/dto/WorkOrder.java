@@ -21,6 +21,7 @@ public class WorkOrder {
 	private String meterialReqRef;
 	
 	private String actioned;
+	private String completed;
 	
 	
 	
@@ -114,6 +115,12 @@ public class WorkOrder {
 	 */
 	public void setActioned(String actioned) {
 		this.actioned = actioned;
+	}
+	public String getCompleted() {
+		return completed;
+	}
+	public void setCompleted(String completed) {
+		this.completed = completed;
 	}
 	
 }

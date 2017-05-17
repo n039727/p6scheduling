@@ -13,9 +13,9 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat-start="wo in $ctrl.data"class="accordion-toggle">
+		<tr ng-repeat-start="wo in $ctrl.data" class="accordion-toggle">
 			<td>
-				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-lg glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event, wo)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
+				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-sm glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event, wo)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
 				</button>
 			</td>
 			<td>{{wo.workOrders.join(',')}}</td>
@@ -24,9 +24,8 @@
 			<td> {{wo.leadCrew}}</td>
 			<td>{{wo.exctnPckgName}}</td>
 			
-			<td> <span ng-if="wo.actioned == 'Y'">Yes</span>
-				<span ng-if="wo.actioned == 'N'"></span>
-			</td>
+			<td> <span ng-show="wo.actioned == 'Y'">Yes</span>
+			</td> 
 		</tr>
 		<tr ng-repeat-end>
 			<td colspan="12" class="hiddenRow">
@@ -97,7 +96,7 @@
 								<textarea class="form-control" rows="3" id="comment-1" ng-model="wo.schedulingToDoComment"></textarea> 
 							</div>
 							<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-8 " >
-								<b>Package has been saved successfully</b>
+								<p class="success-message" >{{$ctrl.successSavedMsg}}</p>
 							</div>
 							
 							<div class="col-md-offset-9 col-md-2" style="padding:5px">

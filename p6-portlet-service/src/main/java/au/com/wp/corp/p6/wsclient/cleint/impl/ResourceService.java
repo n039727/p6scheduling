@@ -1,6 +1,3 @@
-/**
- * 
- */
 package au.com.wp.corp.p6.wsclient.cleint.impl;
 
 import java.net.MalformedURLException;
@@ -20,27 +17,22 @@ import org.slf4j.LoggerFactory;
 
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.utils.CacheManager;
-import au.com.wp.corp.p6.wsclient.activity.Activity;
-import au.com.wp.corp.p6.wsclient.activity.ActivityFieldType;
-import au.com.wp.corp.p6.wsclient.activity.ActivityPortType;
-import au.com.wp.corp.p6.wsclient.activity.IntegrationFault;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
+import au.com.wp.corp.p6.wsclient.resource.Resource;
+import au.com.wp.corp.p6.wsclient.resource.ResourceFieldType;
+import au.com.wp.corp.p6.wsclient.resource.ResourcePortType;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
 
-/**
- * @author n039126
- *
- */
-public class ActivityService extends AbstractSOAPCall<List<Activity>> {
-	private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
+public class ResourceService extends AbstractSOAPCall<List<Resource>> {
+	private static final Logger logger = LoggerFactory.getLogger(ResourceService.class);
 	
 	private BindingProvider bp;
-	private ActivityPortType servicePort;
+	private ResourcePortType servicePort;
 	private String endPoint; 
 	private String filter;
 	
-	public ActivityService(final RequestTrackingId trackingId, String endPoint, String filter) {
+	public ResourceService(final RequestTrackingId trackingId, String endPoint, String filter, String orderBy) {
 		super(trackingId);
 		this.filter = filter;
 		this.endPoint = endPoint;
@@ -54,10 +46,10 @@ public class ActivityService extends AbstractSOAPCall<List<Activity>> {
 		} catch (MalformedURLException e) {
 			throw new P6ServiceException(e);
 		}
-		au.com.wp.corp.p6.wsclient.activity.ActivityService Service = new au.com.wp.corp.p6.wsclient.activity.ActivityService(
+		au.com.wp.corp.p6.wsclient.resource.ResourceService Service = new au.com.wp.corp.p6.wsclient.resource.ResourceService(
 				wsdlURL,
-				new QName("http://xmlns.oracle.com/Primavera/P6/WS/Activity/V1", "ActivityService"));
-		servicePort = Service.getActivityPort();
+				new QName("http://xmlns.oracle.com/Primavera/P6/WS/Resource/V1", "ResourceService"));
+		servicePort = Service.getResourcePort();
 		bp = (BindingProvider) servicePort;
 		
 		Map<String, List<String>> headers = (Map<String, List<String>>) bp.getRequestContext()
@@ -79,31 +71,30 @@ public class ActivityService extends AbstractSOAPCall<List<Activity>> {
 	}
 
 	@Override
-	protected Holder<List<Activity>> command() throws P6ServiceException {
+	protected Holder<List<Resource>> command() throws P6ServiceException {
 		
-		List<ActivityFieldType> fields = new ArrayList<>();
+		List<ResourceFieldType> fields = new ArrayList<>();
 		
-		fields.add(ActivityFieldType.PLANNED_START_DATE );
-		fields.add(ActivityFieldType.PLANNED_FINISH_DATE );
-		fields.add(ActivityFieldType.ID);
-		fields.add(ActivityFieldType.OBJECT_ID);
-		fields.add(ActivityFieldType.NAME);
-		fields.add(ActivityFieldType.PRIMARY_RESOURCE_OBJECT_ID);
-		fields.add(ActivityFieldType.PRIMARY_RESOURCE_NAME);
-		fields.add(ActivityFieldType.PROJECT_OBJECT_ID);
-		fields.add(ActivityFieldType.PRIMARY_RESOURCE_ID);
-		//'2010-12-30T08:30:00'
-		//String filter = "PlannedStartDate BETWEEN TO_DATE('2010-12-30 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('2010-12-30 23:59:59', 'yyyy-mm-dd hh24:mi:ss') ";
-		//String filter = "PrimaryResourceId = 'MOST8' OR PrimaryResourceId = 'MOST3'";
+		fields.add(ResourceFieldType.ID );
+		fields.add(ResourceFieldType.NAME );
+		fields.add(ResourceFieldType.OBJECT_ID);
+		fields.add(ResourceFieldType.PRIMARY_ROLE_NAME);
+		fields.add(ResourceFieldType.PRIMARY_ROLE_ID);
+		fields.add(ResourceFieldType.RESOURCE_TYPE);
+		fields.add(ResourceFieldType.TITLE);
+		fields.add(ResourceFieldType.IS_ACTIVE);
+		fields.add(ResourceFieldType.EMPLOYEE_ID);
 		
-		List<Activity> activities;
+		
+		List<Resource> resources;
 		try {
-			activities = servicePort.readActivities(fields, filter, null);
-		} catch (IntegrationFault e) {
+			resources = servicePort.readResources(fields, filter, null);
+
+		} catch (au.com.wp.corp.p6.wsclient.resource.IntegrationFault e) {
 			throw new P6ServiceException(e);
 		}
 		
-		return new Holder<>(activities);
+		return new Holder<>(resources);
 	}
 
 	@Override

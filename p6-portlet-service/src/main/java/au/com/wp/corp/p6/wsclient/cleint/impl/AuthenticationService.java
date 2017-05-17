@@ -20,16 +20,24 @@ import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 
 public class AuthenticationService extends AbstractSOAPCall<Boolean> {
-	private static final Logger logger = LoggerFactory.getLogger(ActivityService.class);
+	private static final Logger logger = LoggerFactory.getLogger(ActivityServiceCall.class);
 	
 	private BindingProvider bp;
 	private AuthenticationServicePortType servicePort;
 	private static List<String> cookieHeaders = null;
 	private final String endPoint;
+	
+	private final String userPrincipal;
+	private  final String userCredential;
+	private final int p6DBInstance;
 
-	public AuthenticationService(final RequestTrackingId trackingId, String endPoint) {
+	public AuthenticationService(final RequestTrackingId trackingId, final String endPoint , final String userPrincipal, final String userCredential, final int p6DBInstance) {
 		super(trackingId);
 		this.endPoint = endPoint;
+		this.userPrincipal = userPrincipal;
+		this.userCredential = userCredential;
+		this.p6DBInstance = p6DBInstance;
+		
 	}
 
 	@Override
@@ -51,7 +59,7 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 	protected Holder<Boolean> command() throws P6ServiceException {
 		boolean status;
 		try {
-			status = servicePort.login("svc_P6_SYS_USER_NP", "QChihIC4s", 1);
+			status = servicePort.login(userPrincipal, userCredential, p6DBInstance);
 		} catch (IntegrationFault e) {
 			throw new P6ServiceException(e);
 		}

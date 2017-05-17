@@ -95,6 +95,16 @@ body {
 	margin:0px;
 	border:0px;
 }
+.search-panel-body {
+	padding-bottom:5px;
+	padding-top:15px;
+}
+.search-control-label{
+    font-weight: 700;
+	min-width: 992px;
+	margin-bottom:0;
+	text-align:left;
+}
 .side-panel-heading {
 	background-color:#f37420 !important;
 	color:#ffffff !important;
@@ -127,6 +137,7 @@ body {
 .query-result-header {
 	background-color:f37420;
 	border:2px;
+	color:#ffffff !important;
 }
 .panel-standard-to-do {
 	padding:0px;
@@ -166,12 +177,23 @@ body {
 	font-weight: bold;
 }
 .success-message{
-	background-color:green;
 	display:inline;	
-	color:#fff;
+	color:green;
 	font-weight: bold;
 }
 .active-context{
 	background-color:#f37420 !important;
 	
 }
+.btn-floating {
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  padding: 30px;
+  font-size: 0px;
+  position: fixed;
+  bottom: 20px; /* Adjust to where you want it */
+  right: 90px; /* Adjust to where you want it */
+  z-index: 9999;
+}
+

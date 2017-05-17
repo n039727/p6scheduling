@@ -35,7 +35,7 @@ import au.com.wp.corp.p6.test.config.AppConfig;
  */
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { AppConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ExecutionPackageDaoTest {
+public class ExecutionPackageDaoIntegrationTest {
 	
 	@Autowired
 	ExecutionPackageDaoImpl executionPackageDao;

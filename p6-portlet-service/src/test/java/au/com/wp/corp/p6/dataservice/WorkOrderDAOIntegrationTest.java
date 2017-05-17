@@ -41,7 +41,7 @@ import au.com.wp.corp.p6.test.config.AppConfig;
  */
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { AppConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class WorkOrderDAOTest {
+public class WorkOrderDAOIntegrationTest {
 
 	@Autowired
 	WorkOrderDAO workOrderDAO;
