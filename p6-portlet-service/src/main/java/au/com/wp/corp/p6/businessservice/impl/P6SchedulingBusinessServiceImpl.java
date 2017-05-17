@@ -112,8 +112,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					Task dbTask = workOrderDAO.fetch(workOrderId);
 					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
 					dbTask = dbTask == null ? new Task() : dbTask;
-					
-					
 					updateTaskAgainstExecutionPackage(dbTask.getExecutionPackage());
 					if (dbTask.getExecutionPackage() != null) {
 						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());
@@ -183,10 +181,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	private WorkOrder prepareWorkOrder(WorkOrder workOrder, Task dbTask, List<Task> tasksForUpdate) {
 		Date scheduledDateForWorkOrder = dateUtils.toDateFromYYYY_MM_DD(workOrder.getScheduleDate());
 		Date scheduledDateInTask = dbTask.getSchdDt();
-		String crewAssignedForWorkOrder = workOrder.getCrewNames();
-		String crewAssignedForTask = dbTask.getCrewId();
-		String leadCrewWorkOrder = workOrder.getLeadCrew();
-		String leadCrewForTask = dbTask.getLeadCrewId();
+		String crewAssignedForWorkOrder = workOrder.getCrewNames() == null ?"":workOrder.getCrewNames();
+		String crewAssignedForTask = dbTask.getCrewId() == null ?"":dbTask.getCrewId();
+		String leadCrewWorkOrder = workOrder.getLeadCrew() == null ? "" : workOrder.getLeadCrew();
+		String leadCrewForTask = dbTask.getLeadCrewId() == null ? "" : dbTask.getLeadCrewId();
 		
 		WorkOrder workOrderNew = new WorkOrder();
 		workOrderNew.setWorkOrders(workOrder.getWorkOrders());
@@ -195,10 +193,16 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrderNew.setActioned(dbTask.getActioned());
 		workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
 		workOrderNew.setLeadCrew(leadCrewWorkOrder);
-		if((scheduledDateForWorkOrder.compareTo(scheduledDateInTask) != 0)
-				|| (!crewAssignedForWorkOrder.equalsIgnoreCase(crewAssignedForTask))
-				|| (!leadCrewWorkOrder.equalsIgnoreCase(leadCrewForTask))){
-			tasksForUpdate.add(dbTask);
+		
+		if (scheduledDateForWorkOrder != null && scheduledDateInTask != null) {
+			if ((scheduledDateForWorkOrder.compareTo(scheduledDateInTask) != 0)
+					|| (!crewAssignedForWorkOrder.equalsIgnoreCase(crewAssignedForTask))
+					|| (!leadCrewWorkOrder.equalsIgnoreCase(leadCrewForTask))) {
+				dbTask.setSchdDt(scheduledDateForWorkOrder);
+				dbTask.setCrewId(crewAssignedForWorkOrder);
+				dbTask.setLeadCrewId(leadCrewWorkOrder);
+				tasksForUpdate.add(dbTask);
+			}
 		}
 		
 		/*
