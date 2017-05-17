@@ -15,7 +15,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat-start="wo in $ctrl.data"class="accordion-toggle">
+		<tr ng-repeat-start="wo in $ctrl.data" class="accordion-toggle">
 			<td>
 				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-sm glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event, wo)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
 				</button>

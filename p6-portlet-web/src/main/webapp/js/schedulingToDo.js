@@ -1,4 +1,4 @@
-function schedulingToDoResultController($scope, $http) {
+function schedulingToDoResultController($scope, restTemplate) {
 	var ctrl = this;
 	ctrl.successSavedMsg = "";
 	console.log('data received: ' + JSON.stringify(ctrl.data));
@@ -89,7 +89,11 @@ function schedulingToDoResultController($scope, $http) {
 				}
 			}
 		}
-		
+		if(wo && wo.toDoItems.length == 0){
+			wo.actioned = 'N';
+		}else if(wo && wo.toDoItems.length > 0){
+			wo.actioned = 'Y';
+		}
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		var req = {
 			 method: 'POST',
@@ -100,11 +104,10 @@ function schedulingToDoResultController($scope, $http) {
 			 data: JSON.stringify(wo)
 			 
 		};
-		$http(req).then(function (response) {
+		/*$http(req).then(function (response) {
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			wo.actioned = 'Y';
 			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
 				ctrl.successSavedMsg = "Package has been saved successfully";
 			}else{
@@ -112,7 +115,20 @@ function schedulingToDoResultController($scope, $http) {
 			}
 			ctrl.savedMsgVisible = true;
 			
-		});
+		});*/
+		restTemplate.callService(req, function (response) {
+			console.log("Received data from server");
+			$scope.fetchedData = response.data;
+			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
+			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
+				ctrl.successSavedMsg = "Package has been saved successfully";
+			}else{
+				ctrl.successSavedMsg = "Work order task has been saved successfully";
+			}
+			ctrl.savedMsgVisible = true;
+			
+		}, null);
+		
 		ctrl.handleDataChange({event:{eventId:'SCHEDULING_TODO_SAVED'}});
 	};
 	
@@ -154,7 +170,7 @@ function schedulingToDoResultController($scope, $http) {
 				data: JSON.stringify(query)
 
 			};
-		$http(req).then(function (response) {
+		/*$http(req).then(function (response) {
 			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			wo.toDoItems = [];
 			wo.schedulingToDoComment = "";
@@ -165,7 +181,20 @@ function schedulingToDoResultController($scope, $http) {
 			ctrl.populateToDoBindings(wo, wo.toDoItems);
 			ctrl.populateWorkOrderDisplayList(wo);
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
-		});
+		});*/
+		
+		restTemplate.callService(req, function (response) {
+			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
+			wo.toDoItems = [];
+			wo.schedulingToDoComment = "";
+			if (response.data[0] && response.data[0].toDoItems) {
+				wo.toDoItems = response.data[0].toDoItems;
+				wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
+			}
+			ctrl.populateToDoBindings(wo, wo.toDoItems);
+			ctrl.populateWorkOrderDisplayList(wo);
+			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
+		}, null);
 	}
 	
 	ctrl.toDoBindingVar = {};
