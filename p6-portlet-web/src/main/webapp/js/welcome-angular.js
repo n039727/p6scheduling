@@ -66,7 +66,7 @@ fetchMetaData(app).then(bootstrapApplication);
 function fetchMetaData(app) {
 	var initInjector = angular.injector([ "ng" ]);
 	var $http = initInjector.get("$http");
-	return $http.get("/p6-portal-service/scheduler/fetchToDos").then(
+	return $http.get("/p6-portal-service/scheduler/fetchMetadata").then(
 			function(response) {
 				console.log("Received data from server for fetch to dos: "
 						+ JSON.stringify(response.data));
@@ -81,7 +81,7 @@ function fetchMetaData(app) {
 					id : 3,
 					name : 'Depot3'
 				} ];
-				metadata.crewList = [ {
+				/*metadata.crewList = [ {
 					id : 1,
 					name : 'MOST1'
 				}, {
@@ -90,8 +90,9 @@ function fetchMetaData(app) {
 				}, {
 					id : 3,
 					name : 'MOST3'
-				} ];
-				metadata.todoList = response.data;
+				} ];*/
+				metadata.crewList = response.data.crews;
+				metadata.todoList = response.data.toDoItems;
 				app.constant('metadata', metadata);
 			});
 }
