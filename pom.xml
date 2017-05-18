@@ -5,7 +5,7 @@
 	<artifactId>p6-scheduling</artifactId>
 	<packaging>pom</packaging>
 	<name>p6-scheduling</name>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.2-RC1</version>
 
 	<modules>
 		<module>p6-wsmodel</module>	
