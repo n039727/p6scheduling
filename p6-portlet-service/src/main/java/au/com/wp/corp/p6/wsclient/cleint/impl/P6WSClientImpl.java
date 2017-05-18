@@ -51,16 +51,16 @@ public class P6WSClientImpl implements P6WSClient {
 
 	@Value("${P6_USER_PRINCIPAL}")
 	private String userPrincipal;
-	
-	@Value ("${P6_USER_CREDENTIAL}")
+
+	@Value("${P6_USER_CREDENTIAL}")
 	private String userCredential;
-	
-	@Value ("${P6_DB_INSTANCE}")
+
+	@Value("${P6_DB_INSTANCE}")
 	private int p6DBInstance;
-	
+
 	@Value("${P6_RESOURCE_SERVICE_WSDL}")
 	private String resourceServiceWSDL;
-	
+
 	Map<String, Integer> workOrderIdMap = new HashMap<String, Integer>();
 
 	/*
@@ -81,36 +81,34 @@ public class P6WSClientImpl implements P6WSClient {
 		}
 
 		final StringBuilder filter = new StringBuilder();
-		if (null != searchRequest.getCrewList()) {
-			int i = 0;
-			if (searchRequest.getCrewList().size() > 1)
-				filter.append("(");
-			for (String crew : searchRequest.getCrewList()) {
-				if (i > 0)
-					filter.append(OR);
-				filter.append("PrimaryResourceId = ");
-				filter.append("'" + crew + "'");
-				i++;
-			}
-			if (searchRequest.getCrewList().size() > 1)
-				filter.append(")");
-		}
-
-		if (null != searchRequest.getPlannedStartDate()) {
-			if (filter.length() > 0)
-				filter.append(AND);
-			filter.append("PlannedStartDate BETWEEN TO_DATE('");
-			filter.append(searchRequest.getPlannedStartDate() + " 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('");
-			filter.append(searchRequest.getPlannedStartDate() + " 23:59:59', 'yyyy-mm-dd hh24:mi:ss')");
-		}
-
-		if ( null != searchRequest.getWorkOrder() ) {
-			if (filter.length() > 0)
-				filter.append(OR);
+		if (null != searchRequest.getWorkOrder() && !searchRequest.getWorkOrder().trim().isEmpty()) {
 			filter.append("(Id = ");
-			filter.append("'"+searchRequest.getWorkOrder()+"')");
+			filter.append("'" + searchRequest.getWorkOrder() + "')");
+		} else {
+			if (null != searchRequest.getCrewList()) {
+				int i = 0;
+				if (searchRequest.getCrewList().size() > 1)
+					filter.append("(");
+				for (String crew : searchRequest.getCrewList()) {
+					if (i > 0)
+						filter.append(OR);
+					filter.append("PrimaryResourceId = ");
+					filter.append("'" + crew + "'");
+					i++;
+				}
+				if (searchRequest.getCrewList().size() > 1)
+					filter.append(")");
+			}
+
+			if (null != searchRequest.getPlannedStartDate()) {
+				if (filter.length() > 0)
+					filter.append(AND);
+				filter.append("PlannedStartDate BETWEEN TO_DATE('");
+				filter.append(
+						searchRequest.getPlannedStartDate() + " 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('");
+				filter.append(searchRequest.getPlannedStartDate() + " 23:59:59', 'yyyy-mm-dd hh24:mi:ss')");
+			}
 		}
-		
 		logger.debug("filter criteria for search # {} ", filter.toString());
 
 		final ActivityServiceCall activityService = new ActivityServiceCall(trackingId, activityServiceWSDL,
@@ -136,11 +134,13 @@ public class P6WSClientImpl implements P6WSClient {
 
 		return workOrders;
 	}
-	
-	
 
-	/* (non-Javadoc)
-	 * @see au.com.wp.corp.p6.wsclient.cleint.P6WSClient#searchCrew(au.com.wp.corp.p6.dto.ResourceSearchRequest)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * au.com.wp.corp.p6.wsclient.cleint.P6WSClient#searchCrew(au.com.wp.corp.p6
+	 * .dto.ResourceSearchRequest)
 	 */
 	@Override
 	public List<Crew> searchCrew(ResourceSearchRequest searchRequest) throws P6ServiceException {
@@ -154,10 +154,10 @@ public class P6WSClientImpl implements P6WSClient {
 
 		final StringBuilder filter = new StringBuilder();
 		if (null != searchRequest.getResourceType()) {
-				
-				filter.append("ResourceType = ");
-				filter.append("'" + searchRequest.getResourceType() + "'");
-				
+
+			filter.append("ResourceType = ");
+			filter.append("'" + searchRequest.getResourceType() + "'");
+
 		}
 
 		logger.debug("filter criteria for crew search # {} ", filter.toString());
@@ -172,17 +172,16 @@ public class P6WSClientImpl implements P6WSClient {
 			logger.debug("size of cres list from P6 # {}", crews.size());
 			for (Resource resource : resources.value) {
 				Crew crew = new Crew();
-				crew.setCrewId(resource.getId());;
+				crew.setCrewId(resource.getId());
+				;
 				crew.setCrewName(resource.getName());
-				
+
 				crews.add(crew);
 			}
 		}
 
 		return crews;
 	}
-
-
 
 	/**
 	 * @param trackingId
@@ -193,7 +192,8 @@ public class P6WSClientImpl implements P6WSClient {
 				? (Long) CacheManager.getWSLoginTimestamp().get(WS_AUTH_SERVICE_CALL_TIME) : 0;
 		if (CacheManager.getWsHeaders().isEmpty()
 				|| System.currentTimeMillis() - wsAuthCallTimestamp > 2 * 60 * 60 * 1000) {
-			AuthenticationService authService = new AuthenticationService(trackingId, authServiceWSDL, userPrincipal,userCredential,p6DBInstance);
+			AuthenticationService authService = new AuthenticationService(trackingId, authServiceWSDL, userPrincipal,
+					userCredential, p6DBInstance);
 			Holder<Boolean> holder = authService.run();
 			logger.debug("Is authentication successfull ??  {} ", holder.value);
 			if (holder.value)
@@ -203,8 +203,6 @@ public class P6WSClientImpl implements P6WSClient {
 
 		return false;
 	}
-
-
 
 	@Override
 	public ExecutionPackageDTO createExecutionPackage(ResourceSearchRequest searchRequest) throws P6ServiceException {

@@ -29,7 +29,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 		}
 		$scope.crews = [];
 		for (var i = 0, l = this.selectedCrewList.length; i < l; i++) {
-			$scope.crews.push (this.selectedCrewList[i].name);
+			$scope.crews.push (this.selectedCrewList[i].crewId);
 		}
 		var queryObj = {
 			depotList: $scope.depots,
