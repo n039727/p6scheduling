@@ -1,5 +1,7 @@
 package au.com.wp.corp.p6.service.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,17 @@ public class DepotController {
 		}
 		
 		return new ResponseEntity<ViewToDoStatus>(dpotTodoService.UpdateDepotToDo(request.getBody()), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/fetchTaskForUpdateTodo", method = RequestMethod.POST, produces = {
+			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<List<WorkOrder>> fetchTaskForUpdateTodo(
+			RequestEntity<WorkOrderSearchRequest> query) throws P6BaseException {
+		logger.info(" viewDepotToDo service is called ....");
+		
+		return new ResponseEntity<List<WorkOrder>>(
+				dpotTodoService.fetchDepotTaskForAddUpdateToDo(query.getBody()),
+				HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/addTodo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
