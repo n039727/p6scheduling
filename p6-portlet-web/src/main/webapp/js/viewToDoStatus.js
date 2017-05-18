@@ -1,6 +1,7 @@
 function viewToDoStatusController($scope,restTemplate) {
 	var ctrl = this;
 	ctrl.successSavedMsg = "";
+	ctrl.savedMsgVisible = false;
 	
 	console.log('$ctrl.activeContext in view: ' + JSON.stringify(ctrl.activeContext));
 	console.log('data received: ' + JSON.stringify(ctrl.data));
@@ -16,6 +17,7 @@ function viewToDoStatusController($scope,restTemplate) {
 			$('#'+button.id).removeClass("glyphicon-minus");
 			$('#'+button.id).addClass("glyphicon-plus");
 		}
+		ctrl.savedMsgVisible = false;
 	};
 	
 	ctrl.saveToDo = function(wo){
