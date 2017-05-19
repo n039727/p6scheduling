@@ -103,8 +103,8 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 			logger.error(" Invalid request - {}", request.getBody());
 			throw new P6BaseException(" invalid request ");
 		}
-		logger.info("Search String # crews - {} , start date - {}", request.getBody().getCrewList(),
-				request.getBody().getFromDate());
+		logger.info("Search String # crews - {} , start date - {}, workOrderId - {}", request.getBody().getCrewList(),
+				request.getBody().getFromDate(), request.getBody().getWorkOrderId());
 		return new ResponseEntity<List<WorkOrder>>(p6BusinessService.search(request.getBody()), HttpStatus.OK);
 	}
 

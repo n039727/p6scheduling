@@ -81,6 +81,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
 		searchRequest.setCrewList(input.getCrewList());
 		searchRequest.setPlannedStartDate(dateUtils.convertDate(input.getFromDate()));
+		searchRequest.setWorkOrder(input.getWorkOrderId());
+		searchRequest.setDepotList(input.getDepotList());
 		List<WorkOrder> workOrders = p6wsClient.searchWorkOrder(searchRequest);
 		logger.info("list of work orders from P6# {}", workOrders);
 		return workOrders;

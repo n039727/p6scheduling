@@ -3,6 +3,8 @@
  */
 package au.com.wp.corp.p6.businessservice;
 
+import java.util.List;
+
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -32,5 +34,7 @@ public interface DepotTodoService {
 	public ViewToDoStatus UpdateDepotToDo(ViewToDoStatus workOrder) throws P6BusinessException;
 	
 	public WorkOrder saveDepotToDo(WorkOrder workOrder) throws P6BusinessException;
+	
+	public List<WorkOrder> fetchDepotTaskForAddUpdateToDo(WorkOrderSearchRequest query);
 
 }

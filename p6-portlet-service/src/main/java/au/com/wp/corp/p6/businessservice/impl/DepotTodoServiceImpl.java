@@ -384,7 +384,86 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		}
 
 		return todoTemplate;
-		
+	}
+	
+	@Override
+	public List<WorkOrder> fetchDepotTaskForAddUpdateToDo(WorkOrderSearchRequest query) {
+
+		List<Task> tasks = null;
+		ExecutionPackage executionPackage = null;
+		logger.debug("ExecPckgName >>>>{}", query.getExecPckgName());
+		logger.debug("WorkOrderId >>>>{}", query.getWorkOrderId());
+		if (null != query && null != query.getExecPckgName()) {
+			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
+			tasks = new ArrayList<Task>(executionPackage.getTasks());
+		} else {
+			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
+		}
+
+		Map<String, WorkOrder> workOrderMap = new HashMap<String, WorkOrder>();
+		Map<String, Map<Long, ToDoItem>> workOrderToDoMap = new HashMap<String, Map<Long, ToDoItem>>();
+
+		for (Task task : tasks) {
+
+			String executionPkg = null;
+			if (task.getExecutionPackage() != null) {
+				executionPkg = task.getExecutionPackage().getExctnPckgNam();
+			}
+
+			WorkOrder workOrder = null;
+			Map<Long, ToDoItem> toDoMap = null;
+			if (!StringUtils.isEmpty(executionPkg) && workOrderMap.containsKey(executionPkg)) {
+				workOrder = workOrderMap.get(executionPkg);
+				workOrder.setCrewNames(workOrder.getCrewNames() + "," + task.getCrewId());
+				workOrder.getWorkOrders().add(task.getTaskId());
+				toDoMap = workOrderToDoMap.get(executionPkg);
+			} else {
+				workOrder = new WorkOrder();
+				if (!StringUtils.isEmpty(executionPkg))
+					workOrder.setExctnPckgName(executionPkg);
+				else
+					executionPkg = task.getTaskId();
+				List<String> workOrders = new ArrayList<String>();
+				workOrders.add(task.getTaskId());
+				workOrder.setWorkOrders(workOrders);
+				workOrder.setLeadCrew(task.getLeadCrewId());
+				workOrder.setCrewNames(task.getCrewId());
+				workOrder.setScheduleDate(task.getSchdDt().toString());
+				workOrder.setSchedulingToDoComment(task.getCmts());
+				toDoMap = new HashMap<Long, ToDoItem>();
+				workOrderMap.put(executionPkg, workOrder);
+			}
+
+			if (task.getTodoAssignments() != null) {
+				for (TodoAssignment todo : task.getTodoAssignments()) {
+					Long todoId = todo.getTodoAssignMentPK().getTodoId().longValue();
+					if (toDoMap.containsKey(todoId)) {
+						toDoMap.get(todoId).getWorkOrders().add(todo.getTodoAssignMentPK().getTask().getTaskId());
+					} else {
+						ToDoItem item = new ToDoItem();
+						item.setTodoId(String.valueOf(todoId));
+						String toDoName = todoDAO.getToDoName(todoId);
+						item.setToDoName(toDoName);
+						item.setTypeId(todoDAO.getTypeId(toDoName));
+						List<String> workOrders = new ArrayList<String>();
+						workOrders.add(todo.getTodoAssignMentPK().getTask().getTaskId());
+						item.setWorkOrders(workOrders);
+						toDoMap.put(todoId, item);
+					}
+				}
+				workOrderToDoMap.put(executionPkg, toDoMap);
+			}
+		}
+
+		List<WorkOrder> workOrders = new ArrayList<WorkOrder>(workOrderMap.values());
+		for (WorkOrder workOrder : workOrders) {
+			String executionPkg = workOrder.getExctnPckgName();
+			if (StringUtils.isEmpty(executionPkg)) {
+				executionPkg = workOrder.getWorkOrders().get(0);
+			}
+			workOrder.setToDoItems(new ArrayList<ToDoItem>(workOrderToDoMap.get(executionPkg).values()));
+		}
+		return workOrders;
 	}
 
 }
