@@ -2,7 +2,7 @@ function viewToDoStatusController($scope,restTemplate) {
 	var ctrl = this;
 	ctrl.successSavedMsg = "";
 	ctrl.savedMsgVisible = false;
-	
+	ctrl.isAllCompletedStatus = false;
 	console.log('$ctrl.activeContext in view: ' + JSON.stringify(ctrl.activeContext));
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	
@@ -30,6 +30,24 @@ function viewToDoStatusController($scope,restTemplate) {
 					wo.todoAssignments[i].reqByDate = "";
 					
 				}
+				
+				if(wo.todoAssignments[i].status == "Completed"){
+					ctrl.isAllCompletedStatus = true;
+				}else{
+					ctrl.isAllCompletedStatus = false;
+				}
+			}
+			
+			if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){
+				for (var i =0; i<wo.todoAssignments.length; i++) {
+					if(wo.todoAssignments[i].status == "Completed"){
+						ctrl.isAllCompletedStatus = true;
+					}else{
+						ctrl.isAllCompletedStatus = false;
+						break;
+					}
+				}
+				
 			}
 		}
 		
@@ -60,6 +78,15 @@ function viewToDoStatusController($scope,restTemplate) {
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
+			if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){			
+				console.log("ctrl.isAllCompletedStatus: " + JSON.stringify(ctrl.isAllCompletedStatus));
+				if(wo && ctrl.isAllCompletedStatus){
+					wo.completed = 'Y';
+				}else if(wo && !ctrl.isAllCompletedStatus){
+					wo.completed = 'N';
+				}
+			}
+	
 			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
 				ctrl.successSavedMsg = "Package has been saved successfully";
 			}else{
