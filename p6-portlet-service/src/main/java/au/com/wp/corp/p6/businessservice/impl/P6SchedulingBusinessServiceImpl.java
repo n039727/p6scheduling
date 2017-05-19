@@ -243,9 +243,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					String crewAssignedToTask = taskAttahced.getCrewId();
 					logger.debug("crew assigned to this task{}", crewAssignedToTask);
 					String executionPackageName = executionPackage.getExctnPckgNam();
-					String[] strNames = StringUtils.split(executionPackageName, "_");
-					if (strNames != null) {
-						Date dateOfExectnPkg = dateUtils.toDateFromDD_MM_YYYY(strNames[0]);
+					//if (strNames != null) {
+						Date dateOfExectnPkg = executionPackage.getScheduledStartDate();
 						logger.debug("planned start date {} for task {}", plannedStartDate, taskAttahced.getTaskId());
 						logger.debug("date {} for package  {}", dateOfExectnPkg, executionPackageName);
 						if(plannedStartDate != null){
@@ -258,8 +257,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 								crewPresent.append(crewAssignedToTask);
 							}
 						}
-
-					}
 
 				}
 				if (!StringUtils.contains(crewPresent, executionPackage.getLeadCrewId())) {
@@ -439,23 +436,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		Set<String> supDocLinks = new HashSet<String>();
 		//String toDoName ;
 		logger.debug("before starting loop for assignments size = {}",assignments);
-		/*for (Iterator<ToDoAssignment> iterator = assignments.iterator(); iterator.hasNext();) {
-			ToDoAssignment toDoAssignment = (ToDoAssignment) iterator.next();
-			String toDoName = toDoAssignment.getToDoName();
-			logger.debug("todo name {}",toDoName);
-			singleMergedTodo.setToDoName(toDoName); //single todo name
-			logger.debug("Grouping for ToDo = {}",toDoName);
-			workOrders.add(toDoAssignment.getWorkOrderId());
-			logger.debug("workOrder for this todo = {}",toDoAssignment.getWorkOrderId());
-			String reqByDate = toDoAssignment.getReqByDate() == null ? "" :toDoAssignment.getReqByDate();
-			String strStatus = toDoAssignment.getStatus() == null ? "": toDoAssignment.getStatus();
-			boolean isNotSameReqByDate = requiredByDate.add(reqByDate);
-			logger.debug("isSameReqByDate to be added for this todo {}",isNotSameReqByDate);
-			boolean isNotSameStatus = status.add(strStatus);
-			logger.debug("isNotSameStatus to be added for this todo {}",isNotSameStatus);
-			comments.add(toDoAssignment.getComment()==null?"":toDoAssignment.getComment());
-			supDocLinks.add(toDoAssignment.getSupportingDoc()==null?"":toDoAssignment.getSupportingDoc());
-		}*/
 		assignments.forEach(toDoAssignment->{
 		String toDoName = toDoAssignment.getToDoName();
 			logger.debug("todo name {}",toDoName);

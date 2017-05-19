@@ -4,9 +4,11 @@
 package au.com.wp.corp.p6.wsclient.cleint;
 
 import java.util.List;
+import java.util.Map;
 
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.Crew;
+import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -25,5 +27,6 @@ public interface P6WSClient {
 	
 	public List<WorkOrder> searchWorkOrder (ActivitySearchRequest searchRequest) throws P6ServiceException;
 	public List<Crew> searchCrew (ResourceSearchRequest searchRequest) throws P6ServiceException;
-	public ExecutionPackageDTO createExecutionPackage (ResourceSearchRequest searchRequest) throws P6ServiceException;
+	List<ExecutionPackageDTO> createExecutionPackage(List<ExecutionPackageCreateRequest> request) throws P6ServiceException;
+	public Map<String, Integer> getWorkOrderIdMap();
 }

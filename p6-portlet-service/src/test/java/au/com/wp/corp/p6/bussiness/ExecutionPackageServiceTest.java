@@ -37,6 +37,7 @@ import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.test.config.AppConfig;
 import au.com.wp.corp.p6.utils.DateUtils;
+import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 
 /**
  * @author n039126
@@ -60,7 +61,8 @@ public class ExecutionPackageServiceTest {
 	
 	@Mock
 	P6SchedulingBusinessServiceImpl p6SchedulingService;
-
+	@Mock
+	P6WSClient p6wsClient;
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 

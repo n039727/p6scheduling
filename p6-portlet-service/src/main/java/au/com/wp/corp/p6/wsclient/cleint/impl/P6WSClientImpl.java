@@ -7,19 +7,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.ws.Holder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
-import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.Crew;
+import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -29,6 +30,8 @@ import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.resource.Resource;
+import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
+import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
 
 /**
  * 
@@ -61,7 +64,19 @@ public class P6WSClientImpl implements P6WSClient {
 	@Value("${P6_RESOURCE_SERVICE_WSDL}")
 	private String resourceServiceWSDL;
 	
-	Map<String, Integer> workOrderIdMap = new HashMap<String, Integer>();
+	@Value("${P6_UDF_SERVICE_WSDL}")
+	private String udfServiceWSDL;
+	
+	private Map<String, Integer> workOrderIdMap = new HashMap<String, Integer>();
+
+	@Override
+	public Map<String, Integer> getWorkOrderIdMap() {
+		return workOrderIdMap;
+	}
+
+
+
+
 
 	/*
 	 * (non-Javadoc)
@@ -128,7 +143,7 @@ public class P6WSClientImpl implements P6WSClient {
 				workOrder.setScheduleDate(activity.getPlannedStartDate().toString());
 				List<String> wos = new ArrayList<>();
 				wos.add(activity.getId());
-				workOrderIdMap.put(activity.getId(), activity.getObjectId());
+				workOrderIdMap.put(activity.getId(),activity.getObjectId());
 				workOrder.setWorkOrders(wos);
 				workOrders.add(workOrder);
 			}
@@ -204,12 +219,89 @@ public class P6WSClientImpl implements P6WSClient {
 		return false;
 	}
 
-
-
 	@Override
-	public ExecutionPackageDTO createExecutionPackage(ResourceSearchRequest searchRequest) throws P6ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ExecutionPackageDTO> createExecutionPackage(List<ExecutionPackageCreateRequest> request)
+			throws P6ServiceException {
+		logger.info("Calling activity service in P6 Webservice ...");
+		final RequestTrackingId trackingId = new RequestTrackingId();
+		getAuthenticated(trackingId);
+		if (null == request) {
+			throw new P6ServiceException("NO_SEARCH_CRITERIA_FOUND");
+		}
+		
+		final StringBuilder filter = new StringBuilder();
+		filter.append("UDFTypeSubjectArea= ");
+		filter.append("'" + request.get(0).getUdfTypeSubjectArea() + "'");
+		
+		if (request != null) {
+			if (request.size() > 1) {
+				filter.append(AND);
+				int i = 0;
+				filter.append("(");
+				for (ExecutionPackageCreateRequest executionPackageCreateRequest : request) {
+
+					if (null != executionPackageCreateRequest.getForeignObjectId()
+							&& null != executionPackageCreateRequest.getUdfTypeTitle()) {
+
+						if (i > 0) {
+							filter.append(OR);
+						}
+						filter.append("ForeignObjectId = ");
+						filter.append(executionPackageCreateRequest.getForeignObjectId());
+						i++;
+					}
+
+				}
+				filter.append(")");
+			} else {
+				filter.append(AND);
+				filter.append("ForeignObjectId = ");
+				filter.append(request.get(0).getForeignObjectId());
+			}
+
+			filter.append(AND);
+			filter.append("UDFTypeTitle = ");
+			filter.append("'" + request.get(0).getUdfTypeTitle() + "'");
+
+		}
+		logger.debug("filter criteria for search # {} ", filter.toString());
+		
+		final UDFValueServiceCall<List<ObjectId>> createUdfservice = new CreateUDFValueServiceCall(trackingId, udfServiceWSDL,request);
+		logger.debug("request {}",request);
+		final Holder<List<ObjectId>> objectIds = createUdfservice.run();
+		final UDFValueServiceCall<List<UDFValue>> readUdfservice = new ReadUDFValueServiceCall(trackingId, udfServiceWSDL,
+				filter.length() > 0 ? filter.toString() : null,null);
+		final Holder<List<UDFValue>> udfValues = readUdfservice.run();
+		final List<ExecutionPackageDTO> executionPackages = new ArrayList<ExecutionPackageDTO>();
+		logger.debug("list of udfValues from P6 # {}", udfValues);
+		if (null != udfValues) {
+			logger.debug("size of udfValues list from P6 # {}", udfValues.value.size());
+			List<WorkOrder> workOrders = new ArrayList<WorkOrder>();
+			
+			for (UDFValue udfvalue : udfValues.value) {
+				ExecutionPackageDTO dto = new ExecutionPackageDTO();
+				dto.setExctnPckgName(udfvalue.getText());
+				WorkOrder workOrder = new WorkOrder();
+				if(workOrderIdMap.containsValue(udfvalue.getForeignObjectId())){
+					Set<Entry<String,Integer>> entrySet = workOrderIdMap.entrySet();
+					for (Entry<String, Integer> entry : entrySet) {
+						if(entry.getValue() == udfvalue.getForeignObjectId()){
+							workOrder.setWorkOrderId(entry.getKey());
+							break;
+						}
+					}
+				}
+				
+				workOrders.add(workOrder);
+				dto.setWorkOrders(workOrders);
+				executionPackages.add(dto);
+			}
+			
+		}
+		return executionPackages;
 	}
+
+
+	
 
 }

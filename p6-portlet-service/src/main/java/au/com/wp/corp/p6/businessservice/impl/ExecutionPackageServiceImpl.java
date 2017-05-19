@@ -4,6 +4,7 @@
 package au.com.wp.corp.p6.businessservice.impl;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,14 +19,18 @@ import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
+import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.utils.DateUtils;
+import au.com.wp.corp.p6.utils.P6Constant;
+import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 
 /**
  * ExecutionPackageService performs following tasks regarding the execution
@@ -51,6 +56,9 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	
 	@Autowired
 	P6SchedulingBusinessService p6SchedulingService;
+	
+	@Autowired
+	P6WSClient p6wsClient;
 	
 	/*
 	 * (non-Javadoc)
@@ -123,10 +131,55 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		updateOldExecutionPackages(executionPackages);
 		logger.info("execution package has been created with execution package id # {} ",
 				execPackgDTO.getExctnPckgName());
+		updateP6ForExecutionPackage(execPackgDTO);
 		return execPackgDTO;
 
 	}
 	
+	private void updateP6ForExecutionPackage(ExecutionPackageDTO execPackgDTO) {
+		List<ExecutionPackageCreateRequest> request = new ArrayList<>();
+
+		if (execPackgDTO.getWorkOrders() != null) {
+			List<WorkOrder> workOrders = execPackgDTO.getWorkOrders();
+			if (workOrders != null) {
+				for (WorkOrder workOrder : workOrders) {
+
+					ExecutionPackageCreateRequest executionPackageCreateRequest = new ExecutionPackageCreateRequest();
+					Integer foreignObjId = p6wsClient.getWorkOrderIdMap().get(workOrder.getWorkOrderId());
+					executionPackageCreateRequest.setForeignObjectId(foreignObjId);
+					executionPackageCreateRequest.setText(execPackgDTO.getExctnPckgName());
+					executionPackageCreateRequest.setUdfTypeDataType(P6Constant.TEXT);
+					executionPackageCreateRequest.setUdfTypeObjectId(5920);
+					executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.ACTIVITY);
+					executionPackageCreateRequest.setUdfTypeTitle(P6Constant.EXECUTION_GROUPING);
+					request.add(executionPackageCreateRequest);
+				}
+			}
+
+		}
+		/*
+		 * <v1:Text>18-05-2017_023711511</v1:Text> <!--Optional:-->
+		 * <v1:UDFTypeDataType>Text</v1:UDFTypeDataType> <!--Optional:-->
+		 * <v1:UDFTypeObjectId>5920</v1:UDFTypeObjectId> <!--Optional:-->
+		 * <v1:UDFTypeSubjectArea>Activity</v1:UDFTypeSubjectArea>
+		 * <!--Optional:--> <v1:UDFTypeTitle>Execution
+		 * Grouping</v1:UDFTypeTitle>
+		 */
+
+		List<ExecutionPackageDTO> listOfCreatedExecutionPackages = null;
+		try {
+			listOfCreatedExecutionPackages = p6wsClient.createExecutionPackage(request);
+		} catch (P6ServiceException e) {
+			e.printStackTrace();
+		}
+		if (!(listOfCreatedExecutionPackages != null && listOfCreatedExecutionPackages.isEmpty())) {
+			logger.info("execution package created in P6 for {} with work orders {}",
+					listOfCreatedExecutionPackages.get(0).getExctnPckgName(),
+					listOfCreatedExecutionPackages.get(0).getWorkOrders());
+		}
+
+	}
+
 	private void updateOldExecutionPackages(Set<ExecutionPackage> executionPackages) throws P6BusinessException{
 		if(null != executionPackages){
 			logger.debug("Number of old Execution package>> {} ", executionPackages.size());
