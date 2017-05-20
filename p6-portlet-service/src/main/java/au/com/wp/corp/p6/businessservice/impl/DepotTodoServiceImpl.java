@@ -338,7 +338,8 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				if(null == todoId){
 					//create new TODO
 					TodoTemplate newToDo = addTodo(item);
-					todoId = newToDo.getTodoId();
+					//todoId = newToDo.getTodoId();
+					todoId = new BigDecimal(newToDo.getId().getTodoId());
 				}
 				if (null != item.getWorkOrders() && item.getWorkOrders().contains(updatedTask.getTaskId())) {
 					TodoAssignment todoAssignment = new TodoAssignment();
@@ -367,20 +368,25 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		todoTemplate.setLstUpdtdUsr("N039603");
 		todoTemplate.setTmpltDesc(item.getToDoName());
 		todoTemplate.setTodoNam(item.getToDoName());
-		todoTemplate.setTypeId(2);
+		//todoTemplate.setTypeId(2);
+		todoTemplate.setTypId(new BigDecimal(2));
 		List<TodoTemplate> lastRecFromDB = todoDAO.fetchToDoForGratestToDoId();
 		if(null != lastRecFromDB && lastRecFromDB.size()>0){
-			if(null != lastRecFromDB.get(0).getTodoId()){
-				int toDoId = lastRecFromDB.get(0).getTodoId().intValue();
+			//if(null != lastRecFromDB.get(0).getTodoId()){
+			if(null != lastRecFromDB.get(0).getId()){
+				//int toDoId = lastRecFromDB.get(0).getTodoId().intValue();
+				long toDoId = lastRecFromDB.get(0).getId().getTodoId();
 				toDoId = toDoId+1;
-				todoTemplate.setTodoId(new BigDecimal(toDoId));
+				//todoTemplate.setTodoId(new BigDecimal(toDoId));
+				todoTemplate.getId().setTodoId(toDoId);
 			}
 			else{
-				todoTemplate.setTodoId(new BigDecimal(Math.random()));
+				todoTemplate.getId().setTodoId(new Long((long) Math.random()));
 			}
 		}
 		else{//TODO
-			todoTemplate.setTodoId(new BigDecimal(Math.random()));
+			//todoTemplate.setTodoId(new BigDecimal(Math.random()));
+			todoTemplate.getId().setTodoId(new Long((long) Math.random()));
 		}
 
 		return todoTemplate;

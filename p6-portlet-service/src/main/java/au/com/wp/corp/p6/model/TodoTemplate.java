@@ -1,16 +1,12 @@
 package au.com.wp.corp.p6.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -24,11 +20,8 @@ import javax.persistence.Table;
 public class TodoTemplate implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@SequenceGenerator(name="TODO_TEMPLATE_TMPLTID_GENERATOR", sequenceName="TMPLT_ID")
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TODO_TEMPLATE_TMPLTID_GENERATOR")
-	@Column(name="TMPLT_ID")
-	private long tmpltId;
+	@EmbeddedId
+	private TodoTemplatePK id = new TodoTemplatePK();;
 
 	@Column(name="CRTD_TS")
 	private Timestamp crtdTs;
@@ -45,33 +38,21 @@ public class TodoTemplate implements Serializable {
 	@Column(name="TMPLT_DESC")
 	private String tmpltDesc;
 
-	@Column(name="TODO_ID")
-	private BigDecimal todoId;
-
 	@Column(name="TODO_NAM")
 	private String todoNam;
-	
+
 	@Column(name="TYP_ID")
-	private long typeId;
-
-	//bi-directional many-to-one association to TodoAssignment
-	//@OneToMany(mappedBy="todoTemplate")
-	//private List<TodoAssignment> todoAssignments;
-
-	//bi-directional many-to-one association to TodoType
-	//@ManyToOne
-	//@JoinColumn(name="TYP_ID")
-	//private TodoType todoType;
+	private java.math.BigDecimal typId;
 
 	public TodoTemplate() {
 	}
 
-	public long getTmpltId() {
-		return this.tmpltId;
+	public TodoTemplatePK getId() {
+		return this.id;
 	}
 
-	public void setTmpltId(long tmpltId) {
-		this.tmpltId = tmpltId;
+	public void setId(TodoTemplatePK id) {
+		this.id = id;
 	}
 
 	public Timestamp getCrtdTs() {
@@ -114,14 +95,6 @@ public class TodoTemplate implements Serializable {
 		this.tmpltDesc = tmpltDesc;
 	}
 
-	public BigDecimal getTodoId() {
-		return this.todoId;
-	}
-
-	public void setTodoId(BigDecimal todoId) {
-		this.todoId = todoId;
-	}
-
 	public String getTodoNam() {
 		return this.todoNam;
 	}
@@ -130,52 +103,12 @@ public class TodoTemplate implements Serializable {
 		this.todoNam = todoNam;
 	}
 
-	/**
-	 * @return the typeId
-	 */
-	public long getTypeId() {
-		return typeId;
+	public java.math.BigDecimal getTypId() {
+		return this.typId;
 	}
 
-	/**
-	 * @param typeId the typeId to set
-	 */
-	public void setTypeId(long typeId) {
-		this.typeId = typeId;
+	public void setTypId(java.math.BigDecimal typId) {
+		this.typId = typId;
 	}
-
-	/**
-	public List<TodoAssignment> getTodoAssignments() {
-		return this.todoAssignments;
-	}
-
-	public void setTodoAssignments(List<TodoAssignment> todoAssignments) {
-		this.todoAssignments = todoAssignments;
-	}
-	
-	public TodoAssignment addTodoAssignment(TodoAssignment todoAssignment) {
-		getTodoAssignments().add(todoAssignment);
-		todoAssignment.setTodoTemplate(this);
-
-		return todoAssignment;
-	}
-
-	public TodoAssignment removeTodoAssignment(TodoAssignment todoAssignment) {
-		getTodoAssignments().remove(todoAssignment);
-		todoAssignment.setTodoTemplate(null);
-
-		return todoAssignment;
-	}
-
-
-	public TodoType getTodoType() {
-		return this.todoType;
-	}
-
-	public void setTodoType(TodoType todoType) {
-		this.todoType = todoType;
-	}
-	
-	**/
 
 }

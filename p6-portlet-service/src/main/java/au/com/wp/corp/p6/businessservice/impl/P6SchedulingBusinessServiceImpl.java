@@ -303,9 +303,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			}
 			item.setLstUpdtdUsr(toDo.getLstUpdtdUsr());
 			item.setTmpltDesc(toDo.getTmpltDesc());
-			item.setTmpltId(String.valueOf(toDo.getTmpltId()));
+			item.setTmpltId(String.valueOf(toDo.getId().getTmpltId()));
 			item.setToDoName(toDo.getTodoNam());
-			item.setTypeId(toDo.getTypeId());
+			item.setTypeId(toDo.getTypId().longValue());
 			toDos.add(item);
 		}
 		ResourceSearchRequest resourceSearchRequest = new ResourceSearchRequest();
@@ -506,57 +506,77 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	private void prepareToDoAssignmentList(Task updatedTask, WorkOrder workOrder) {
 		
-		if (updatedTask == null)
+		logger.debug("inside prepareToDoAssignmentList");
+		if (updatedTask == null){
 			return;
-		
-		if (null != updatedTask.getTodoAssignments()) {
-			for (Iterator<TodoAssignment> itr = updatedTask.getTodoAssignments().iterator(); itr.hasNext();) {
-				TodoAssignment todo = itr.next();
-				boolean found = false;
-				logger.debug("todo.getTodoId(): " + todo.getTodoAssignMentPK().getTodoId());
-				for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
-					ToDoItem item = itrToDo.next();
-					logger.debug("item.getTodoName(): " + item.getToDoName());
-					if (item.getToDoName().equals(todoDAO.getToDoName(todo.getTodoAssignMentPK().getTodoId().longValue())) 
-																										// check
-																										// on
-																										// long
-																										// ID
-							&& item.getWorkOrders().contains(updatedTask.getTaskId())) {
-						item.getWorkOrders().remove(updatedTask.getTaskId());
-						if (item.getWorkOrders().isEmpty()) {
-							itrToDo.remove();
+		}
+		List<ToDoItem> requestToDos = workOrder.getToDoItems();
+		Set<TodoAssignment> newToDos =  new HashSet<>();
+		Set<TodoAssignment> deleteToDos =  new HashSet<>();
+		ToDoItem reqToDoNeedsToDeAdded = null;
+		Set<TodoAssignment> dBToDos = null;
+		if(null != requestToDos && ! requestToDos.isEmpty()){
+			logger.debug("requestToDos is not null");
+			Set<TodoAssignment> existingToDos =  new HashSet<>();
+			TodoAssignment dbToDo = null;
+			for (ToDoItem reqToDo : requestToDos){
+				boolean isExists = false;
+				logger.debug("inside reqToDo for loop");
+				if (null != updatedTask.getTodoAssignments() && !updatedTask.getTodoAssignments().isEmpty()) {
+					logger.debug("updatedTask.getTodoAssignments() is not null");
+					dBToDos= updatedTask.getTodoAssignments();
+					for (Iterator<TodoAssignment> itr = dBToDos.iterator(); itr.hasNext();) {
+						dbToDo = itr.next();
+						logger.debug("inside dBToDos for loop");
+						if (reqToDo.getToDoName().equals(todoDAO.getToDoName(dbToDo.getTodoAssignMentPK().getTodoId().longValue())) 
+								&& reqToDo.getWorkOrders().contains(updatedTask.getTaskId())) {
+							logger.debug("Todo in request exists in DB #{} ", reqToDo.getToDoName());
+							isExists = true;
+							break;
 						}
-						found = true;
-						break;
+						else{
+							reqToDoNeedsToDeAdded = reqToDo;
+						}
+					}
+					if(isExists){
+						existingToDos.add(dbToDo);
+					}
+					else{
+						logger.debug("Todo in request do not exists in DB, needs to be added  #{} ", reqToDoNeedsToDeAdded.getToDoName());
+						TodoAssignment todoAssignment = new TodoAssignment();
+						todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
+						todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(reqToDoNeedsToDeAdded.getToDoName()));
+						newToDos.add(todoAssignment);
 					}
 				}
-				if (!found) {
-					itr.remove();
-				}
-			}
-		}	
-		
-		if (null != workOrder && null != workOrder.getToDoItems()) {
-			Set<TodoAssignment> todos = new HashSet<>();
-			// Set the new values
-			for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
-				ToDoItem item = itrToDo.next();
-				if (null != item.getWorkOrders() && item.getWorkOrders().contains(updatedTask.getTaskId())) {
+				else{					
+					logger.debug("No todo assignment exists for the task, adding new =={}", reqToDo.getToDoName());
 					TodoAssignment todoAssignment = new TodoAssignment();
 					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
-					//todoAssignment.setExecutionPackage(updatedTask.getExecutionPackage());
-					logger.debug("Todo id for #{} - {}", item.getToDoName(), todoDAO.getToDoId(item.getToDoName()));
-					todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(item.getToDoName()));
-					todos.add(todoAssignment);
+					todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(reqToDo.getToDoName()));
+					newToDos.add(todoAssignment);
 				}
 			}
-			if (updatedTask.getTodoAssignments() == null) {
+			if(null == updatedTask.getTodoAssignments()){
 				updatedTask.setTodoAssignments(new HashSet<TodoAssignment>());
 			}
-			updatedTask.getTodoAssignments().addAll(todos);
+			
+			if(null != dBToDos){
+				for (TodoAssignment allDbToDo : dBToDos){
+					if(existingToDos.add(allDbToDo)){
+						//delete from DB
+						logger.debug("TODO to be deleted from DB=={}", allDbToDo.getTodoAssignMentPK().getTodoId());
+						deleteToDos.add(allDbToDo);
+					}
+				}
+				for (TodoAssignment deleteDbToDo : deleteToDos){
+					updatedTask.getTodoAssignments().remove(deleteDbToDo);
+				}
+			}
+			updatedTask.getTodoAssignments().addAll(newToDos);
 		}
-	
+		
+
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
 		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
 		
