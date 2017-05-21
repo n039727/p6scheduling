@@ -585,11 +585,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder, String workOrderId) {
 		// create new Task if not there in DB
 		if (dbTask == null) {
+			logger.debug("Task don't exists in portal DB..");
 			dbTask = new Task();
 			dbTask.setTaskId(workOrderId);
-			
 		}
-
+		
 		dbTask.setCmts(workOrder.getSchedulingToDoComment());
 		dbTask.setCrewId(workOrder.getCrewNames());
 		dbTask.setLeadCrewId(workOrder.getLeadCrew());
