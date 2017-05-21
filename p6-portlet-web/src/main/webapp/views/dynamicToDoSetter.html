@@ -1,0 +1,43 @@
+<div>
+	<div class="container">
+		<div class="col-md-6" ng-repeat="column in $ctrl.columnGroup" ng-init="groupIndex = $index">
+			<table class="table table-condensed">
+				<thead >
+					<th class="standard-to-do-header">To-Do</th>
+					<!--<th class="standard-to-do-header">Enable</th>-->
+					<th class="standard-to-do-header">Linked WO</th>
+					<th class="standard-to-do-header">&nbsp;</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="row in column">
+						<td>
+						  <span ng-if="row.isNewItem == false">{{row.todoName}}</span>
+						  <oi-select ng-if="row.isNewItem == true" oi-options="todoName for todoName in $ctrl.toDos"
+								ng-model="row.todoName"
+								placeholder="Type to add new to-do"
+								oi-select-options="{
+		              newItem: true
+		          }">
+							</oi-select>
+						</td>
+						<td >
+							<oi-select required oi-options="workOrderId for workOrderId in $ctrl.workOrders"
+								ng-model="row.workOrders"
+								multiple
+								data-ng-change="$ctrl.onChange(row)"
+								placeholder="Select">
+							</oi-select>
+							<div class="warning" ng-show="row.isNewItem == false && row.workOrders == undefined || row.workOrders.length == 0">This item will be removed when you save</div>
+						</td>
+						<td >
+							<span class="glyphicon glyphicon-trash" ng-click="$ctrl.removeItem(row.todoName, groupIndex)"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div ng-show="$ctrl.isAddError" class="error">{{$ctrl.addErrorMessage}}</div>
+	<button ng-if="$ctrl.newAddIndex == -1" class="btn btn-warning" ng-click="$ctrl.addItem()">Add New</button>
+	<button ng-if="$ctrl.newAddIndex > -1" class="btn btn-warning" ng-click="$ctrl.doneAdding()">Done</button>
+</div>

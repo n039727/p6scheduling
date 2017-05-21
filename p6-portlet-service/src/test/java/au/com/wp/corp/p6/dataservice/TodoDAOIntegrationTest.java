@@ -59,8 +59,10 @@ public class TodoDAOIntegrationTest {
 			Assert.assertNotNull(todoTemplate.getTodoNam());
 			Assert.assertNotNull(todoTemplate.getCrtdTs());
 			Assert.assertNotNull(todoTemplate.getLstUpdtdTs());
-			Assert.assertNotNull(todoTemplate.getTmpltId());
-			Assert.assertNotNull(todoTemplate.getTodoId());
+			//Assert.assertNotNull(todoTemplate.getTmpltId());
+			Assert.assertNotNull(todoTemplate.getId().getTmpltId());
+			//Assert.assertNotNull(todoTemplate.getTodoId());
+			Assert.assertNotNull(todoTemplate.getId().getTodoId());
 
 		}
 
