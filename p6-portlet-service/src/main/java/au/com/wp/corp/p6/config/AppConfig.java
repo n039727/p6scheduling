@@ -1,7 +1,10 @@
 package au.com.wp.corp.p6.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
@@ -69,6 +72,4 @@ public class AppConfig {
 	    return transactionManager;
 	}
 	
-	
-
 }

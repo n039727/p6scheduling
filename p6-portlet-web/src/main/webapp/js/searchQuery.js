@@ -2,19 +2,28 @@
 function searchQueryController($scope,$mdDateLocale,$filter) {
 	var ctrl = this;
 	ctrl.isValidationErr = false;
+	ctrl.isInvalidDateFormat = false;
 	ctrl.showErrorMsg = "";
+	ctrl.dateFormat = 'DD/MM/YYYY';
 	console.log('Meta Data passed from parent: ' + JSON.stringify(this.metadata));
 	// FORMAT THE DATE FOR THE DATEPICKER
 	$mdDateLocale.formatDate = function(date) {
    	 console.log('date in formatDate: ' + JSON.stringify(date));
     	if(angular.isDefined(date) && date !== null){
+    		ctrl.isInvalidDateFormat = false;
     		return $filter('date')(date, "dd/MM/yyyy");
     	}else{
     		return null;
     	}
     };
     $mdDateLocale.parseDate = function(dateString) {
-    	 var m = moment(dateString, 'DD/MM/YYYY', false);
+    	 var m = moment(dateString, ctrl.dateFormat, true);
+       	 console.log('m in parseDate: ' + JSON.stringify(m));
+       	 if(!m.isValid()){
+       		ctrl.isInvalidDateFormat = true;
+       	 }else{
+        	ctrl.isInvalidDateFormat = false;
+       	 }
     	 return m.isValid() ? m.toDate() : new Date(NaN);
     };
 
@@ -29,7 +38,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 		}
 		$scope.crews = [];
 		for (var i = 0, l = this.selectedCrewList.length; i < l; i++) {
-			$scope.crews.push (this.selectedCrewList[i].name);
+			$scope.crews.push (this.selectedCrewList[i].crewId);
 		}
 		var queryObj = {
 			depotList: $scope.depots,
@@ -55,13 +64,19 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	
 	this.validateForm = function(){
 		console.log('ctrl.activeContext in search :' + JSON.stringify(ctrl.activeContext));
+		if(ctrl.isInvalidDateFormat){
+			ctrl.showErrorMsg = 'Date format is invalid,format should be ' + ctrl.dateFormat;
+			ctrl.isValidationErr = true;
+			return false;
+		}
 		if(ctrl.activeContext == 'ADD_SCHEDULING_TODO' || ctrl.activeContext == 'VIEW_TODO_STATUS' 
 				|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO'){
 			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == ""){
 				ctrl.showErrorMsg = 'Planned Start From Date is required';
 				ctrl.isValidationErr = true;
 				return false;
-			}else{
+			}
+			else{
 				ctrl.isValidationErr = false;
 				return true;
 			}

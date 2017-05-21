@@ -1,6 +1,7 @@
 function schedulingToDoResultController($scope, restTemplate) {
 	var ctrl = this;
 	ctrl.successSavedMsg = "";
+	ctrl.savedMsgVisible = false;
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;

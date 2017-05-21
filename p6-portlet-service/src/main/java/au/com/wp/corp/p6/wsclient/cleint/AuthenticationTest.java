@@ -6,8 +6,8 @@ package au.com.wp.corp.p6.wsclient.cleint;
 import java.util.ArrayList;
 import java.util.List;
 
+import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
-import au.com.wp.corp.p6.model.ActivitySearchRequest;
 import au.com.wp.corp.p6.wsclient.cleint.impl.P6WSClientImpl;
 
 /**

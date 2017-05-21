@@ -3,6 +3,8 @@
  */
 package au.com.wp.corp.p6.wsclient;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Assert;
@@ -14,12 +16,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.Crew;
+import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
+import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
-import au.com.wp.corp.p6.model.ActivitySearchRequest;
 import au.com.wp.corp.p6.test.config.AppConfig;
+import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 
 /**
@@ -66,6 +71,31 @@ public class P6WSClientIntegrationTest {
 			
 		}
 		
+	}
+	
+	@Test
+	public void testCreateExecutionPackage() throws P6ServiceException {
+		List<ExecutionPackageCreateRequest> request = new ArrayList<>();
+
+		ExecutionPackageCreateRequest executionPackageCreateRequest = new ExecutionPackageCreateRequest();
+		executionPackageCreateRequest.setForeignObjectId(5401390);
+		executionPackageCreateRequest.setText("18-05-2017_023711511");
+		executionPackageCreateRequest.setUdfTypeDataType(P6Constant.TEXT);
+		executionPackageCreateRequest.setUdfTypeObjectId(5920);
+		executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.ACTIVITY);
+		executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.EXECUTION_GROUPING);
+		request.add(executionPackageCreateRequest);
+
+		List<ExecutionPackageDTO> listOfCreatedExecutionPackages = p6WSClient.createExecutionPackage(request);
+		if (listOfCreatedExecutionPackages != null) {
+			for (Iterator<ExecutionPackageDTO> iterator = listOfCreatedExecutionPackages.iterator(); iterator.hasNext();) {
+				ExecutionPackageDTO executionPackageDTO = (ExecutionPackageDTO) iterator.next();
+				Assert.assertEquals("18-05-2017_023711511",executionPackageDTO.getExctnPckgName());
+				Assert.assertEquals(05214374002, executionPackageDTO.getWorkOrders().get(0).getWorkOrders().get(0));
+			}
+			
+		}
+
 	}
 
 }

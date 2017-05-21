@@ -46,7 +46,8 @@ public class TodoDAOImpl implements TodoDAO {
 					toDoMap = new HashMap<Long, TodoTemplate>();
 					toDoNameMap = new HashMap<String, TodoTemplate>();
 					for (TodoTemplate todo:listToDo) {
-						toDoMap.put(todo.getTodoId().longValue(), todo);
+						//toDoMap.put(todo.getTodoId().longValue(), todo);
+						toDoMap.put(todo.getId().getTodoId(), todo);
 						toDoNameMap.put(todo.getTodoNam(), todo);
 					}
 				}
@@ -71,7 +72,8 @@ public class TodoDAOImpl implements TodoDAO {
 	public BigDecimal getToDoId(String todoName) {
 		fetchAllToDos();
 		if (toDoNameMap != null && toDoNameMap.containsKey(todoName)) {
-			return toDoNameMap.get(todoName).getTodoId();
+			//return toDoNameMap.get(todoName).getTodoId();
+			return new BigDecimal(toDoNameMap.get(todoName).getId().getTodoId());
 		}
 		return null;
 	}
@@ -80,7 +82,8 @@ public class TodoDAOImpl implements TodoDAO {
 	public Long getTypeId(String todoName) {
 		fetchAllToDos();
 		if (toDoNameMap != null && toDoNameMap.containsKey(todoName)) {
-			return toDoNameMap.get(todoName).getTypeId();
+			//return toDoNameMap.get(todoName).getTypeId();
+			return toDoNameMap.get(todoName).getTypId().longValue();
 		}
 		return null;
 	}
@@ -106,7 +109,7 @@ public class TodoDAOImpl implements TodoDAO {
 	@Transactional
 	@Override
 	public boolean createToDo(TodoTemplate todoTemplate) throws P6DataAccessException {
-		logger.debug("inserting or updating the execution package and task details");
+		logger.debug("inserting the user define TodoTemplate");
 		boolean status = Boolean.FALSE;
 
 		try {
@@ -115,7 +118,7 @@ public class TodoDAOImpl implements TodoDAO {
 		} catch (Exception e) {
 			parseException(e);
 		}
-		logger.debug("inserted or updated the execution package and task details");
+		logger.debug("inserted the user define TodoTemplate");
 		getSession().flush();
 		getSession().clear();
 		return status;

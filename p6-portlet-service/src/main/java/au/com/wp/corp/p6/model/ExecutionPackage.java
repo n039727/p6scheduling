@@ -59,7 +59,7 @@ public class ExecutionPackage implements Serializable {
 	private Date scheduledStartDate;
 
 	//bi-directional many-to-one association to Task
-	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Task> tasks;
 
 	//bi-directional many-to-one association to TodoAssignment

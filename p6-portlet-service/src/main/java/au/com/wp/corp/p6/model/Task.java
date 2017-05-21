@@ -62,7 +62,7 @@ public class Task implements Serializable {
 	private Date schdDt;
 
 	//bi-directional many-to-one association to ExecutionPackage
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne/*(cascade=CascadeType.ALL)*/
 	@JoinColumn(name="EXCTN_PCKG_ID")
 	private ExecutionPackage executionPackage;
 
@@ -210,6 +210,37 @@ public class Task implements Serializable {
 	 */
 	public void setActioned(String actioned) {
 		this.actioned = actioned;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((taskId == null) ? 0 : taskId.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Task other = (Task) obj;
+		if (taskId == null) {
+			if (other.taskId != null)
+				return false;
+		} else if (!taskId.equals(other.taskId))
+			return false;
+		return true;
 	}
 
 	

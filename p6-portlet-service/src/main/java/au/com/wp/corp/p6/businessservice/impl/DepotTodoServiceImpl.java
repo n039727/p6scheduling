@@ -33,6 +33,7 @@ import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
@@ -273,11 +274,10 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder, String workOrderId) {
 		// create new Task if not there in DB
 		if (dbTask == null) {
+			logger.debug("Task don't exists in portal DB..");
 			dbTask = new Task();
 			dbTask.setTaskId(workOrderId);
-			
 		}
-
 		dbTask.setCmts(workOrder.getSchedulingToDoComment());
 		dbTask.setCrewId(workOrder.getCrewNames());
 		dbTask.setLeadCrewId(workOrder.getLeadCrew());
@@ -293,15 +293,98 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			if(null != executionPackage){
 				dbTask.setExecutionPackage(executionPackage);
 			}
-
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		}
 		return dbTask;
 	}
 	
-	private void prepareToDoAssignmentList(Task updatedTask, WorkOrder workOrder) {
+	private void prepareToDoAssignmentList(Task updatedTask, WorkOrder workOrder) throws P6BusinessException {
 		
-		if (updatedTask == null)
+		logger.debug("inside prepareToDoAssignmentList");
+		if (updatedTask == null){
+			return;
+		}
+		List<ToDoItem> requestToDos = workOrder.getToDoItems();
+		Set<TodoAssignment> newToDos =  new HashSet<>();
+		Set<TodoAssignment> deleteToDos =  new HashSet<>();
+		ToDoItem reqToDoNeedsToDeAdded = null;
+		Set<TodoAssignment> dBToDos = null;
+		if(null != requestToDos && ! requestToDos.isEmpty()){
+			logger.debug("requestToDos is not null");
+			Set<TodoAssignment> existingToDos =  new HashSet<>();
+			TodoAssignment dbToDo = null;
+			for (ToDoItem reqToDo : requestToDos){
+				boolean isExists = false;
+				logger.debug("inside reqToDo for loop");
+				if (null != updatedTask.getTodoAssignments() && !updatedTask.getTodoAssignments().isEmpty()) {
+					logger.debug("updatedTask.getTodoAssignments() is not null");
+					dBToDos= updatedTask.getTodoAssignments();
+					for (Iterator<TodoAssignment> itr = dBToDos.iterator(); itr.hasNext();) {
+						dbToDo = itr.next();
+						logger.debug("inside dBToDos for loop");
+						if (reqToDo.getToDoName().equals(todoDAO.getToDoName(dbToDo.getTodoAssignMentPK().getTodoId().longValue())) 
+								&& reqToDo.getWorkOrders().contains(updatedTask.getTaskId())) {
+							logger.debug("Todo in request exists in DB #{} ", reqToDo.getToDoName());
+							isExists = true;
+							break;
+						}
+						else{
+							reqToDoNeedsToDeAdded = reqToDo;
+						}
+					}
+					if(isExists){
+						existingToDos.add(dbToDo);
+					}
+					else{
+						logger.debug("Todo in request do not exists in DB, needs to be added  #{} ", reqToDoNeedsToDeAdded.getToDoName());
+						BigDecimal todoId = todoDAO.getToDoId(reqToDo.getToDoName());
+						if(null == todoId){
+							//create new TODO
+							TodoTemplate newToDo = addTodo(reqToDo);
+						}
+						TodoAssignment todoAssignment = new TodoAssignment();
+						todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
+						todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(reqToDoNeedsToDeAdded.getToDoName()));
+						newToDos.add(todoAssignment);
+					}
+				}
+				else{					
+					logger.debug("No todo assignment exists for the task, adding new =={}", reqToDo.getToDoName());
+					BigDecimal todoId = todoDAO.getToDoId(reqToDo.getToDoName());
+					if(null == todoId){
+						//create new TODO
+						TodoTemplate newToDo = addTodo(reqToDo);
+					}
+					TodoAssignment todoAssignment = new TodoAssignment();
+					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
+					todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(reqToDo.getToDoName()));
+					newToDos.add(todoAssignment);
+				}
+			}
+			if(null == updatedTask.getTodoAssignments()){
+				updatedTask.setTodoAssignments(new HashSet<TodoAssignment>());
+			}
+			
+			if(null != dBToDos){
+				for (TodoAssignment allDbToDo : dBToDos){
+					if(existingToDos.add(allDbToDo)){
+						//delete from DB
+						logger.debug("TODO to be deleted from DB=={}", allDbToDo.getTodoAssignMentPK().getTodoId());
+						deleteToDos.add(allDbToDo);
+					}
+				}
+				for (TodoAssignment deleteDbToDo : deleteToDos){
+					updatedTask.getTodoAssignments().remove(deleteDbToDo);
+				}
+			}
+			updatedTask.getTodoAssignments().addAll(newToDos);
+		}
+		
+
+		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
+		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
+		
+		/*if (updatedTask == null)
 			return;
 		
 		if (null != updatedTask.getTodoAssignments()) {
@@ -338,7 +421,8 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				if(null == todoId){
 					//create new TODO
 					TodoTemplate newToDo = addTodo(item);
-					todoId = newToDo.getTodoId();
+					//todoId = newToDo.getTodoId();
+					todoId = new BigDecimal(newToDo.getId().getTodoId());
 				}
 				if (null != item.getWorkOrders() && item.getWorkOrders().contains(updatedTask.getTaskId())) {
 					TodoAssignment todoAssignment = new TodoAssignment();
@@ -355,11 +439,11 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		}
 	
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
-		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
+		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());*/
 		
 	}
 	
-	private TodoTemplate addTodo(ToDoItem item){
+	private TodoTemplate addTodo(ToDoItem item) throws P6BusinessException {
 		TodoTemplate todoTemplate = new TodoTemplate();
 		todoTemplate.setCrtdTs(new Timestamp(System.currentTimeMillis()));
 		todoTemplate.setCrtdUsr("N039603");
@@ -367,24 +451,108 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		todoTemplate.setLstUpdtdUsr("N039603");
 		todoTemplate.setTmpltDesc(item.getToDoName());
 		todoTemplate.setTodoNam(item.getToDoName());
-		todoTemplate.setTypeId(2);
+		todoTemplate.setTypId(new BigDecimal(2));
 		List<TodoTemplate> lastRecFromDB = todoDAO.fetchToDoForGratestToDoId();
-		if(null != lastRecFromDB && lastRecFromDB.size()>0){
-			if(null != lastRecFromDB.get(0).getTodoId()){
-				int toDoId = lastRecFromDB.get(0).getTodoId().intValue();
+		if(null != lastRecFromDB && lastRecFromDB.size()>0 ){
+			if(null != lastRecFromDB.get(0).getId()){
+				long toDoId = lastRecFromDB.get(0).getId().getTodoId();
+				long tmplId = 2;
 				toDoId = toDoId+1;
-				todoTemplate.setTodoId(new BigDecimal(toDoId));
+
+				todoTemplate.getId().setTodoId(toDoId);
+				todoTemplate.getId().setTmpltId(tmplId);
 			}
 			else{
-				todoTemplate.setTodoId(new BigDecimal(Math.random()));
+				todoTemplate.getId().setTodoId((long) Math.random());
+				todoTemplate.getId().setTmpltId(2);
 			}
 		}
-		else{//TODO
-			todoTemplate.setTodoId(new BigDecimal(Math.random()));
+		else{
+			todoTemplate.getId().setTodoId((long) Math.random());
+			todoTemplate.getId().setTmpltId(2);
+		}
+		todoDAO.createToDo(todoTemplate);
+		return todoTemplate;
+	}
+	
+	@Override
+	public List<WorkOrder> fetchDepotTaskForAddUpdateToDo(WorkOrderSearchRequest query) {
+
+		List<Task> tasks = null;
+		ExecutionPackage executionPackage = null;
+		logger.debug("ExecPckgName >>>>{}", query.getExecPckgName());
+		logger.debug("WorkOrderId >>>>{}", query.getWorkOrderId());
+		if (null != query && null != query.getExecPckgName()) {
+			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
+			tasks = new ArrayList<Task>(executionPackage.getTasks());
+		} else {
+			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
 		}
 
-		return todoTemplate;
-		
+		Map<String, WorkOrder> workOrderMap = new HashMap<String, WorkOrder>();
+		Map<String, Map<Long, ToDoItem>> workOrderToDoMap = new HashMap<String, Map<Long, ToDoItem>>();
+
+		for (Task task : tasks) {
+
+			String executionPkg = null;
+			if (task.getExecutionPackage() != null) {
+				executionPkg = task.getExecutionPackage().getExctnPckgNam();
+			}
+
+			WorkOrder workOrder = null;
+			Map<Long, ToDoItem> toDoMap = null;
+			if (!StringUtils.isEmpty(executionPkg) && workOrderMap.containsKey(executionPkg)) {
+				workOrder = workOrderMap.get(executionPkg);
+				workOrder.setCrewNames(workOrder.getCrewNames() + "," + task.getCrewId());
+				workOrder.getWorkOrders().add(task.getTaskId());
+				toDoMap = workOrderToDoMap.get(executionPkg);
+			} else {
+				workOrder = new WorkOrder();
+				if (!StringUtils.isEmpty(executionPkg))
+					workOrder.setExctnPckgName(executionPkg);
+				else
+					executionPkg = task.getTaskId();
+				List<String> workOrders = new ArrayList<String>();
+				workOrders.add(task.getTaskId());
+				workOrder.setWorkOrders(workOrders);
+				workOrder.setLeadCrew(task.getLeadCrewId());
+				workOrder.setCrewNames(task.getCrewId());
+				workOrder.setScheduleDate(task.getSchdDt().toString());
+				workOrder.setSchedulingToDoComment(task.getCmts());
+				toDoMap = new HashMap<Long, ToDoItem>();
+				workOrderMap.put(executionPkg, workOrder);
+			}
+
+			if (task.getTodoAssignments() != null) {
+				for (TodoAssignment todo : task.getTodoAssignments()) {
+					Long todoId = todo.getTodoAssignMentPK().getTodoId().longValue();
+					if (toDoMap.containsKey(todoId)) {
+						toDoMap.get(todoId).getWorkOrders().add(todo.getTodoAssignMentPK().getTask().getTaskId());
+					} else {
+						ToDoItem item = new ToDoItem();
+						item.setTodoId(String.valueOf(todoId));
+						String toDoName = todoDAO.getToDoName(todoId);
+						item.setToDoName(toDoName);
+						item.setTypeId(todoDAO.getTypeId(toDoName));
+						List<String> workOrders = new ArrayList<String>();
+						workOrders.add(todo.getTodoAssignMentPK().getTask().getTaskId());
+						item.setWorkOrders(workOrders);
+						toDoMap.put(todoId, item);
+					}
+				}
+				workOrderToDoMap.put(executionPkg, toDoMap);
+			}
+		}
+
+		List<WorkOrder> workOrders = new ArrayList<WorkOrder>(workOrderMap.values());
+		for (WorkOrder workOrder : workOrders) {
+			String executionPkg = workOrder.getExctnPckgName();
+			if (StringUtils.isEmpty(executionPkg)) {
+				executionPkg = workOrder.getWorkOrders().get(0);
+			}
+			workOrder.setToDoItems(new ArrayList<ToDoItem>(workOrderToDoMap.get(executionPkg).values()));
+		}
+		return workOrders;
 	}
 
 }
