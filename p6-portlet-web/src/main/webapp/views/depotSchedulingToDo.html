@@ -1,0 +1,124 @@
+
+<div>
+<table class="table table-condensed table-bordered table-striped" style="border-collapse:collapse;">
+	<thead class="query-result-header">
+		<tr>
+			<th>&nbsp;</th>
+			<th>WO #</th>
+			<th>Planned Start Date</th>
+			<th>Crew Assigned</th>
+			<th>Lead Crew</th>
+			<th>Execution Package</th>
+			<th>Actioned</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat-start="wo in $ctrl.data" class="accordion-toggle">
+			<td>
+				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-sm glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event, wo)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
+				</button>
+			</td>
+			<td>{{wo.workOrders.join(',')}}</td>
+			<td>{{wo.scheduleDate}}</td>
+			<td>{{wo.crewNames}}</td>
+			<td> {{wo.leadCrew}}</td>
+			<td>{{wo.exctnPckgName}}</td>
+			
+			<td> <span ng-show="wo.actioned == 'Y'">Yes</span>
+			</td> 
+		</tr>
+		<tr ng-repeat-end>
+			<td colspan="12" class="hiddenRow">
+				<div class="accordian-body collapse" id="{{'demo-' + wo.workOrders[0]}}">
+					<div class="panel panel-default panel-standard-to-do">
+						<div class="panel-heading panel-standard-to-do-heading"><b>Select Scheduling To-Do</b></div>
+						<div class="panel-body">
+							<div class="col-md-6">
+								<table class="table table-condensed">
+									<thead>
+										<th class="standard-to-do-header">To-Do</th>
+										<th class="standard-to-do-header">Enable</th>
+										<th class="standard-to-do-header">Linked WO</th>
+									</thead>
+									<tbody>
+										<tr ng-repeat="todo in $ctrl.todoGrp1">
+											<td>{{todo}}</td>
+											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
+											<td>
+												<!--
+												<select class="form-control" >
+													<option ng-repeat="workOrderId in wo.workOrders" ng-if="$ctrl.calculateEnable(wo, todo)">{{workOrderId}}</option>
+												</select>
+												-->
+												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
+													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
+													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
+													ng-disabled="!$ctrl.calculateEnable(wo, todo)"
+													multiple
+													placeholder="Select">
+												</oi-select>
+												<!--<div>{{toDoBindingVar[getWorkOrderToDoKey(wo, todo)]}}</div>-->
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="col-md-6">
+								<table class="table table-condensed">
+									<thead>
+										<th class="standard-to-do-header">To-Do</th>
+										<th class="standard-to-do-header">Enable</th>
+										<th class="standard-to-do-header">Linked WO</th>
+									</thead>
+									<tbody>
+										<tr ng-repeat="todo in $ctrl.todoGrp2">
+											<td>{{todo}}</td>
+											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
+											<td>
+												<!--<select class="form-control" >
+													<option ng-if="$ctrl.calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
+												</select>-->
+												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
+													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
+													ng-disabled="!$ctrl.calculateEnable(wo, todo)"
+													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
+													multiple
+													placeholder="Select">
+												</oi-select>
+												<!--<div>{{toDoBindingVar[getWorkOrderToDoKey(wo, todo)]}}</div>-->
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="col-md-12">
+								<label for="comment">Scheduling To-Do Comment</label>
+								<textarea class="form-control" rows="3" id="comment-1" ng-model="wo.schedulingToDoComment"></textarea> 
+							</div>
+						</div>
+						<div class="panel-heading panel-standard-to-do-heading"><b>Select Depot To-Do</b></div>
+						<div class="panel-body">
+							<!--<dynamic-to-do-setter columns="2" work-orders="wo.workOrders" to-dos="$ctrl.schedulingToDoList" 
+													current-map="$ctrl.createToDoMap(wo)" handle-data-change="$ctrl.populateDepotToDo(map)"></dynamic-to-do-setter>-->
+							<dynamic-to-do-setter columns="2" work-orders="wo.workOrders" to-dos="$ctrl.schedulingToDoList" current-map="wo.toDoMap" handle-data-change="$ctrl.populateDepotToDo(map, wo)">
+    
+							<div class="col-md-12">
+								<label for="comment">Depot To-Do Comment</label>
+								<textarea class="form-control" rows="3" id="comment-1" ng-model="wo.depotToDoComment"></textarea> 
+							</div>
+						</div>
+						<div class="col-md-offset-9 col-md-2" style="padding:5px">
+							<button id="save-to-do-1" class="btn btn-warning btn-block" ng-click="$ctrl.saveToDo(wo)">
+								<h4><b>Save</b></h4>
+							</button>
+						</div>
+						<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-8 " >
+							<p class="success-message" >{{$ctrl.successSavedMsg}}</p>
+						</div>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</div>
