@@ -109,7 +109,7 @@ public class TodoDAOImpl implements TodoDAO {
 	@Transactional
 	@Override
 	public boolean createToDo(TodoTemplate todoTemplate) throws P6DataAccessException {
-		logger.debug("inserting or updating the execution package and task details");
+		logger.debug("inserting the user define TodoTemplate");
 		boolean status = Boolean.FALSE;
 
 		try {
@@ -118,7 +118,7 @@ public class TodoDAOImpl implements TodoDAO {
 		} catch (Exception e) {
 			parseException(e);
 		}
-		logger.debug("inserted or updated the execution package and task details");
+		logger.debug("inserted the user define TodoTemplate");
 		getSession().flush();
 		getSession().clear();
 		return status;

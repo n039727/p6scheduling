@@ -232,7 +232,7 @@ public class DepotTodoServiceTest {
 	 * @throws P6BusinessException
 	 */
 	@Test
-	@Rollback(true)
+	//@Rollback(true)
 	public void testSaveToDo_1() throws P6BusinessException {
 		WorkOrder workOrder = new WorkOrder();
 
