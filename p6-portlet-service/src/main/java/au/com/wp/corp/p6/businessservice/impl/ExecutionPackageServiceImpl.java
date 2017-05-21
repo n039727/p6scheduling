@@ -6,12 +6,14 @@ package au.com.wp.corp.p6.businessservice.impl;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,6 +61,26 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	
 	@Autowired
 	P6WSClient p6wsClient;
+	
+	private List<ExecutionPackageDTO> executionPackageDTOFoP6List;
+	private List<String> workOrdersForExcnPkgDelP6 = new ArrayList<String>();
+	@Override
+	public List<ExecutionPackageDTO> getExecutionPackageDTDOFoP6() {
+		return executionPackageDTOFoP6List;
+	}
+	@Override
+	public void setExecutionPackageDTDOFoP6(List<ExecutionPackageDTO> executionPackageDTDOFoP6) {
+		this.executionPackageDTOFoP6List = executionPackageDTDOFoP6;
+	}
+	@Override
+	public List<String> getWorkOrdersForExcnPkgDelP6() {
+		return workOrdersForExcnPkgDelP6;
+	}
+	@Override
+	public void setWorkOrdersForExcnPkgDelP6(List<String> workOrdersForExcnPkgDelP6) {
+		this.workOrdersForExcnPkgDelP6 = workOrdersForExcnPkgDelP6;
+	}
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -131,55 +153,82 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		updateOldExecutionPackages(executionPackages);
 		logger.info("execution package has been created with execution package id # {} ",
 				execPackgDTO.getExctnPckgName());
-		updateP6ForExecutionPackage(execPackgDTO);
+		List<ExecutionPackageDTO> execPkgdtos = new ArrayList<ExecutionPackageDTO>();
+		execPkgdtos.add(execPackgDTO);
+		executionPackageDTOFoP6List = execPkgdtos;
+		//updateP6ForExecutionPackage(execPackgDTO);
 		return execPackgDTO;
 
 	}
-	
-	private void updateP6ForExecutionPackage(ExecutionPackageDTO execPackgDTO) {
+	@Scheduled(fixedDelay = 20000)
+	public void updateP6ForExecutionPackage() {
+		logger.debug("Starting to trigger execution package update with executionPackageDTDOFoP6 "
+				+ executionPackageDTOFoP6List);
 		List<ExecutionPackageCreateRequest> request = new ArrayList<>();
+		if (executionPackageDTOFoP6List == null) {
+			return;
+		}
+		for (ExecutionPackageDTO executionPackageDTOForP6 : executionPackageDTOFoP6List) {
 
-		if (execPackgDTO.getWorkOrders() != null) {
-			List<WorkOrder> workOrders = execPackgDTO.getWorkOrders();
+			if (executionPackageDTOForP6.getWorkOrders() != null
+					&& (!executionPackageDTOForP6.getWorkOrders().isEmpty())) {
+			}
+
+			List<WorkOrder> workOrders = executionPackageDTOForP6.getWorkOrders();
 			if (workOrders != null) {
 				for (WorkOrder workOrder : workOrders) {
+					/*
+					 * <v1:Text>18-05-2017_023711511</v1:Text> <!--Optional:-->
+					 * <v1:UDFTypeDataType>Text</v1:UDFTypeDataType>
+					 * <!--Optional:-->
+					 * <v1:UDFTypeObjectId>5920</v1:UDFTypeObjectId>
+					 * <!--Optional:-->
+					 * <v1:UDFTypeSubjectArea>Activity</v1:UDFTypeSubjectArea>
+					 * <!--Optional:--> <v1:UDFTypeTitle>Execution
+					 * Grouping</v1:UDFTypeTitle>
+					 */
 
 					ExecutionPackageCreateRequest executionPackageCreateRequest = new ExecutionPackageCreateRequest();
 					Integer foreignObjId = p6wsClient.getWorkOrderIdMap().get(workOrder.getWorkOrderId());
 					executionPackageCreateRequest.setForeignObjectId(foreignObjId);
-					executionPackageCreateRequest.setText(execPackgDTO.getExctnPckgName());
+					executionPackageCreateRequest.setText(executionPackageDTOForP6.getExctnPckgName());
 					executionPackageCreateRequest.setUdfTypeDataType(P6Constant.TEXT);
 					executionPackageCreateRequest.setUdfTypeObjectId(5920);
 					executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.ACTIVITY);
 					executionPackageCreateRequest.setUdfTypeTitle(P6Constant.EXECUTION_GROUPING);
 					request.add(executionPackageCreateRequest);
 				}
+				ExecutionPackageDTO createdExecutionPackage = null;
+				try {
+					createdExecutionPackage = p6wsClient.createExecutionPackage(request);
+					if (createdExecutionPackage != null) {
+						logger.info("execution package created in P6 for {} with work orders {}",
+								createdExecutionPackage.getExctnPckgName(), createdExecutionPackage.getWorkOrders());
+						executionPackageDTOForP6.getWorkOrders().clear();
+					}
+				} catch (P6ServiceException e) {
+					e.printStackTrace();
+				}
+
 			}
 
 		}
-		/*
-		 * <v1:Text>18-05-2017_023711511</v1:Text> <!--Optional:-->
-		 * <v1:UDFTypeDataType>Text</v1:UDFTypeDataType> <!--Optional:-->
-		 * <v1:UDFTypeObjectId>5920</v1:UDFTypeObjectId> <!--Optional:-->
-		 * <v1:UDFTypeSubjectArea>Activity</v1:UDFTypeSubjectArea>
-		 * <!--Optional:--> <v1:UDFTypeTitle>Execution
-		 * Grouping</v1:UDFTypeTitle>
-		 */
-
-		List<ExecutionPackageDTO> listOfCreatedExecutionPackages = null;
-		try {
-			listOfCreatedExecutionPackages = p6wsClient.createExecutionPackage(request);
-		} catch (P6ServiceException e) {
-			e.printStackTrace();
+		executionPackageDTOFoP6List = null;
+		List<String>  workorderIds = getWorkOrdersForExcnPkgDelP6();
+		if(workorderIds != null && workorderIds.size() >0){
+			try {
+				logger.debug("Calling to remove execution package for work orders {}",workorderIds);
+				boolean isSuccess =p6wsClient.removeExecutionPackage(workorderIds);
+				logger.debug("Removal suceeeded {}",isSuccess);
+			} catch (P6ServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			workorderIds.clear();
+			workorderIds = null;
 		}
-		if (!(listOfCreatedExecutionPackages != null && listOfCreatedExecutionPackages.isEmpty())) {
-			logger.info("execution package created in P6 for {} with work orders {}",
-					listOfCreatedExecutionPackages.get(0).getExctnPckgName(),
-					listOfCreatedExecutionPackages.get(0).getWorkOrders());
-		}
-
 	}
-
+		
 	private void updateOldExecutionPackages(Set<ExecutionPackage> executionPackages) throws P6BusinessException{
 		if(null != executionPackages){
 			logger.debug("Number of old Execution package>> {} ", executionPackages.size());

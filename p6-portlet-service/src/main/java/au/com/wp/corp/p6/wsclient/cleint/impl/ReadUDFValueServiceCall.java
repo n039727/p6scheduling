@@ -11,7 +11,6 @@ import javax.xml.ws.Holder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;

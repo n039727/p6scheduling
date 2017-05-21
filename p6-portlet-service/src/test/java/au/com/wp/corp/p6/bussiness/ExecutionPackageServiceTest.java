@@ -23,6 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.impl.ExecutionPackageServiceImpl;
 import au.com.wp.corp.p6.businessservice.impl.P6SchedulingBusinessServiceImpl;
 import au.com.wp.corp.p6.dataservice.impl.ExecutionPackageDaoImpl;

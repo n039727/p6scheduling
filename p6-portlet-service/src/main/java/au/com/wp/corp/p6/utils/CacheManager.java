@@ -25,6 +25,4 @@ public class CacheManager {
 		return wsLoginTimestampMap;
 	}
 	
-	
-	
 }

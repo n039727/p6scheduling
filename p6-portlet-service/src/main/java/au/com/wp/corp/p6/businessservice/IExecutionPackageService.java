@@ -35,4 +35,12 @@ public interface IExecutionPackageService {
 
 	List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6BaseException;
 
+	void setWorkOrdersForExcnPkgDelP6(List<String> workOrdersForExcnPkgDelP6);
+
+	List<String> getWorkOrdersForExcnPkgDelP6();
+
+	void setExecutionPackageDTDOFoP6(List<ExecutionPackageDTO> executionPackageDTDOFoP6);
+
+	List<ExecutionPackageDTO> getExecutionPackageDTDOFoP6();
+
 }

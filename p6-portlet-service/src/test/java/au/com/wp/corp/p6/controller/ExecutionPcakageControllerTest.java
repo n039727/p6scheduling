@@ -30,7 +30,7 @@ import org.springframework.web.util.NestedServletException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import au.com.wp.corp.p6.businessservice.impl.ExecutionPackageServiceImpl;
+import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -52,7 +52,7 @@ public class ExecutionPcakageControllerTest {
 	ExecutionPackageContoller execPckgCtrl;
 
 	@Mock
-	private ExecutionPackageServiceImpl executionPckg;
+	private IExecutionPackageService executionPckg;
 	
 	@Mock
 	Validator validator;

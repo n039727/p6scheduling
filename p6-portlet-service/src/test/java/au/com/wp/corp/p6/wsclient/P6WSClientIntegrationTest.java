@@ -83,16 +83,13 @@ public class P6WSClientIntegrationTest {
 		executionPackageCreateRequest.setUdfTypeDataType(P6Constant.TEXT);
 		executionPackageCreateRequest.setUdfTypeObjectId(5920);
 		executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.ACTIVITY);
-		executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.EXECUTION_GROUPING);
+		executionPackageCreateRequest.setUdfTypeTitle(P6Constant.EXECUTION_GROUPING);
 		request.add(executionPackageCreateRequest);
-
-		List<ExecutionPackageDTO> listOfCreatedExecutionPackages = p6WSClient.createExecutionPackage(request);
-		if (listOfCreatedExecutionPackages != null) {
-			for (Iterator<ExecutionPackageDTO> iterator = listOfCreatedExecutionPackages.iterator(); iterator.hasNext();) {
-				ExecutionPackageDTO executionPackageDTO = (ExecutionPackageDTO) iterator.next();
-				Assert.assertEquals("18-05-2017_023711511",executionPackageDTO.getExctnPckgName());
-				Assert.assertEquals(05214374002, executionPackageDTO.getWorkOrders().get(0).getWorkOrders().get(0));
-			}
+		p6WSClient.getWorkOrderIdMap().put("05214374002", 5401390);
+		ExecutionPackageDTO dto = p6WSClient.createExecutionPackage(request);
+		if (dto != null) {
+				Assert.assertEquals("18-05-2017_023711511",dto.getExctnPckgName());
+				Assert.assertEquals("05214374002", dto.getWorkOrders().get(0).getWorkOrderId());
 			
 		}
 

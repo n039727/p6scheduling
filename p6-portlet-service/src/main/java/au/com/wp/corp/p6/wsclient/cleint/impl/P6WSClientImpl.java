@@ -26,6 +26,7 @@ import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.utils.CacheManager;
+import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
@@ -139,6 +140,18 @@ public class P6WSClientImpl implements P6WSClient {
 				workOrder.setWorkOrderId(activity.getId());
 				workOrder.setCrewNames(activity.getPrimaryResourceId());
 				workOrder.setScheduleDate(activity.getPlannedStartDate().toString());
+				
+				ExecutionPackageCreateRequest executionPackageCreateRequest = new ExecutionPackageCreateRequest();
+				Integer foreignObjId = activity.getObjectId();
+				executionPackageCreateRequest.setForeignObjectId(foreignObjId);
+				executionPackageCreateRequest.setUdfTypeDataType(P6Constant.TEXT);
+				executionPackageCreateRequest.setUdfTypeObjectId(5920);
+				executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.ACTIVITY);
+				executionPackageCreateRequest.setUdfTypeTitle(P6Constant.EXECUTION_GROUPING);
+				ExecutionPackageDTO dto =readExecutionPackage(executionPackageCreateRequest, trackingId);
+				if(dto != null){
+					workOrder.setExctnPckgName(dto.getExctnPckgName());
+				}
 				List<String> wos = new ArrayList<>();
 				wos.add(activity.getId());
 				workOrderIdMap.put(activity.getId(),activity.getObjectId());
@@ -220,84 +233,135 @@ public class P6WSClientImpl implements P6WSClient {
 	}
 
 	@Override
-	public List<ExecutionPackageDTO> createExecutionPackage(List<ExecutionPackageCreateRequest> request)
+	public ExecutionPackageDTO createExecutionPackage(List<ExecutionPackageCreateRequest> request)
 			throws P6ServiceException {
-		logger.info("Calling activity service in P6 Webservice ...");
+		logger.info("Calling udfvalue  service in P6 Webservice to create executionpackage...");
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
 		if (null == request) {
 			throw new P6ServiceException("NO_SEARCH_CRITERIA_FOUND");
 		}
+		ExecutionPackageDTO dto = null;
+		for (ExecutionPackageCreateRequest executionPackageCreateRequest : request) {
+			dto = readExecutionPackage(executionPackageCreateRequest, trackingId);
+			logger.debug("list of udfValues returned from P6 # {}", dto);
+			
+			if (null != dto && dto.getWorkOrders().size() > 0) {
+				logger.debug("size of udfValues list from P6 # {}", dto.getWorkOrders().size());
+				logger.debug("Updating P6 for execution package");
+				
+				final UDFValueServiceCall<Boolean> updateUdfservice = new UpdateUDFValueServiceCall(trackingId,
+						udfServiceWSDL, request);
+				final Holder<Boolean> isUpdated = updateUdfservice.run();
+				logger.debug("Updated successfully {}", isUpdated.value);
+			} else {
+				logger.debug("search has not returned anything hence creating");
+				final UDFValueServiceCall<List<ObjectId>> createUdfservice = new CreateUDFValueServiceCall(trackingId,
+						udfServiceWSDL, request);
+				logger.debug("request {}", request);
+				final Holder<List<ObjectId>> objectIds = createUdfservice.run();
+				List<ObjectId> objectIdList = objectIds.value;
+				List<WorkOrder> workOrders = new ArrayList<WorkOrder>();;
+
+				dto.setExctnPckgName(executionPackageCreateRequest.getText());
+				if (objectIdList != null) {
+					for (ObjectId objectId : objectIdList) {
+						WorkOrder workOrder = new WorkOrder();
+						if (workOrderIdMap.containsValue(objectId.getForeignObjectId())) {
+							Set<Entry<String, Integer>> entrySet = workOrderIdMap.entrySet();
+							for (Entry<String, Integer> entry : entrySet) {
+								if (entry.getValue() == objectId.getForeignObjectId()) {
+									workOrder.setWorkOrderId(entry.getKey());
+									break;
+								}
+							}
+						}
+
+						workOrders.add(workOrder);
+					}
+					dto.setWorkOrders(workOrders);
+				}
+				
+			}
+				
+			}
 		
+		return dto;
+	}
+	private ExecutionPackageDTO readExecutionPackage(ExecutionPackageCreateRequest executionPackageCreateRequest, RequestTrackingId trackingId) throws P6ServiceException {
 		final StringBuilder filter = new StringBuilder();
 		filter.append("UDFTypeSubjectArea= ");
-		filter.append("'" + request.get(0).getUdfTypeSubjectArea() + "'");
-		
-		if (request != null) {
-			if (request.size() > 1) {
-				filter.append(AND);
-				int i = 0;
-				filter.append("(");
-				for (ExecutionPackageCreateRequest executionPackageCreateRequest : request) {
-
-					if (null != executionPackageCreateRequest.getForeignObjectId()
-							&& null != executionPackageCreateRequest.getUdfTypeTitle()) {
-
-						if (i > 0) {
-							filter.append(OR);
-						}
-						filter.append("ForeignObjectId = ");
-						filter.append(executionPackageCreateRequest.getForeignObjectId());
-						i++;
-					}
-
-				}
-				filter.append(")");
-			} else {
+		filter.append("'" + executionPackageCreateRequest.getUdfTypeSubjectArea() + "'");
+		ExecutionPackageDTO dto = new ExecutionPackageDTO();
+		if (executionPackageCreateRequest != null) {
+			
+			if (null != executionPackageCreateRequest.getForeignObjectId()) {
 				filter.append(AND);
 				filter.append("ForeignObjectId = ");
-				filter.append(request.get(0).getForeignObjectId());
+				filter.append(executionPackageCreateRequest.getForeignObjectId());
+				
 			}
-
 			filter.append(AND);
 			filter.append("UDFTypeTitle = ");
-			filter.append("'" + request.get(0).getUdfTypeTitle() + "'");
+			filter.append("'" + executionPackageCreateRequest.getUdfTypeTitle() + "'");
 
 		}
 		logger.debug("filter criteria for search # {} ", filter.toString());
-		
-		final UDFValueServiceCall<List<ObjectId>> createUdfservice = new CreateUDFValueServiceCall(trackingId, udfServiceWSDL,request);
-		logger.debug("request {}",request);
-		final Holder<List<ObjectId>> objectIds = createUdfservice.run();
+		logger.debug("calling read UDF Values");
 		final UDFValueServiceCall<List<UDFValue>> readUdfservice = new ReadUDFValueServiceCall(trackingId, udfServiceWSDL,
 				filter.length() > 0 ? filter.toString() : null,null);
 		final Holder<List<UDFValue>> udfValues = readUdfservice.run();
-		final List<ExecutionPackageDTO> executionPackages = new ArrayList<ExecutionPackageDTO>();
-		logger.debug("list of udfValues from P6 # {}", udfValues);
-		if (null != udfValues) {
-			logger.debug("size of udfValues list from P6 # {}", udfValues.value.size());
-			List<WorkOrder> workOrders = new ArrayList<WorkOrder>();
-			
+		logger.debug("returned from search {}",udfValues.value);
+		List<WorkOrder> workOrders = new ArrayList<WorkOrder>();
+		if(udfValues.value != null){
 			for (UDFValue udfvalue : udfValues.value) {
-				ExecutionPackageDTO dto = new ExecutionPackageDTO();
+				logger.debug("Returned Package name from P6 {}", udfvalue.getText());
 				dto.setExctnPckgName(udfvalue.getText());
 				WorkOrder workOrder = new WorkOrder();
-				if(workOrderIdMap.containsValue(udfvalue.getForeignObjectId())){
-					Set<Entry<String,Integer>> entrySet = workOrderIdMap.entrySet();
+				if (workOrderIdMap.containsValue(udfvalue.getForeignObjectId())) {
+					Set<Entry<String, Integer>> entrySet = workOrderIdMap.entrySet();
 					for (Entry<String, Integer> entry : entrySet) {
-						if(entry.getValue() == udfvalue.getForeignObjectId()){
+						if (entry.getValue().equals(udfvalue.getForeignObjectId())) {
 							workOrder.setWorkOrderId(entry.getKey());
 							break;
 						}
 					}
 				}
-				
+
 				workOrders.add(workOrder);
-				dto.setWorkOrders(workOrders);
-				executionPackages.add(dto);
 			}
-			
 		}
-		return executionPackages;
+		dto.setWorkOrders(workOrders);
+		
+		return dto;
+	}
+
+
+
+
+
+	@Override
+	public Boolean removeExecutionPackage(List<String> workOrderIds)
+			throws P6ServiceException {
+		logger.info("Calling udfvalue service in P6 Webservice to de link execution package...");
+		Boolean retVal = Boolean.FALSE;
+		final RequestTrackingId trackingId = new RequestTrackingId();
+		getAuthenticated(trackingId);
+		if (null == workOrderIds) {
+			throw new P6ServiceException("NO_SEARCH_CRITERIA_FOUND");
+		}
+		List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds = new ArrayList<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId>();
+		for (String workOrderId : workOrderIds) {
+			au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId deletedObjId = new au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId();
+			Integer foreignObjId = workOrderIdMap.get(workOrderId);
+			deletedObjId.setForeignObjectId(foreignObjId);
+			deletedObjId.setUDFTypeObjectId(5920);
+			objectIds.add(deletedObjId);
+		}
+		logger.debug("request {}",objectIds);
+		final UDFValueServiceCall<Boolean> deleteUdfservice = new DeleteUDFValueServiceCall(trackingId, udfServiceWSDL, objectIds);
+		final Holder<Boolean> isDeleted = deleteUdfservice.run();
+		
+		return retVal = isDeleted.value;
 	}
 }

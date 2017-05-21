@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
@@ -74,6 +75,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	P6WSClient p6wsClient;
 	
+	@Autowired
+	IExecutionPackageService executionPackageservice;
+	
+	private Map<String,List<WorkOrder>> mapOfExecutionPackageWOP6 = new HashMap<String,List<WorkOrder>>();;
 	
 	@Override
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException{
@@ -141,12 +146,28 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 		/*synchronization of task*/
 		updateTasksInDB(tasksForUpdate);
+		updateWorkOrdersinP6();
 		logger.debug("final grouped work orders size {}",mapOfExecutionPkgWO.values().size());
 		logger.debug("final grouped work orders = {}",mapOfExecutionPkgWO.values());
 		List<WorkOrder> workorders = new ArrayList<> (mapOfExecutionPkgWO.values());
 		workorders.addAll(ungroupedWorkorders);
 		
 		return workorders;
+	}
+
+	private void updateWorkOrdersinP6() {
+		if(mapOfExecutionPackageWOP6 != null){
+			List<ExecutionPackageDTO> executionPackagestoCreate = new ArrayList<ExecutionPackageDTO>();
+			mapOfExecutionPackageWOP6.forEach((executionPkgName, workOrders) -> {
+				ExecutionPackageDTO dto = new ExecutionPackageDTO();
+					dto.setExctnPckgName(executionPkgName);
+					dto.setWorkOrders(workOrders);
+					executionPackagestoCreate.add(dto);
+				});
+			executionPackageservice.setExecutionPackageDTDOFoP6(executionPackagestoCreate);
+			mapOfExecutionPackageWOP6.clear();
+		}
+		
 	}
 
 	private void updateTasksInDB(List<Task> tasksForUpdate) throws P6BusinessException {
@@ -179,17 +200,25 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 		return Boolean.TRUE;
 	}
-
+	/**
+	 * Method to sync work orders between Portal DB and P6.
+	 * @param workOrder
+	 * @param dbTask
+	 * @param tasksForUpdate
+	 * @return
+	 */
 	private WorkOrder prepareWorkOrder(WorkOrder workOrder, Task dbTask, List<Task> tasksForUpdate) {
 		Date scheduledDateForWorkOrder = dateUtils.toDateFromYYYY_MM_DD(workOrder.getScheduleDate());
 		Date scheduledDateInTask = dbTask.getSchdDt();
-		String crewAssignedForWorkOrder = workOrder.getCrewNames() == null ?"":workOrder.getCrewNames();
-		String crewAssignedForTask = dbTask.getCrewId() == null ?"":dbTask.getCrewId();
+		String crewAssignedForWorkOrder = workOrder.getCrewNames() == null ? "" : workOrder.getCrewNames();
+		String crewAssignedForTask = dbTask.getCrewId() == null ? "" : dbTask.getCrewId();
 		String leadCrewWorkOrder = workOrder.getLeadCrew() == null ? "" : workOrder.getLeadCrew();
 		String leadCrewForTask = dbTask.getLeadCrewId() == null ? "" : dbTask.getLeadCrewId();
-		
+
 		WorkOrder workOrderNew = new WorkOrder();
+		logger.debug("work order id in workorder returned from P6 =={}", workOrder.getWorkOrderId());
 		workOrderNew.setWorkOrders(workOrder.getWorkOrders());
+		logger.debug("work orders in workorder returned from P6 =={}", workOrder.getWorkOrders());
 		workOrderNew.setCrewNames(crewAssignedForWorkOrder);
 		workOrderNew.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
 		workOrderNew.setActioned(dbTask.getActioned());
@@ -197,6 +226,19 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrderNew.setLeadCrew(leadCrewWorkOrder);
 		if (dbTask.getExecutionPackage() != null) {
 			workOrderNew.setExctnPckgName(dbTask.getExecutionPackage().getExctnPckgNam());
+			if (workOrder.getExctnPckgName() == null) { //not present in p6 so create
+				if (mapOfExecutionPackageWOP6.containsKey(dbTask.getExecutionPackage().getExctnPckgNam())) {
+					mapOfExecutionPackageWOP6.get(dbTask.getExecutionPackage().getExctnPckgNam()).add(workOrder);
+				} else {
+					List<WorkOrder> workorders = new ArrayList<WorkOrder>();
+					workorders.add(workOrder);
+					mapOfExecutionPackageWOP6.put(dbTask.getExecutionPackage().getExctnPckgNam(), workorders);
+				}
+			}
+		} else { // not present in portal so delete from p6
+			if (workOrder.getExctnPckgName() != null) {
+				executionPackageservice.getWorkOrdersForExcnPkgDelP6().add(workOrder.getWorkOrderId());
+			}
 		}
 		if (scheduledDateForWorkOrder != null && scheduledDateInTask != null) {
 			if ((scheduledDateForWorkOrder.compareTo(scheduledDateInTask) != 0)
@@ -208,22 +250,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				tasksForUpdate.add(dbTask);
 			}
 		}
-		
-		/*
-		 * TODO : code is commented for retrieving extra work orders 
-		 * those are present in execution package
-		 * List<String> workOrderNamesinGroup = new ArrayList<String>();
-
-		 * if (dbTask.getExecutionPackage() != null) {
-			Set<Task> tasks = dbTask.getExecutionPackage().getTasks();
-			workOrderNew.setExctnPckgName(dbTask.getExecutionPackage().getExctnPckgNam());
-			for (Task dbTaskTemp : tasks) {
-				workOrderNamesinGroup.add(dbTaskTemp.getTaskId());
-			}
-		} else {
-			workOrderNamesinGroup = workOrder.getWorkOrders();
-		}*/
-
 		return workOrderNew;
 
 	}
@@ -238,6 +264,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		if (executionPackage != null) {
 			Set<Task> tasks = executionPackage.getTasks();
 			StringBuilder crewPresent = new StringBuilder();
+			boolean isStatusUpdated = false;
 			if (tasks != null) {
 				for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext();) {
 					Task taskAttahced = (Task) iterator.next();
@@ -255,6 +282,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 										executionPackageName);
 								taskAttahced.setExecutionPackage(null);
 								tasksForUpdate.add(taskAttahced);
+								isStatusUpdated = true;
 							} else {
 								crewPresent.append(crewAssignedToTask);
 							}
@@ -263,8 +291,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				}
 				if (!StringUtils.contains(crewPresent, executionPackage.getLeadCrewId())) {
 					executionPackage.setLeadCrewId("");
+					isStatusUpdated = true;
 				}
-				executionPackageDao.createOrUpdateExecPackage(executionPackage);
+				if(isStatusUpdated){
+					executionPackageDao.createOrUpdateExecPackage(executionPackage);
+				}
 			}
 		}
 			
