@@ -3,6 +3,8 @@
  */
 package au.com.wp.corp.p6.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -21,11 +23,16 @@ import au.com.wp.corp.p6.dto.ErrorResponse;
 @RestControllerAdvice
 public class P6ControllerAdvice {
 	
+	private static final Logger logger = LoggerFactory.getLogger(P6ControllerAdvice.class);
+	
 	@Autowired
 	private Environment environment; 
 	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> exceptionHandler(Exception ex) {
+		
+		logger.error("The following error occurred: ", ex);
+		
 		ErrorResponse error = new ErrorResponse();
 		error.setErrorCode(ex.getMessage().split(":")[1].trim());
 		error.setErrorMessage(environment.getProperty(ex.getMessage().split(":")[1].trim()));

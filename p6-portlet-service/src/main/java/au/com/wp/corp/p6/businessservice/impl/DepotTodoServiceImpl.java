@@ -47,7 +47,7 @@ import au.com.wp.corp.p6.utils.DateUtils;
 @Service
 public class DepotTodoServiceImpl implements DepotTodoService {
 	
-	private static final Logger logger = LoggerFactory.getLogger(P6SchedulingBusinessServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(DepotTodoServiceImpl.class);
 	
 	@Autowired
 	WorkOrderDAO workOrderDAO;
@@ -336,16 +336,20 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 						existingToDos.add(dbToDo);
 					}
 					else{
-						logger.debug("Todo in request do not exists in DB, needs to be added  #{} ", reqToDoNeedsToDeAdded.getToDoName());
-						BigDecimal todoId = todoDAO.getToDoId(reqToDo.getToDoName());
-						if(null == todoId){
-							//create new TODO
-							TodoTemplate newToDo = addTodo(reqToDo);
+						if (reqToDoNeedsToDeAdded.getWorkOrders().contains(updatedTask.getTaskId())) {
+							logger.debug("Todo in request do not exists in DB, needs to be added  #{} ", reqToDoNeedsToDeAdded.getToDoName());
+							BigDecimal todoId = todoDAO.getToDoId(reqToDo.getToDoName());
+							if(null == todoId){
+								//create new TODO
+								logger.debug("Todo Id is null and hence creating new  #{} ", todoId);
+								TodoTemplate newToDo = addTodo(reqToDo);
+								todoId = new BigDecimal(newToDo.getId().getTodoId());
+							}
+							TodoAssignment todoAssignment = new TodoAssignment();
+							todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
+							todoAssignment.getTodoAssignMentPK().setTodoId(todoId);
+							newToDos.add(todoAssignment);
 						}
-						TodoAssignment todoAssignment = new TodoAssignment();
-						todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
-						todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(reqToDoNeedsToDeAdded.getToDoName()));
-						newToDos.add(todoAssignment);
 					}
 				}
 				else{					
@@ -354,10 +358,11 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					if(null == todoId){
 						//create new TODO
 						TodoTemplate newToDo = addTodo(reqToDo);
+						todoId = new BigDecimal(newToDo.getId().getTodoId());
 					}
 					TodoAssignment todoAssignment = new TodoAssignment();
 					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
-					todoAssignment.getTodoAssignMentPK().setTodoId(todoDAO.getToDoId(reqToDo.getToDoName()));
+					todoAssignment.getTodoAssignMentPK().setTodoId(todoId);
 					newToDos.add(todoAssignment);
 				}
 			}
@@ -378,6 +383,19 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				}
 			}
 			updatedTask.getTodoAssignments().addAll(newToDos);
+		}
+		else{
+			dBToDos= updatedTask.getTodoAssignments();
+			if(null != dBToDos){
+				
+				for (TodoAssignment allDbToDo : dBToDos){
+						logger.debug("TODO to be deleted from DB=={}", allDbToDo.getTodoAssignMentPK().getTodoId());
+						deleteToDos.add(allDbToDo);
+				}
+				for (TodoAssignment deleteDbToDo : deleteToDos){
+					updatedTask.getTodoAssignments().remove(deleteDbToDo);
+				}
+			}
 		}
 		
 
@@ -444,6 +462,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	}
 	
 	private TodoTemplate addTodo(ToDoItem item) throws P6BusinessException {
+		logger.debug("inside addTodo ");
 		TodoTemplate todoTemplate = new TodoTemplate();
 		todoTemplate.setCrtdTs(new Timestamp(System.currentTimeMillis()));
 		todoTemplate.setCrtdUsr("N039603");
@@ -452,7 +471,8 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		todoTemplate.setTmpltDesc(item.getToDoName());
 		todoTemplate.setTodoNam(item.getToDoName());
 		todoTemplate.setTypId(new BigDecimal(2));
-		List<TodoTemplate> lastRecFromDB = todoDAO.fetchToDoForGratestToDoId();
+		/*List<TodoTemplate> lastRecFromDB = todoDAO.fetchToDoForGratestToDoId();
+		logger.debug("lastRecFromDB>>>{} ", lastRecFromDB);
 		if(null != lastRecFromDB && lastRecFromDB.size()>0 ){
 			if(null != lastRecFromDB.get(0).getId()){
 				long toDoId = lastRecFromDB.get(0).getId().getTodoId();
@@ -470,7 +490,11 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		else{
 			todoTemplate.getId().setTodoId((long) Math.random());
 			todoTemplate.getId().setTmpltId(2);
-		}
+		}*/
+		todoTemplate.getId().setTodoId(todoDAO.getMaxToDoId() + 1);
+		todoTemplate.getId().setTmpltId(2);
+		
+		logger.debug("ToDo Id and Template Id>>>{} , {]", todoTemplate.getId().getTodoId(), todoTemplate.getId().getTmpltId());
 		todoDAO.createToDo(todoTemplate);
 		return todoTemplate;
 	}

@@ -52,7 +52,7 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 					if(!wo.toDoItems)
 						wo.toDoItems = [];
 						
-					wo.toDoItems.push({toDoName:todo, workOrders:[wo.workOrders[0]]});
+					wo.toDoItems.push({toDoName:todo, typeId: 1, workOrders:[wo.workOrders[0]]});
 					console.log('WO after adding To Do: ' + JSON.stringify(wo));
 				}
 				if (angular.isDefined(wo.workOrderIdDisplayArray) 
@@ -244,7 +244,7 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 		if(angular.isDefined(workOrder)
 				&& angular.isDefined(workOrder.toDoItems)) {
 			for (var i = 0; i< workOrder.toDoItems.length; i++) {
-				todoMap[workOrder.toDoItems[i].todoName] = workOrder.toDoItems[i].workOrders;
+				todoMap[workOrder.toDoItems[i].toDoName] = workOrder.toDoItems[i].workOrders;
 			}
 			workOrder.todoMap = todoMap;
 		}
@@ -252,23 +252,29 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 	}
 	
 	ctrl.populateToDoItemsFromMap = function(workOrder) {
-		var upodatedToDoItems = [];
+		var updatedToDoItems = [];
 		if (angular.isDefined(workOrder.toDoItems)) {
 			for (var i = 0; i < workOrder.toDoItems.length; i++) {
-				var workOrders = workOrder.todoMap[workOrder.toDoItems[i].todoName];
+				if (angular.isDefined(workOrder.toDoItems[i].typeId) 
+						&& workOrder.toDoItems[i].typeId === 1) {
+					updatedToDoItems.push(workOrder.toDoItems[i]);
+					continue;
+				}
+
+				var workOrders = workOrder.todoMap[workOrder.toDoItems[i].toDoName];
 				if (angular.isDefined(workOrders)
 						&& workOrders.length > 0) {
 					workOrder.toDoItems[i].workOrders = workOrders;
-					upodatedToDoItems.push(toDoItems[i]);
-					delete workOrder.todoMap[toDoItems[i].todoName];
+					updatedToDoItems.push(workOrder.toDoItems[i]);
+					delete workOrder.todoMap[workOrder.toDoItems[i].toDoName];
 				} 
 			}
 		}
 		
 		for(var todo in workOrder.todoMap) {
-			upodatedToDoItems.push({todoName:todo, workOrders:workOrder.todoMap[todo]});
+			updatedToDoItems.push({toDoName:todo, workOrders:workOrder.todoMap[todo]});
 		}
-		workOrder.toDoItems = upodatedToDoItems;
+		workOrder.toDoItems = updatedToDoItems;
 	}
 	
 	ctrl.populateDepotToDo = function(todoMap, workOrder) {
