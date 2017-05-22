@@ -19,6 +19,11 @@ public class ActivitySearchRequest {
 	 * planned start date
 	 */
 	private String plannedStartDate;
+	
+	/**
+	 * planned start date
+	 */
+	private String plannedEndDate;
 	/**
 	 * work order id
 	 */
@@ -95,6 +100,12 @@ public class ActivitySearchRequest {
 		this.depotList = depotList;
 	}
 
+	public String getPlannedEndDate() {
+		return plannedEndDate;
+	}
+	public void setPlannedEndDate(String plannedEndDate) {
+		this.plannedEndDate = plannedEndDate;
+	}
 	@Override
 	public boolean equals (Object obj) {
 		if ( obj instanceof ActivitySearchRequest) {

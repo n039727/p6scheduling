@@ -384,6 +384,19 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			}
 			updatedTask.getTodoAssignments().addAll(newToDos);
 		}
+		else{
+			dBToDos= updatedTask.getTodoAssignments();
+			if(null != dBToDos){
+				
+				for (TodoAssignment allDbToDo : dBToDos){
+						logger.debug("TODO to be deleted from DB=={}", allDbToDo.getTodoAssignMentPK().getTodoId());
+						deleteToDos.add(allDbToDo);
+				}
+				for (TodoAssignment deleteDbToDo : deleteToDos){
+					updatedTask.getTodoAssignments().remove(deleteDbToDo);
+				}
+			}
+		}
 		
 
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());

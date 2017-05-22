@@ -87,6 +87,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
 		searchRequest.setCrewList(input.getCrewList());
 		searchRequest.setPlannedStartDate(dateUtils.convertDate(input.getFromDate()));
+		searchRequest.setPlannedEndDate(dateUtils.convertDate(input.getToDate()));
 		searchRequest.setWorkOrder(input.getWorkOrderId());
 		searchRequest.setDepotList(input.getDepotList());
 		List<WorkOrder> workOrders = p6wsClient.searchWorkOrder(searchRequest);
@@ -274,28 +275,34 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			if (tasks != null) {
 				for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext();) {
 					Task taskAttahced = (Task) iterator.next();
-					Date plannedStartDate = taskAttahced.getSchdDt();
+					Date plannedStartDate = null;
+					if(taskAttahced.getSchdDt() != null){
+						plannedStartDate = dateUtils.toDateFromYYYY_MM_DD(taskAttahced.getSchdDt().toString());
+					}
 					String crewAssignedToTask = taskAttahced.getCrewId();
 					logger.debug("crew assigned to this task{}", crewAssignedToTask);
 					String executionPackageName = executionPackage.getExctnPckgNam();
 					//if (strNames != null) {
-						Date dateOfExectnPkg = executionPackage.getScheduledStartDate();
+						Date dateOfExectnPkg = null;
+						if(executionPackage.getScheduledStartDate() != null){
+							dateOfExectnPkg = dateUtils.toDateFromYYYY_MM_DD(executionPackage.getScheduledStartDate().toString());
+						}
 						logger.debug("planned start date {} for task {}", plannedStartDate, taskAttahced.getTaskId());
 						logger.debug("date {} for package  {}", dateOfExectnPkg, executionPackageName);
-						if(plannedStartDate != null){
+						if(plannedStartDate != null && dateOfExectnPkg != null){
 							if (dateOfExectnPkg.compareTo(plannedStartDate) != 0) {
 								logger.debug("removing task {} from execution package", taskAttahced.getTaskId(),
 										executionPackageName);
 								taskAttahced.setExecutionPackage(null);
 								tasksForUpdate.add(taskAttahced);
-								isStatusUpdated = true;
 							} else {
 								crewPresent.append(crewAssignedToTask);
 							}
 						}
 
 				}
-				if (!StringUtils.contains(crewPresent, executionPackage.getLeadCrewId())) {
+				String executionPkgLeadCrew = executionPackage.getLeadCrewId() == null ? "" :executionPackage.getLeadCrewId();
+				if ((!executionPkgLeadCrew.equals("")) && (!StringUtils.contains(crewPresent, executionPkgLeadCrew))) {
 					executionPackage.setLeadCrewId("");
 					isStatusUpdated = true;
 				}
@@ -565,20 +572,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			return;
 		}
 		
-		
-		/*Set<TodoAssignment> updatedToDoSet = updateToDoSet(workOrder, updatedTask);
-		
-		Set<TodoAssignment> currentSet = updatedTask.getTodoAssignments();
-		if(null != currentSet){
-			for (TodoAssignment todoAssignment : currentSet) {
-				if (updatedToDoSet.contains(todoAssignment)) {
-					updatedToDoSet.remove(todoAssignment);
-					updatedToDoSet.add(todoAssignment);
-				}
-			}
-		}*/
-		//updatedTask.setTodoAssignments(updatedToDoSet);
-		
 		List<ToDoItem> requestToDos = workOrder.getToDoItems();
 		Set<TodoAssignment> newToDos =  new HashSet<>();
 		Set<TodoAssignment> deleteToDos =  new HashSet<>();
@@ -647,6 +640,19 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			}
 			updatedTask.getTodoAssignments().addAll(newToDos);
 		}
+		else{
+			dBToDos= updatedTask.getTodoAssignments();
+			if(null != dBToDos){
+				
+				for (TodoAssignment allDbToDo : dBToDos){
+						logger.debug("TODO to be deleted from DB=={}", allDbToDo.getTodoAssignMentPK().getTodoId());
+						deleteToDos.add(allDbToDo);
+				}
+				for (TodoAssignment deleteDbToDo : deleteToDos){
+					updatedTask.getTodoAssignments().remove(deleteDbToDo);
+				}
+			}
+		}
 		
 
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
@@ -654,22 +660,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		
 	}
 
-	private Set<TodoAssignment> updateToDoSet(WorkOrder workOrder, Task task) {
-		// TODO Auto-generated method stub
-		Set<TodoAssignment> todoAssignments = new HashSet<TodoAssignment>();
-		for (ToDoItem todoItem : workOrder.getToDoItems()) {
-			if (todoItem.getWorkOrders().contains(task.getTaskId())) {
-				TodoAssignment assignment = new TodoAssignment();
-				assignment.getTodoAssignMentPK().setTask(task);
-				BigDecimal todoId = todoDAO.getToDoId(todoItem.getToDoName());
-				assignment.getTodoAssignMentPK().setTodoId(todoId);
-				todoAssignments.add(assignment);
-			}
-		}
-		
-		return todoAssignments;
-	}
-
+	
 	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder, String workOrderId) {
 		// create new Task if not there in DB
 		if (dbTask == null) {

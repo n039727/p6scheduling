@@ -62,7 +62,7 @@ public class Task implements Serializable {
 	private Date schdDt;
 
 	//bi-directional many-to-one association to ExecutionPackage
-	@ManyToOne/*(cascade=CascadeType.ALL)*/
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="EXCTN_PCKG_ID")
 	private ExecutionPackage executionPackage;
 
