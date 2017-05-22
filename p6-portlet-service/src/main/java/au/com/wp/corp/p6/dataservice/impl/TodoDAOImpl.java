@@ -138,6 +138,7 @@ public class TodoDAOImpl implements TodoDAO {
 		synchronized (lock) {
 			maxPk = todoTemplate.getId().getTodoId();
 			toDoNameMap.put(todoTemplate.getTodoNam(), todoTemplate);
+			toDoMap.put(todoTemplate.getId().getTodoId(), todoTemplate);
 			logger.debug("Setting Max pk after adding new to do: " + maxPk);
 		}
 		return status;

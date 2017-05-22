@@ -160,7 +160,7 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) 
 			ctrl.workOrders = [ event.eventData ];
 			ctrl.resultVisible = true;
 			ctrl.savedMsgVisible = false;
-		} else if (if (event && event.eventId === 'DEPOT_TODO_SAVED') {
+		} else if (event && event.eventId === 'DEPOT_TODO_SAVED') {
 			var config = {
 				method : 'GET',
 				url : "/p6-portal-service/scheduler/fetchMetadata"
@@ -170,7 +170,7 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) 
 					metadata.crewList = response.data.crews;
 					metadata.todoList = response.data.toDoItems;
 				}, null);
-		})
+		}
 	}
 	
 	restTemplate.callService({

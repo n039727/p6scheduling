@@ -5,31 +5,31 @@ function dynamicToDoSetterController($scope) {
 	var ctrl = this;
 	// Create Column Groups
 	ctrl.init = function() {
-	  console.log("[DEBUG] Current Map changed");
-	  if (angular.isDefined(ctrl.columns)) {
-  		console.log("[DEBUG] Number of columns in dynamic to do setter: " + ctrl.columns);
-  		ctrl.columnGroup = [];
-  		for (var i = 0; i < ctrl.columns; i++) { 
-  			ctrl.columnGroup.push([]);
-  		}
-  	}
+		console.log("[DEBUG] Current Map changed");
+		if (angular.isDefined(ctrl.columns)) {
+			console.log("[DEBUG] Number of columns in dynamic to do setter: " + ctrl.columns);
+			ctrl.columnGroup = [];
+			for (var i = 0; i < ctrl.columns; i++) { 
+				ctrl.columnGroup.push([]);
+			}
+		}
   	
   	// Create rows from to do maps
-  	if (angular.isDefined(ctrl.currentMap)) { 
-  		var index = 0;
-  		for(var todo in ctrl.currentMap) {
-  			ctrl.columnGroup[index%ctrl.columns].push({
-  			    todoName:todo, 
-  			    enabled:ctrl.currentMap[todo] ? ctrl.currentMap[todo].length > 0:false, 
-  			    workOrders:ctrl.currentMap[todo], 
-  			    isNewItem:false
-  			});
-  			ctrl.removeToDo(ctrl.toDos, todo);
-  			index++;
-  		}
-  		console.log("[DEBUG] Current Map: " + JSON.stringify(ctrl.currentMap)); 
-  		console.log("[DEBUG] Column Group: " + JSON.stringify(ctrl.columnGroup)); 
-  	}
+		if (angular.isDefined(ctrl.currentMap)) { 
+			var index = 0;
+			for(var todo in ctrl.currentMap) {
+				ctrl.columnGroup[index%ctrl.columns].push({
+					todoName:todo, 
+					enabled:ctrl.currentMap[todo] ? ctrl.currentMap[todo].length > 0:false, 
+					workOrders:ctrl.currentMap[todo], 
+					isNewItem:false
+				});
+				ctrl.removeToDo(ctrl.toDos, todo);
+				index++;
+			}
+			console.log("[DEBUG] Current Map: " + JSON.stringify(ctrl.currentMap)); 
+			console.log("[DEBUG] Column Group: " + JSON.stringify(ctrl.columnGroup)); 
+		}
 	}
 	
 	ctrl.removeToDo = function(todoList, todo) {
