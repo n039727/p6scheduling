@@ -138,7 +138,8 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) 
 		// }
 		ctrl.reload(query, function(data) {
 			ctrl.workOrders = data;
-			ctrl.resultVisible = true;
+			ctrl.resultVisible = data.length > 0;
+			console.log('ctrl.resultVisible:' + JSON.stringify(ctrl.resultVisible));
 			ctrl.savedMsgVisible = false;
 		});
 	};

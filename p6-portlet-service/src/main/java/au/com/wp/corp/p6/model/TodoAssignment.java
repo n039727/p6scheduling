@@ -146,5 +146,36 @@ public class TodoAssignment implements Serializable {
 		this.suprtngDocLnk = suprtngDocLnk;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((todoAssignMentPK == null) ? 0 : todoAssignMentPK.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TodoAssignment other = (TodoAssignment) obj;
+		if (todoAssignMentPK == null) {
+			if (other.todoAssignMentPK != null)
+				return false;
+		} else if (!todoAssignMentPK.equals(other.todoAssignMentPK))
+			return false;
+		return true;
+	}
+
 
 }

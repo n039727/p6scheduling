@@ -1,4 +1,4 @@
-<div class="panel query-result-panel panel-primary col-md-10" ng-show="$ctrl.visible">
+<div class="panel query-result-panel panel-primary col-md-10" ng-show="$ctrl.visible == true">
 	<div class="panel-body result-container">
 		<scheduling-to-do-result ng-if="$ctrl.activeContext == 'ADD_SCHEDULING_TODO'" data="$ctrl.data" metadata="$ctrl.metadata" handle-data-change="$ctrl.onDataChange(event)"></scheduling-to-do-result>
 		<view-to-do-result active-context="$ctrl.activeContext" ng-if="$ctrl.activeContext == 'VIEW_TODO_STATUS' || $ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'" data="$ctrl.data" handle-data-change="$ctrl.onDataChange(event)"></view-to-do-result>

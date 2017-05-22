@@ -37,7 +37,6 @@ import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.impl.TaskDAOImpl;
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
-import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -402,7 +401,6 @@ public class P6SchedulingBusinessServiceTest {
 			Assert.assertEquals("W11", _workOrder.getWorkOrders().get(0));
 			Assert.assertEquals("CRW1", _workOrder.getCrewNames());
 			System.out.println("exec pakg "+_workOrder.getExctnPckgName());
-			//Assert.assertNull(_workOrder.getExctnPckgName());
 			Assert.assertEquals("28-04-2017_12345678", _workOrder.getExctnPckgName());
 		}
 
@@ -451,7 +449,7 @@ public class P6SchedulingBusinessServiceTest {
 		for (WorkOrder _workOrder : workOrders) {
 			Assert.assertEquals("W11", _workOrder.getWorkOrders().get(0));
 			Assert.assertEquals("CRW1", _workOrder.getCrewNames());
-			Assert.assertEquals(null, _workOrder.getExctnPckgName());
+			Assert.assertEquals("", _workOrder.getExctnPckgName());
 		}
 
 	}

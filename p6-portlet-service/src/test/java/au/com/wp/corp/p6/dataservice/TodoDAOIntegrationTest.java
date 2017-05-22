@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.dataservice.impl.TodoDAOImpl;
 import au.com.wp.corp.p6.model.TodoTemplate;
+import au.com.wp.corp.p6.model.TodoTemplatePK;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
 /**
@@ -59,13 +60,65 @@ public class TodoDAOIntegrationTest {
 			Assert.assertNotNull(todoTemplate.getTodoNam());
 			Assert.assertNotNull(todoTemplate.getCrtdTs());
 			Assert.assertNotNull(todoTemplate.getLstUpdtdTs());
-			//Assert.assertNotNull(todoTemplate.getTmpltId());
 			Assert.assertNotNull(todoTemplate.getId().getTmpltId());
-			//Assert.assertNotNull(todoTemplate.getTodoId());
 			Assert.assertNotNull(todoTemplate.getId().getTodoId());
 
 		}
 
 	}
+	
+	/**
+	 * test case to verify whether application able to fetch the latest record 
+	 * to increment the value of the ID fields
+	 * value
+	 */
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFetchToDoForGratestToDoId() {
+		List<TodoTemplate> todoTemps = todoDAOImpl.fetchToDoForGratestToDoId();
+		Assert.assertNotNull(todoTemps);
+		for (TodoTemplate todoTemplate : todoTemps) {
+			Assert.assertNotNull(todoTemplate);
+			Assert.assertNotNull(todoTemplate.getCrtdUsr());
+			Assert.assertNotNull(todoTemplate.getLstUpdtdUsr());
+			Assert.assertNotNull(todoTemplate.getTmpltDesc());
+			Assert.assertNotNull(todoTemplate.getTodoNam());
+			Assert.assertNotNull(todoTemplate.getCrtdTs());
+			Assert.assertNotNull(todoTemplate.getLstUpdtdTs());
+			Assert.assertNotNull(todoTemplate.getId().getTodoId());
+			Assert.assertNotNull(todoTemplate.getId().getTmpltId());
+		}
+
+	}
+	
+	/**
+	 * test case to verify whether application able to fetch the latest record 
+	 * to increment the value of the ID fields
+	 * value
+	 */
+	/*@Test
+	@Transactional
+	@Rollback(true)
+	public void testCreateToDo() {
+		
+		TodoTemplate todoTemplate = new TodoTemplate();
+		TodoTemplatePK todoTemplatePK = new TodoTemplatePK();
+		List<TodoTemplate> todoTemps = todoDAOImpl.fetchToDoForGratestToDoId();
+		Assert.assertNotNull(todoTemps);
+		for (TodoTemplate todoTemplate : todoTemps) {
+			Assert.assertNotNull(todoTemplate);
+			Assert.assertNotNull(todoTemplate.getCrtdUsr());
+			Assert.assertNotNull(todoTemplate.getLstUpdtdUsr());
+			Assert.assertNotNull(todoTemplate.getTmpltDesc());
+			Assert.assertNotNull(todoTemplate.getTodoNam());
+			Assert.assertNotNull(todoTemplate.getCrtdTs());
+			Assert.assertNotNull(todoTemplate.getLstUpdtdTs());
+			Assert.assertNotNull(todoTemplate.getId().getTodoId());
+			Assert.assertNotNull(todoTemplate.getId().getTmpltId());
+
+		}
+
+	}*/
 	
 }
