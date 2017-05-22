@@ -28,7 +28,7 @@
 	</servlet-mapping>
 	
 	
-	<!-- <filter>
+	<filter>
 		<filter-name>AuthFilter</filter-name>
 		<filter-class>au.com.wp.corp.p6.scheduling.auth.WebAuthFilter</filter-class>
 	</filter>
@@ -90,5 +90,5 @@
 	</security-constraint>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
-	</welcome-file-list> -->
+	</welcome-file-list>
 </web-app>
