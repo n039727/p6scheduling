@@ -344,7 +344,6 @@ public class P6WSClientImpl implements P6WSClient {
 	public Boolean removeExecutionPackage(List<String> workOrderIds)
 			throws P6ServiceException {
 		logger.info("Calling udfvalue service in P6 Webservice to de link execution package...");
-		Boolean retVal = Boolean.FALSE;
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
 		if (null == workOrderIds) {
@@ -362,6 +361,6 @@ public class P6WSClientImpl implements P6WSClient {
 		final UDFValueServiceCall<Boolean> deleteUdfservice = new DeleteUDFValueServiceCall(trackingId, udfServiceWSDL, objectIds);
 		final Holder<Boolean> isDeleted = deleteUdfservice.run();
 		
-		return retVal = isDeleted.value;
+		return isDeleted.value;
 	}
 }
