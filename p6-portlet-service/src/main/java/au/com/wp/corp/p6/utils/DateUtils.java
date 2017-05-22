@@ -22,7 +22,7 @@ public class DateUtils {
 	private  final Logger logger = LoggerFactory.getLogger(DateUtils.class);
 	private final  SimpleDateFormat DATE_FORMAT_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 	
-	private final  SimpleDateFormat DATE_FORMAT_DD_MM_YYYY = new SimpleDateFormat("dd-MM-yyyy");
+	private final  SimpleDateFormat DATE_FORMAT_DD_MM_YYYY = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private final  SimpleDateFormat DATE_FORMAT_DD_MM_YYYY_TIMESTAMP = new SimpleDateFormat("dd-MM-yyyy_hhmmssMs");
 	
@@ -41,6 +41,17 @@ public class DateUtils {
 	
 	public String convertDateDDMMYYYY ( String date )  {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		Date d = new Date();
+		try {
+			d = sdf.parse(date);
+		} catch (ParseException e) {
+			logger.error("Exception while convertDate>>{}", e);
+		}
+		
+		return DATE_FORMAT_DD_MM_YYYY.format(d);
+	}
+	public String convertDateDDMMYYYY ( String date ,String separator)  {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd"+separator+"MM"+separator+"yyyy");
 		Date d = new Date();
 		try {
 			d = sdf.parse(date);
@@ -86,5 +97,4 @@ public class DateUtils {
 		}
 		return dt;
 	}
-	
 }

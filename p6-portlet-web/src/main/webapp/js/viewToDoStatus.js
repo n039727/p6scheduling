@@ -146,7 +146,7 @@ function viewToDoStatusController($scope,restTemplate) {
 				for (var i =0; i<wo.todoAssignments.length; i++) {
 					console.log("req by date for fetchWOForTODOStatus: " + JSON.stringify(wo.todoAssignments[i].reqByDate));
 					if(angular.isDefined(wo.todoAssignments[i].reqByDate) && wo.todoAssignments[i].reqByDate !== null && wo.todoAssignments[i].reqByDate !== ""){					
-						wo.todoAssignments[i].reqByDt = new Date(wo.todoAssignments[i].reqByDate);
+						wo.todoAssignments[i].reqByDt = new Date(ctrl.formatYYYYMMDate(wo.todoAssignments[i].reqByDate));
 					}
 				}
 			}
@@ -165,7 +165,23 @@ function viewToDoStatusController($scope,restTemplate) {
 			if (day.length < 2) day = '0' + day;
 
 			return [day, month, year].join('/');
-		}
+	}
+	ctrl.formatYYYYMMDate = function(date) {
+		var arr= [];
+		arr = date.split('/');
+		var dateStr = "";
+		dateStr = [arr[2],arr[1],arr[0]].join('-');
+		var d = new Date(dateStr),
+			month = '' + (d.getMonth() + 1),
+			day = '' + d.getDate(),
+			year = d.getFullYear();
+
+		if (month.length < 2) month = '0' + month;
+		if (day.length < 2) day = '0' + day;
+
+		return [year, month, day].join('-');
+	}
+
 	}
 	
 }

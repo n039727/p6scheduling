@@ -224,10 +224,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrderNew.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
 		workOrderNew.setActioned(dbTask.getActioned());
 		workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
-		workOrderNew.setLeadCrew(leadCrewWorkOrder);
+		
 		if (dbTask.getExecutionPackage() != null) {
+			workOrderNew.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
 			workOrderNew.setExctnPckgName(dbTask.getExecutionPackage().getExctnPckgNam());
-			if (workOrder.getExctnPckgName() == null) { //not present in p6 so create
+			if (workOrder.getExctnPckgName() == null) { //not present in p6 so create in p6
 				if (mapOfExecutionPackageWOP6.containsKey(dbTask.getExecutionPackage().getExctnPckgNam())) {
 					mapOfExecutionPackageWOP6.get(dbTask.getExecutionPackage().getExctnPckgNam()).add(workOrder);
 				} else {
@@ -237,6 +238,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				}
 			}
 		} else { // not present in portal so delete from p6
+			workOrderNew.setLeadCrew(leadCrewWorkOrder);
+			workOrderNew.setExctnPckgName("");
 			if (workOrder.getExctnPckgName() != null) {
 				executionPackageservice.getWorkOrdersForExcnPkgDelP6().add(workOrder.getWorkOrderId());
 			}
@@ -247,7 +250,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					|| (!leadCrewWorkOrder.equalsIgnoreCase(leadCrewForTask))) {
 				dbTask.setSchdDt(scheduledDateForWorkOrder);
 				dbTask.setCrewId(crewAssignedForWorkOrder);
-				dbTask.setLeadCrewId(leadCrewWorkOrder);
+				if(dbTask.getExecutionPackage() == null){
+					dbTask.setLeadCrewId(leadCrewWorkOrder);
+				}
 				tasksForUpdate.add(dbTask);
 			}
 		}
@@ -478,6 +483,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			workOrders.add(toDoAssignment.getWorkOrderId());
 			logger.debug("workOrder for this todo = {}",toDoAssignment.getWorkOrderId());
 			String reqByDate = toDoAssignment.getReqByDate() == null ? "" :toDoAssignment.getReqByDate();
+			logger.debug("reqByDate for this todo {}",reqByDate);
 			String strStatus = toDoAssignment.getStatus() == null ? "": toDoAssignment.getStatus();
 			boolean isNotSameReqByDate = requiredByDate.add(reqByDate);
 			logger.debug("isSameReqByDate to be added for this todo {}",isNotSameReqByDate);
@@ -833,7 +839,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	private void mergeToDoAssignment(TodoAssignment assignment, ToDoAssignment assignmentDTO) throws ParseException {
-		if(!"".equalsIgnoreCase(assignmentDTO.getReqByDate())){
+		if(!("".equalsIgnoreCase(assignmentDTO.getReqByDate()))){
+			logger.debug("updating req by date {}",assignmentDTO.getReqByDate());
+			//String reqByDate = dateUtils.convertDateDDMMYYYY(assignmentDTO.getReqByDate(),"/");
 			assignment.setReqdByDt(dateUtils.toDateFromDD_MM_YYYY(assignmentDTO.getReqByDate()));
 		}
 		assignment.setCmts(assignmentDTO.getComment());

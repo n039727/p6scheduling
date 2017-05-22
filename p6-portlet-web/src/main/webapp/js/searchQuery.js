@@ -80,7 +80,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 				ctrl.isValidationErr = false;
 				return true;
 			}
-		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){
+		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS' || ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO'){
 			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == ""){
 				ctrl.showErrorMsg = 'Planned Start From Date is required';
 				ctrl.isValidationErr = true;
@@ -132,6 +132,7 @@ angular.module("todoPortal").component('searchQuery', {
   bindings: {
 	activeContext: '<',
     metadata: '<',
+    visible: '<',
 	search: '&'
   }
 });
