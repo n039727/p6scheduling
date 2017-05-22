@@ -31,6 +31,7 @@ public class TodoDAOImpl implements TodoDAO {
 	private volatile Map<Long, TodoTemplate> toDoMap = null;
 	private volatile Map<String, TodoTemplate> toDoNameMap = null;
 	private Object lock = new Object();
+	private Long maxPk = null;
 	
 	
 	@Transactional
@@ -49,6 +50,11 @@ public class TodoDAOImpl implements TodoDAO {
 						//toDoMap.put(todo.getTodoId().longValue(), todo);
 						toDoMap.put(todo.getId().getTodoId(), todo);
 						toDoNameMap.put(todo.getTodoNam(), todo);
+						if (maxPk == null) {
+							maxPk = todo.getId().getTodoId();
+						} else if (maxPk < todo.getId().getTodoId()) {
+							maxPk = todo.getId().getTodoId();
+						}
 					}
 				}
 			}
@@ -89,6 +95,12 @@ public class TodoDAOImpl implements TodoDAO {
 	}
 	
 	@Override
+	public Long getMaxToDoId() { 
+		logger.debug("Returning Max Pk: " + maxPk);
+		return maxPk;
+	}
+	
+	@Override
 	@Transactional
 	public List<TodoTemplate> fetchToDoForGratestToDoId() {
 
@@ -121,6 +133,13 @@ public class TodoDAOImpl implements TodoDAO {
 		logger.debug("inserted the user define TodoTemplate");
 		getSession().flush();
 		getSession().clear();
+		
+		// update Max To Do Id
+		synchronized (lock) {
+			maxPk = todoTemplate.getId().getTodoId();
+			toDoNameMap.put(todoTemplate.getTodoNam(), todoTemplate);
+			logger.debug("Setting Max pk after adding new to do: " + maxPk);
+		}
 		return status;
 	}
 

@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import au.com.wp.corp.p6.businessservice.DepotTodoService;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -65,6 +68,8 @@ public class DepotController {
 				HttpStatus.OK);
 	}
 	
+	private ObjectMapper mapper = new ObjectMapper();
+	
 	@RequestMapping(value = "/addTodo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
 	@ResponseBody
 	public ResponseEntity<WorkOrder> saveDepotToDo(RequestEntity<WorkOrder> request)
@@ -73,7 +78,12 @@ public class DepotController {
 			logger.error(" Invalid request - {}", request.getBody());
 			throw new P6BaseException("invalid request");
 		}
-		
+		try {
+			logger.debug("The json for save to do depot : {}", mapper.writeValueAsString(request.getBody()));
+		} catch (JsonProcessingException e) {
+			logger.error("Error occurred while printing json ", e);
+			e.printStackTrace();
+		}
 		return new ResponseEntity<WorkOrder>(dpotTodoService.saveDepotToDo(request.getBody()), HttpStatus.OK);
 	}
 

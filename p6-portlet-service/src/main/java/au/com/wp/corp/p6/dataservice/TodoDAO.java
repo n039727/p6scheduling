@@ -14,5 +14,6 @@ public interface TodoDAO extends P6DAOExceptionParser{
 	public Long getTypeId(String todoName);
 	public List<TodoTemplate> fetchToDoForGratestToDoId();
 	public boolean createToDo(TodoTemplate odoTemplate) throws P6DataAccessException;
+	Long getMaxToDoId();
 
 }
