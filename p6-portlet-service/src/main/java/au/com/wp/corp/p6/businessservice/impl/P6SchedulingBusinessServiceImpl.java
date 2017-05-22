@@ -565,20 +565,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			return;
 		}
 		
-		
-		/*Set<TodoAssignment> updatedToDoSet = updateToDoSet(workOrder, updatedTask);
-		
-		Set<TodoAssignment> currentSet = updatedTask.getTodoAssignments();
-		if(null != currentSet){
-			for (TodoAssignment todoAssignment : currentSet) {
-				if (updatedToDoSet.contains(todoAssignment)) {
-					updatedToDoSet.remove(todoAssignment);
-					updatedToDoSet.add(todoAssignment);
-				}
-			}
-		}*/
-		//updatedTask.setTodoAssignments(updatedToDoSet);
-		
 		List<ToDoItem> requestToDos = workOrder.getToDoItems();
 		Set<TodoAssignment> newToDos =  new HashSet<>();
 		Set<TodoAssignment> deleteToDos =  new HashSet<>();
@@ -647,6 +633,19 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			}
 			updatedTask.getTodoAssignments().addAll(newToDos);
 		}
+		else{
+			dBToDos= updatedTask.getTodoAssignments();
+			if(null != dBToDos){
+				
+				for (TodoAssignment allDbToDo : dBToDos){
+						logger.debug("TODO to be deleted from DB=={}", allDbToDo.getTodoAssignMentPK().getTodoId());
+						deleteToDos.add(allDbToDo);
+				}
+				for (TodoAssignment deleteDbToDo : deleteToDos){
+					updatedTask.getTodoAssignments().remove(deleteDbToDo);
+				}
+			}
+		}
 		
 
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
@@ -654,22 +653,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		
 	}
 
-	private Set<TodoAssignment> updateToDoSet(WorkOrder workOrder, Task task) {
-		// TODO Auto-generated method stub
-		Set<TodoAssignment> todoAssignments = new HashSet<TodoAssignment>();
-		for (ToDoItem todoItem : workOrder.getToDoItems()) {
-			if (todoItem.getWorkOrders().contains(task.getTaskId())) {
-				TodoAssignment assignment = new TodoAssignment();
-				assignment.getTodoAssignMentPK().setTask(task);
-				BigDecimal todoId = todoDAO.getToDoId(todoItem.getToDoName());
-				assignment.getTodoAssignMentPK().setTodoId(todoId);
-				todoAssignments.add(assignment);
-			}
-		}
-		
-		return todoAssignments;
-	}
-
+	
 	private Task prepareTaskBean(Task dbTask, WorkOrder workOrder, String workOrderId) {
 		// create new Task if not there in DB
 		if (dbTask == null) {
