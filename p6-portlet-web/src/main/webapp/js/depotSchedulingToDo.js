@@ -244,7 +244,7 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 		if(angular.isDefined(workOrder)
 				&& angular.isDefined(workOrder.toDoItems)) {
 			for (var i = 0; i< workOrder.toDoItems.length; i++) {
-				todoMap(workOrder.toDoItems[i].todoName) = workOrder.toDoItems[i].workOrders;
+				todoMap[workOrder.toDoItems[i].todoName] = workOrder.toDoItems[i].workOrders;
 			}
 			workOrder.todoMap = todoMap;
 		}
@@ -255,12 +255,12 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 		var upodatedToDoItems = [];
 		if (angular.isDefined(workOrder.toDoItems)) {
 			for (var i = 0; i < workOrder.toDoItems.length; i++) {
-				var workOrders = workOrder.todoMap(workOrder.toDoItems[i].todoName);
+				var workOrders = workOrder.todoMap[workOrder.toDoItems[i].todoName];
 				if (angular.isDefined(workOrders)
 						&& workOrders.length > 0) {
 					workOrder.toDoItems[i].workOrders = workOrders;
 					upodatedToDoItems.push(toDoItems[i]);
-					delete workOrder.todoMap(toDoItems[i].todoName);
+					delete workOrder.todoMap[toDoItems[i].todoName];
 				} 
 			}
 		}
