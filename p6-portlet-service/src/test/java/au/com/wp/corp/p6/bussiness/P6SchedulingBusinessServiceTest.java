@@ -354,7 +354,7 @@ public class P6SchedulingBusinessServiceTest {
 		workOrder.setWorkOrders(workOrderIds);
 		workOrder.setWorkOrderId("W11");
 		workOrder.setCrewNames("CRW1");
-		workOrder.setScheduleDate("28/04/2017");
+		workOrder.setScheduleDate("09/05/2017");
 		searchResult.add(workOrder);
 
 		workOrder = new WorkOrder();
@@ -364,16 +364,16 @@ public class P6SchedulingBusinessServiceTest {
 		workOrder.setWorkOrders(workOrderIds);
 		workOrder.setWorkOrderId("W11");
 		workOrder.setCrewNames("CRW1");
-		workOrder.setScheduleDate("28/04/2017");
+		workOrder.setScheduleDate("09/05/2017");
 		searchResult.add(workOrder);
 
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
 		searchRequest.setPlannedStartDate("2017-04-28");
-		Mockito.when(dateUtils.convertDate(Mockito.any())).thenReturn("2017-04-28");
+		Mockito.when(dateUtils.convertDate(Mockito.any())).thenReturn("2017-05-09");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
 		try {
-			Mockito.when(dateUtils.toDateFromDD_MM_YYYY(Mockito.any())).thenReturn(dateFormat.parse("2017-04-28"));
-			Mockito.when(dateUtils.toDateFromYYYY_MM_DD(Mockito.any())).thenReturn(dateFormat.parse("2017-04-28"));
+			Mockito.when(dateUtils.toDateFromDD_MM_YYYY(Mockito.any())).thenReturn(dateFormat.parse("2017-05-09"));
+			Mockito.when(dateUtils.toDateFromYYYY_MM_DD(Mockito.any())).thenReturn(dateFormat.parse("2017-05-09"));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -388,7 +388,7 @@ public class P6SchedulingBusinessServiceTest {
 		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(Mockito.any())).thenReturn(new Date());
 		ExecutionPackage excPckg = new ExecutionPackage();
 		excPckg.setExctnPckgId(123456L);
-		excPckg.setExctnPckgNam("28-04-2017_12345678");
+		excPckg.setExctnPckgNam("09-05-2017_064556556");
 		task.setExecutionPackage(excPckg);
 		Set<Task> tasks = new HashSet<Task>();
 		tasks.add(task);
@@ -401,7 +401,7 @@ public class P6SchedulingBusinessServiceTest {
 			Assert.assertEquals("W11", _workOrder.getWorkOrders().get(0));
 			Assert.assertEquals("CRW1", _workOrder.getCrewNames());
 			System.out.println("exec pakg "+_workOrder.getExctnPckgName());
-			Assert.assertEquals("28-04-2017_12345678", _workOrder.getExctnPckgName());
+			Assert.assertEquals("09-05-2017_064556556", _workOrder.getExctnPckgName());
 		}
 
 	}

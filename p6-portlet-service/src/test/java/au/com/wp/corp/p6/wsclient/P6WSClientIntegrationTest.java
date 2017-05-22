@@ -4,7 +4,6 @@
 package au.com.wp.corp.p6.wsclient;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Assert;

@@ -86,6 +86,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
 		searchRequest.setCrewList(input.getCrewList());
 		searchRequest.setPlannedStartDate(dateUtils.convertDate(input.getFromDate()));
+		searchRequest.setPlannedEndDate(dateUtils.convertDate(input.getToDate()));
 		searchRequest.setWorkOrder(input.getWorkOrderId());
 		searchRequest.setDepotList(input.getDepotList());
 		List<WorkOrder> workOrders = p6wsClient.searchWorkOrder(searchRequest);
@@ -273,28 +274,34 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			if (tasks != null) {
 				for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext();) {
 					Task taskAttahced = (Task) iterator.next();
-					Date plannedStartDate = taskAttahced.getSchdDt();
+					Date plannedStartDate = null;
+					if(taskAttahced.getSchdDt() != null){
+						plannedStartDate = dateUtils.toDateFromYYYY_MM_DD(taskAttahced.getSchdDt().toString());
+					}
 					String crewAssignedToTask = taskAttahced.getCrewId();
 					logger.debug("crew assigned to this task{}", crewAssignedToTask);
 					String executionPackageName = executionPackage.getExctnPckgNam();
 					//if (strNames != null) {
-						Date dateOfExectnPkg = executionPackage.getScheduledStartDate();
+						Date dateOfExectnPkg = null;
+						if(executionPackage.getScheduledStartDate() != null){
+							dateOfExectnPkg = dateUtils.toDateFromYYYY_MM_DD(executionPackage.getScheduledStartDate().toString());
+						}
 						logger.debug("planned start date {} for task {}", plannedStartDate, taskAttahced.getTaskId());
 						logger.debug("date {} for package  {}", dateOfExectnPkg, executionPackageName);
-						if(plannedStartDate != null){
+						if(plannedStartDate != null && dateOfExectnPkg != null){
 							if (dateOfExectnPkg.compareTo(plannedStartDate) != 0) {
 								logger.debug("removing task {} from execution package", taskAttahced.getTaskId(),
 										executionPackageName);
 								taskAttahced.setExecutionPackage(null);
 								tasksForUpdate.add(taskAttahced);
-								isStatusUpdated = true;
 							} else {
 								crewPresent.append(crewAssignedToTask);
 							}
 						}
 
 				}
-				if (!StringUtils.contains(crewPresent, executionPackage.getLeadCrewId())) {
+				String executionPkgLeadCrew = executionPackage.getLeadCrewId() == null ? "" :executionPackage.getLeadCrewId();
+				if ((!executionPkgLeadCrew.equals("")) && (!StringUtils.contains(crewPresent, executionPkgLeadCrew))) {
 					executionPackage.setLeadCrewId("");
 					isStatusUpdated = true;
 				}

@@ -122,7 +122,9 @@ public class P6WSClientImpl implements P6WSClient {
 				filter.append("PlannedStartDate BETWEEN TO_DATE('");
 				filter.append(
 						searchRequest.getPlannedStartDate() + " 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('");
-				filter.append(searchRequest.getPlannedStartDate() + " 23:59:59', 'yyyy-mm-dd hh24:mi:ss')");
+				filter.append((searchRequest.getPlannedEndDate() != null ? searchRequest.getPlannedEndDate() :  searchRequest.getPlannedStartDate()));  
+				filter.append(" 23:59:59', 'yyyy-mm-dd hh24:mi:ss')");
+				
 			}
 		}
 		logger.debug("filter criteria for search # {} ", filter.toString());
