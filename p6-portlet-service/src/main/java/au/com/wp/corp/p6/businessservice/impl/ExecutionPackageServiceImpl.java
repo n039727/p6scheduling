@@ -98,6 +98,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		executionPackage.setLeadCrewId(execPackgDTO.getLeadCrew());
 		final List<WorkOrder> workOrders = execPackgDTO.getWorkOrders();
 		final StringBuilder crewNames = new StringBuilder();
+		final StringBuilder pkgSchedulerCmt = new StringBuilder();
 		Set<ExecutionPackage> executionPackages = new HashSet<>();
 		if (workOrders != null && !workOrders.isEmpty()) {
 			logger.debug("work orders size {}", workOrders.size());
@@ -121,6 +122,9 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 						oldExecutionPackage.getTasks().remove(task);
 						executionPackages.add(oldExecutionPackage);
 					}
+					if(null != task.getCmts()){
+						pkgSchedulerCmt.append(task.getCmts()+ " ");
+					}
 					task.setExecutionPackage(executionPackage);
 					task.setLstUpdtdUsr(userName);
 					task.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
@@ -135,11 +139,15 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					task.setCrtdTs(new Timestamp(System.currentTimeMillis()));
 					task.setLstUpdtdUsr(userName);
 					task.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
+					if(null != task.getCmts()){
+						pkgSchedulerCmt.append(task.getCmts()+ " ");
+					}
 					tasks.add(task);
 				}
 			}
 			executionPackage.setTasks(tasks);
 			execPackgDTO.setCrewNames(crewNames.toString());
+			execPackgDTO.setExecSchdlrCmt(pkgSchedulerCmt.toString());
 			executionPackage.setScheduledStartDate(dateUtils.toDateFromDD_MM_YYYY(scheduledStartDate));
 		}
 
@@ -147,6 +155,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		executionPackage.setCrtdUsr(userName);
 		executionPackage.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
 		executionPackage.setLstUpdtdUsr(userName);
+		executionPackage.setExecSchdlrCmt(pkgSchedulerCmt.toString());
 		executionPackageDao.createOrUpdateExecPackage(executionPackage);
 		executionPackageDao.createOrUpdateTasks(executionPackage.getTasks());
 		updateOldExecutionPackages(executionPackages);

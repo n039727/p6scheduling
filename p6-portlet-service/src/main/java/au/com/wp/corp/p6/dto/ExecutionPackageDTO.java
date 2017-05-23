@@ -8,6 +8,8 @@ public class ExecutionPackageDTO {
 	private String crewNames;
 	private List<WorkOrder> workOrders;
 	private String actioned;
+	private String execSchdlrCmt;
+	private String execDeptCmt;
 	
 	/**
 	 * @return the exctnPckgName
@@ -51,6 +53,30 @@ public class ExecutionPackageDTO {
 	}
 	public void setActioned(String actioned) {
 		this.actioned = actioned;
+	}
+	/**
+	 * @return the execSchdlrCmt
+	 */
+	public String getExecSchdlrCmt() {
+		return execSchdlrCmt;
+	}
+	/**
+	 * @param execSchdlrCmt the execSchdlrCmt to set
+	 */
+	public void setExecSchdlrCmt(String execSchdlrCmt) {
+		this.execSchdlrCmt = execSchdlrCmt;
+	}
+	/**
+	 * @return the execDeptCmt
+	 */
+	public String getExecDeptCmt() {
+		return execDeptCmt;
+	}
+	/**
+	 * @param execDeptCmt the execDeptCmt to set
+	 */
+	public void setExecDeptCmt(String execDeptCmt) {
+		this.execDeptCmt = execDeptCmt;
 	}
 	
 	

@@ -288,7 +288,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		dbTask.setSchdDt(scheduleDate);
 		dbTask.setDepotId(workOrder.getDepotId());
 		dbTask.setMatrlReqRef(workOrder.getMeterialReqRef());
-		if ( null != workOrder.getExctnPckgName()){
+		if (!org.springframework.util.StringUtils.isEmpty(workOrder.getExctnPckgName())){
 			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
 			if(null != executionPackage){
 				dbTask.setExecutionPackage(executionPackage);

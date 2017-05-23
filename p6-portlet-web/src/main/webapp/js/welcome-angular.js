@@ -43,13 +43,13 @@ app.service('restTemplate', function($http) {
 				console.log("Auth Token has been set as " + restTemplate.authToken);
 			}
 			
-			if(angular.isDefined(successCallback)) {
+			if(angular.isDefined(successCallback) || successCallback != null) {
 					successCallback(response);
 			}
 			
 		  }, function(response) {
 				console.log("Error occurred while consuming rest service");
-				if(angular.isDefined(errorCallback)) {
+				if(angular.isDefined(errorCallback) || errorCallback != null) {
 					errorCallback(response);
 				}
 		  });
@@ -160,6 +160,16 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) 
 			ctrl.workOrders = [ event.eventData ];
 			ctrl.resultVisible = true;
 			ctrl.savedMsgVisible = false;
+		} else if (event && event.eventId === 'DEPOT_TODO_SAVED') {
+			var config = {
+				method : 'GET',
+				url : "/p6-portal-service/scheduler/fetchMetadata"
+			};
+			restTemplate.callService(config, function(response) {
+					console.log("Received data from server: " + JSON.stringify(response.data));
+					metadata.crewList = response.data.crews;
+					metadata.todoList = response.data.toDoItems;
+				}, null);
 		}
 	}
 	

@@ -133,7 +133,7 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 			
 		}, null);
 		
-		ctrl.handleDataChange({event:{eventId:'SCHEDULING_TODO_SAVED'}});
+		ctrl.handleDataChange({event:{eventId:'DEPOT_TODO_SAVED'}});
 	};
 	
 	ctrl.updateBindingVarOnSelect= function(wo, todoName) {
@@ -208,13 +208,15 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 			ctrl.toDoBindingVar = {};
 			if (workOrder && workOrder.toDoItems) {
 				for (var i = 0; i< workOrder.toDoItems.length; i++) {
-					var boundWorkOrders = workOrder.toDoItems[i].workOrders;
-					if (angular.isDefined(boundWorkOrders) && angular.isDefined(workOrder) && boundWorkOrders.length == workOrder.workOrders.length) {
-						if (boundWorkOrders.length > 1) {
-								boundWorkOrders = ['ALL'];
+					if (workOrder.toDoItems[i].typeId === 1) {
+						var boundWorkOrders = workOrder.toDoItems[i].workOrders;
+						if (angular.isDefined(boundWorkOrders) && angular.isDefined(workOrder) && boundWorkOrders.length == workOrder.workOrders.length) {
+							if (boundWorkOrders.length > 1) {
+									boundWorkOrders = ['ALL'];
+							}
 						}
+						ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(workOrder, workOrder.toDoItems[i].toDoName)] = boundWorkOrders;
 					}
-					ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(workOrder, workOrder.toDoItems[i].toDoName)] = boundWorkOrders;
 				}
 			}
 			console.log("toDoBindingVar: " + JSON.stringify(ctrl.toDoBindingVar));
