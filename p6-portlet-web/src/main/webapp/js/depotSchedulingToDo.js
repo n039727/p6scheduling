@@ -37,7 +37,7 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 		console.log("Scheduling To Do List: " + JSON.stringify(ctrl.schedulingToDoList));
 		
 		for(i=0; i<ctrl.schedulingToDoList.length;i++) {  
-			if (i < ctrl.metadata.todoList.length/2) 
+			if (i < ctrl.schedulingToDoList.length/2) 
 				ctrl.todoGrp1.push(ctrl.schedulingToDoList[i]);
 			else
 				ctrl.todoGrp2.push(ctrl.schedulingToDoList[i]);
@@ -155,7 +155,7 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 	}
 	
 	ctrl.fetchToDoAgainstWO = function(wo) {
-		serviceUrl = "/p6-portal-service/scheduler/fetchWOForAddUpdateToDo";
+		serviceUrl = "/p6-portal-service/depot/fetchTaskForUpdateTodo";
 		var query = {};
 		if (wo.exctnPckgName) {
 			query.execPckgName = wo.exctnPckgName;
@@ -174,18 +174,6 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 				data: JSON.stringify(query)
 
 			};
-		/*$http(req).then(function (response) {
-			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
-			wo.toDoItems = [];
-			wo.schedulingToDoComment = "";
-			if (response.data[0] && response.data[0].toDoItems) {
-				wo.toDoItems = response.data[0].toDoItems;
-				wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
-			}
-			ctrl.populateToDoBindings(wo, wo.toDoItems);
-			ctrl.populateWorkOrderDisplayList(wo);
-			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
-		});*/
 		
 		restTemplate.callService(req, function (response) {
 			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
@@ -246,7 +234,9 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 		if(angular.isDefined(workOrder)
 				&& angular.isDefined(workOrder.toDoItems)) {
 			for (var i = 0; i< workOrder.toDoItems.length; i++) {
-				todoMap[workOrder.toDoItems[i].toDoName] = workOrder.toDoItems[i].workOrders;
+				if (workOrder.toDoItems[i].typeId === 2) {
+					todoMap[workOrder.toDoItems[i].toDoName] = workOrder.toDoItems[i].workOrders;
+				}
 			}
 			workOrder.todoMap = todoMap;
 		}

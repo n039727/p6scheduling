@@ -21,7 +21,7 @@
 			<td>{{wo.workOrders.join(',')}}</td>
 			<td>{{wo.scheduleDate}}</td>
 			<td>{{wo.crewNames}}</td>
-			<td> {{wo.leadCrew}}</td>
+			<td>{{wo.leadCrew}}</td>
 			<td>{{wo.exctnPckgName}}</td>
 			
 			<td> <span ng-show="wo.actioned == 'Y'">Yes</span>
@@ -31,6 +31,7 @@
 			<td colspan="12" class="hiddenRow">
 				<div class="accordian-body collapse" id="{{'demo-' + wo.workOrders[0]}}">
 					<div class="panel panel-default panel-standard-to-do">
+						<!--
 						<div class="panel-heading panel-standard-to-do-heading"><b>Select Scheduling To-Do</b></div>
 						<div class="panel-body">
 							<div class="col-md-6">
@@ -45,11 +46,6 @@
 											<td>{{todo}}</td>
 											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
 											<td>
-												<!--
-												<select class="form-control" >
-													<option ng-repeat="workOrderId in wo.workOrders" ng-if="$ctrl.calculateEnable(wo, todo)">{{workOrderId}}</option>
-												</select>
-												-->
 												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
 													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
@@ -57,7 +53,6 @@
 													multiple
 													placeholder="Select">
 												</oi-select>
-												<!--<div>{{toDoBindingVar[getWorkOrderToDoKey(wo, todo)]}}</div>-->
 											</td>
 										</tr>
 									</tbody>
@@ -75,9 +70,6 @@
 											<td>{{todo}}</td>
 											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
 											<td>
-												<!--<select class="form-control" >
-													<option ng-if="$ctrl.calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
-												</select>-->
 												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
 													ng-disabled="!$ctrl.calculateEnable(wo, todo)"
@@ -85,7 +77,6 @@
 													multiple
 													placeholder="Select">
 												</oi-select>
-												<!--<div>{{toDoBindingVar[getWorkOrderToDoKey(wo, todo)]}}</div>-->
 											</td>
 										</tr>
 									</tbody>
@@ -96,10 +87,9 @@
 								<textarea class="form-control" rows="3" id="comment-1" ng-model="wo.schedulingToDoComment"></textarea> 
 							</div>
 						</div>
+						-->
 						<div class="panel-heading panel-standard-to-do-heading"><b>Select Depot To-Do</b></div>
 						<div class="panel-body">
-							<!--<dynamic-to-do-setter columns="2" work-orders="wo.workOrders" to-dos="$ctrl.schedulingToDoList" 
-													current-map="$ctrl.createToDoMap(wo)" handle-data-change="$ctrl.populateDepotToDo(map)"></dynamic-to-do-setter>-->
 							<dynamic-to-do-setter columns="2" work-orders="wo.workOrders" to-dos="$ctrl.depotToDoList" current-map="wo.todoMap" handle-data-change="$ctrl.populateDepotToDo(map, wo)">
     
 							<div class="col-md-12">
