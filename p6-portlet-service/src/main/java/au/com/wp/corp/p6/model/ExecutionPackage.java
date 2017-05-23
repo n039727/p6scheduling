@@ -57,6 +57,12 @@ public class ExecutionPackage implements Serializable {
 	
 	@Column(name="SCHD_STRT_DT")
 	private Date scheduledStartDate;
+	
+	@Column(name="EXEC_SCHDLR_CMT")
+	private String execSchdlrCmt = "";
+	
+	@Column(name="EXEC_DEPT_CMT")
+	private String execDeptCmt = "";
 
 	//bi-directional many-to-one association to Task
 	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -201,6 +207,38 @@ public class ExecutionPackage implements Serializable {
 	 */
 	public void setActioned(String actioned) {
 		this.actioned = actioned;
+	}
+
+
+	/**
+	 * @return the execSchdlrCmt
+	 */
+	public String getExecSchdlrCmt() {
+		return execSchdlrCmt;
+	}
+
+
+	/**
+	 * @param execSchdlrCmt the execSchdlrCmt to set
+	 */
+	public void setExecSchdlrCmt(String execSchdlrCmt) {
+		this.execSchdlrCmt = execSchdlrCmt;
+	}
+
+
+	/**
+	 * @return the execDeptCmt
+	 */
+	public String getExecDeptCmt() {
+		return execDeptCmt;
+	}
+
+
+	/**
+	 * @param execDeptCmt the execDeptCmt to set
+	 */
+	public void setExecDeptCmt(String execDeptCmt) {
+		this.execDeptCmt = execDeptCmt;
 	}
 
 	

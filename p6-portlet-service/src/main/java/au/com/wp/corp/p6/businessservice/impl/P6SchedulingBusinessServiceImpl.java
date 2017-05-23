@@ -679,10 +679,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		dbTask.setSchdDt(scheduleDate);
 		dbTask.setDepotId(workOrder.getDepotId());
 		dbTask.setMatrlReqRef(workOrder.getMeterialReqRef());
-		if ( null != workOrder.getExctnPckgName()){
+		if (!org.springframework.util.StringUtils.isEmpty(workOrder.getExctnPckgName())){
 			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
 			if(null != executionPackage){
 				executionPackage.setActioned(ACTIONED_Y);
+				executionPackage.setExecDeptCmt(workOrder.getExecutionPkgComment());
 				dbTask.setExecutionPackage(executionPackage); 
 				dbTask.setActioned(ACTIONED_N);
 			}
