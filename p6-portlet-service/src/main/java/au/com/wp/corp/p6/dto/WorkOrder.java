@@ -22,6 +22,7 @@ public class WorkOrder {
 	
 	private String actioned;
 	private String completed;
+	private String executionPkgComment;
 	
 	
 	
@@ -122,5 +123,18 @@ public class WorkOrder {
 	public void setCompleted(String completed) {
 		this.completed = completed;
 	}
+	/**
+	 * @return the schedulerPkgComment
+	 */
+	public String getExecutionPkgComment() {
+		return executionPkgComment;
+	}
+	/**
+	 * @param schedulerPkgComment the schedulerPkgComment to set
+	 */
+	public void setExecutionPkgComment(String executionPkgComment) {
+		this.executionPkgComment = executionPkgComment;
+	}
+	
 	
 }
