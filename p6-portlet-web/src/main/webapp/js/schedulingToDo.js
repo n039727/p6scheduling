@@ -19,14 +19,39 @@ function schedulingToDoResultController($scope, restTemplate) {
 	};
 	
 	
-	ctrl.todoGrp1 = [];
+	/*ctrl.todoGrp1 = [];
 	ctrl.todoGrp2 = [];
 	if(ctrl.metadata.todoList){
 		for(i=0; i<ctrl.metadata.todoList.length;i++) {  
+		
 			if (i < ctrl.metadata.todoList.length/2) 
 				ctrl.todoGrp1.push(ctrl.metadata.todoList[i].toDoName);
 			else
 				ctrl.todoGrp2.push(ctrl.metadata.todoList[i].toDoName);
+		}
+	}*/
+	
+	ctrl.todoGrp1 = [];
+	ctrl.todoGrp2 = [];
+	ctrl.schedulingToDoList = [];
+	ctrl.depotToDoList = [];
+	
+	if(ctrl.metadata.todoList){
+		for (i=0; i<ctrl.metadata.todoList.length;i++) {
+			console.log("Type Id: " + ctrl.metadata.todoList[i].typeId);
+			if (ctrl.metadata.todoList[i].typeId == 1) {
+				ctrl.schedulingToDoList.push(ctrl.metadata.todoList[i].toDoName);
+			} else {
+				ctrl.depotToDoList.push(ctrl.metadata.todoList[i].toDoName);
+			}
+		}
+		console.log("Scheduling To Do List: " + JSON.stringify(ctrl.schedulingToDoList));
+		
+		for(i=0; i<ctrl.schedulingToDoList.length;i++) {  
+			if (i < ctrl.schedulingToDoList.length/2) 
+				ctrl.todoGrp1.push(ctrl.schedulingToDoList[i]);
+			else
+				ctrl.todoGrp2.push(ctrl.schedulingToDoList[i]);
 		}
 	}
 	
@@ -191,6 +216,7 @@ function schedulingToDoResultController($scope, restTemplate) {
 			if (response.data[0] && response.data[0].toDoItems) {
 				wo.toDoItems = response.data[0].toDoItems;
 				wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
+				wo.executionPkgComment = response.data[0].executionPkgComment;
 			}
 			ctrl.populateToDoBindings(wo, wo.toDoItems);
 			ctrl.populateWorkOrderDisplayList(wo);
