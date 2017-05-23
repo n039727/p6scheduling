@@ -43,7 +43,10 @@
 									<tbody>
 										<tr ng-repeat="todo in $ctrl.todoGrp1">
 											<td>{{todo}}</td>
-											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
+											<td><input type="checkbox" id="{{'enable-' + $ctrl.getWorkOrderToDoKeyForCheckBox(wo,todo)}}" 
+														ng-checked="$ctrl.calculateEnable(wo, todo)" 
+														ng-click="$ctrl.addRemoveTodo($event, wo, todo)">
+											</td>
 											<td>
 												<!--
 												<select class="form-control" >
@@ -73,7 +76,10 @@
 									<tbody>
 										<tr ng-repeat="todo in $ctrl.todoGrp2">
 											<td>{{todo}}</td>
-											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
+											<td><input type="checkbox" id="{{'enable-' + $ctrl.getWorkOrderToDoKeyForCheckBox(wo,todo)}}"
+													   ng-checked="$ctrl.calculateEnable(wo, todo)" 
+													   ng-click="$ctrl.addRemoveTodo($event, wo, todo)">
+											</td>
 											<td>
 												<!--<select class="form-control" >
 													<option ng-if="$ctrl.calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
