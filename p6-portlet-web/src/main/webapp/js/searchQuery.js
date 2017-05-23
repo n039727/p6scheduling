@@ -112,14 +112,19 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	};
 	
 	ctrl.formatDate = function(date) {
+		console.log('date in formatDate of search :' + JSON.stringify(date));
+		if(angular.isDefined(date) && date !== ""){
 		var d = new Date(date),
 		month = '' + (d.getMonth() + 1),
 		day = '' + d.getDate(),
 		year = d.getFullYear();
 		if (month.length < 2) month = '0' + month;
 		if (day.length < 2) day = '0' + day;
-		return [year, month, day].join('-')+'T00:00:00.000Z';;
-	};	
+		return [year, month, day].join('-')+'T00:00:00.000Z';
+		}else {
+		return null;
+		}
+		};
 	
 	this.refresh();
 	

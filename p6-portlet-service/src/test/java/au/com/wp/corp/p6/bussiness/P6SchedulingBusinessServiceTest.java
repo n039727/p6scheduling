@@ -417,7 +417,7 @@ public class P6SchedulingBusinessServiceTest {
 	@Rollback(true)
 	public void testSearch_2() throws P6BusinessException {
 		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
-		request.setFromDate("2017-04-28'T'00:00:00.000Z");
+		request.setFromDate("2017-05-19'T'00:00:00.000Z");
 
 		List<WorkOrder> searchResult = new ArrayList<>();
 
@@ -428,12 +428,12 @@ public class P6SchedulingBusinessServiceTest {
 		workOrder.setWorkOrders(workOrderIds);
 		workOrder.setWorkOrderId("W11");
 		workOrder.setCrewNames("CRW1");
-		workOrder.setScheduleDate("28/04/2017");
+		workOrder.setScheduleDate("19/05/2017");
 		searchResult.add(workOrder);
 
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
-		searchRequest.setPlannedStartDate("2017-04-28");
-		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-04-28");
+		searchRequest.setPlannedStartDate("2017-05-19");
+		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
 		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
 
 		Task task = new Task();

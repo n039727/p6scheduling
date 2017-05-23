@@ -12,6 +12,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +104,24 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	@Override
 	public Session getSession() {
 		return sessionFactory.getCurrentSession();
+	}
+
+	@Override
+	@Transactional
+	public List<Task> fetchTasks(List<String> workOrderId) throws P6DataAccessException {
+		logger.debug("sessionfactory initialized ====={}",sessionFactory);
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Task.class);
+        Disjunction objDisjunction = Restrictions.disjunction();
+        for (String task : workOrderId) {
+        	logger.debug("Input TASK_ID>>>>{}", task);
+        	objDisjunction.add(Restrictions.eq("taskId", task));
+		}
+		
+		criteria.add(objDisjunction);
+		@SuppressWarnings("unchecked")
+		List<Task> listTask = (List<Task>) criteria
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+		return listTask;
 	}
 
 }

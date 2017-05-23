@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
-import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValues;
-import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse;
 import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
 import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
 
