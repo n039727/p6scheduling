@@ -94,7 +94,8 @@
     
 							<div class="col-md-12">
 								<label for="comment">Depot To-Do Comment</label>
-								<textarea class="form-control" rows="3" id="comment-1" ng-model="wo.depotToDoComment"></textarea> 
+								<textarea ng-if="!angular.isDefined(wo.exctnPckgName) || wo.exctnPckgName.trim() == ''" class="form-control" rows="3" id="comment-1" ng-model="wo.depotToDoComment"></textarea> 
+								<textarea ng-if="angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName.trim() != ''" class="form-control" rows="3" id="comment-1" ng-model="wo.executionPkgComment"></textarea> 
 							</div>
 						</div>
 						<div class="col-md-offset-9 col-md-2" style="padding:5px">

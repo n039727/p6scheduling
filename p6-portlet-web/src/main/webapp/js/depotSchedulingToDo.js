@@ -182,6 +182,7 @@ function depotSchedulingToDoResultController($scope, restTemplate) {
 			if (response.data[0] && response.data[0].toDoItems) {
 				wo.toDoItems = response.data[0].toDoItems;
 				wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
+				wo.executionPkgComment = response.data[0].executionPkgComment;
 			}
 			ctrl.populateToDoBindings(wo, wo.toDoItems);
 			ctrl.populateWorkOrderDisplayList(wo);
