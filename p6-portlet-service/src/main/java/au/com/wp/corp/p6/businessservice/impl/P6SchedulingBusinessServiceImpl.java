@@ -683,7 +683,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
 			if(null != executionPackage){
 				executionPackage.setActioned(ACTIONED_Y);
-				executionPackage.setExecDeptCmt(workOrder.getExecutionPkgComment());
+				executionPackage.setExecSchdlrCmt(workOrder.getExecutionPkgComment());
 				dbTask.setExecutionPackage(executionPackage); 
 				dbTask.setActioned(ACTIONED_N);
 			}
@@ -739,10 +739,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				toDoMap = workOrderToDoMap.get(executionPkg);
 			} else {
 				workOrder = new WorkOrder();
-				if (!StringUtils.isEmpty(executionPkg))
+				if (!StringUtils.isEmpty(executionPkg)){
 					workOrder.setExctnPckgName(executionPkg);
-				else
+					workOrder.setExecutionPkgComment(executionPackage.getExecSchdlrCmt());
+				}
+				else{
 					executionPkg = task.getTaskId();
+				}
 				List<String> workOrders = new ArrayList<String>();
 				workOrders.add(task.getTaskId());
 				workOrder.setWorkOrders(workOrders);
