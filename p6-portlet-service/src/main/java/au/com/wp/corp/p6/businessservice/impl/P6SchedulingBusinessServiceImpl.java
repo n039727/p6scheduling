@@ -346,6 +346,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	
 
 	@Override
+	@Transactional
 	public MetadataDTO fetchMetadata() throws P6BusinessException{
 
 		List<TodoTemplate> toDoTemplateList = todoDAO.fetchAllToDos();
@@ -365,6 +366,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			toDos.add(item);
 		}
 		Map<String, List<String>> depotCrewMap = resourceDetailDAO.fetchAllResourceDetail();
+		logger.debug("depotCrewMap >>>{}", depotCrewMap);
+		if(depotCrewMap != null ){
+			logger.debug("depotCrewMap size>>>{}", depotCrewMap.size());
+		}
 		ResourceDTO resourceDTO = new ResourceDTO();
 		resourceDTO.setDepotCrewMap(depotCrewMap);
 		
