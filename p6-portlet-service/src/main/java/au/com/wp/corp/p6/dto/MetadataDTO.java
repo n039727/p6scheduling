@@ -16,7 +16,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class MetadataDTO {
 	
 	private List<ToDoItem> toDoItems;
-	private List<Crew> crews;
+	private ResourceDTO resourceDTO;
+	//private List<Crew> crews;
 	/**
 	 * @return the toDoItems
 	 */
@@ -32,15 +33,27 @@ public class MetadataDTO {
 	/**
 	 * @return the crews
 	 */
-	public List<Crew> getCrews() {
+	/*public List<Crew> getCrews() {
 		return crews;
-	}
+	}*/
 	/**
 	 * @param crews the crews to set
 	 */
-	public void setCrews(List<Crew> crews) {
+	/*public void setCrews(List<Crew> crews) {
 		this.crews = crews;
+	}*/
+	/**
+	 * @return the resourceDTO
+	 */
+	public ResourceDTO getResourceDTO() {
+		return resourceDTO;
+	}
+	/**
+	 * @param resourceDTO the resourceDTO to set
+	 */
+	public void setResourceDTO(ResourceDTO resourceDTO) {
+		this.resourceDTO = resourceDTO;
 	}
 	
-
+ 
 }

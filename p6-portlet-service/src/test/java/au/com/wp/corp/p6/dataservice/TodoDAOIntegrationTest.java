@@ -3,6 +3,8 @@
  */
 package au.com.wp.corp.p6.dataservice;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.junit.Assert;
@@ -104,6 +106,16 @@ public class TodoDAOIntegrationTest {
 		
 		TodoTemplate todoTemplate = new TodoTemplate();
 		TodoTemplatePK todoTemplatePK = new TodoTemplatePK();
+		todoTemplatePK.setTmpltId(2);
+		todoTemplatePK.setTodoId(99999);
+		todoTemplate.setId(todoTemplatePK);
+		todoTemplate.setCrtdTs(new Timestamp(System.currentTimeMillis()));
+		todoTemplate.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
+		todoTemplate.setCrtdUsr("Test User");
+		todoTemplate.setLstUpdtdUsr("Test User");
+		todoTemplate.setTmpltDesc("test depot desc");
+		todoTemplate.setTodoNam("TestDepotToDo");
+		todoTemplate.setTypId(New BigDecimal("2"));
 		List<TodoTemplate> todoTemps = todoDAOImpl.fetchToDoForGratestToDoId();
 		Assert.assertNotNull(todoTemps);
 		for (TodoTemplate todoTemplate : todoTemps) {

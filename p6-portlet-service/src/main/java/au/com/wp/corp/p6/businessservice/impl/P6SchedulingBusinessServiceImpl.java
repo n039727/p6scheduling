@@ -24,12 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
+import au.com.wp.corp.p6.dataservice.ResourceDetailDAO;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.MetadataDTO;
+import au.com.wp.corp.p6.dto.ResourceDTO;
 import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
@@ -76,6 +78,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	IExecutionPackageService executionPackageservice;
 	
+
+	@Autowired
+	ResourceDetailDAO resourceDetailDAO;
+	
+
 	
 	@Override
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException{
@@ -339,6 +346,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	
 
 	@Override
+	@Transactional
 	public MetadataDTO fetchMetadata() throws P6BusinessException{
 
 		List<TodoTemplate> toDoTemplateList = todoDAO.fetchAllToDos();
@@ -357,12 +365,21 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			item.setTypeId(toDo.getTypId().longValue());
 			toDos.add(item);
 		}
-		ResourceSearchRequest resourceSearchRequest = new ResourceSearchRequest();
+		Map<String, List<String>> depotCrewMap = resourceDetailDAO.fetchAllResourceDetail();
+		logger.debug("depotCrewMap >>>{}", depotCrewMap);
+		if(depotCrewMap != null ){
+			logger.debug("depotCrewMap size>>>{}", depotCrewMap.size());
+		}
+		ResourceDTO resourceDTO = new ResourceDTO();
+		resourceDTO.setDepotCrewMap(depotCrewMap);
+		
+		/*ResourceSearchRequest resourceSearchRequest = new ResourceSearchRequest();
 		resourceSearchRequest.setResourceType("Labor");
-		List<Crew> crews = retrieveCrews(resourceSearchRequest);
+		List<Crew> crews = retrieveCrews(resourceSearchRequest);*/
 		MetadataDTO metadataDTO = new MetadataDTO();
-		metadataDTO.setCrews(crews);
+		//metadataDTO.setCrews(crews);
 		metadataDTO.setToDoItems(toDos);
+		metadataDTO.setResourceDTO(resourceDTO);
 		return metadataDTO;
 	}
 

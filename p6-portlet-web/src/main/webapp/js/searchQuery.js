@@ -70,7 +70,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			return false;
 		}
 		if(ctrl.activeContext == 'ADD_SCHEDULING_TODO' || ctrl.activeContext == 'VIEW_TODO_STATUS' 
-				|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO'){
+				|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' ){
 			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == ""){
 				ctrl.showErrorMsg = 'Planned Start From Date is required';
 				ctrl.isValidationErr = true;
@@ -81,8 +81,9 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 				return true;
 			}
 		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS' || ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO'){
-			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == ""){
-				ctrl.showErrorMsg = 'Planned Start From Date is required';
+			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == "" 
+				|| ctrl.scheduleToDate == null || ctrl.scheduleToDate == ""){
+				ctrl.showErrorMsg = 'Planned Start From and To Date  is required';
 				ctrl.isValidationErr = true;
 				return false;
 			}else if(ctrl.scheduleToDate !==""){
