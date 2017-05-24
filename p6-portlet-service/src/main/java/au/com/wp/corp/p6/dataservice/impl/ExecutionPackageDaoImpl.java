@@ -53,7 +53,9 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 		criteria.add(Restrictions.eq("exctnPckgNam", name));
 		criteria.setFetchSize(1);
 		ExecutionPackage retValue = (ExecutionPackage) criteria.uniqueResult();
-		logger.debug("returning package as: {} ", retValue.getExctnPckgId());
+		if(retValue != null){
+			logger.debug("returning package as: {} ", retValue.getExctnPckgId());
+		}
 
 		return retValue;
 	}
