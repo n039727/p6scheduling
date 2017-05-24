@@ -7,14 +7,15 @@
 				<div class="form-group">
 					<label class="control-label col-md-1" for="userId">Depot</label>
 					<div class="col-md-4">
-						<oi-select oi-options="depot.name for depot in $ctrl.metadata.depotList track by depot.id"
+						<oi-select oi-options="depot for depot in $ctrl.depotList"
 							ng-model="$ctrl.selectedDepotList"
+							data-ng-change="$ctrl.onDepotChange()"
 							multiple
 							placeholder="Select"></oi-select>
 					</div>
 					<label class="control-label col-md-2" for="userId">Crew</label>
 					<div class="col-md-4">
-						<oi-select oi-options="crew.crewId for crew in $ctrl.metadata.crewList"
+						<oi-select oi-options="crew for crew in $ctrl.crewList"
 							ng-model="$ctrl.selectedCrewList"
 							multiple
 							placeholder="Select"></oi-select>

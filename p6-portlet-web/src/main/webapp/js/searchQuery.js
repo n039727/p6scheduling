@@ -6,6 +6,49 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	ctrl.showErrorMsg = "";
 	ctrl.dateFormat = 'DD/MM/YYYY';
 	console.log('Meta Data passed from parent: ' + JSON.stringify(this.metadata));
+	
+	ctrl.depotList = [];
+	ctrl.depotCrewMap = {};
+	ctrl.crewList = [];
+	ctrl.allCrewList = [];
+	if (angular.isDefined(ctrl.metadata) && angular.isDefined(ctrl.metadata.depotCrewMap)) {
+		console.log("Populating depot and crew");
+		ctrl.depotCrewMap = ctrl.metadata.depotCrewMap;
+		for (depot in ctrl.depotCrewMap) {
+			console.log("Populating depot" + depot);
+			ctrl.depotList.push(depot);
+			var crews = ctrl.depotCrewMap[depot];
+			if (crews != null) {
+				crews = crews.unique();
+				for (var j = 0; j < crews.length; j++){
+					ctrl.allCrewList.push(crews[j]);
+				}
+			}
+			
+		}
+		ctrl.crewList = ctrl.allCrewList;
+		console.log("Depot List: " + JSON.stringify(ctrl.depotList));
+		console.log("Crew List: " + JSON.stringify(ctrl.crewList));
+	}
+	
+	ctrl.onDepotChange = function() {
+		console.log("On Depot Change Called with depot names" + JSON.stringify(ctrl.selectedDepotList));
+		ctrl.crewList = [];
+		if (angular.isDefined(ctrl.selectedDepotList) && ctrl.selectedDepotList.length > 0) {
+			for (var i =0; i < ctrl.selectedDepotList.length; i++) {
+				var depot = ctrl.selectedDepotList[i];
+				var crews = ctrl.depotCrewMap[depot];
+				if (crews != null) {
+					for (var j = 0; j < crews.length; j++){
+						ctrl.crewList.push(crews[j]);
+					}
+				}
+			}
+		} else {
+			ctrl.crewList = ctrl.allCrewList;
+		}
+	}
+	
 	// FORMAT THE DATE FOR THE DATEPICKER
 	$mdDateLocale.formatDate = function(date) {
    	 console.log('date in formatDate: ' + JSON.stringify(date));

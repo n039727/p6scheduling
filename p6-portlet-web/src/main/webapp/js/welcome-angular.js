@@ -10,12 +10,16 @@ Array.prototype.contains = function(v) {
 };
 
 Array.prototype.unique = function() {
+	console.log("unique called");
+	var itemMap = {};
 	var arr = [];
 	for (var i = 0; i < this.length; i++) {
-		if (!arr.contains(this[i])) {
-			arr.push(this[i]);
-		}
+		itemMap[this[i]] = {};
 	}
+	for (item in itemMap) {
+		arr.push(item);
+	}
+	console.log("Unique object: " + JSON.stringify(arr));
 	return arr;
 };
 
@@ -71,7 +75,7 @@ function fetchMetaData(app) {
 				console.log("Received data from server for fetch to dos: "
 						+ JSON.stringify(response.data));
 				metadata = {};
-				metadata.depotList = [ {
+				/*metadata.depotList = [ {
 					id : 1,
 					name : 'Depot1'
 				}, {
@@ -81,7 +85,7 @@ function fetchMetaData(app) {
 					id : 3,
 					name : 'Depot3'
 				} ];
-				/*metadata.crewList = [ {
+				metadata.crewList = [ {
 					id : 1,
 					name : 'MOST1'
 				}, {
@@ -93,6 +97,7 @@ function fetchMetaData(app) {
 				} ];*/
 				metadata.crewList = response.data.crews;
 				metadata.todoList = response.data.toDoItems;
+				metadata.depotCrewMap = response.data.resourceDTO.depotCrewMap;
 				app.constant('metadata', metadata);
 			});
 }
