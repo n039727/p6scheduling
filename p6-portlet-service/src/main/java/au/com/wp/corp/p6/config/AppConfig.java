@@ -29,6 +29,7 @@ import au.com.wp.corp.p6.aspect.P6PortalLoggingAspect;
 @PropertySource("file:/${properties.dir}/p6portal.properties")
 @EnableTransactionManagement
 @EnableScheduling
+@EnableAsync
 public class AppConfig {
 
 	@Autowired

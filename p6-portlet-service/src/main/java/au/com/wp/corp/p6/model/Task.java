@@ -62,13 +62,13 @@ public class Task implements Serializable {
 	private Date schdDt;
 
 	//bi-directional many-to-one association to ExecutionPackage
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JoinColumn(name="EXCTN_PCKG_ID")
 	private ExecutionPackage executionPackage;
 
 	//bi-directional many-to-one association to TodoAssignment
 
-	@OneToMany(mappedBy="todoAssignMentPK.task",cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
+	@OneToMany(mappedBy="todoAssignMentPK.task",cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval=true)
 	private Set<TodoAssignment> todoAssignments;
 	
 	@Column(name="ACTN_FLG")

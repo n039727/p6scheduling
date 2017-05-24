@@ -43,7 +43,10 @@
 									<tbody>
 										<tr ng-repeat="todo in $ctrl.todoGrp1">
 											<td>{{todo}}</td>
-											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
+											<td><input type="checkbox" id="{{'enable-' + $ctrl.getWorkOrderToDoKeyForCheckBox(wo,todo)}}" 
+														ng-checked="$ctrl.calculateEnable(wo, todo)" 
+														ng-click="$ctrl.addRemoveTodo($event, wo, todo)">
+											</td>
 											<td>
 												<!--
 												<select class="form-control" >
@@ -73,7 +76,10 @@
 									<tbody>
 										<tr ng-repeat="todo in $ctrl.todoGrp2">
 											<td>{{todo}}</td>
-											<td><input type="checkbox" ng-checked="$ctrl.calculateEnable(wo, todo)" ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
+											<td><input type="checkbox" id="{{'enable-' + $ctrl.getWorkOrderToDoKeyForCheckBox(wo,todo)}}"
+													   ng-checked="$ctrl.calculateEnable(wo, todo)" 
+													   ng-click="$ctrl.addRemoveTodo($event, wo, todo)">
+											</td>
 											<td>
 												<!--<select class="form-control" >
 													<option ng-if="$ctrl.calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
@@ -93,7 +99,8 @@
 							</div>
 							<div class="col-md-12">
 								<label for="comment">Scheduling To-Do Comment</label>
-								<textarea class="form-control" rows="3" id="comment-1" ng-model="wo.schedulingToDoComment"></textarea> 
+								<textarea ng-if="!angular.isDefined(wo.exctnPckgName) || wo.exctnPckgName.trim() == ''" class="form-control" rows="3" id="comment-1" ng-model="wo.schedulingToDoComment"></textarea> 
+								<textarea ng-if="angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName.trim() != ''" class="form-control" rows="3" id="comment-1" ng-model="wo.executionPkgComment"></textarea> 
 							</div>
 							<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-8 " >
 								<p class="success-message" >{{$ctrl.successSavedMsg}}</p>

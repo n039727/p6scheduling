@@ -6,7 +6,6 @@ package au.com.wp.corp.p6.businessservice.impl;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -169,6 +168,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		return execPackgDTO;
 
 	}
+	
 	@Scheduled(fixedDelay = 20000)
 	public void updateP6ForExecutionPackage() {
 		logger.debug("Starting to trigger execution package update with executionPackageDTDOFoP6 "
@@ -223,7 +223,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 
 		}
 		executionPackageDTOFoP6List = null;
-		List<String>  workorderIds = getWorkOrdersForExcnPkgDelP6();
+		/*List<String>  workorderIds = getWorkOrdersForExcnPkgDelP6();
 		if(workorderIds != null && workorderIds.size() >0){
 			try {
 				logger.debug("Calling to remove execution package for work orders {}",workorderIds);
@@ -235,7 +235,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			}
 			workorderIds.clear();
 			workorderIds = null;
-		}
+		}*/
 	}
 		
 	private void updateOldExecutionPackages(Set<ExecutionPackage> executionPackages) throws P6BusinessException{
