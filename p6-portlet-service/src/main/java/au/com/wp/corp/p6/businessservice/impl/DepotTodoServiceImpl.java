@@ -533,7 +533,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				workOrder = new WorkOrder();
 				if (!StringUtils.isEmpty(executionPkg)){
 					workOrder.setExctnPckgName(executionPkg);
-					workOrder.setExecutionPkgComment(executionPackage.getExecDeptCmt());
+					workOrder.setExecutionPkgComment(executionPackage.getExecSchdlrCmt());
 				}
 				
 				else{

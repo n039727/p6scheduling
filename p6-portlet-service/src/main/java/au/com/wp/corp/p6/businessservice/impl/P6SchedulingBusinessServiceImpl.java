@@ -251,12 +251,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		logger.debug("work orders in workorder returned from P6 =={}", workOrder.getWorkOrders());
 		workOrderNew.setCrewNames(crewAssignedForWorkOrder);
 		workOrderNew.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
-		workOrderNew.setActioned(dbTask.getActioned());
+		
 		workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
 		
 		if (dbTask.getExecutionPackage() != null) {
 			workOrderNew.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
 			workOrderNew.setExctnPckgName(dbTask.getExecutionPackage().getExctnPckgNam());
+			workOrderNew.setActioned(dbTask.getExecutionPackage().getActioned());
 			/*if (workOrder.getExctnPckgName() == null) { //not present in p6 so create in p6
 				if (mapOfExecutionPackageWOP6.containsKey(dbTask.getExecutionPackage().getExctnPckgNam())) {
 					mapOfExecutionPackageWOP6.get(dbTask.getExecutionPackage().getExctnPckgNam()).add(workOrder);
@@ -269,6 +270,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		} else { // not present in portal so delete from p6
 			workOrderNew.setLeadCrew(leadCrewWorkOrder);
 			workOrderNew.setExctnPckgName("");
+			workOrderNew.setActioned(dbTask.getActioned());
 			/*if (workOrder.getExctnPckgName() != null) {
 				executionPackageservice.getWorkOrdersForExcnPkgDelP6().add(workOrder.getWorkOrderId());
 			}*/
@@ -703,7 +705,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		dbTask.setSchdDt(scheduleDate);
 		dbTask.setDepotId(workOrder.getDepotId());
 		dbTask.setMatrlReqRef(workOrder.getMeterialReqRef());
-		if ( null != workOrder.getExctnPckgName()){
+		if ( !org.springframework.util.StringUtils.isEmpty(workOrder.getExctnPckgName())){
 			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
 			if(null != executionPackage){
 				executionPackage.setActioned(ACTIONED_Y);
