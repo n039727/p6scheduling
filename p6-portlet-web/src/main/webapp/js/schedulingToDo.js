@@ -254,6 +254,18 @@ function schedulingToDoResultController($scope, restTemplate) {
 	ctrl.getWorkOrderToDoKeyForCheckBox = function(workOrder, todoName) {
 		return ctrl.getWorkOrderToDoKey(workOrder,todoName).replace(" ","_");
 	}
+	ctrl.disbledDropdown = function(wo, todoName){
+		var key = ctrl.getWorkOrderToDoKey(wo, todoName);
+		if(angular.isDefined(ctrl.toDoBindingVar)){
+			var selectedValArray = ctrl.toDoBindingVar[key];
+			if (angular.isDefined(selectedValArray) && selectedValArray.length > 0) {
+				return true;
+			}else if(angular.isDefined(selectedValArray) && selectedValArray.length == 0){
+				return false;
+				
+			}
+		}
+	};
 	
 	ctrl.populateWorkOrderDisplayList = function(wo) {
 		wo.workOrderIdDisplayArray = [];
