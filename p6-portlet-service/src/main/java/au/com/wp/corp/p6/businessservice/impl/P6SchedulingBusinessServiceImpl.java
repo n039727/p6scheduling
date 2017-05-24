@@ -1,7 +1,6 @@
 package au.com.wp.corp.p6.businessservice.impl;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,8 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
@@ -31,10 +29,8 @@ import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.Crew;
-import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ResourceSearchRequest;
-import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.UserTokenRequest;
@@ -80,7 +76,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	IExecutionPackageService executionPackageservice;
 	
-	private Map<String,List<WorkOrder>> mapOfExecutionPackageWOP6 = new HashMap<String,List<WorkOrder>>();;
 	
 	@Override
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException{
@@ -109,6 +104,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
  
 	@Override
+	@Transactional
 	public List<WorkOrder> search(WorkOrderSearchRequest input) throws P6BusinessException {
 		long startTime = System.currentTimeMillis();
 		logger.debug("User logged in as ======================================={}",userTokenRequest.getUserPrincipal());
@@ -340,23 +336,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		
 	}
 
-	@Override
-	@Transactional
-	public List<TaskDTO> listTasks() throws P6BusinessException {
-		List<Task> taskList = taskDAO.listTasks();
-		List<TaskDTO> tasks = new ArrayList<>();
-		for (Task task2 : taskList) {
-			TaskDTO taskDTO = new TaskDTO();
-			taskDTO.setTaskId(task2.getTaskId());
-			taskDTO.setExecutionPackageId(task2.getExecutionPackage().getExctnPckgId());
-			taskDTO.setDepotId(task2.getDepotId());
-			taskDTO.setCrewId(task2.getCrewId());
-			taskDTO.setLeadCrewId(task2.getLeadCrewId());
-			taskDTO.setMatrlReqRef(task2.getMatrlReqRef());
-			tasks.add(taskDTO);
-		}
-		return tasks;
-	}
+	
 
 	@Override
 	public MetadataDTO fetchMetadata() throws P6BusinessException{
@@ -387,6 +367,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	@Override
+	@Transactional
 	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) {
 
 		List<Task> tasks = null;
@@ -549,6 +530,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	 */
 
 	@Override
+	@Transactional
 	public WorkOrder saveToDo(WorkOrder workOrder) throws P6BusinessException {
 
 		if (workOrder == null)
@@ -722,15 +704,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return dbTask;
 	}
 
-	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO)
-			throws P6BusinessException {
-		executionPackageDTO.setExctnPckgName(getCurrentDateTimeMS());
-		executionPackageDTO = executionPackageDao.saveExecutionPackage(executionPackageDTO);
-		return executionPackageDTO;
-	}
 
 
 	@Override
+	@Transactional
 	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest query) {
 
 		List<Task> tasks = null;
@@ -808,12 +785,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return workOrders;
 	}
 
-	private String getCurrentDateTimeMS() {
-		java.util.Date dNow = new java.util.Date();
-		SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy-hhmmssMs");
-		String datetime = ft.format(dNow);
-		return datetime;
-	}
 
 	@Override
 	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus workOrder) throws P6BusinessException {
