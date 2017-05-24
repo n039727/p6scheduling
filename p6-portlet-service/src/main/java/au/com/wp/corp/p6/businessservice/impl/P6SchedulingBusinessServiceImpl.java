@@ -787,6 +787,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 
 	@Override
+	@Transactional
 	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus workOrder) throws P6BusinessException {
 
 		if (workOrder != null) {
