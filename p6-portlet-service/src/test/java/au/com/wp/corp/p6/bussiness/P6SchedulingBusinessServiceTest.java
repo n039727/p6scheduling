@@ -10,8 +10,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.After;
@@ -33,10 +35,13 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.impl.P6SchedulingBusinessServiceImpl;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
+import au.com.wp.corp.p6.dataservice.ResourceDetailDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.impl.TaskDAOImpl;
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
+import au.com.wp.corp.p6.dto.MetadataDTO;
+import au.com.wp.corp.p6.dto.ResourceDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -72,6 +77,9 @@ public class P6SchedulingBusinessServiceTest {
 
 	@Mock
 	TodoDAO todoDAO;
+	
+	@Mock
+	ResourceDetailDAO resourceDetailDAO;
 
 	@Mock
 	UserTokenRequest userTokenRequest;
@@ -455,7 +463,7 @@ public class P6SchedulingBusinessServiceTest {
 	}
 	
 	@Test
-	public void testFetchToDos () throws P6BusinessException{
+	public void testFetchMetadata () throws P6BusinessException{
 		List<TodoTemplate> toDoTemplateList = new ArrayList<>();
 		TodoTemplate toDo = new TodoTemplate();
 		toDo.setCrtdTs(new Timestamp(System.currentTimeMillis()));
@@ -463,17 +471,27 @@ public class P6SchedulingBusinessServiceTest {
 		toDo.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
 		toDo.setLstUpdtdUsr("Test user1");
 		toDo.setTmpltDesc("test template desc");
-		//toDo.setTmpltId(1L);
-		//toDo.setTypId(new BigDecimal("lL"));
-		//toDo.setTodoId(new BigDecimal(1));
+		toDo.getId().setTmpltId(1);
+		toDo.setTypId(new BigDecimal(0.1));
 		toDo.getId().setTodoId(1);
 		toDoTemplateList.add(toDo);
 		
 		Mockito.when(todoDAO.fetchAllToDos()).thenReturn(toDoTemplateList);
-		//MetadataDTO metadataDTO=  p6SchedulingBusinessService.fetchMetadata();
-		//List<ToDoItem> toDos = metadataDTO.getToDoItems();
 		
-		/*Assert.assertNotNull(toDos);
+		Map<String, List<String>> depotCrewMap = new HashMap<String, List<String>>();
+		List<String> crews = new ArrayList<String>();
+		crews.add("BUNT04");
+		crews.add("BUNT05");
+		depotCrewMap.put("Picton", crews);
+		
+		Mockito.when(resourceDetailDAO.fetchAllResourceDetail()).thenReturn(depotCrewMap);
+
+		MetadataDTO metadataDTO=  p6SchedulingBusinessService.fetchMetadata();
+		List<ToDoItem> toDos = metadataDTO.getToDoItems();
+		ResourceDTO resourceDTO = metadataDTO.getResourceDTO();
+		
+		Assert.assertNotNull(toDos);
+		Assert.assertNotNull(resourceDTO);
 		
 		for ( ToDoItem item : toDos) {
 			Assert.assertEquals(toDo.getCrtdUsr(),item.getCrtdUsr());
@@ -484,7 +502,12 @@ public class P6SchedulingBusinessServiceTest {
 			Assert.assertEquals(toDo.getTodoNam(), item.getToDoName());
 			Assert.assertEquals(toDo.getCrtdTs().toString(), item.getCrtdTs());
 			
-		}*/
+		}
+
+		Set<String> keys = depotCrewMap.keySet();
+		for(String depot : keys){
+			Assert.assertNotNull(depotCrewMap.get(depot));
+		}
 	}
 	
 	@Test

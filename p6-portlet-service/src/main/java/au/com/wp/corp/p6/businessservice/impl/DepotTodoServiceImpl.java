@@ -532,10 +532,14 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				toDoMap = workOrderToDoMap.get(executionPkg);
 			} else {
 				workOrder = new WorkOrder();
-				if (!StringUtils.isEmpty(executionPkg))
+				if (!StringUtils.isEmpty(executionPkg)){
 					workOrder.setExctnPckgName(executionPkg);
-				else
+					workOrder.setExecutionPkgComment(executionPackage.getExecDeptCmt());
+				}
+				
+				else{
 					executionPkg = task.getTaskId();
+				}
 				List<String> workOrders = new ArrayList<String>();
 				workOrders.add(task.getTaskId());
 				workOrder.setWorkOrders(workOrders);

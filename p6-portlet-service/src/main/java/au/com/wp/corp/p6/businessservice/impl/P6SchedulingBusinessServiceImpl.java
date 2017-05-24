@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
+import au.com.wp.corp.p6.dataservice.ResourceDetailDAO;
 import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
@@ -32,6 +33,7 @@ import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.MetadataDTO;
+import au.com.wp.corp.p6.dto.ResourceDTO;
 import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
@@ -78,6 +80,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	
 	@Autowired
 	IExecutionPackageService executionPackageservice;
+	
+	@Autowired
+	ResourceDetailDAO resourceDetailDAO;
 	
 	private Map<String,List<WorkOrder>> mapOfExecutionPackageWOP6 = new HashMap<String,List<WorkOrder>>();;
 	
@@ -352,12 +357,17 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			item.setTypeId(toDo.getTypId().longValue());
 			toDos.add(item);
 		}
-		ResourceSearchRequest resourceSearchRequest = new ResourceSearchRequest();
+		Map<String, List<String>> depotCrewMap = resourceDetailDAO.fetchAllResourceDetail();
+		ResourceDTO resourceDTO = new ResourceDTO();
+		resourceDTO.setDepotCrewMap(depotCrewMap);
+		
+		/*ResourceSearchRequest resourceSearchRequest = new ResourceSearchRequest();
 		resourceSearchRequest.setResourceType("Labor");
-		List<Crew> crews = retrieveCrews(resourceSearchRequest);
+		List<Crew> crews = retrieveCrews(resourceSearchRequest);*/
 		MetadataDTO metadataDTO = new MetadataDTO();
-		metadataDTO.setCrews(crews);
+		//metadataDTO.setCrews(crews);
 		metadataDTO.setToDoItems(toDos);
+		metadataDTO.setResourceDTO(resourceDTO);
 		return metadataDTO;
 	}
 
