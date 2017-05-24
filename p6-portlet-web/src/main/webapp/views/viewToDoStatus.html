@@ -30,7 +30,6 @@
 			</td>
 			<td ng-if="$ctrl.activeContext == 'VIEW_TODO_STATUS'">
 				<span ng-show="wo.actioned == 'Y'">Yes</span>
-				<!-- <span ng-if="wo.actioned == 'N'"></span> -->
 			</td>
 		</tr>
 		<tr ng-repeat-end>
@@ -50,7 +49,7 @@
 										<th class="standard-to-do-header">Supporting Document</th>
 									</thead>
 									<tbody>
-										<tr ng-repeat="todo in wo.todoAssignments">
+										<tr ng-repeat="todo in wo.todoAssignments | filter:{typeId:1}">
 											<td>{{todo.toDoName}}</td>
 											<td>{{todo.workOrders.join(',')}}</td>
 											<td>
@@ -70,24 +69,60 @@
 									</tbody>
 								</table>
 							</div>
-							<div class="col-md-12">
-								<label for="comment">Scheduling To-Do Comment</label>
-								<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.schedulingComment}}</textarea> 
-							</div>
-							<div class="col-md-12">
-								<label for="comment">Depot To-Do Comment</label>
-								<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.depotToDoComment}}</textarea> 
-							</div>
-							<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-8 " >
-								<p class="success-message" >{{$ctrl.successSavedMsg}}</p>
-							</div>
-							<div class="col-md-offset-9 col-md-2" style="padding:5px">
-								<button id="save-to-do-1" class="btn btn-warning btn-block" ng-click="$ctrl.saveToDo(wo)">
-									<h4><b>Save</b></h4>
-								</button>
-							</div>
-						</div>	
+						</div>
 					</div>
+					<div class="panel panel-default panel-standard-to-do">
+						<div class="panel-heading panel-standard-to-do-heading"><b>Depot To-Do</b></div>
+						<div class="panel-body">
+							<div class="col-md-12">
+								<table class="table table-condensed">
+									<thead>
+										<th class="standard-to-do-header">To-Do</th>
+										<th class="standard-to-do-header">WO Assigned</th>
+										<th class="standard-to-do-header">Req By Date</th>
+										<th class="standard-to-do-header">Comment</th>
+										<th class="standard-to-do-header">Status</th>
+										<th class="standard-to-do-header">Supporting Document</th>
+									</thead>
+									<tbody>
+										<tr ng-repeat="todo in wo.todoAssignments | filter:{typeId:2}">
+											<td>{{todo.toDoName}}</td>
+											<td>{{todo.workOrders.join(',')}}</td>
+											<td>
+												<md-datepicker ng-model="todo.reqByDt" md-placeholder="DD/MM/YYYY"></md-datepicker>
+											</td>
+											<td><input type="text" class="form-control" ng-model="todo.comment"></td>
+											<td>
+												<select class="form-control" ng-model="todo.status" id="crew-select">
+													<option disabled>Select</option>
+													<option>Not Started</option>
+													<option>In Progress</option>
+													<option>Completed</option>
+												</select>
+											</td>
+											<td><input type="text" class="form-control" ng-model="todo.supportingDoc"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12">
+							<label for="comment">Scheduling To-Do Comment</label>
+							<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.schedulingComment}}</textarea> 
+						</div>
+						<div class="col-md-12">
+							<label for="comment">Depot To-Do Comment</label>
+							<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.depotToDoComment}}</textarea> 
+						</div>
+						<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-8 " >
+							<p class="success-message" >{{$ctrl.successSavedMsg}}</p>
+						</div>
+						<div class="col-md-offset-9 col-md-2" style="padding:5px">
+							<button id="save-to-do-1" class="btn btn-warning btn-block" ng-click="$ctrl.saveToDo(wo)">
+								<h4><b>Save</b></h4>
+							</button>
+						</div>
 				</div>
 			</td>
 		</tr>

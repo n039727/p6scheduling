@@ -34,9 +34,7 @@ function dynamicToDoSetterController($scope) {
 	
 	ctrl.$onChanges = function (changes) {
 		console.log('[DEBUG] On changes called');
-		if (changes.currentMap) {
-		  ctrl.init();
-		}
+		ctrl.init();
 	};
 	
 	ctrl.removeToDo = function(todoList, todo) {
