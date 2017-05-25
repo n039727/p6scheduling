@@ -111,7 +111,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			return false;
 		}
 		if(ctrl.activeContext == 'ADD_SCHEDULING_TODO' || ctrl.activeContext == 'VIEW_TODO_STATUS' 
-				|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' ){
+				|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'){
 			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == ""){
 				ctrl.showErrorMsg = 'Planned Start From Date is required';
 				ctrl.isValidationErr = true;
