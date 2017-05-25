@@ -62,6 +62,17 @@ public class DateUtils {
 		return DATE_FORMAT_DD_MM_YYYY.format(d);
 	}
 	
+	public String convertDateYYYYMMDD ( String date ,String separator)  {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy"+separator+"MM"+separator+"dd");
+		Date d = new Date();
+		try {
+			d = sdf.parse(date);
+		} catch (ParseException e) {
+			logger.error("Exception while convertDate>>{}", e);
+		}
+		
+		return DATE_FORMAT_DD_MM_YYYY.format(d);
+	}
 	
 	public  String toStringYYYY_MM_DD(Date dt) {
 		return DATE_FORMAT_YYYY_MM_DD.format(dt);

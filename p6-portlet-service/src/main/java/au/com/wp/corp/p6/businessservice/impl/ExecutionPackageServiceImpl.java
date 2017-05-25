@@ -169,7 +169,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 
 	}
 	
-	@Scheduled(fixedDelay = 20000)
+	@Scheduled(fixedDelay = 30000)
 	public void updateP6ForExecutionPackage() {
 		logger.debug("Starting to trigger execution package update with executionPackageDTDOFoP6 "
 				+ executionPackageDTOFoP6List);

@@ -238,8 +238,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	 * @return
 	 */
 	private WorkOrder prepareWorkOrder(WorkOrder workOrder, Task dbTask, List<Task> tasksForUpdate) {
-		Date scheduledDateForWorkOrder = dateUtils.toDateFromYYYY_MM_DD(workOrder.getScheduleDate());
+		logger.debug("prepare work order workOrder scheduled date  after conversion ==={}",workOrder.getScheduleDate());
+		Date scheduledDateForWorkOrder = dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate());
+		logger.debug("prepare work order scheduledDateForWorkOrder after conversion ==={}",scheduledDateForWorkOrder);
 		Date scheduledDateInTask = dbTask.getSchdDt();
+		logger.debug("prepare work order scheduled date in task for this work order ==={}",scheduledDateInTask);
 		String crewAssignedForWorkOrder = workOrder.getCrewNames() == null ? "" : workOrder.getCrewNames();
 		String crewAssignedForTask = dbTask.getCrewId() == null ? "" : dbTask.getCrewId();
 		String leadCrewWorkOrder = workOrder.getLeadCrew() == null ? "" : workOrder.getLeadCrew();
@@ -250,13 +253,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrderNew.setWorkOrders(workOrder.getWorkOrders());
 		logger.debug("work orders in workorder returned from P6 =={}", workOrder.getWorkOrders());
 		workOrderNew.setCrewNames(crewAssignedForWorkOrder);
-		workOrderNew.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate()));
-		workOrderNew.setActioned(dbTask.getActioned());
+		workOrderNew.setScheduleDate(workOrder.getScheduleDate());
 		workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask)));
 		
 		if (dbTask.getExecutionPackage() != null) {
 			workOrderNew.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
 			workOrderNew.setExctnPckgName(dbTask.getExecutionPackage().getExctnPckgNam());
+			workOrderNew.setActioned(dbTask.getExecutionPackage().getActioned());
 			/*if (workOrder.getExctnPckgName() == null) { //not present in p6 so create in p6
 				if (mapOfExecutionPackageWOP6.containsKey(dbTask.getExecutionPackage().getExctnPckgNam())) {
 					mapOfExecutionPackageWOP6.get(dbTask.getExecutionPackage().getExctnPckgNam()).add(workOrder);
@@ -274,10 +277,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			}*/
 		}
 		if (scheduledDateForWorkOrder != null && scheduledDateInTask != null) {
-			if ((scheduledDateForWorkOrder.compareTo(scheduledDateInTask) != 0)
+			
+			if (((scheduledDateForWorkOrder.compareTo(scheduledDateInTask) != 0)
 					|| (!crewAssignedForWorkOrder.equalsIgnoreCase(crewAssignedForTask))
-					|| (!leadCrewWorkOrder.equalsIgnoreCase(leadCrewForTask))) {
-				dbTask.setSchdDt(scheduledDateForWorkOrder);
+					|| (!leadCrewWorkOrder.equalsIgnoreCase(leadCrewForTask)))) {
+				logger.debug("prepare work order scheduled date in task updating for this work order ==={}",scheduledDateInTask);
+				// TODO : this is changing date format commenting temp
+				//dbTask.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
 				dbTask.setCrewId(crewAssignedForWorkOrder);
 				if(dbTask.getExecutionPackage() == null){
 					dbTask.setLeadCrewId(leadCrewWorkOrder);
