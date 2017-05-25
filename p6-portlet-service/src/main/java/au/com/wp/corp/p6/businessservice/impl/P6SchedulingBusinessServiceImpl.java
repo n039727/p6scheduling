@@ -531,6 +531,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		});
 		
 		singleMergedTodo.setWorkOrders(Arrays.asList(workOrders.toArray(new String[workOrders.size()])));
+		singleMergedTodo.setTypeId(todoDAO.getTypeId(singleMergedTodo.getToDoName()));
 		if((requiredByDate.size() > 1) && (status.size() > 1)){
 			singleMergedTodo.setReqByDate("");
 			singleMergedTodo.setStatus("");
