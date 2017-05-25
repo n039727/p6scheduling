@@ -1,0 +1,51 @@
+
+<table class="table table-condensed table-bordered table-striped" style="border-collapse:collapse;">
+	<thead class="query-result-header">
+		<tr>
+			<th>&nbsp;</th>
+			<th>WO #</th>
+			<th>Planned Start Date</th>
+			<th>Crew Assigned</th>
+			<th>Lead Crew</th>
+			<th>Execution Package</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat-start="wo in $ctrl.data" class="accordion-toggle">
+			<td>
+				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-sm glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event, wo)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
+				</button>
+			</td>
+			<td>{{wo.workOrders.join(',')}}</td>
+			<td>{{wo.scheduleDate}}</td>
+			<td>{{wo.crewNames}}</td>
+			<td>{{wo.leadCrew}}</td>
+			<td>{{wo.exctnPckgName}}</td>
+		</tr>
+		<tr ng-repeat-end>
+			<td colspan="12" class="hiddenRow">
+				<div class="accordian-body collapse" id="{{'demo-' + wo.workOrders[0]}}">
+					<div class="panel panel-default panel-standard-to-do">
+						<div class="panel-heading panel-standard-to-do-heading"><b>Material Requisition</b></div>
+						<div class="panel-body">
+							<div class="col-md-12">
+								<table class="table table-condensed table-bordered table-striped">
+									<thead>
+										<th class="standard-to-do-header">WO#</th>
+										<th class="standard-to-do-header">Requisition No #</th>
+									</thead>
+									<tbody>
+										<tr ng-repeat="todo in wo.todoAssignments | filter:{typeId:1}">
+											<td>{{todo.toDoName}}</td>
+											<td>{{todo.workOrders.join(',')}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
