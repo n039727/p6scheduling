@@ -272,6 +272,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		} else { // not present in portal so delete from p6
 			workOrderNew.setLeadCrew(leadCrewWorkOrder);
 			workOrderNew.setExctnPckgName("");
+			workOrderNew.setActioned(dbTask.getActioned());
 			/*if (workOrder.getExctnPckgName() != null) {
 				executionPackageservice.getWorkOrdersForExcnPkgDelP6().add(workOrder.getWorkOrderId());
 			}*/
@@ -709,7 +710,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		dbTask.setSchdDt(scheduleDate);
 		dbTask.setDepotId(workOrder.getDepotId());
 		dbTask.setMatrlReqRef(workOrder.getMeterialReqRef());
-		if ( null != workOrder.getExctnPckgName()){
+		if ( !org.springframework.util.StringUtils.isEmpty(workOrder.getExctnPckgName())){
 			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
 			if(null != executionPackage){
 				executionPackage.setActioned(ACTIONED_Y);

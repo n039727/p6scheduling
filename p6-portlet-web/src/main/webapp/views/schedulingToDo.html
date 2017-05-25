@@ -48,11 +48,6 @@
 														ng-click="$ctrl.addRemoveTodo($event, wo, todo)">
 											</td>
 											<td>
-												<!--
-												<select class="form-control" >
-													<option ng-repeat="workOrderId in wo.workOrders" ng-if="$ctrl.calculateEnable(wo, todo)">{{workOrderId}}</option>
-												</select>
-												-->
 												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
 													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
@@ -60,7 +55,6 @@
 													multiple
 													placeholder="Select">
 												</oi-select>
-												<!--<div>{{toDoBindingVar[getWorkOrderToDoKey(wo, todo)]}}</div>-->
 											</td>
 										</tr>
 									</tbody>
@@ -81,9 +75,6 @@
 													   ng-click="$ctrl.addRemoveTodo($event, wo, todo)">
 											</td>
 											<td>
-												<!--<select class="form-control" >
-													<option ng-if="$ctrl.calculateEnable(wo, todo)">{{wo.workOrders[0]}}</option>
-												</select>-->
 												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
 													ng-disabled="!$ctrl.disbledDropdown(wo, todo)"
@@ -91,7 +82,6 @@
 													multiple
 													placeholder="Select">
 												</oi-select>
-												<!--<div>{{toDoBindingVar[getWorkOrderToDoKey(wo, todo)]}}</div>-->
 											</td>
 										</tr>
 									</tbody>
