@@ -5,7 +5,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	ctrl.isInvalidDateFormat = false;
 	ctrl.showErrorMsg = "";
 	ctrl.dateFormat = 'DD/MM/YYYY';
-	console.log('Meta Data passed from parent: ' + JSON.stringify(this.metadata));
+//	console.log('Meta Data passed from parent: ' + JSON.stringify(this.metadata));
 	
 	ctrl.depotList = [];
 	ctrl.depotCrewMap = {};
@@ -51,7 +51,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	
 	// FORMAT THE DATE FOR THE DATEPICKER
 	$mdDateLocale.formatDate = function(date) {
-   	 console.log('date in formatDate: ' + JSON.stringify(date));
+//   	 console.log('date in formatDate: ' + JSON.stringify(date));
     	if(angular.isDefined(date) && date !== null){
     		ctrl.isInvalidDateFormat = false;
     		return $filter('date')(date, "dd/MM/yyyy");
@@ -61,7 +61,6 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
     };
     $mdDateLocale.parseDate = function(dateString) {
     	 var m = moment(dateString, ctrl.dateFormat, true);
-       	 console.log('m in parseDate: ' + JSON.stringify(m));
        	 if(!m.isValid()){
        		ctrl.isInvalidDateFormat = true;
        	 }else{
@@ -74,7 +73,6 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	this.prepareSearch = function() {
 		
 		console.log('search called');
-		console.log('this.scheduleFromDate:' + this.scheduleFromDate);
 		$scope.depots = [];
 		for (var i = 0, l = this.selectedDepotList.length; i < l; i++) {
 			$scope.depots.push (this.selectedDepotList[i].name);
@@ -91,7 +89,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			toDate: ctrl.formatDate(this.scheduleToDate)
 		};
 		if(this.validateForm()){
-			console.log('queryObject:' + JSON.stringify(queryObj));
+//			console.log('queryObject:' + JSON.stringify(queryObj));
 			this.search({query:queryObj});
 		}
 	};
@@ -118,8 +116,20 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 				ctrl.showErrorMsg = 'Planned Start From Date is required';
 				ctrl.isValidationErr = true;
 				return false;
-			}
-			else{
+			}else if(ctrl.scheduleToDate !==""){
+				this.schFromDate = ctrl.formatDate(this.scheduleFromDate);
+				this.schToDate = ctrl.formatDate(this.scheduleToDate);
+				var isSamedate = moment(this.schFromDate).isSame(this.schToDate);
+				var isPastDate = moment(this.schFromDate).isBefore(this.schToDate); 
+				if(!isSamedate && !isPastDate){
+					ctrl.showErrorMsg = 'To Date must be future date of From Date';
+					ctrl.isValidationErr = true;
+					return false;
+				}else{
+					ctrl.isValidationErr = false;
+					return true;
+				}
+			}else{
 				ctrl.isValidationErr = false;
 				return true;
 			}
@@ -156,19 +166,18 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	};
 	
 	ctrl.formatDate = function(date) {
-		console.log('date in formatDate of search :' + JSON.stringify(date));
 		if(angular.isDefined(date) && date !== ""){
-		var d = new Date(date),
-		month = '' + (d.getMonth() + 1),
-		day = '' + d.getDate(),
-		year = d.getFullYear();
-		if (month.length < 2) month = '0' + month;
-		if (day.length < 2) day = '0' + day;
-		return [year, month, day].join('-')+'T00:00:00.000Z';
+			var d = new Date(date),
+				month = '' + (d.getMonth() + 1),
+				day = '' + d.getDate(),
+				year = d.getFullYear();
+			if (month.length < 2) month = '0' + month;
+			if (day.length < 2) day = '0' + day;
+			return [year, month, day].join('-')+'T00:00:00.000Z';
 		}else {
-		return null;
+			return null;
 		}
-		};
+	};
 	
 	this.refresh();
 	
