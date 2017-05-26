@@ -36,10 +36,8 @@ public class MaterialRequisitionDAOTest {
 		String[] workOrderId = new String[] {"EC000133","EC000132","EC000158","EC000134"};
 		List<MaterialRequisition> reqs = dao.listMetReq(workOrderId);
 		Assert.assertNotNull(reqs);
-		System.out.println(reqs);
 		for ( MaterialRequisition req : reqs ){
 			Assert.assertNotNull(req.getId().getRequisitionNo());
-			System.out.println(req.getId().getRequisitionNo());
 		}
 	}
 
