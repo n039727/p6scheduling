@@ -44,6 +44,12 @@ public class AppConfig {
 		return dataSourceLookup.getDataSource(environment.getProperty("p6.portal.jndi.datasource"));
 	}
 	
+	@Bean(name = "elipseDataSource")
+	public DataSource getElipsDataSource() {
+		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
+		return dataSourceLookup.getDataSource(environment.getProperty("elips.portal.jndi.datasource"));
+	}
+	
 	@Autowired
 	@Bean(name = "sessionFactory")
 	public SessionFactory getSessionFactory(DataSource dataSource) {
@@ -51,6 +57,19 @@ public class AppConfig {
 	    sessionBuilder.scanPackages("au.com.wp.corp.p6.model");
 	    sessionBuilder.setProperty("hibernate.show_sql", "true");
 	    sessionBuilder.addProperties(getHibernateProperties());
+	    return sessionBuilder.buildSessionFactory();
+	}
+	@Autowired
+	@Bean(name = "elipsSessionFactory")
+	public SessionFactory getElipsSessionFactory(DataSource elipseDataSource) {
+	    LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(elipseDataSource);
+	    sessionBuilder.scanPackages("au.com.wp.corp.p6.model.elips");
+	    sessionBuilder.setProperty("hibernate.show_sql", "true");
+	    Properties properties = new Properties();
+	    properties.put("hibernate.show_sql", "true");
+	    properties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
+	    properties.put("hibernate.default_schema" ,"NELL");
+	    sessionBuilder.addProperties(properties);
 	    return sessionBuilder.buildSessionFactory();
 	}
 

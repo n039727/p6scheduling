@@ -735,10 +735,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				toDoMap = workOrderToDoMap.get(executionPkg);
 			} else {
 				workOrder = new WorkOrder();
-				if (!StringUtils.isEmpty(executionPkg))
+				if (!StringUtils.isEmpty(executionPkg)){
 					workOrder.setExctnPckgName(executionPkg);
-				else
+					workOrder.setExecutionPkgComment(executionPackage.getExecSchdlrCmt());
+				}
+				else{
 					executionPkg = task.getTaskId();
+				}
 				List<String> workOrders = new ArrayList<String>();
 				workOrders.add(task.getTaskId());
 				workOrder.setWorkOrders(workOrders);
