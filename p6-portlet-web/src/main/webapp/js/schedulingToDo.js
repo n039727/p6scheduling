@@ -249,6 +249,8 @@ function schedulingToDoResultController($scope, restTemplate) {
 	}
 	
 	ctrl.getWorkOrderToDoKey = function(workOrder, todoName) {
+		if (angular.isDefined(workOrder))
+			return "";
 		return (angular.isDefined(workOrder.exctnPckgName)?workOrder.exctnPckgName:workOrder.workOrders[0]) + "-" + todoName;
 	}
 	ctrl.getWorkOrderToDoKeyForCheckBox = function(workOrder, todoName) {
