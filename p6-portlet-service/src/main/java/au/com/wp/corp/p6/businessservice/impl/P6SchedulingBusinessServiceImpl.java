@@ -152,8 +152,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			}
 		}
 		/*synchronization of task*/
-		updateTasksInDB(tasksForUpdate); //3 async
-		//updateWorkOrdersinP6(); //async
+		updateTasksInDB(tasksForUpdate); 
 		logger.debug("final grouped work orders size {}",mapOfExecutionPkgWO.values().size());
 		logger.debug("final grouped work orders = {}",mapOfExecutionPkgWO.values());
 		List<WorkOrder> workorders = new ArrayList<> (mapOfExecutionPkgWO.values());
@@ -254,7 +253,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					|| (!leadCrewWorkOrder.equalsIgnoreCase(leadCrewForTask)))) {
 				logger.debug("prepare work order scheduled date in task updating for this work order ==={}",scheduledDateInTask);
 				// TODO : this is changing date format commenting temp
-				//dbTask.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
+				dbTask.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
 				dbTask.setCrewId(crewAssignedForWorkOrder);
 				if(dbTask.getExecutionPackage() == null){
 					dbTask.setLeadCrewId(leadCrewWorkOrder);
@@ -282,7 +281,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					Task taskAttahced = (Task) iterator.next();
 					Date plannedStartDate = null;
 					if(taskAttahced.getSchdDt() != null){
-						plannedStartDate = dateUtils.toDateFromYYYY_MM_DD(taskAttahced.getSchdDt().toString());
+						//plannedStartDate = dateUtils.toDateFromYYYY_MM_DD(taskAttahced.getSchdDt().toString());
+						plannedStartDate = taskAttahced.getSchdDt();
 					}
 					String crewAssignedToTask = taskAttahced.getCrewId();
 					logger.debug("crew assigned to this task{}", crewAssignedToTask);
@@ -290,7 +290,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					//if (strNames != null) {
 						Date dateOfExectnPkg = null;
 						if(executionPackage.getScheduledStartDate() != null){
-							dateOfExectnPkg = dateUtils.toDateFromYYYY_MM_DD(executionPackage.getScheduledStartDate().toString());
+							//dateOfExectnPkg = dateUtils.toDateFromYYYY_MM_DD(executionPackage.getScheduledStartDate().toString());
+							dateOfExectnPkg = executionPackage.getScheduledStartDate();
 						}
 						logger.debug("planned start date {} for task {}", plannedStartDate, taskAttahced.getTaskId());
 						logger.debug("date {} for package  {}", dateOfExectnPkg, executionPackageName);
