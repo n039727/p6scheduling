@@ -27,8 +27,8 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			
 		}
 		ctrl.crewList = ctrl.allCrewList;
-		console.log("Depot List: " + JSON.stringify(ctrl.depotList));
-		console.log("Crew List: " + JSON.stringify(ctrl.crewList));
+//		console.log("Depot List: " + JSON.stringify(ctrl.depotList));
+//		console.log("Crew List: " + JSON.stringify(ctrl.crewList));
 	}
 	
 	ctrl.onDepotChange = function() {
@@ -134,9 +134,8 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 				return true;
 			}
 		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS' || ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO'){
-			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == "" 
-				|| ctrl.scheduleToDate == null || ctrl.scheduleToDate == ""){
-				ctrl.showErrorMsg = 'Planned Start From and To Date  is required';
+			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == "" ){
+				ctrl.showErrorMsg = 'Planned Start From Date  is required';
 				ctrl.isValidationErr = true;
 				return false;
 			}else if(ctrl.scheduleToDate !==""){

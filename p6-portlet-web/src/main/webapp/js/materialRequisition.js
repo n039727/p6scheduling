@@ -8,12 +8,40 @@ function materialRequisitionResultController($scope, restTemplate) {
 		if($('#'+button.id).hasClass("glyphicon-plus")) {
 			$('#'+button.id).removeClass("glyphicon-plus");
 			$('#'+button.id).addClass("glyphicon-minus");
+			ctrl.fetchMaterialReqAgainstWO(wo);			
 		} else if ($('#'+button.id).hasClass("glyphicon-minus")) {
 			$('#'+button.id).removeClass("glyphicon-minus");
 			$('#'+button.id).addClass("glyphicon-plus");
 		}
-		ctrl.savedMsgVisible = false;
 	};
+	ctrl.fetchMaterialReqAgainstWO = function(wo) {
+		serviceUrl = "/p6-portal-service/scheduler/fetchMetReqData";
+		var query = {};
+		var workOrderArr = [];
+		if(wo && wo.workOrders){
+			for(var i=0;i< wo.workOrders.length;i++ ){
+				workOrderArr.push(wo.workOrders[i].substring(0,8));
+			}
+		}
+		query.workOrderList = workOrderArr.unique();
+		console.log('fetching Material Requisition for : ' + JSON.stringify(query));
+		
+		var req = {
+				method: 'POST',
+				url: serviceUrl,
+				headers: {
+				   'Content-Type': 'application/json'
+				},
+				data: JSON.stringify(query)
+
+			};
+		
+		restTemplate.callService(req, function (response) {
+			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
+//			metadata.depotCrewMap = response.data.depotCrewMap;
+
+		}, null);
+	}
 	
 }
 
