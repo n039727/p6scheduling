@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.exception.P6DataAccessException;
-import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.elipse.MaterialRequisition;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
@@ -31,7 +30,7 @@ public class MaterialRequisitionDAOTest {
 		MockitoAnnotations.initMocks(this);
 	}
 
-	@Test
+	@Ignore
 	@Transactional
 	@Rollback(true)
 	public void testListMetReq () throws P6DataAccessException {
