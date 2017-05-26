@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.elipse.MaterialRequisition;
 import au.com.wp.corp.p6.test.config.AppConfig;
-@Ignore
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { AppConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
 public class MaterialRequisitionDAOTest {
@@ -30,15 +29,17 @@ public class MaterialRequisitionDAOTest {
 		MockitoAnnotations.initMocks(this);
 	}
 
-	@Ignore
+	@Test
 	@Transactional
 	@Rollback(true)
 	public void testListMetReq () throws P6DataAccessException {
 		String[] workOrderId = new String[] {"EC000133","EC000132","EC000158","EC000134"};
 		List<MaterialRequisition> reqs = dao.listMetReq(workOrderId);
 		Assert.assertNotNull(reqs);
+		System.out.println(reqs);
 		for ( MaterialRequisition req : reqs ){
 			Assert.assertNotNull(req.getId().getRequisitionNo());
+			System.out.println(req.getId().getRequisitionNo());
 		}
 	}
 

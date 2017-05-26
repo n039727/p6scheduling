@@ -63,7 +63,7 @@ public class AppConfig {
 	@Bean(name = "elipsSessionFactory")
 	public SessionFactory getElipsSessionFactory(DataSource elipseDataSource) {
 	    LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(elipseDataSource);
-	    sessionBuilder.scanPackages("au.com.wp.corp.p6.model.elips");
+	    sessionBuilder.scanPackages("au.com.wp.corp.p6.model.elipse");
 	    sessionBuilder.setProperty("hibernate.show_sql", "true");
 	    Properties properties = new Properties();
 	    properties.put("hibernate.show_sql", "true");
