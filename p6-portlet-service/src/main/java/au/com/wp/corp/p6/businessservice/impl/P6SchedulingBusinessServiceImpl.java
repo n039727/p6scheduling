@@ -116,14 +116,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		List<WorkOrder> ungroupedWorkorders = new ArrayList<>();
 		List<Task> tasksForUpdate = new ArrayList<Task>();
 		List<Task> tasksInDb = fetchListOfTasksForWorkOrders(listWOData);
-		
-			
+
 		for (WorkOrder workOrder : listWOData) {
-			//List<String> workOrderNamesinGroup = new ArrayList<>();
 			if (workOrder.getWorkOrders() != null) {
 				for (String workOrderId : workOrder.getWorkOrders()) {
 					Optional<Task> task = findTask(tasksInDb, workOrderId);
-					//Task dbTask = workOrderDAO.fetch(workOrderId); //2
 					Task dbTask = task.isPresent() ? task.get() : new Task();
 					updateExecutionPackage(dbTask.getExecutionPackage(),tasksForUpdate);
 					if (dbTask.getExecutionPackage() != null) {
@@ -141,15 +138,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 								/*if(dbTask.getTodoAssignments() != null){
 								workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask.getTodoAssignments())));
 								}*/
-								/*if(dbTask.getTodoAssignments() != null){
-									workOrderNew.setCompleted(convertBooleanToString(Boolean.TRUE));
-									for (TodoAssignment todo : dbTask.getTodoAssignments()) {
-										if (!P6Constant.STATUS_COMPLETED.equalsIgnoreCase(todo.getStat())) {
-											workOrderNew.setCompleted(convertBooleanToString(Boolean.FALSE));
-										}
-									}
-									
-								}*/
 								mapOfExecutionPkgWO.put(dbWOExecPkg, workOrderNew);
 							}
 					}else{
@@ -157,15 +145,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 						WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask,tasksForUpdate);
 						/*if(dbTask.getTodoAssignments() != null){
 							workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask.getTodoAssignments())));
-						}*/
-						/*if(dbTask.getTodoAssignments() != null){
-							workOrderNew.setCompleted(convertBooleanToString(Boolean.TRUE));
-							for (TodoAssignment todo : dbTask.getTodoAssignments()) {
-								if (!P6Constant.STATUS_COMPLETED.equalsIgnoreCase(todo.getStat())) {
-									workOrderNew.setCompleted(convertBooleanToString(Boolean.FALSE));
-								}
-							}
-							
 						}*/
 						ungroupedWorkorders.add(workOrderNew);
 					}
@@ -263,22 +242,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			workOrderNew.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
 			workOrderNew.setExctnPckgName(dbTask.getExecutionPackage().getExctnPckgNam());
 			workOrderNew.setActioned(dbTask.getExecutionPackage().getActioned());
-			/*if (workOrder.getExctnPckgName() == null) { //not present in p6 so create in p6
-				if (mapOfExecutionPackageWOP6.containsKey(dbTask.getExecutionPackage().getExctnPckgNam())) {
-					mapOfExecutionPackageWOP6.get(dbTask.getExecutionPackage().getExctnPckgNam()).add(workOrder);
-				} else {
-					List<WorkOrder> workorders = new ArrayList<WorkOrder>();
-					workorders.add(workOrder);
-					mapOfExecutionPackageWOP6.put(dbTask.getExecutionPackage().getExctnPckgNam(), workorders);
-				}
-			}*/
 		} else { // not present in portal so delete from p6
 			workOrderNew.setLeadCrew(leadCrewWorkOrder);
 			workOrderNew.setExctnPckgName("");
 			workOrderNew.setActioned(dbTask.getActioned());
-			/*if (workOrder.getExctnPckgName() != null) {
-				executionPackageservice.getWorkOrdersForExcnPkgDelP6().add(workOrder.getWorkOrderId());
-			}*/
 		}
 		if (scheduledDateForWorkOrder != null && scheduledDateInTask != null) {
 			
