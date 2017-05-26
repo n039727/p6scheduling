@@ -147,8 +147,8 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 			parseException(e);
 		}
 		logger.debug("inserted or updated the execution package and task details");
-		getSession().flush();
-		getSession().clear();
+		//getSession().flush();
+		//getSession().clear();
 		return status;
 	}
 	

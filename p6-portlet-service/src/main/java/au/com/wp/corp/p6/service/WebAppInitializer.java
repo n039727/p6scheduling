@@ -31,9 +31,10 @@ public class WebAppInitializer implements WebApplicationInitializer {
 		dynamic.addMapping("/");
 		dynamic.setLoadOnStartup(1);
 		logger.debug("Started up web application");
-		/*servletContext.addFilter("userTokenfilter", UserTokenFilter.class).
-								addMappingForUrlPatterns(null, true, "/p6-portal-service/*");
-		
+		/*javax.servlet.FilterRegistration.Dynamic filter = servletContext.addFilter("hibernateFilter", org.springframework.orm.hibernate4.support.OpenSessionInViewFilter.class);
+		filter.addMappingForUrlPatterns(null, true, "/*");	
+		filter.setInitParameter("sessionFactoryBeanName", "sessionFactory");
+	
 	    logger.debug("Filter for User token registered up web application");*/
 		
 		servletContext.addFilter("userTokenFilter", new DelegatingFilterProxy("userTokenFilter")).

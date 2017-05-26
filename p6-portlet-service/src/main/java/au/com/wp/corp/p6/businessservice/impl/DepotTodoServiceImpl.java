@@ -173,6 +173,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		}
 		
 		singleMergedTodo.setWorkOrders(Arrays.asList(workOrders.toArray(new String[workOrders.size()])));
+		singleMergedTodo.setTypeId(todoDAO.getTypeId(singleMergedTodo.getToDoName()));
 		if(requiredByDate.size() > 1){
 			singleMergedTodo.setReqByDate("");
 			

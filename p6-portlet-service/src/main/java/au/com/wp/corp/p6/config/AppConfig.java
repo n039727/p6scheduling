@@ -16,7 +16,6 @@ import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -28,7 +27,6 @@ import au.com.wp.corp.p6.aspect.P6PortalLoggingAspect;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @PropertySource("file:/${properties.dir}/p6portal.properties")
 @EnableTransactionManagement
-@EnableScheduling
 @EnableAsync
 public class AppConfig {
 

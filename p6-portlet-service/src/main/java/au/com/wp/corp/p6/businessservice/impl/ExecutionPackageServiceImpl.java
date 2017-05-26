@@ -7,12 +7,13 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -164,20 +165,20 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		List<ExecutionPackageDTO> execPkgdtos = new ArrayList<ExecutionPackageDTO>();
 		execPkgdtos.add(execPackgDTO);
 		executionPackageDTOFoP6List = execPkgdtos;
-		//updateP6ForExecutionPackage(execPackgDTO);
+		updateP6ForExecutionPackage(execPkgdtos);
 		return execPackgDTO;
 
 	}
 	
-	@Scheduled(fixedDelay = 20000)
-	public void updateP6ForExecutionPackage() {
-		logger.debug("Starting to trigger execution package update with executionPackageDTDOFoP6 "
-				+ executionPackageDTOFoP6List);
+	@Async
+	private void updateP6ForExecutionPackage(List<ExecutionPackageDTO> execPkgdtos) {
+		logger.debug("Starting to execution package update with execPkgdtos "
+				+ execPkgdtos);
 		List<ExecutionPackageCreateRequest> request = new ArrayList<>();
-		if (executionPackageDTOFoP6List == null) {
+		if (execPkgdtos == null) {
 			return;
 		}
-		for (ExecutionPackageDTO executionPackageDTOForP6 : executionPackageDTOFoP6List) {
+		for (ExecutionPackageDTO executionPackageDTOForP6 : execPkgdtos) {
 
 			if (executionPackageDTOForP6.getWorkOrders() != null
 					&& (!executionPackageDTOForP6.getWorkOrders().isEmpty())) {
@@ -278,13 +279,16 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		return execPckgId;
 	}
 	@Override
+	@Transactional
 	public List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6BaseException {
-		List<WorkOrder> mockWOData = p6SchedulingService.retrieveWorkOrders(input);
-		for (WorkOrder workOrder : mockWOData) {
+		List<WorkOrder> listWOData = p6SchedulingService.retrieveWorkOrders(input);
+		List<Task> tasksInDb = fetchListOfTasksForWorkOrders(listWOData);
+		for (WorkOrder workOrder : listWOData) {
 			if (workOrder.getWorkOrders() != null) {
 				for (String workOrderId : workOrder.getWorkOrders()) {
-					Task dbTask = workOrderDao.fetch(workOrderId);
-					dbTask = dbTask == null ? new Task() : dbTask;
+					Optional<Task> task = findTask(tasksInDb, workOrderId);
+					//Task dbTask = workOrderDAO.fetch(workOrderId); //2
+					Task dbTask = task.isPresent() ? task.get() : new Task();
 					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
 					if (dbTask.getExecutionPackage() != null) {
 						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());
@@ -296,7 +300,24 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 				}
 			}
 		}
-		logger.debug("final grouped work orders size {}",mockWOData.size());
-		return mockWOData;
+		logger.debug("final grouped work orders size {}",listWOData.size());
+		return listWOData;
 	}
+	private Optional<Task> findTask(final List<Task> list, final String woId) {
+	    return list.stream()
+	        .filter(p -> p.getTaskId().equals(woId)).findAny();
+	}
+	private List<Task> fetchListOfTasksForWorkOrders(List<WorkOrder> listWOData) throws P6BusinessException{
+		long startTime = System.currentTimeMillis();
+		List<String> worOrders = new ArrayList<String>();
+		if (listWOData != null) {
+			listWOData.forEach(workOrder->{
+				worOrders.add(workOrder.getWorkOrderId());
+				});
+			
+		}
+		logger.debug("Total time taken to updateTasksInDB {}",System.currentTimeMillis() - startTime );
+		return workOrderDao.fetchTasks(worOrders);
+	}
+
 }

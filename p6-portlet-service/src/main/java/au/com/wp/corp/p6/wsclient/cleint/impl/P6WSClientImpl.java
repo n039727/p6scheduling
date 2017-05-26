@@ -15,6 +15,7 @@ import javax.xml.ws.Holder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.utils.CacheManager;
+import au.com.wp.corp.p6.utils.DateUtils;
 import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
@@ -68,6 +70,9 @@ public class P6WSClientImpl implements P6WSClient {
 	
 	@Value("${P6_UDF_SERVICE_WSDL}")
 	private String udfServiceWSDL;
+	
+	@Autowired
+	DateUtils dateUtils;
 	
 	private Map<String, Integer> workOrderIdMap = new HashMap<String, Integer>();
 
@@ -143,7 +148,7 @@ public class P6WSClientImpl implements P6WSClient {
 				WorkOrder workOrder = new WorkOrder();
 				workOrder.setWorkOrderId(activity.getId());
 				workOrder.setCrewNames(activity.getPrimaryResourceId());
-				workOrder.setScheduleDate(activity.getPlannedStartDate().toString());
+				workOrder.setScheduleDate(dateUtils.convertDateDDMMYYYY(activity.getPlannedStartDate().toString()));
 				List<String> wos = new ArrayList<>();
 				wos.add(activity.getId());
 				workOrderIdMap.put(activity.getId(),activity.getObjectId());

@@ -16,9 +16,9 @@ Array.prototype.unique = function() {
 	for (var i = 0; i < this.length; i++) {
 		itemMap[this[i]] = {};
 	}
-	for (item in itemMap) {
-		arr.push(item);
-	}
+	$.each(itemMap, function (key, value) {
+	   arr.push(key);
+	});
 	console.log("Unique object: " + JSON.stringify(arr));
 	return arr;
 };
