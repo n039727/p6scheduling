@@ -109,7 +109,9 @@
 					</div>
 					<div class="col-md-12">
 							<label for="comment">Scheduling To-Do Comment</label>
-							<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.schedulingComment}}</textarea> 
+							<!--<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.schedulingComment}}</textarea> -->
+							<textarea ng-show="{{wo.exctnPckgName === null || wo.exctnPckgName === ''}}" class="form-control" rows="3" id="comment-1" ng-model="wo.schedulingToDoComment"></textarea> 
+							<textarea ng-show="{{wo.exctnPckgName != null && wo.exctnPckgName != ''}}" class="form-control" rows="3" id="comment-1" ng-model="wo.executionPkgComment"></textarea> 
 						</div>
 						<div class="col-md-12">
 							<label for="comment">Depot To-Do Comment</label>
