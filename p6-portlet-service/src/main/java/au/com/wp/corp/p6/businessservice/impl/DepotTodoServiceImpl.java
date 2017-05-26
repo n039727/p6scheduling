@@ -246,6 +246,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	}
 	
 	@Override
+	@Transactional
 	public WorkOrder saveDepotToDo(WorkOrder workOrder) throws P6BusinessException {
 
 		if (workOrder == null)
@@ -500,6 +501,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	}
 	
 	@Override
+	@Transactional
 	public List<WorkOrder> fetchDepotTaskForAddUpdateToDo(WorkOrderSearchRequest query) {
 
 		List<Task> tasks = null;
