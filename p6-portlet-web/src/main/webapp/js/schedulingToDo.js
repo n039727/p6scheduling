@@ -249,7 +249,7 @@ function schedulingToDoResultController($scope, restTemplate) {
 	}
 	
 	ctrl.getWorkOrderToDoKey = function(workOrder, todoName) {
-		if (angular.isDefined(workOrder))
+		if (angular.isUndefined(workOrder))
 			return "";
 		return (angular.isDefined(workOrder.exctnPckgName)?workOrder.exctnPckgName:workOrder.workOrders[0]) + "-" + todoName;
 	}
@@ -261,8 +261,10 @@ function schedulingToDoResultController($scope, restTemplate) {
 		if(angular.isDefined(ctrl.toDoBindingVar)){
 			var selectedValArray = ctrl.toDoBindingVar[key];
 			if (angular.isDefined(selectedValArray) && selectedValArray.length > 0) {
+//				console.log("selectedValArray >: " + JSON.stringify(selectedValArray));
 				return true;
 			}else if(angular.isDefined(selectedValArray) && selectedValArray.length == 0){
+//				console.log("selectedValArray =: " + JSON.stringify(selectedValArray));
 				return false;
 				
 			}
