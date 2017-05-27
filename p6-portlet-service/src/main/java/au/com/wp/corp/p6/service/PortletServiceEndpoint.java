@@ -10,6 +10,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.MaterialRequisitionDTO;
 import au.com.wp.corp.p6.dto.MaterialRequisitionRequest;
 import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
@@ -33,6 +34,6 @@ public interface PortletServiceEndpoint {
 	//ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO) throws P6BaseException;
 	ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus) throws P6BusinessException;
 	List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchRequest> query);
-	ResponseEntity<Map<String,List<String>>> fetchMetReqdata(RequestEntity<MaterialRequisitionRequest> request) throws P6BaseException;
+	ResponseEntity<MaterialRequisitionDTO> fetchMetReqdata(RequestEntity<MaterialRequisitionRequest> request) throws P6BaseException;
 
 }

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
@@ -46,8 +47,13 @@ public class AppConfig {
 	
 	@Bean(name = "elipseDataSource")
 	public DataSource getElipsDataSource() {
-		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
-		return dataSourceLookup.getDataSource(environment.getProperty("elips.portal.jndi.datasource"));
+		//JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
+		//return dataSourceLookup.getDataSource(environment.getProperty("elips.portal.jndi.datasource"));
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setUrl("jdbc:oracle:thin:@oracle-dwdev:1521:dwdev");
+		dataSource.setUsername("NELLDAPI7");
+		dataSource.setPassword("Gfsdhy76657sdsd");
+		return dataSource;
 	}
 	
 	@Autowired
