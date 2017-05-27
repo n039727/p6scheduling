@@ -48,6 +48,8 @@ public class ReadEllipseThread implements Runnable {
 		
 		final String readingStrategy = P6ReloadablePropertiesReader.getProperty("ELLIPSE_READING_STRATEGY");
 		
+		logger.debug("Ellipse reading strategy # {}", readingStrategy);
+		
 		if ( readingStrategy.equals(EllipseReadParameter.ALL.name()))
 		{
 			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet(); 

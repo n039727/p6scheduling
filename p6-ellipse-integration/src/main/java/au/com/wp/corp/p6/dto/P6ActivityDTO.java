@@ -5,8 +5,6 @@ package au.com.wp.corp.p6.dto;
 
 import java.io.Serializable;
 
-import au.com.wp.corp.p6.wsclient.activity.ActivityFieldType;
-
 /**
  * ActivityDTO holds the activity details
  * 
@@ -14,6 +12,10 @@ import au.com.wp.corp.p6.wsclient.activity.ActivityFieldType;
  * @version 1.0
  */
 public class P6ActivityDTO  implements Serializable{
+	/**
+	 * serial version id 
+	 */
+	private static final long serialVersionUID = -2859048188743315099L;
 	/**
 	 * Primary Id in P6
 	 */

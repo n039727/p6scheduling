@@ -13,6 +13,7 @@ import au.com.wp.corp.p6.dto.P6ProjWorkgroupDTO;
  * @author N039126
  * @version 1.0
  */
+@FunctionalInterface
 public interface P6PortalMapper {
 	/**
 	 * retrieve project resource details from portal DB

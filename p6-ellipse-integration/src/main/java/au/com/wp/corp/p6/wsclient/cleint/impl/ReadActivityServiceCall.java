@@ -45,7 +45,7 @@ public class ReadActivityServiceCall extends ActivityServiceCall<List<Activity>>
 		//fields.add(ActivityFieldType.PRIMARY_RESOURCE_NAME);
 		fields.add(ActivityFieldType.PROJECT_OBJECT_ID);
 		fields.add(ActivityFieldType.PRIMARY_RESOURCE_ID);
-		fields.add(ActivityFieldType.ACTUAL_DURATION);
+		fields.add(ActivityFieldType.PLANNED_DURATION);
 		fields.add(ActivityFieldType.REMAINING_DURATION);
 		fields.add(ActivityFieldType.STATUS);
 		

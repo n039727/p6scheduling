@@ -17,13 +17,16 @@ import au.com.wp.corp.p6.wsclient.udfvalue.IntegrationFault;
 import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
 
 /**
+ * CreatUDFValueServiceCall, webservice client for P6 CreateUDFValueService.
+ * 
  * @author n039126
- *
+ * @version 1.0
  */
 public class CreateUDFValueServiceCall extends UDFValueServiceCall<List<ObjectId>> {
 	private static final Logger logger = LoggerFactory.getLogger(CreateUDFValueServiceCall.class);
-	
+
 	private final List<UDFValue> udfValues;
+
 	public CreateUDFValueServiceCall(final RequestTrackingId trackingId, String endPoint, List<UDFValue> udfValues) {
 		super(trackingId, endPoint);
 		this.udfValues = udfValues;
@@ -31,16 +34,15 @@ public class CreateUDFValueServiceCall extends UDFValueServiceCall<List<ObjectId
 
 	@Override
 	protected Holder<List<ObjectId>> command() throws P6ServiceException {
-		
+
 		List<ObjectId> objectIds = null;
 		try {
-			logger.debug("calling createUDFValues with udf values == {}",udfValues);
+			logger.debug("calling createUDFValues with udf values == {}", udfValues);
 			objectIds = servicePort.createUDFValues(udfValues);
 		} catch (IntegrationFault e) {
 			throw new P6ServiceException(e);
 		}
-		return new Holder<List<ObjectId>>(objectIds);
+		return new Holder<>(objectIds);
 	}
-
 
 }

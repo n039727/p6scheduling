@@ -16,4 +16,6 @@ public interface P6EllipseIntegrationService {
 	
 	public List<P6ActivityDTO> startEllipseToP6Integration() throws P6BusinessException;
 
+	public void clearApplicationMemmory();
+
 }

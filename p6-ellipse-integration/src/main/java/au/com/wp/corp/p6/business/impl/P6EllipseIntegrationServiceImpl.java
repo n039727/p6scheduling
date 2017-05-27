@@ -542,5 +542,16 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		}
 		return p6Activity;
 	}
+	
+	
+	@Override
+	public void clearApplicationMemmory (){
+		CacheManager.getEllipseActivitiesMap().clear();
+		CacheManager.getP6ActivitiesMap().clear();
+		CacheManager.getP6ProjectWorkgroupMap().clear();
+		CacheManager.getProjectWorkgroupListMap().clear();
+		CacheManager.getSystemReadStatusMap().clear();
+		CacheManager.getWsHeaders().clear();
+	}
 
 }
