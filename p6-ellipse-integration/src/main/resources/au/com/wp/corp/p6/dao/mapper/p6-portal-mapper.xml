@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
+  'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+<mapper namespace='au.com.wp.corp.p6.dao.mapper.P6PortalMapper'>
+	<resultMap type='p6ProjWorkgroupDTO' id='workGroupResultMap'>
+		<result property="projectObjectId" column="PROJ_ID"/>
+		<result property="projectName" column="PROJ_NAM"/>
+		<result property="primaryResourceId" column="PRMRY_RSCR_ID"/>
+		<result property="resourceName" column="RSRC_NAM"/>
+		<result property="roleId" column="ROLE_ID"/>
+		<result property="roleName" column="ROLE_NAM"/>
+		<result property="schedulerinbox" column="SCHDLR_INBX"/>
+		<result property="primaryResourceYN" column="PRMRY_RSRC_FLG"/>
+	</resultMap>
+	<select id="getProjectResourceMappingList" resultMap="workGroupResultMap">
+		SELECT
+		PROJ_ID, PROJ_NAM, PRMRY_RSCR_ID, RSRC_NAM, ROLE_ID, ROLE_NAM,
+		SCHDLR_INBX, PRMRY_RSRC_FLG FROM P6PORTAL.PROJECT_WORKGROUP_MAPPING
+	</select>
+</mapper>
