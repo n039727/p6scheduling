@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.businessservice.P6MaterialRequisitionService;
 import au.com.wp.corp.p6.dataservice.MaterialRequisitionDAO;
+import au.com.wp.corp.p6.dto.MaterialRequisitionDTO;
 import au.com.wp.corp.p6.dto.MaterialRequisitionRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.model.elipse.MaterialRequisition;
@@ -25,7 +26,7 @@ public class P6MaterialRequisitionServiceImpl implements P6MaterialRequisitionSe
 
 	@Override
 	@Transactional
-	public Map<String, List<String>> retriveMetReq(MaterialRequisitionRequest input) throws P6BusinessException {
+	public MaterialRequisitionDTO retriveMetReq(MaterialRequisitionRequest input) throws P6BusinessException {
 		Object[] workOrderId = input.getWorkOrderList().toArray();
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
 		List<MaterialRequisition> metReqList = dao.listMetReq(workOrderId);
@@ -38,7 +39,9 @@ public class P6MaterialRequisitionServiceImpl implements P6MaterialRequisitionSe
 				result.put(metReq.getWorkOrder(),reqIds);
 			}
 		}
-		return result;
+		MaterialRequisitionDTO response = new MaterialRequisitionDTO();
+		response.setMaterialRequisitionMap(result);
+		return response;
 	}
 
 }
