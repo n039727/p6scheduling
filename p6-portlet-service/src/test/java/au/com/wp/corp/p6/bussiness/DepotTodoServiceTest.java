@@ -35,6 +35,7 @@ import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
@@ -86,9 +87,10 @@ public class DepotTodoServiceTest {
 
 	/**
 	 * Test method for {@link au.com.wp.corp.p6.businessservice.DepotTodoService#fetchDepotTaskForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchRequest)}.
+	 * @throws P6BusinessException 
 	 */
 	@Test
-	public void testFetchDepotTaskForViewToDoStatus() {
+	public void testFetchDepotTaskForViewToDoStatus() throws P6BusinessException {
 
 		WorkOrderSearchRequest  request =  new WorkOrderSearchRequest();
 		request.setExecPckgName("15-05-2017_05590757");
