@@ -143,8 +143,8 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) 
 		ctrl.reload(query, function(data) {
 			ctrl.workOrders = data;
 			ctrl.resultVisible = data.length > 0;
-			console.log('ctrl.resultVisible:' + JSON.stringify(ctrl.resultVisible));
-			if(data.length > 0){
+//			console.log('ctrl.resultVisible:' + JSON.stringify(ctrl.resultVisible));
+			if(ctrl.resultVisible){
 				ctrl.metadata.isErrdataAvail = false;
 			}else{
 				ctrl.metadata.isErrdataAvail = true;
