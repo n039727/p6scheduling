@@ -363,14 +363,14 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	@Override
 	@Transactional
-	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) {
+	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) throws P6BusinessException {
 
 		List<Task> tasks = null;
 		//Map<String, ViewToDoStatus> taskIdWOMap = new HashMap<String, ViewToDoStatus>();
 		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> mapOfToDoIdWorkOrders = new HashMap<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>>();
 		ExecutionPackage executionPackage = null;
 		ViewToDoStatus returnedVal = new ViewToDoStatus();
-		if (null != query && null != query.getExecPckgName()) {
+		if (null != query && (null != query.getExecPckgName() || "".equals(query.getExecPckgName()))) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
 			tasks = new ArrayList<Task>(executionPackage.getTasks()); //multiple tasks
 		} else { 
@@ -381,17 +381,15 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			if (task.getExecutionPackage() != null) {
 				key = task.getExecutionPackage().getExctnPckgNam();
 				returnedVal.setExctnPckgName(key);
+				returnedVal.setSchedulingComment(task.getExecutionPackage().getExecSchdlrCmt());
+				returnedVal.setDeportComment(task.getExecutionPackage().getExecDeptCmt());
 			} else {
 				key = task.getTaskId();
 				returnedVal.setExctnPckgName("");
+				returnedVal.setDeportComment(task.getCmts());
+				returnedVal.setSchedulingComment(task.getCmts());
 			}
-
-			
-			
 			logger.debug("Key for fetch todo >>>{}", key);
-			
-			returnedVal.setSchedulingComment(task.getCmts());
-			
 			// TO DO
 			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
 
@@ -406,6 +404,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				long todoId = assignment.getTodoAssignMentPK().getTodoId().longValue();
 				String toDoName = todoDAO.getToDoName(todoId);
 				logger.debug("work order associated to each todo {} {}",toDoName,workOrderId);
+				
 				assignmentDTO.setComment(assignment.getCmts());
 				if (null != assignment.getReqdByDt()) {
 					assignmentDTO.setReqByDate(dateUtils.toStringDD_MM_YYYY(assignment.getReqdByDt()));
@@ -699,7 +698,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	@Override
 	@Transactional
-	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest query) {
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest query) throws P6BusinessException {
 
 		List<Task> tasks = null;
 		ExecutionPackage executionPackage = null;

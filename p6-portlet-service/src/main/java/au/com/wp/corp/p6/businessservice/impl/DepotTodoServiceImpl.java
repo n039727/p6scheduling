@@ -33,6 +33,7 @@ import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
@@ -65,13 +66,13 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	 */
 	@Transactional
 	@Override
-	public ViewToDoStatus fetchDepotTaskForViewToDoStatus(WorkOrderSearchRequest query){
+	public ViewToDoStatus fetchDepotTaskForViewToDoStatus(WorkOrderSearchRequest query) throws P6DataAccessException{
 		
 		List<Task> tasks = null;
 		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> toDoAssignments = new HashMap<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>>();
 		ExecutionPackage executionPackage = null;
 		ViewToDoStatus viewToDoStatus = new ViewToDoStatus();
-		if (null != query && null != query.getExecPckgName()) {
+		if (null != query && (null != query.getExecPckgName() || "".equals(query.getExecPckgName()))) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
 			tasks = new ArrayList<Task>(executionPackage.getTasks()); 
 		} else { 
@@ -80,10 +81,13 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		for (Task task : tasks) {
 			if (task.getExecutionPackage() != null) {
 				viewToDoStatus.setExctnPckgName(task.getExecutionPackage().getExctnPckgNam());
+				viewToDoStatus.setSchedulingComment(task.getExecutionPackage().getExecSchdlrCmt());
+				viewToDoStatus.setDeportComment(task.getExecutionPackage().getExecDeptCmt());
 			} else {
 				viewToDoStatus.setExctnPckgName("");
+				viewToDoStatus.setSchedulingComment(task.getCmts());
+				viewToDoStatus.setDeportComment(task.getCmts());
 			}
-			viewToDoStatus.setSchedulingComment(task.getCmts());
 
 			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
 
@@ -503,7 +507,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	
 	@Override
 	@Transactional
-	public List<WorkOrder> fetchDepotTaskForAddUpdateToDo(WorkOrderSearchRequest query) {
+	public List<WorkOrder> fetchDepotTaskForAddUpdateToDo(WorkOrderSearchRequest query) throws P6BusinessException {
 
 		List<Task> tasks = null;
 		ExecutionPackage executionPackage = null;
