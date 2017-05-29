@@ -147,7 +147,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 					ctrl.showErrorMsg = 'To Date must be future date of From Date';
 					ctrl.isValidationErr = true;
 					return false;
-				}else if(moment(this.schToDate).diff(this.schFromDate,'days') > 14){
+				}else if(moment(this.schToDate).diff(this.schFromDate,'days') >= 14){
 					ctrl.showErrorMsg = 'Search is allowed for a maximum of 2 weeks period';
 					ctrl.isValidationErr = true;
 					return false;
