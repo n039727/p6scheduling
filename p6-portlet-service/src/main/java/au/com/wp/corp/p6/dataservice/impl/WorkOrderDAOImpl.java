@@ -44,18 +44,23 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	 */
 	@Override
 	@Transactional
-	public List<Task> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) {
+	public List<Task> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) throws P6DataAccessException {
 		logger.debug("sessionfactory initialized ====={}",sessionFactory);
 		
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Task.class);
-        
-		logger.debug("Input TASK_ID>>>>{}", query.getWorkOrderId());
-		criteria.add(Restrictions.eq("taskId", query.getWorkOrderId()));
-		
-		@SuppressWarnings("unchecked")
-		List<Task> listTask = (List<Task>) criteria
-                  .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-		criteria.setFetchSize(1);
+        @SuppressWarnings("unchecked")
+		List<Task> listTask = null;
+		try {
+			Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Task.class);
+			
+			logger.debug("Input TASK_ID>>>>{}", query.getWorkOrderId());
+			criteria.add(Restrictions.eq("taskId", query.getWorkOrderId()));
+			
+			listTask = (List<Task>) criteria
+			          .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+			criteria.setFetchSize(1);
+		} catch (HibernateException e) {
+			parseException(e);
+		}
 		/* This list size should always be 1*/
 		logger.info("size={}",listTask.size());
         return listTask;

@@ -133,6 +133,7 @@ public class P6WSClientImpl implements P6WSClient {
 				filter.append(" 23:59:59', 'yyyy-mm-dd hh24:mi:ss')");
 				
 			}
+			filter.append(" order by PlannedStartDate,Id");
 		}
 		logger.debug("filter criteria for search # {} ", filter.toString());
 

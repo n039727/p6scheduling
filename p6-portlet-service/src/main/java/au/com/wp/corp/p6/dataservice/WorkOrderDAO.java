@@ -8,7 +8,7 @@ import au.com.wp.corp.p6.model.Task;
 
 public interface WorkOrderDAO extends P6DAOExceptionParser {
 
-	List<Task> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query);
+	List<Task> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) throws P6DataAccessException;
 	Task saveTask(Task task) throws P6DataAccessException;
 	Task fetch(String workOrderId) throws P6DataAccessException;
 	List<Task> fetchTasks(List<String> workOrderId) throws P6DataAccessException;
