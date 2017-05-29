@@ -1,6 +1,15 @@
 
-function executionPackageResultController($scope, ModalService) {
+function executionPackageResultController($scope, ModalService, userAccessService) {
 	var ctrl = this;
+	
+	// Authorization implementation
+	ctrl.isReadOnly = false;
+	if (ctrl.isAuthEnabled) {
+		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
+			ctrl.isReadOnly = true;
+		}
+	}
+	
 	ctrl.selectedExecPckg = [];
 	console.log('data received in execution package: ' + JSON.stringify(ctrl.data));
 	ctrl.errorMsgVisiable = false;
@@ -178,6 +187,8 @@ angular.module('todoPortal').component('executionPackageResult', {
   bindings: {
 	  activeContext: '<',
 	  data: '<',
-	  handleDataChange: '&'
+	  handleDataChange: '&',
+	  isAuthEnabled:'<',
+	  functionId: '<'
   }
 });

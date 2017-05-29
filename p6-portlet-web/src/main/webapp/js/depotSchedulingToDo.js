@@ -1,5 +1,14 @@
-function depotSchedulingToDoResultController($scope, restTemplate) {
+function depotSchedulingToDoResultController($scope, restTemplate, userAccessService) {
 	var ctrl = this;
+	
+	// Authorization implementation
+	ctrl.isReadOnly = false;
+	if (ctrl.isAuthEnabled) {
+		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
+			ctrl.isReadOnly = true;
+		}
+	}
+	
 	ctrl.successSavedMsg = "";
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	ctrl.toggleExpansion  = function($event, wo) {
@@ -284,6 +293,8 @@ angular.module('todoPortal').component('depotSchedulingToDoResult', {
 	  activeContext: '<',
 	  data: '<',
 	  metadata: '<',
-	  handleDataChange: '&'
+	  handleDataChange: '&',
+	  isAuthEnabled:'<',
+	  functionId: '<'
   }
 });

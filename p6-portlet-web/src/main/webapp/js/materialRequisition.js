@@ -1,5 +1,14 @@
-function materialRequisitionResultController($scope, restTemplate) {
+function materialRequisitionResultController($scope, restTemplate, userAccessService) {
 	var ctrl = this;
+	
+	// Authorization implementation
+	ctrl.isReadOnly = false;
+	if (ctrl.isAuthEnabled) {
+		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
+			ctrl.isReadOnly = true;
+		}
+	}
+	
 	console.log('data received in material req.: ' + JSON.stringify(ctrl.data));
 	ctrl.woMatReqMap = {};
 	ctrl.woReqs = [];
@@ -62,6 +71,8 @@ angular.module('todoPortal').component('materialRequisitionResult', {
 	  activeContext: '<',
 	  data: '<',
 	  metadata: '<',
-	  handleDataChange: '&'
+	  handleDataChange: '&',
+	  isAuthEnabled:'<',
+	  functionId: '<'
   }
 });

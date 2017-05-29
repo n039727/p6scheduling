@@ -1,5 +1,14 @@
-function viewToDoStatusController($scope,restTemplate) {
+function viewToDoStatusController($scope,restTemplate, userAccessService) {
 	var ctrl = this;
+	
+	// Authorization implementation
+	ctrl.isReadOnly = false;
+	if (ctrl.isAuthEnabled) {
+		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
+			ctrl.isReadOnly = true;
+		}
+	}
+	
 	ctrl.successSavedMsg = "";
 	ctrl.savedMsgVisible = false;
 	ctrl.isAllCompletedStatus = false;
@@ -193,6 +202,8 @@ angular.module('todoPortal').component('viewToDoResult', {
   bindings: {
 	  activeContext: '<',
 	  data: '<',
-	  handleDataChange: '&'
+	  handleDataChange: '&',
+	  isAuthEnabled:'<',
+	  functionId: '<'
   }
 });
