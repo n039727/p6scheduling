@@ -4,7 +4,6 @@
 package au.com.wp.corp.p6.service.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +55,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	@RequestMapping(value = "/fetchWOForTODOStatus", method = RequestMethod.POST, produces = {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchRequest> query) {
+	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchRequest> query) throws P6BusinessException {
 		logger.debug("DEPOT_ID>>>>{}", query.getBody().getDepotList());
 		return p6BusinessService.fetchWorkOrdersForViewToDoStatus(query.getBody());
 	}
@@ -64,7 +63,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	@RequestMapping(value = "/fetchWOForAddUpdateToDo", method = RequestMethod.POST, produces = {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
-	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchRequest> query) {
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchRequest> query) throws P6BusinessException {
 		logger.debug("DEPOT_ID>>>>{}", query.getBody().getDepotList());
 		return p6BusinessService.fetchWorkOrdersForAddUpdateToDo(query.getBody());
 	}
