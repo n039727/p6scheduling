@@ -433,13 +433,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				}
 				assignmentDTOs.add(assignmentDTO);
 			}
-			/*if (status.getTodoAssignments() == null) {
-				status.setTodoAssignments(new ArrayList<ToDoAssignment>());
-			}
-			status.getTodoAssignments().addAll(assignmentDTOs);
-			logger.debug("Size of ToDoAssignment for task>>>{}", status.getTodoAssignments().size());
 			
-			//toDoStatuses.add(status);*/
 		}
 		Map<String,ToDoAssignment> mapOfGroupedTodoRecord = getGroupedTodowithWorkOrders(mapOfToDoIdWorkOrders);
 		List<ToDoAssignment> listOfTodoAssignments = new ArrayList<ToDoAssignment>(mapOfGroupedTodoRecord.values());
