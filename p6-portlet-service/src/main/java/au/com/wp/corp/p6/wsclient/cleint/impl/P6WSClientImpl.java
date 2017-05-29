@@ -43,7 +43,7 @@ import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
  * @version 1.0
  */
 @Service
-@PropertySource("file:/${properties.dir}/p6portal-wsdl.properties")
+@PropertySource("file:/${properties.dir}/p6portal.properties")
 public class P6WSClientImpl implements P6WSClient {
 	private static final Logger logger = LoggerFactory.getLogger(P6WSClientImpl.class);
 

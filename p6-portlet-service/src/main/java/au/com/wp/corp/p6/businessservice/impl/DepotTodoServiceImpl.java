@@ -292,6 +292,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		if (!org.springframework.util.StringUtils.isEmpty(workOrder.getExctnPckgName())){
 			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
 			if(null != executionPackage){
+				executionPackage.setExecSchdlrCmt(workOrder.getExecutionPkgComment());
 				dbTask.setExecutionPackage(executionPackage);
 			}
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());

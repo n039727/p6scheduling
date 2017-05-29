@@ -680,6 +680,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
 			if(null != executionPackage){
 				executionPackage.setActioned(ACTIONED_Y);
+				executionPackage.setExecSchdlrCmt(workOrder.getExecutionPkgComment());
 				dbTask.setExecutionPackage(executionPackage); 
 				dbTask.setActioned(ACTIONED_N);
 			}

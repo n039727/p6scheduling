@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import au.com.wp.corp.p6.businessservice.P6MaterialRequisitionService;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
+import au.com.wp.corp.p6.dto.MaterialRequisitionDTO;
 import au.com.wp.corp.p6.dto.MaterialRequisitionRequest;
 import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
@@ -113,12 +114,12 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	
 	@RequestMapping(value = "/fetchMetReqData", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Override
-	public ResponseEntity<Map<String,List<String>>>  fetchMetReqdata(RequestEntity<MaterialRequisitionRequest> request)throws P6BaseException {
+	public ResponseEntity<MaterialRequisitionDTO>  fetchMetReqdata(RequestEntity<MaterialRequisitionRequest> request)throws P6BaseException {
 		if (request.getBody() == null) {
 			logger.error(" Invalid request - {}", request.getBody());
 			throw new P6BaseException(" invalid request ");
 		}
-		return new ResponseEntity<Map<String,List<String>>>(materialRequisitionService.retriveMetReq(request.getBody()), HttpStatus.OK);
+		return new ResponseEntity<MaterialRequisitionDTO>(materialRequisitionService.retriveMetReq(request.getBody()), HttpStatus.OK);
 	}
 
 }

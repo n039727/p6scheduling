@@ -1,7 +1,7 @@
 function materialRequisitionResultController($scope, restTemplate) {
 	var ctrl = this;
 	console.log('data received in material req.: ' + JSON.stringify(ctrl.data));
-	
+	ctrl.woMatReqMap = {};
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
 		
@@ -38,7 +38,8 @@ function materialRequisitionResultController($scope, restTemplate) {
 		
 		restTemplate.callService(req, function (response) {
 			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
-//			metadata.depotCrewMap = response.data.depotCrewMap;
+			ctrl.woMatReqMap = response.data.materialRequisitionMap;
+			console.log("ctrl.woMatReqMap: " + JSON.stringify(ctrl.woMatReqMap));
 
 		}, null);
 	}
