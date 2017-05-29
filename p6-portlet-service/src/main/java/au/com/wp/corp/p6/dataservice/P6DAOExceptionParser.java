@@ -25,10 +25,6 @@ public interface P6DAOExceptionParser extends P6ExceptionMapper{
 			throw new P6DataAccessException (UNIQUE_CONSTRAINT_VIOLATION_1001, exc);
 		}
 		
-		if ( exc instanceof NullPointerException ){
-			throw new P6DataAccessException (UNIQUE_CONSTRAINT_VIOLATION_1001, exc);
-		}
-		
 		if ( exc instanceof HibernateException ){
 			throw new P6DataAccessException (DB_LOOKUP_OR_UPDATE_ERROR_2001, exc);
 		}

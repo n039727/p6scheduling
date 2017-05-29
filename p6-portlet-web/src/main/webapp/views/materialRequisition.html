@@ -35,9 +35,9 @@
 										<th class="standard-to-do-header">Requisition No #</th>
 									</thead>
 									<tbody>
-										<tr ng-repeat="todo in wo.todoAssignments | filter:{typeId:1}">
-											<td>{{todo.toDoName}}</td>
-											<td>{{todo.workOrders.join(',')}}</td>
+										<tr ng-repeat="matReq in $ctrl.woReqs">
+											<td>{{matReq.wo}}</td>
+											<td>{{matReq.reqList.join(',')}}</td>
 										</tr>
 									</tbody>
 								</table>

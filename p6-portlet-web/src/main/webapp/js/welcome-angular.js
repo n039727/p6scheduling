@@ -101,6 +101,7 @@ function fetchMetaData(app) {
 				metadata.crewList = response.data.crews;
 				metadata.todoList = response.data.toDoItems;
 				metadata.depotCrewMap = response.data.resourceDTO.depotCrewMap;
+				metadata.isErrdataAvail = false;
 				app.constant('metadata', metadata);
 			});
 }
@@ -142,12 +143,15 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) 
 	ctrl.search = function(query) {
 		console.log('Query:' + JSON.stringify(query));
 		var serviceUrl = "";
-		// if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
-		// }
 		ctrl.reload(query, function(data) {
 			ctrl.workOrders = data;
 			ctrl.resultVisible = data.length > 0;
-			console.log('ctrl.resultVisible:' + JSON.stringify(ctrl.resultVisible));
+//			console.log('ctrl.resultVisible:' + JSON.stringify(ctrl.resultVisible));
+			if(ctrl.resultVisible){
+				ctrl.metadata.isErrdataAvail = false;
+			}else{
+				ctrl.metadata.isErrdataAvail = true;
+			}
 			ctrl.savedMsgVisible = false;
 		});
 	};

@@ -9,6 +9,7 @@ import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.exception.P6DataAccessException;
 
 /**
  * DepotTodoService performs following tasks for depot TODOs
@@ -22,8 +23,9 @@ public interface DepotTodoService {
 	 * Retrieve TODOs for both execution package and single task
 	 * @param query
 	 * @return ViewToDoStatus
+	 * @throws P6DataAccessException 
 	 */
-	public ViewToDoStatus fetchDepotTaskForViewToDoStatus(WorkOrderSearchRequest query);
+	public ViewToDoStatus fetchDepotTaskForViewToDoStatus(WorkOrderSearchRequest query) throws P6DataAccessException;
 	
 	/**
 	 * Update TODO status and comment for both execution package and single task
@@ -35,6 +37,6 @@ public interface DepotTodoService {
 	
 	public WorkOrder saveDepotToDo(WorkOrder workOrder) throws P6BusinessException;
 	
-	public List<WorkOrder> fetchDepotTaskForAddUpdateToDo(WorkOrderSearchRequest query);
+	public List<WorkOrder> fetchDepotTaskForAddUpdateToDo(WorkOrderSearchRequest query) throws P6BusinessException;
 
 }
