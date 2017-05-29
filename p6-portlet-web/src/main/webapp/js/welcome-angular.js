@@ -23,6 +23,12 @@ Array.prototype.unique = function() {
 	return arr;
 };
 
+app.service('userAccessService', function($http) {
+		this.hasUpdateableAccess = function(functionId) {
+			return true;
+		}
+});
+
 app.service('restTemplate', function($http) {
 	this.authToken = "";
 	var restTemplate = this;
@@ -67,6 +73,23 @@ function bootstrapApplication() {
 }
 fetchMetaData(app).then(bootstrapApplication);
 
+/*function fetchUserData(app) {
+	var initInjector = angular.injector([ "ng" ]);
+	var $http = initInjector.get("$http");
+	return $http.get("/p6-portal-service/scheduler/fetchMetadata").then(
+			function(response) {
+				console.log("Received data from server for fetch to dos: "
+						+ JSON.stringify(response.data));
+				userData = {};
+				metadata.authToken = response.data.authToken;
+				metadata.todoList = response.data.toDoItems;
+				metadata.depotCrewMap = response.data.resourceDTO.depotCrewMap;
+				app.constant('metadata', metadata);
+			});
+}*/
+
+
+
 function fetchMetaData(app) {
 	var initInjector = angular.injector([ "ng" ]);
 	var $http = initInjector.get("$http");
@@ -75,26 +98,6 @@ function fetchMetaData(app) {
 				console.log("Received data from server for fetch to dos: "
 						+ JSON.stringify(response.data));
 				metadata = {};
-				/*metadata.depotList = [ {
-					id : 1,
-					name : 'Depot1'
-				}, {
-					id : 2,
-					name : 'Depot2'
-				}, {
-					id : 3,
-					name : 'Depot3'
-				} ];
-				metadata.crewList = [ {
-					id : 1,
-					name : 'MOST1'
-				}, {
-					id : 2,
-					name : 'MOST2'
-				}, {
-					id : 3,
-					name : 'MOST3'
-				} ];*/
 				metadata.crewList = response.data.crews;
 				metadata.todoList = response.data.toDoItems;
 				metadata.depotCrewMap = response.data.resourceDTO.depotCrewMap;
