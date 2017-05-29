@@ -182,8 +182,8 @@ body {
 	font-weight: bold;
 }
 .active-context{
-	background-color:#f37420 !important;
-	
+	background-color:#f2771f !important;
+	color:#ffffff !important;
 }
 .btn-floating {
   position: fixed;
