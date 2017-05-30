@@ -100,24 +100,7 @@ public class TodoDAOImpl implements TodoDAO {
 		return maxPk;
 	}
 	
-	@Override
-	@Transactional
-	public List<TodoTemplate> fetchToDoForGratestToDoId() {
-
-		 Criteria criteria = getSession().createCriteria(TodoTemplate.class);
-		 criteria.setProjection(Projections.max("todoId"));
-			
-			@SuppressWarnings("unchecked")
-			List<TodoTemplate> toDos = (List<TodoTemplate>) criteria
-	                  .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-			criteria.setFetchSize(1);
-			/* This list size should always be 1*/
-			logger.info("size={}",toDos.size());
-
-			return toDos;
 		
-	}
-	
 	@Transactional
 	@Override
 	public boolean createToDo(TodoTemplate todoTemplate) throws P6DataAccessException {
