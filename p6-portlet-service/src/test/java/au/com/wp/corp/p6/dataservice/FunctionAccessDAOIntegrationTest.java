@@ -47,6 +47,7 @@ public class FunctionAccessDAOIntegrationTest {
 
 	/**
 	 * Test method for {@link au.com.wp.corp.p6.dataservice.impl.FunctionAccessDAOImpl#getAccess(java.lang.String)}.
+	 * this test covers the role which have write access to a specified resource
 	 */
 	@Transactional
 	@Rollback(true)
@@ -55,12 +56,35 @@ public class FunctionAccessDAOIntegrationTest {
 	
 		List<FunctionAccess> accesses = functionAccessDAO.getAccess("P6_TEM_LEDR_SCHDLR");
 		if(accesses != null){
-			for(FunctionAccess access:accesses){
+			//for(FunctionAccess access:accesses){
+			FunctionAccess access = accesses.get(0);
 				Assert.assertEquals("Add_Scheduling_To_Do", access.getPortalFunction().getFuncNam());
 				Assert.assertEquals("Y",access.getWriteFlg());
-			}
+			//}
 		}
 		Assert.assertNotNull(accesses);
 	}
+	
+	/**
+	 * Test method for {@link au.com.wp.corp.p6.dataservice.impl.FunctionAccessDAOImpl#getAccess(java.lang.String)}.
+	 * this test covers the role which have view access to a specified resource
+	 */
+	@Transactional
+	@Rollback(true)
+	@Test
+	public void testGetAccess1() {
+	
+		List<FunctionAccess> accesses = functionAccessDAO.getAccess("P6_TEM_LEDR_SCHDLR");
+		if(accesses != null){
+			//for(FunctionAccess access:accesses){
+			FunctionAccess access = accesses.get(1);
+				Assert.assertEquals("View_To_Do_Status", access.getPortalFunction().getFuncNam());
+				Assert.assertEquals("N",access.getWriteFlg());
+			//}
+		}
+		Assert.assertNotNull(accesses);
+	}
+	
+	
 
 }

@@ -32,7 +32,7 @@ public class FunctionAccessDAOImpl implements FunctionAccessDAO {
 	@Override
 	public List<FunctionAccess> getAccess(String roleName) {
 		logger.debug("sessionfactory initialized ====={}", sessionFactory);
-		logger.debug("Input execution package name ====={}", roleName);
+		logger.debug("Input roleName ====={}", roleName);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(FunctionAccess.class);
 		criteria.add(Restrictions.eq("roleNam", roleName));
 		List<FunctionAccess> accesses = (List<FunctionAccess>) criteria
