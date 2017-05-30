@@ -14,9 +14,9 @@ import au.com.wp.corp.p6.exception.P6BusinessException;
 public interface P6SchedulingBusinessService {
 	
 	public MetadataDTO fetchMetadata()throws P6BusinessException;
-	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query);
+	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) throws P6BusinessException;
 	public WorkOrder saveToDo(WorkOrder workOrder) throws P6BusinessException;
-	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest body);
+	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest body) throws P6BusinessException;
 	public ViewToDoStatus saveViewToDoStatus(ViewToDoStatus body) throws P6BusinessException;
 	public List<WorkOrder> search(WorkOrderSearchRequest input) throws P6BusinessException;
 	public List<Crew> retrieveCrews(ResourceSearchRequest input) throws P6BusinessException;

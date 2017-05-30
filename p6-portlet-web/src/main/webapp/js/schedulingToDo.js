@@ -1,5 +1,15 @@
-function schedulingToDoResultController($scope, restTemplate) {
+function schedulingToDoResultController($scope, restTemplate, userAccessService) {
 	var ctrl = this;
+	
+	// Authorization implementation
+	ctrl.isReadOnly = false;
+	if (ctrl.isAuthEnabled) {
+		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
+			ctrl.isReadOnly = true;
+		}
+	}
+	
+	
 	ctrl.successSavedMsg = "";
 	ctrl.savedMsgVisible = false;
 	console.log('data received: ' + JSON.stringify(ctrl.data));
@@ -296,6 +306,8 @@ angular.module('todoPortal').component('schedulingToDoResult', {
 	  activeContext: '<',
 	  data: '<',
 	  metadata: '<',
-	  handleDataChange: '&'
+	  handleDataChange: '&',
+	  isAuthEnabled:'<',
+	  functionId: '<'
   }
 });

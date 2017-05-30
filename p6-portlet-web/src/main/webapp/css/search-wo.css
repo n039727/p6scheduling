@@ -182,8 +182,8 @@ body {
 	font-weight: bold;
 }
 .active-context{
-	background-color:#f37420 !important;
-	
+	background-color:#f2771f !important;
+	color:#ffffff !important;
 }
 .btn-floating {
   position: fixed;
@@ -201,4 +201,18 @@ body {
 }
 .warning {
   color: orange;
+}
+
+.auth-enabled-container {
+	position:relative;
+}
+
+.read-only-cover {
+	position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background-color: #ddd;
+    opacity: 0.0;
+	cursor: not-allowed;
 }
