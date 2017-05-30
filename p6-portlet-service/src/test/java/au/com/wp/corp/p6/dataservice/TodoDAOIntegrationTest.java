@@ -4,7 +4,6 @@
 package au.com.wp.corp.p6.dataservice;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.List;
 
 import org.junit.Assert;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.dataservice.impl.TodoDAOImpl;
 import au.com.wp.corp.p6.model.TodoTemplate;
-import au.com.wp.corp.p6.model.TodoTemplatePK;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
 /**
@@ -69,28 +67,32 @@ public class TodoDAOIntegrationTest {
 
 	}
 	
+	
 	/**
-	 * test case to verify whether application able to fetch the latest record 
-	 * to increment the value of the ID fields
-	 * value
+	 * test case to verify whether application able to fetch the todo name 
+	 * corresponding to a todo id
+	 * 
 	 */
 	@Test
 	@Transactional
 	@Rollback(true)
-	public void testFetchToDoForGratestToDoId() {
-		List<TodoTemplate> todoTemps = todoDAOImpl.fetchToDoForGratestToDoId();
-		Assert.assertNotNull(todoTemps);
-		for (TodoTemplate todoTemplate : todoTemps) {
-			Assert.assertNotNull(todoTemplate);
-			Assert.assertNotNull(todoTemplate.getCrtdUsr());
-			Assert.assertNotNull(todoTemplate.getLstUpdtdUsr());
-			Assert.assertNotNull(todoTemplate.getTmpltDesc());
-			Assert.assertNotNull(todoTemplate.getTodoNam());
-			Assert.assertNotNull(todoTemplate.getCrtdTs());
-			Assert.assertNotNull(todoTemplate.getLstUpdtdTs());
-			Assert.assertNotNull(todoTemplate.getId().getTodoId());
-			Assert.assertNotNull(todoTemplate.getId().getTmpltId());
-		}
+	public void testGetToDoName() {
+		String todoname = todoDAOImpl.getToDoName(new Long("4"));
+		Assert.assertEquals("Gas Permit", todoname);
+
+	}
+	
+	/**
+	 * test case to verify whether application able to fetch the todo name 
+	 * corresponding to a todo id
+	 * 
+	 */
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testGetToDoId() {
+		BigDecimal todoId = todoDAOImpl.getToDoId("Gas Permit");
+		Assert.assertEquals(new BigDecimal("4"), todoId);
 
 	}
 	
