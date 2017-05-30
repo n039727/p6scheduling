@@ -30,17 +30,12 @@ public class UserAuthorizationServiceImpl implements UserAuthorizationService {
 	@Autowired
 	private FunctionAccessDAO functionAccessDAO;
 	
-	@Autowired
-	private UserRoleExtractor userRoleExtractor;
-
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.businessservice.UserAuthorizationService#getAccess(java.lang.String)
 	 */
 	@Transactional
 	@Override
-	public List<UserAuthorizationDTO> getAccess(String userName) {
-		logger.debug("User name : {} ", userName);
-		String roleName = userRoleExtractor.extract(userName);
+	public List<UserAuthorizationDTO> getAccess(String roleName) {
 		logger.debug("Input role name>>>{}", roleName);
 		List<FunctionAccess> accesses = functionAccessDAO.getAccess(roleName);
 		List<UserAuthorizationDTO> userAuthorizationDTOs = new ArrayList<UserAuthorizationDTO>();

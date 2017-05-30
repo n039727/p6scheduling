@@ -39,6 +39,10 @@ app.service('userAccessService', function($http, userdata) {
 				&& userdata.accessMap != null
 				&& userdata.accessMap[functionId] != null;
 		}
+		
+		this.isAuthEnabled = function() {
+			return userdata != null && userdata.isAuthEnabled; 
+		}
 });
 
 app.service('restTemplate', function($http, userdata) {
@@ -105,6 +109,7 @@ function fetchUserData(app) {
 						+ JSON.stringify(response.data));
 				userData.name = response.data.userName;
 				userData.accessMap = response.data.accessMap;
+				userData.isAuthEnabled = true;
 				app.constant('userdata', userData);
 				return fetchMetaData(app);
 			});

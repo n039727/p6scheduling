@@ -4,7 +4,7 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 	
 	// Authorization implementation
 	ctrl.isReadOnly = false;
-	if (ctrl.isAuthEnabled) {
+	if (userAccessService.isAuthEnabled()) {
 		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
 			ctrl.isReadOnly = true;
 		}
@@ -188,7 +188,6 @@ angular.module('todoPortal').component('executionPackageResult', {
 	  activeContext: '<',
 	  data: '<',
 	  handleDataChange: '&',
-	  isAuthEnabled:'<',
 	  functionId: '<'
   }
 });

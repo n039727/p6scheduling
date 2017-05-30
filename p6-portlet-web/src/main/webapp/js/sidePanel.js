@@ -8,8 +8,7 @@ function sidePanelController($scope, userAccessService) {
 	
 	ctrl.isDisabled = function(functionId) {
 		console.log("is disabled called for " + functionId);
-		if (angular.isDefined(ctrl.isAuthEnabled) 
-			&& ctrl.isAuthEnabled) {
+		if (userAccessService.isAuthEnabled()) {
 			console.log("Has access: " + userAccessService.hasAccess(functionId));
 			return !userAccessService.hasAccess(functionId);
 		}
@@ -25,7 +24,6 @@ angular.module('todoPortal').component('sidePanel', {
   controller: sidePanelController,
   bindings: {
 	  activeContext: '<',
-	  onChangeContext: "&",
-	  isAuthEnabled: '<'
+	  onChangeContext: "&"
   }
 });
