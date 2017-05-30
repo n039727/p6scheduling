@@ -86,7 +86,7 @@ function fetchUserData(app) {
 					console.log('response auth token has not been set');
 				} else {
 					userData.authToken = response.headers('AUTH_TOKEN');
-					console.log("Auth Token has been set as " + restTemplate.authToken);
+//					console.log("Auth Token has been set as " + restTemplate.authToken);
 				}
 				console.log("Received data from server for fetch to dos: "
 						+ JSON.stringify(response.data));
