@@ -79,7 +79,7 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 				loggingStream.write(("\n" + trackingId + " Exception in handler: " + e).getBytes());
 			}
 		} catch (final IOException e) {
-			throw new RuntimeException(e);
+			logger.error("An error occurs while logging SOAP service call details", e);
 		}
 
 		logger.debug(loggingStream.toString());

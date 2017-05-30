@@ -59,7 +59,7 @@ public class P6EllipseDAOIntegrationTest {
 
 			}
 		} catch (P6DataAccessException e) {
-
+			e.printStackTrace();
 		}
 		
 		final List<String> workgroupList = new ArrayList<>();
