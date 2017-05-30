@@ -47,13 +47,11 @@ function materialRequisitionResultController($scope, restTemplate, userAccessSer
 			};
 		
 		restTemplate.callService(req, function (response) {
-			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			ctrl.woMatReqMap = response.data.materialRequisitionMap;
 			console.log("ctrl.woMatReqMap: " + JSON.stringify(ctrl.woMatReqMap));
 			if(ctrl.woMatReqMap){
+				ctrl.woReqs = [];
 				for ( wo in ctrl.woMatReqMap) {
-					console.log("Populating wo" + wo);
-					console.log("reqs: " + JSON.stringify(ctrl.woMatReqMap[wo]));
 					ctrl.woReqs.push({woNum:wo,reqList: ctrl.woMatReqMap[wo]});				
 				}
 			}	
