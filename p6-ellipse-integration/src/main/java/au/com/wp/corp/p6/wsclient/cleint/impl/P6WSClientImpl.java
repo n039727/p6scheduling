@@ -8,10 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -19,13 +21,14 @@ import org.springframework.stereotype.Service;
 import au.com.wp.corp.p6.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.util.CacheManager;
+import au.com.wp.corp.p6.util.DateUtil;
 import au.com.wp.corp.p6.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 import au.com.wp.corp.p6.wsclient.constant.P6WSConstants;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
+import au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId;
 import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
-import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
 
 /**
  * 
@@ -57,6 +60,9 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 
 	@Value("${P6_UDF_SERVICE_WSDL}")
 	private String udfServiceWSDL;
+
+	@Autowired
+	DateUtil dateUtil;
 
 	/*
 	 * (non-Javadoc)
@@ -194,15 +200,23 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
 		int crdActivitySize = activities.size();
 		logger.debug("Number of calls to P6 UDFValue web service #{}", (crdActivitySize / chunkSize) + 1);
+
 		for (int i = 0; i < (crdActivitySize / chunkSize) + 1; i++) {
 			final Map<String, P6ActivityDTO> activityMap = new HashMap<>();
 
 			final List<Activity> _activities = new ArrayList<>();
 			Activity activity = null;
 			for (P6ActivityDTO p6ActivityDTO : activities.subList(i,
-					i + chunkSize - 1 <= activities.size() - 1 ? i + chunkSize - 1 : activities.size() - 1)) {
+					i + chunkSize <= activities.size() ? i + chunkSize : activities.size())) {
 				activity = new Activity();
 				activity.setId(p6ActivityDTO.getActivityId());
+				activity.setName(p6ActivityDTO.getActivityName());
+				final XMLGregorianCalendar plannedStartDate = dateUtil
+						.convertStringToXMLGregorianClalander(p6ActivityDTO.getPlannedStartDate());
+				if (null != plannedStartDate)
+					activity.setPlannedStartDate(plannedStartDate);
+				else
+					logger.error("Invalid planned start date# {}", p6ActivityDTO.getPlannedStartDate());
 				activity.setProjectObjectId(p6ActivityDTO.getProjectObjectId());
 				_activities.add(activity);
 
@@ -216,7 +230,7 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 
 			int j = 0;
 			final StringBuilder filter = new StringBuilder();
-			filter.append("ForeignObjectId IN (");
+			filter.append("ObjectId IN (");
 			for (Integer activityObjectId : activityIds.value) {
 				if (j > 0)
 					filter.append(",");
@@ -225,7 +239,7 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 				if (j == 999) {
 					filter.append(")");
 					filter.append(OR);
-					filter.append("ForeignObjectId IN (");
+					filter.append("ObjectId IN (");
 					logger.debug("Filter criteria length for Read Value services # {} ", i);
 					j = 0;
 				}
@@ -235,13 +249,13 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 			filter.append(")");
 
 			final ActivityServiceCall<List<Activity>> rdActservice = new ReadActivityServiceCall(trackingId,
-					resourceServiceWSDL, filter.toString());
+					activityServiceWSDL, filter.toString());
 			final Holder<List<Activity>> newlyCrdActivites = rdActservice.run();
 
 			for (Activity newActivity : newlyCrdActivites.value) {
 				activityMap.get(newActivity.getId()).setActivityObjectId(newActivity.getObjectId());
 			}
-			
+
 			final List<P6ActivityDTO> crdActivityFileds = new ArrayList<>();
 			crdActivityFileds.addAll(activityMap.values());
 			createActivityFieldsUDF(trackingId, crdActivityFileds);
@@ -264,64 +278,68 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 
 		final List<UDFValue> udfValues = new ArrayList<>();
 		for (P6ActivityDTO activity : activityDTOs) {
+
 			if (null != activity.getActivityJDCodeUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 5938, "Activity", "Ellipse JD Code",
+						activity.getActivityJDCodeUDF(), null);
 				udfValues.add(udfValue);
 			}
 
 			if (null != activity.geteGIUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 5911, "Activity", "Ellipse EGI",
+						activity.geteGIUDF(), null);
 				udfValues.add(udfValue);
 			}
 
 			if (null != activity.getUpStreamSwitchUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 
 			if (null != activity.getAddressUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 			if (null != activity.getEllipseStandardJobUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 5932, "Activity", "Ellipse STD Job",
+						activity.getEllipseStandardJobUDF(), null);
 				udfValues.add(udfValue);
 			}
 			if (null != activity.getEquipmentCodeUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 			if (null != activity.getEquipmentNoUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 
 			if (null != activity.getEstimatedLabourHoursUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 			if (null != activity.getFeederUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 			if (null != activity.getLocationInStreetUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 			if (null != activity.getPickIdUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 			if (null != activity.getRequiredByDateUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 			if (null != activity.getTaskDescriptionUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 			if (null != activity.getTaskUserStatusUDF()) {
-				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "", "", "", 0.0);
+				UDFValue udfValue = createUDFValue(activity.getActivityObjectId(), 1234, "Activity", "", "", 0.0);
 				udfValues.add(udfValue);
 			}
 
@@ -331,7 +349,7 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 		logger.debug("Number of calls to P6 UDFValue web service #{}", (udfValueSize / chunkSize) + 1);
 		for (int i = 0; i < (udfValueSize / chunkSize) + 1; i++) {
 			callUDFvalueService(trackingId,
-					udfValues.subList(i, i + chunkSize - 1 <= udfValueSize - 1 ? i + chunkSize - 1 : udfValueSize - 1));
+					udfValues.subList(i, i + chunkSize <= udfValueSize ? i + chunkSize : udfValueSize));
 
 		}
 
@@ -346,9 +364,10 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 	 */
 	private void callUDFvalueService(final RequestTrackingId trackingId, final List<UDFValue> udfValues)
 			throws P6ServiceException {
-		final UDFValueServiceCall<List<ObjectId>> udfValueService = new CreateUDFValueServiceCall(trackingId,
-				udfServiceWSDL, udfValues);
-		final Holder<List<ObjectId>> udfs = udfValueService.run();
+		final UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService = new CreateUDFValueServiceCall(
+				trackingId, udfServiceWSDL, udfValues);
+		final Holder<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfs = udfValueService
+				.run();
 	}
 
 	/**
@@ -367,11 +386,16 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 		if (textValue != null)
 			udfValue.setText(textValue);
 
+		if (doubleValue != null)
+			udfValue.setDouble(null);
+
 		return udfValue;
 	}
 
 	@Override
 	public void updateActivities(List<P6ActivityDTO> activities) throws P6ServiceException {
+		
+		
 
 	}
 
@@ -381,10 +405,112 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 
 	@Override
 	public void deleteActivities(List<P6ActivityDTO> activities) throws P6ServiceException {
+		if (null == activities || activities.isEmpty()) {
+			throw new P6ServiceException("List of activties can't be null or empty");
+		}
+		logger.info("Deleting activites in P6 ... number of activites # {}", activities.size());
+		final RequestTrackingId trackingId = new RequestTrackingId();
+		getAuthenticated(trackingId);
+
+		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty("ACTIVITY_LIST_SIZE_TO_PROCESS_IN_P6");
+		logger.debug("Defined P6 UDFValueService webservice call trigger value # {}", chunkSizeStr);
+		final int chunkSize = Integer.parseInt(chunkSizeStr);
+		int crdActivitySize = activities.size();
+		logger.debug("Number of calls to P6 UDFValue web service #{}", (crdActivitySize / chunkSize) + 1);
+
+		for (int i = 0; i < (crdActivitySize / chunkSize) + 1; i++) {
+			final Map<String, P6ActivityDTO> activityMap = new HashMap<>();
+
+			final List<Integer> activityIds = new ArrayList<>();
+			final List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds = new ArrayList<>();
+			for (P6ActivityDTO p6ActivityDTO : activities.subList(i,
+					i + chunkSize <= activities.size() ? i + chunkSize : activities.size())) {
+
+				prepareDeleteUDFValues(p6ActivityDTO, objectIds);
+				activityIds.add(p6ActivityDTO.getActivityObjectId());
+			}
+
+			logger.debug("list of activities to be deleted in P6 # {}", activityIds);
+
+			Boolean deleteUDFStatus = deleteActivityFieldsUDF(trackingId, objectIds);
+			logger.debug("Related UDF are deleted .....# {}", deleteUDFStatus.booleanValue() );
+			if (deleteUDFStatus.booleanValue()) {
+				ActivityServiceCall activityService = new DeleteActivityServiceCall(trackingId, activityServiceWSDL,
+						activityIds);
+				Holder<Boolean> status = activityService.run();
+			}
+		}
 
 	}
 
-	private void deleteActivityFieldsUDF() {
+	private void prepareDeleteUDFValues(final P6ActivityDTO activity,
+			final List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds) {
+
+		au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId objectId = new ObjectId();
+		if (null != activity.getActivityJDCodeUDF()) {
+			objectId = new ObjectId();
+			objectId.setForeignObjectId(activity.getActivityObjectId());
+			// objectId.setUDFTypeObjectId(activity);
+			objectIds.add(objectId);
+		}
+
+		if (null != activity.geteGIUDF()) {
+			objectId = new ObjectId();
+			objectId.setForeignObjectId(activity.getActivityObjectId());
+			objectId.setUDFTypeObjectId(5911);
+		}
+
+		if (null != activity.getUpStreamSwitchUDF()) {
+
+		}
+
+		if (null != activity.getAddressUDF()) {
+		}
+		if (null != activity.getEllipseStandardJobUDF()) {
+			objectId = new ObjectId();
+			objectId.setForeignObjectId(activity.getActivityObjectId());
+			objectId.setUDFTypeObjectId(5911);
+
+		}
+		if (null != activity.getEquipmentCodeUDF()) {
+
+		}
+		if (null != activity.getEquipmentNoUDF()) {
+
+		}
+
+		if (null != activity.getEstimatedLabourHoursUDF()) {
+
+		}
+		if (null != activity.getFeederUDF()) {
+
+		}
+		if (null != activity.getLocationInStreetUDF()) {
+
+		}
+		if (null != activity.getPickIdUDF()) {
+
+		}
+		if (null != activity.getRequiredByDateUDF()) {
+
+		}
+		if (null != activity.getTaskDescriptionUDF()) {
+
+		}
+		if (null != activity.getTaskUserStatusUDF()) {
+
+		}
+
+	}
+
+	private Boolean deleteActivityFieldsUDF(final RequestTrackingId trackingId,
+			final List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds)
+			throws P6ServiceException {
+
+		UDFValueServiceCall<Boolean> udfValueServiceCall = new DeleteUDFValueServiceCall(trackingId, udfServiceWSDL,
+				objectIds);
+		Holder<Boolean> status = udfValueServiceCall.run();
+		return status.value;
 
 	}
 

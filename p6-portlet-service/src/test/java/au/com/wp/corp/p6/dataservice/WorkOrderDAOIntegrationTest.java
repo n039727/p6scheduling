@@ -75,11 +75,12 @@ public class WorkOrderDAOIntegrationTest {
 	/**
 	 * Test method for
 	 * {@link au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl#fetchWorkOrdersForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchRequest)}.
+	 * @throws P6DataAccessException 
 	 */
 	@Transactional
 	@Rollback(true)
 	@Test
-	public void testFetchWorkOrdersForViewToDoStatus() {
+	public void testFetchWorkOrdersForViewToDoStatus() throws P6DataAccessException {
 		List<Task> tasks = null;
 		WorkOrderSearchRequest input = new WorkOrderSearchRequest();
 		input.setWorkOrderId("ABCD");

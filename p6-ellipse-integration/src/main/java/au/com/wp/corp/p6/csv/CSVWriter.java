@@ -41,7 +41,6 @@ public class CSVWriter {
 			for (Method m : methods) {
 				if (m.getParameterTypes().length == 0) {
 					if (m.getName().startsWith("get") || m.getName().startsWith("is")) {
-						System.out.println(m.invoke(d) != null ? m.invoke(d).toString() : "");
 						builder.append(m.invoke(d) != null ? m.invoke(d).toString() : "").append(',');
 					}
 				}
@@ -61,7 +60,6 @@ public class CSVWriter {
 			fw.write(produceCsvData(data));
 			fw.flush();
 		} catch (Exception e) {
-			System.out.println("Error while generating csv from data. Error message : " + e.getMessage());
 			e.printStackTrace();
 			return false;
 		} finally {

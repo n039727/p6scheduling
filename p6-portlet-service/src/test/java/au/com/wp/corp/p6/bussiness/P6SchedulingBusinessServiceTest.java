@@ -511,7 +511,7 @@ public class P6SchedulingBusinessServiceTest {
 	}
 	
 	@Test
-	public void testFetchWorkOrdersForAddUpdateToDo () {
+	public void testFetchWorkOrdersForAddUpdateToDo () throws P6BusinessException {
 		WorkOrderSearchRequest  request =  new WorkOrderSearchRequest();
 		request.setExecPckgName("13-05-2017_123456");
 		
@@ -564,7 +564,7 @@ public class P6SchedulingBusinessServiceTest {
 	}
 	
 	@Test
-	public void testFetchWorkOrdersForViewToDoStatus () {
+	public void testFetchWorkOrdersForViewToDoStatus () throws P6BusinessException {
 		WorkOrderSearchRequest  request =  new WorkOrderSearchRequest();
 		request.setExecPckgName("13-05-2017_123456");
 		

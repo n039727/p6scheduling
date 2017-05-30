@@ -23,8 +23,14 @@ Array.prototype.unique = function() {
 	return arr;
 };
 
-app.service('restTemplate', function($http) {
-	this.authToken = "";
+app.service('userAccessService', function($http) {
+		this.hasUpdateableAccess = function(functionId) {
+			return true;
+		}
+});
+
+app.service('restTemplate', function($http, userdata) {
+	//this.authToken = "";
 	var restTemplate = this;
 	this.callService = function(config, successCallback, errorCallback) {
 		if (!angular.isDefined(config)) {
@@ -34,8 +40,8 @@ app.service('restTemplate', function($http) {
 		if (!angular.isDefined(config.headers)) {
 			config.headers = {};
 		}
-		config.headers.AUTH_TOKEN = restTemplate.authToken;
-		console.log("Calling rest service: " + config.url + " with authToken: " + restTemplate.authToken);
+		config.headers.AUTH_TOKEN = userdata.authToken;
+		console.log("Calling rest service: " + config.url + " with authToken: " + userdata.authToken);
 		
 		$http(config).then(function(response) {
 			console.log("Response Headers : ");
@@ -43,17 +49,18 @@ app.service('restTemplate', function($http) {
 			if (response.headers('AUTH_TOKEN') == null) {
 				console.log('response auth token has not been set');
 			} else {
-				restTemplate.authToken = response.headers('AUTH_TOKEN');
-				console.log("Auth Token has been set as " + restTemplate.authToken);
+				//restTemplate.authToken = response.headers('AUTH_TOKEN');
+				userdata.authToken = response.headers('AUTH_TOKEN');
+				console.log("Auth Token has been set as " + userdata.authToken);
 			}
 			
-			if(angular.isDefined(successCallback) || successCallback != null) {
+			if(angular.isDefined(successCallback) && successCallback != null) {
 					successCallback(response);
 			}
 			
 		  }, function(response) {
 				console.log("Error occurred while consuming rest service");
-				if(angular.isDefined(errorCallback) || errorCallback != null) {
+				if(angular.isDefined(errorCallback) && errorCallback != null) {
 					errorCallback(response);
 				}
 		  });
@@ -65,7 +72,32 @@ function bootstrapApplication() {
 		angular.bootstrap(document, [ "todoPortal" ]);
 	});
 }
-fetchMetaData(app).then(bootstrapApplication);
+fetchUserData(app).then(bootstrapApplication);
+
+function fetchUserData(app) {
+	var initInjector = angular.injector([ "ng" ]);
+	var $http = initInjector.get("$http");
+	return $http.get("/p6-portal/web/user/name").then(
+			function(response) {
+				userData = {};
+				console.log("Response Headers : ");
+				console.log(response.headers());
+				if (response.headers('AUTH_TOKEN') == null) {
+					console.log('response auth token has not been set');
+				} else {
+					userData.authToken = response.headers('AUTH_TOKEN');
+//					console.log("Auth Token has been set as " + restTemplate.authToken);
+				}
+				console.log("Received data from server for fetch to dos: "
+						+ JSON.stringify(response.data));
+				userData.name = response.data.name;
+				userData.accessMap = response.data.accessMap;
+				app.constant('userdata', userdata);
+				fetchMetaData(app);
+			});
+}
+
+
 
 function fetchMetaData(app) {
 	var initInjector = angular.injector([ "ng" ]);
@@ -75,29 +107,10 @@ function fetchMetaData(app) {
 				console.log("Received data from server for fetch to dos: "
 						+ JSON.stringify(response.data));
 				metadata = {};
-				/*metadata.depotList = [ {
-					id : 1,
-					name : 'Depot1'
-				}, {
-					id : 2,
-					name : 'Depot2'
-				}, {
-					id : 3,
-					name : 'Depot3'
-				} ];
-				metadata.crewList = [ {
-					id : 1,
-					name : 'MOST1'
-				}, {
-					id : 2,
-					name : 'MOST2'
-				}, {
-					id : 3,
-					name : 'MOST3'
-				} ];*/
 				metadata.crewList = response.data.crews;
 				metadata.todoList = response.data.toDoItems;
 				metadata.depotCrewMap = response.data.resourceDTO.depotCrewMap;
+				metadata.isErrdataAvail = false;
 				app.constant('metadata', metadata);
 			});
 }
@@ -139,12 +152,15 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) 
 	ctrl.search = function(query) {
 		console.log('Query:' + JSON.stringify(query));
 		var serviceUrl = "";
-		// if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
-		// }
 		ctrl.reload(query, function(data) {
 			ctrl.workOrders = data;
 			ctrl.resultVisible = data.length > 0;
-			console.log('ctrl.resultVisible:' + JSON.stringify(ctrl.resultVisible));
+//			console.log('ctrl.resultVisible:' + JSON.stringify(ctrl.resultVisible));
+			if(ctrl.resultVisible){
+				ctrl.metadata.isErrdataAvail = false;
+			}else{
+				ctrl.metadata.isErrdataAvail = true;
+			}
 			ctrl.savedMsgVisible = false;
 		});
 	};

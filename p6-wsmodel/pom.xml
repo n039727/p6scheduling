@@ -98,6 +98,24 @@
 							</wsdlUrls>
 						</configuration>
 					</execution>
+					<execution>
+						<id>ellipseWorkorder</id>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<!-- Keep generated files -->
+							<keep>true</keep>
+							<!-- Package name -->
+							<packageName>au.com.wp.corp.p6.wsclient.ellipse</packageName>
+							<!-- generated source files destination -->
+							<sourceDestDir>target/generated/src/main/java</sourceDestDir>
+							<wsdlUrls>
+								<wsdlUrl>http://ellipse-np-webapp:9120/ews/services/WorkOrderTaskService?wsdl</wsdlUrl>
+							</wsdlUrls>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>

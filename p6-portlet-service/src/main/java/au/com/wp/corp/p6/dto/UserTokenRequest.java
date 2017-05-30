@@ -10,6 +10,9 @@ public class UserTokenRequest {
 	String userPrincipal = "";
 	
 	public String getUserPrincipal() {
+		if(userPrincipal == null || "".equals(userPrincipal)){
+			userPrincipal = "P6 Test User";
+		}
 		return userPrincipal;
 	}
 

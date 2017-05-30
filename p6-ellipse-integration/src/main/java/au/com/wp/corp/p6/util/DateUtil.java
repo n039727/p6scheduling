@@ -3,11 +3,19 @@
  */
 package au.com.wp.corp.p6.util;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,8 +24,13 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DateUtil {
-
+	private static final Logger logger = LoggerFactory.getLogger(DateUtil.class);
+	
 	private static final int FIRST_FISCAL_MONTH = Calendar.JULY;
+
+	public static final String ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP = "dd/MM/yyyy hh:mm:ss";
+
+	public static final String P6_DATE_FORMAT_WITH_TIMESTAMP = "yyyy-MM-dd hh:mm:ss";
 
 	private Calendar calendarDate;
 
@@ -56,9 +69,9 @@ public class DateUtil {
 		return convertDateToString(getStartDateOfFiscalYear(calendarDate).getTime());
 	}
 
-	public String getStartDateOfFiscalYear(final String date) {
+	public String getStartDateOfFiscalYear(final String date, String expectedDateFormat) {
 		this.calendarDate = Calendar.getInstance();
-		this.calendarDate.setTime(convertStringToDatetime(date));
+		this.calendarDate.setTime(convertStringToDatetime(date, expectedDateFormat));
 		return convertDateToString(getStartDateOfFiscalYear(calendarDate).getTime());
 	}
 
@@ -80,27 +93,27 @@ public class DateUtil {
 		return sdf.format(date);
 
 	}
-	
-	public String convertDateToString(String date) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		return sdf.format(convertStringToDatetime(date));
+	public String convertDateToString(String date, String expectedDateFormat, String proviedDateFormat) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat(expectedDateFormat);
+		return sdf.format(convertStringToDatetime(date, proviedDateFormat));
 
 	}
 
-	public Date convertStringToDatetime(String date) {
+	public Date convertStringToDatetime(String date, String format) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
 
 		try {
 			return sdf.parse(date);
 		} catch (ParseException e) {
-
+			e.printStackTrace();
 		}
 		return null;
 
 	}
-	
+
 	public Date convertStringToDate(String date) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -113,8 +126,7 @@ public class DateUtil {
 		return null;
 
 	}
-	
-	
+
 	public Date convertStringToDate(Date date) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -127,21 +139,19 @@ public class DateUtil {
 		return null;
 
 	}
-	
-	
-	public String getCurrentDate () {
+
+	public String getCurrentDate() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 		return sdf.format(new Date());
 	}
-	
-	
-	public boolean isCurrentDate ( String date ){
+
+	public boolean isCurrentDate(String date) {
 		Date _date = convertStringToDate(date);
-		if ( null != _date && _date.equals(convertStringToDate(new Date())))
+		if (null != _date && _date.equals(convertStringToDate(new Date())))
 			return true;
-		
+
 		return false;
-		
+
 	}
 
 	private static void displayFinancialDate(Calendar calendar) {
@@ -149,12 +159,38 @@ public class DateUtil {
 		System.out.println("Fiscal First Date : " + fiscalDate.getStartDateOfFiscalYear(calendar).getTime().toString());
 
 		System.out.println(" ");
-		
+
 		System.out.println(fiscalDate.isCurrentDate("26/05/2017 08:00:00"));
+		System.out.println(fiscalDate.convertDateToString("26/05/2017 08:00:00", P6_DATE_FORMAT_WITH_TIMESTAMP,
+				ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+		System.out.println(fiscalDate.convertDateToString("2017-05-26 08:00:00", ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP,
+				P6_DATE_FORMAT_WITH_TIMESTAMP));
+
 	}
-	
-	
-	public static void main(String[] args) {
-		displayFinancialDate(Calendar.getInstance());
+
+	public XMLGregorianCalendar convertStringToXMLGregorianClalander(final String date) {
+		try {
+			Date dob = null;
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			dob = df.parse(date);
+			GregorianCalendar cal = new GregorianCalendar();
+			cal.setTime(dob);
+			XMLGregorianCalendar xmlDate2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+			return xmlDate2;
+		} catch (ParseException e) {
+			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
+		} catch (DatatypeConfigurationException e) {
+			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
+		}
+		
+		return null;
+
+	}
+
+	public static void main(String[] args) throws DatatypeConfigurationException, ParseException {
+		// displayFinancialDate(Calendar.getInstance());
+
+		// System.out.println(convertStringToXMLGregorianClalander("2016-06-22
+		// 08:00:00"));
 	}
 }

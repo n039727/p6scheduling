@@ -30,10 +30,10 @@ public class P6EllipseIntegrationController {
 		try {
 			p6EllipseService.startEllipseToP6Integration();
 		} catch (P6BaseException e) {
-			p6EllipseService.clearApplicationMemmory();
+			p6EllipseService.clearApplicationMemory();
 			return STATUS_FAILED;
 		}
-		p6EllipseService.clearApplicationMemmory();
+		p6EllipseService.clearApplicationMemory();
 		return STATUS_COMLETED;
 	}
 }

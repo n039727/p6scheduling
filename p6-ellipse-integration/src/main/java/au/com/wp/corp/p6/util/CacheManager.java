@@ -21,18 +21,12 @@ public class CacheManager {
 
 	private static final Map<String, List<String>> wsHeaders = new HashMap<>();
 	
-	private static final Map<String, Long>  wsLoginTimestampMap = new HashMap<>();
-	
 	private CacheManager(){
 		
 	}
 	
 	public static final Map<String, List<String>> getWsHeaders () {
 		return wsHeaders;
-	}
-	
-	public static final Map<String, Long> getWSLoginTimestamp () {
-		return wsLoginTimestampMap;
 	}
 	
 	private final static Map<String, EllipseActivityDTO> ellipseActivities = new HashMap<>();
