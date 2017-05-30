@@ -29,7 +29,7 @@ app.service('userAccessService', function($http) {
 		}
 });
 
-app.service('restTemplate', function($http, userdata) {
+/*app.service('restTemplate', function($http, userdata) {
 	//this.authToken = "";
 	var restTemplate = this;
 	this.callService = function(config, successCallback, errorCallback) {
@@ -65,6 +65,44 @@ app.service('restTemplate', function($http, userdata) {
 				}
 		  });
 	}
+});*/
+
+app.service('restTemplate', function($http) {
+	this.authToken = "";
+	var restTemplate = this;
+	this.callService = function(config, successCallback, errorCallback) {
+		if (!angular.isDefined(config)) {
+			return;
+		}
+		
+		if (!angular.isDefined(config.headers)) {
+			config.headers = {};
+		}
+		config.headers.AUTH_TOKEN = restTemplate.authToken;
+		console.log("Calling rest service: " + config.url + " with authToken: " + restTemplate.authToken);
+		
+		$http(config).then(function(response) {
+			console.log("Response Headers : ");
+			console.log(response.headers());
+			if (response.headers('AUTH_TOKEN') == null) {
+				console.log('response auth token has not been set');
+			} else {
+				restTemplate.authToken = response.headers('AUTH_TOKEN');
+				//restTemplate.authToken = response.headers('AUTH_TOKEN');
+				console.log("Auth Token has been set as " + restTemplate.authToken);
+			}
+			
+			if(angular.isDefined(successCallback) && successCallback != null) {
+					successCallback(response);
+			}
+			
+		  }, function(response) {
+				console.log("Error occurred while consuming rest service");
+				if(angular.isDefined(errorCallback) && errorCallback != null) {
+					errorCallback(response);
+				}
+		  });
+	}
 });
 
 function bootstrapApplication() {
@@ -72,7 +110,8 @@ function bootstrapApplication() {
 		angular.bootstrap(document, [ "todoPortal" ]);
 	});
 }
-fetchUserData(app).then(bootstrapApplication);
+//fetchUserData(app).then(bootstrapApplication);
+fetchMetaData(app).then(bootstrapApplication);
 
 function fetchUserData(app) {
 	var initInjector = angular.injector([ "ng" ]);
@@ -92,7 +131,7 @@ function fetchUserData(app) {
 						+ JSON.stringify(response.data));
 				userData.name = response.data.name;
 				userData.accessMap = response.data.accessMap;
-				app.constant('userdata', userdata);
+				app.constant('userdata', userData);
 				fetchMetaData(app);
 			});
 }
