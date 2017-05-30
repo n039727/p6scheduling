@@ -85,6 +85,18 @@ public class FunctionAccessDAOIntegrationTest {
 		Assert.assertNotNull(accesses);
 	}
 	
+	@Transactional
+	@Rollback(true)
+	@Test
+	public void testFetchAllRole() {
+	
+		List<String> roles = functionAccessDAO.fetchAllRole();
+		if(roles != null){
+			Assert.assertNotNull(roles);
+		}
+		
+	}
+	
 	
 
 }
