@@ -72,7 +72,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> toDoAssignments = new HashMap<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>>();
 		ExecutionPackage executionPackage = null;
 		ViewToDoStatus viewToDoStatus = new ViewToDoStatus();
-		if (null != query && (null != query.getExecPckgName() || (!"".equals(query.getExecPckgName())))) {
+		if (null != query && (null != query.getExecPckgName() && (!"".equals(query.getExecPckgName())))) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
 			tasks = new ArrayList<Task>(executionPackage.getTasks()); 
 		} else { 

@@ -3,8 +3,6 @@
  */
 package au.com.wp.corp.p6.bussiness;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,17 +19,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import au.com.wp.corp.p6.businessservice.impl.ExecutionPackageServiceImpl;
 import au.com.wp.corp.p6.businessservice.impl.UserAuthorizationServiceImpl;
-import au.com.wp.corp.p6.dataservice.impl.ExecutionPackageDaoImpl;
 import au.com.wp.corp.p6.dataservice.impl.FunctionAccessDAOImpl;
 import au.com.wp.corp.p6.dto.UserAuthorizationDTO;
-import au.com.wp.corp.p6.dto.WorkOrder;
-import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
-import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.FunctionAccess;
 import au.com.wp.corp.p6.model.PortalFunction;
-import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
 /**

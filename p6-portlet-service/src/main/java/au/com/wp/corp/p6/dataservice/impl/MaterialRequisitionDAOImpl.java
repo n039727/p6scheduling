@@ -17,8 +17,6 @@ public class MaterialRequisitionDAOImpl implements MaterialRequisitionDAO {
 
 	@Autowired
 	SessionFactory elipsSessionFactory;
-	private volatile List<MaterialRequisition> metReqList = null;
-	private Object lock = new Object();
 	@Override
 	public Session getSession() {
 		return elipsSessionFactory.getCurrentSession();
@@ -26,17 +24,10 @@ public class MaterialRequisitionDAOImpl implements MaterialRequisitionDAO {
 
 	@Override
 	public List<MaterialRequisition> listMetReq(Object[] workOrderId) throws P6DataAccessException {
-			if (metReqList == null) {
-				Criteria criteria = elipsSessionFactory.getCurrentSession().createCriteria(MaterialRequisition.class);
-					criteria.add(Restrictions.in("workOrder", workOrderId));
-					@SuppressWarnings("unchecked")
-					List<MaterialRequisition> resultList = (List<MaterialRequisition>) criteria.list();
-					metReqList = resultList;
-//				String hql = " from "+ MaterialRequisition.class.getName() +" where  dstrctCode ='CORP' and workOrder in (:workOrder)";
-//				Query q = elipsSessionFactory.getCurrentSession().createQuery(hql).setParameterList("workOrder", workOrderId);
-//				List<MaterialRequisition> resultList= q.list();
-//				metReqList = resultList;
-			}
-		return metReqList;
+		Criteria criteria = elipsSessionFactory.getCurrentSession().createCriteria(MaterialRequisition.class);
+		criteria.add(Restrictions.in("workOrder", workOrderId));
+		@SuppressWarnings("unchecked")
+		List<MaterialRequisition> resultList = (List<MaterialRequisition>) criteria.list();
+		return resultList;
 	}
 }

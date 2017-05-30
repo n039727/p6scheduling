@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>au.com.wp.corp.p6.scheduling</groupId>
 		<artifactId>p6-scheduling</artifactId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>p6-ellipse-integration</artifactId>
 	<packaging>war</packaging>
@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>au.com.wp.corp.p6.scheduling</groupId>
 			<artifactId>p6-wsmodel</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>javax</groupId>
@@ -171,12 +171,7 @@
 			<version>2.0.1</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/commons-configuration/commons-configuration -->
-		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-			<version>1.6</version>
-		</dependency>
+		
 
 		<!-- Aspect J -->
 		<dependency>

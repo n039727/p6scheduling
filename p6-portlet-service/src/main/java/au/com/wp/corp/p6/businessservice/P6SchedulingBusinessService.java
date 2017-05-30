@@ -11,7 +11,7 @@ import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 
 
-public interface P6SchedulingBusinessService {
+public interface P6SchedulingBusinessService extends P6BusinessExceptionParser{
 	
 	public MetadataDTO fetchMetadata()throws P6BusinessException;
 	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) throws P6BusinessException;

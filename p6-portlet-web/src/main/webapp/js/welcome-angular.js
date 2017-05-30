@@ -84,6 +84,7 @@ function bootstrapApplication() {
 		angular.bootstrap(document, [ "todoPortal" ]);
 	});
 }
+
 fetchUserData(app).then(bootstrapApplication);
 
 function fetchUserData(app) {

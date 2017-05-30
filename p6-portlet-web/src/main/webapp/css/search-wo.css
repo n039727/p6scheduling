@@ -69,6 +69,12 @@ body {
 	padding:0px;
 	margin:0px;
 }
+.table-striped-metreq > tbody > tr:nth-child(2n) > td {
+	background-color:  #f8d7ca;
+}
+.table-striped-metreq > tbody > tr:nth-child(2n + 1) > td {
+	background-color:  #f7eae5;
+}
 .search-query-container {
 	padding:0px;
 	margin-top:10px;

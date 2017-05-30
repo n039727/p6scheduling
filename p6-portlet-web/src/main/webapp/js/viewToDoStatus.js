@@ -118,7 +118,7 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 		console.log('fetching To-Dos for work order: ' + wo.workOrders[0]);
 		console.log('serviceUrl: ' + serviceUrl);
 		var query = {};
-		if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
+		if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== ""){
 			query = {execPckgName:wo.exctnPckgName};
 		}else{
 			query = {workOrderId:wo.workOrders[0]};

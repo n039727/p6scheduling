@@ -31,7 +31,7 @@ public class CreateP6ActivityThread implements Runnable {
 	@Override
 	public void run() {
 		logger.info("Initiates Create Activities in P6 thread ....");
-		final File file = new File("C:\\test-config\\createActivityP6Set.csv");
+		final File file = new File(System.getProperty("properties.dir")+"\\createActivityP6Set.csv");
 		CSVWriter.generateCSV(file, createActivityP6Set.toArray());
 	}
 
