@@ -370,7 +370,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> mapOfToDoIdWorkOrders = new HashMap<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>>();
 		ExecutionPackage executionPackage = null;
 		ViewToDoStatus returnedVal = new ViewToDoStatus();
-		if (null != query && (null != query.getExecPckgName() || (!"".equals(query.getExecPckgName())))) {
+		if (null != query && (null != query.getExecPckgName() && (!"".equals(query.getExecPckgName())))) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
 			tasks = new ArrayList<Task>(executionPackage.getTasks()); //multiple tasks
 		} else { 
