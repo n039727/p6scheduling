@@ -23,9 +23,21 @@ Array.prototype.unique = function() {
 	return arr;
 };
 
-app.service('userAccessService', function($http) {
+app.service('userAccessService', function($http, userdata) {
 		this.hasUpdateableAccess = function(functionId) {
-			return true;
+			var entry = null;
+			if (angular.isDefined(userdata.accessMap) && userdata.accessMap != null) {
+				entry = userdata.accessMap[functionId];
+			}
+			console.log('Entry  for ' + functionId + ' : ' + (entry != null ? JSON.stringify(entry) : 'null'));
+			return entry != null && entry.access;
+		}
+		
+		this.hasAccess = function(functionId) {
+			return userdata != null 
+				&& angular.isDefined(userdata.accessMap)
+				&& userdata.accessMap != null
+				&& userdata.accessMap[functionId] != null;
 		}
 });
 
@@ -86,14 +98,14 @@ function fetchUserData(app) {
 					console.log('response auth token has not been set');
 				} else {
 					userData.authToken = response.headers('AUTH_TOKEN');
-					console.log("Auth Token has been set as " + restTemplate.authToken);
+					console.log("Auth Token has been set as " + userData.authToken);
 				}
 				console.log("Received data from server for fetch to dos: "
 						+ JSON.stringify(response.data));
-				userData.name = response.data.name;
+				userData.name = response.data.userName;
 				userData.accessMap = response.data.accessMap;
-				app.constant('userdata', userdata);
-				fetchMetaData(app);
+				app.constant('userdata', userData);
+				return fetchMetaData(app);
 			});
 }
 
@@ -115,13 +127,17 @@ function fetchMetaData(app) {
 			});
 }
 
-app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) {
+app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, userdata) {
 
 	var ctrl = this;
 	console.log('metadata: ' + JSON.stringify(metadata));
 	ctrl.metadata = metadata;
 	ctrl.workOrders = [];
 	ctrl.savedMsgVisible = false;
+	
+	if (angular.isDefined(userdata) && userdata != null) {
+		$scope.userName = userdata.name;
+	}
 
 	ctrl.reload = function(query, success) {
 		console.log('data == ' + JSON.stringify(query))
@@ -194,10 +210,10 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) 
 		}
 	}
 	
-	restTemplate.callService({
+	/*restTemplate.callService({
 		method : "GET",
 		url : '/p6-portal/web/user/name'
 	}, function(response) {
 		$scope.userName = response.data.userName;
-	}, null);
+	}, null);*/
 });
