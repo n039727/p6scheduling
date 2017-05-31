@@ -133,7 +133,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 				ctrl.isValidationErr = false;
 				return true;
 			}
-		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS' || ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO'){
+		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS' || ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO' || ctrl.activeContext == 'DEPOT_VIEW_MATERIAL_REQUISITION'){
 			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == "" ){
 				ctrl.showErrorMsg = 'Planned Start From Date  is required';
 				ctrl.isValidationErr = true;
