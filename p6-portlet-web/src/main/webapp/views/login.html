@@ -57,17 +57,21 @@
 						onsubmit="return validateForm()" novalidate="novalidate"
 						class="form-horizontal">
 						<div class="form-group" style="margin-top: 1px;">
-							<label class="control-label col-md-2" for="userId">User
-								ID</label>
-							<div class="col-md-8">
+							<div class="col-md-5" style="text-align: right">
+								<label class="control-label" for="userId">User
+									ID :</label>
+							</div>
+							<div class="col-md-6" style="text-align: left">
 								<input type="text" name="j_username" id="User_name"
 									ng-model="Username" value="" onkeyup="usrFunction()"
 									placeholder="Enter User ID">
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="control-label col-md-2" for="pwd">Password</label>
-							<div class="col-md-8">
+							<div class="col-md-5" style="text-align: right">
+								<label class="control-label" for="pwd">Password :</label>
+							</div>
+							<div class="col-md-6" style="text-align: left">
 								<input type="password" name="j_password" id="User_password"
 									ng-model="password" value="" onkeyup="usrFunction()"
 									placeholder="Enter Password">
