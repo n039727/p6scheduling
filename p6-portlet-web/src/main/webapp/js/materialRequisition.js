@@ -3,15 +3,15 @@ function materialRequisitionResultController($scope, restTemplate, userAccessSer
 	
 	// Authorization implementation
 	ctrl.isReadOnly = false;
-	if (ctrl.isAuthEnabled) {
+	if (userAccessService.isAuthEnabled()) {
 		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
 			ctrl.isReadOnly = true;
 		}
 	}
 	
 	console.log('data received in material req.: ' + JSON.stringify(ctrl.data));
-	ctrl.woMatReqMap = {};
-	ctrl.woReqs = [];
+	//ctrl.woMatReqMap = {};
+	//ctrl.woReqs = [];
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
 		
@@ -47,12 +47,12 @@ function materialRequisitionResultController($scope, restTemplate, userAccessSer
 			};
 		
 		restTemplate.callService(req, function (response) {
-			ctrl.woMatReqMap = response.data.materialRequisitionMap;
-			console.log("ctrl.woMatReqMap: " + JSON.stringify(ctrl.woMatReqMap));
-			if(ctrl.woMatReqMap){
-				ctrl.woReqs = [];
-				for ( wo in ctrl.woMatReqMap) {
-					ctrl.woReqs.push({woNum:wo,reqList: ctrl.woMatReqMap[wo]});				
+			wo.woMatReqMap = response.data.materialRequisitionMap;
+			console.log("wo.woMatReqMap: " + JSON.stringify(wo.woMatReqMap));
+			if(wo.woMatReqMap){
+				wo.woReqs = [];
+				for ( wos in wo.woMatReqMap) {
+					wo.woReqs.push({woNum:wos,reqList: wo.woMatReqMap[wos]});				
 				}
 			}	
 
@@ -70,7 +70,6 @@ angular.module('todoPortal').component('materialRequisitionResult', {
 	  data: '<',
 	  metadata: '<',
 	  handleDataChange: '&',
-	  isAuthEnabled:'<',
 	  functionId: '<'
   }
 });

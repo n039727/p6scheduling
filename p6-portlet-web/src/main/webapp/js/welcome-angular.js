@@ -23,13 +23,29 @@ Array.prototype.unique = function() {
 	return arr;
 };
 
-app.service('userAccessService', function($http) {
+app.service('userAccessService', function($http, userdata) {
 		this.hasUpdateableAccess = function(functionId) {
-			return true;
+			var entry = null;
+			if (angular.isDefined(userdata.accessMap) && userdata.accessMap != null) {
+				entry = userdata.accessMap[functionId];
+			}
+			console.log('Entry  for ' + functionId + ' : ' + (entry != null ? JSON.stringify(entry) : 'null'));
+			return entry != null && entry.access;
+		}
+		
+		this.hasAccess = function(functionId) {
+			return userdata != null 
+				&& angular.isDefined(userdata.accessMap)
+				&& userdata.accessMap != null
+				&& userdata.accessMap[functionId] != null;
+		}
+		
+		this.isAuthEnabled = function() {
+			return userdata != null && userdata.isAuthEnabled; 
 		}
 });
 
-/*app.service('restTemplate', function($http, userdata) {
+app.service('restTemplate', function($http, userdata) {
 	//this.authToken = "";
 	var restTemplate = this;
 	this.callService = function(config, successCallback, errorCallback) {
@@ -65,44 +81,6 @@ app.service('userAccessService', function($http) {
 				}
 		  });
 	}
-});*/
-
-app.service('restTemplate', function($http) {
-	this.authToken = "";
-	var restTemplate = this;
-	this.callService = function(config, successCallback, errorCallback) {
-		if (!angular.isDefined(config)) {
-			return;
-		}
-		
-		if (!angular.isDefined(config.headers)) {
-			config.headers = {};
-		}
-		config.headers.AUTH_TOKEN = restTemplate.authToken;
-		console.log("Calling rest service: " + config.url + " with authToken: " + restTemplate.authToken);
-		
-		$http(config).then(function(response) {
-			console.log("Response Headers : ");
-			console.log(response.headers());
-			if (response.headers('AUTH_TOKEN') == null) {
-				console.log('response auth token has not been set');
-			} else {
-				restTemplate.authToken = response.headers('AUTH_TOKEN');
-				//restTemplate.authToken = response.headers('AUTH_TOKEN');
-				console.log("Auth Token has been set as " + restTemplate.authToken);
-			}
-			
-			if(angular.isDefined(successCallback) && successCallback != null) {
-					successCallback(response);
-			}
-			
-		  }, function(response) {
-				console.log("Error occurred while consuming rest service");
-				if(angular.isDefined(errorCallback) && errorCallback != null) {
-					errorCallback(response);
-				}
-		  });
-	}
 });
 
 function bootstrapApplication() {
@@ -110,8 +88,8 @@ function bootstrapApplication() {
 		angular.bootstrap(document, [ "todoPortal" ]);
 	});
 }
-//fetchUserData(app).then(bootstrapApplication);
-fetchMetaData(app).then(bootstrapApplication);
+
+fetchUserData(app).then(bootstrapApplication);
 
 function fetchUserData(app) {
 	var initInjector = angular.injector([ "ng" ]);
@@ -125,14 +103,15 @@ function fetchUserData(app) {
 					console.log('response auth token has not been set');
 				} else {
 					userData.authToken = response.headers('AUTH_TOKEN');
-//					console.log("Auth Token has been set as " + restTemplate.authToken);
+					console.log("Auth Token has been set as " + userData.authToken);
 				}
 				console.log("Received data from server for fetch to dos: "
 						+ JSON.stringify(response.data));
-				userData.name = response.data.name;
+				userData.name = response.data.userName;
 				userData.accessMap = response.data.accessMap;
+				userData.isAuthEnabled = true;
 				app.constant('userdata', userData);
-				fetchMetaData(app);
+				return fetchMetaData(app);
 			});
 }
 
@@ -154,13 +133,17 @@ function fetchMetaData(app) {
 			});
 }
 
-app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) {
+app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, userdata) {
 
 	var ctrl = this;
 	console.log('metadata: ' + JSON.stringify(metadata));
 	ctrl.metadata = metadata;
 	ctrl.workOrders = [];
 	ctrl.savedMsgVisible = false;
+	
+	if (angular.isDefined(userdata) && userdata != null) {
+		$scope.userName = userdata.name;
+	}
 
 	ctrl.reload = function(query, success) {
 		console.log('data == ' + JSON.stringify(query))
@@ -204,7 +187,7 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) 
 		});
 	};
 
-	ctrl.activeContext = 'ADD_SCHEDULING_TODO';
+//	ctrl.activeContext = 'ADD_SCHEDULING_TODO';
 
 	
 	ctrl.handleContext = function(context) {
@@ -233,10 +216,10 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate) 
 		}
 	}
 	
-	restTemplate.callService({
+	/*restTemplate.callService({
 		method : "GET",
 		url : '/p6-portal/web/user/name'
 	}, function(response) {
 		$scope.userName = response.data.userName;
-	}, null);
+	}, null);*/
 });

@@ -4,16 +4,16 @@
 			<div class="panel-heading side-panel-heading"><h4>Scheduling</h4></div>
 			<div class="panel-body side-panel-body">
 				<div class="side-panel-button-container col-md-12">
-					<button type="submit" class="btn btn-default btn-block side-panel-button " ng-class="{'active-context':$ctrl.activeContext == 'ADD_SCHEDULING_TODO'}" ng-click="$ctrl.setContext('ADD_SCHEDULING_TODO')">Add/Update Scheduling To-Do</button>
+					<button type="submit" class="btn btn-default btn-block side-panel-button " ng-disabled="$ctrl.isDisabled('Add_Scheduling_To_Do')" ng-class="{'active-context':$ctrl.activeContext == 'ADD_SCHEDULING_TODO'}" ng-click="$ctrl.setContext('ADD_SCHEDULING_TODO')">Add/Update Scheduling To-Do</button>
 				</div>
 				<div class="side-panel-button-container col-md-12">
-					<button type="submit" class="btn btn-default btn-block" ng-class="{'active-context':$ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'}" ng-click="$ctrl.setContext('VIEW_MATERIAL_REQUISITION')">View Materials Req.</button>
+					<button type="submit" class="btn btn-default btn-block" ng-disabled="$ctrl.isDisabled('View_Material_Requisitions')" ng-class="{'active-context':$ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'}" ng-click="$ctrl.setContext('VIEW_MATERIAL_REQUISITION')">View Materials Req.</button>
 				</div>
 				<div class="side-panel-button-container col-md-12">
-					<button type="submit" class="btn btn-default btn-block side-panel-button " ng-class="{'active-context':$ctrl.activeContext == 'VIEW_TODO_STATUS'}" ng-click="$ctrl.setContext('VIEW_TODO_STATUS')">View To-Do Status</button>
+					<button type="submit" class="btn btn-default btn-block side-panel-button " ng-disabled="$ctrl.isDisabled('View_To_Do_Status')" ng-class="{'active-context':$ctrl.activeContext == 'VIEW_TODO_STATUS'}" ng-click="$ctrl.setContext('VIEW_TODO_STATUS')">View To-Do Status</button>
 				</div>
 				<div class="side-panel-button-container col-md-12">
-					<button type="submit" class="btn btn-default btn-block side-panel-button " ng-class="{'active-context':$ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE'}" ng-click="$ctrl.setContext('CREATE_EXECUTION_PACKAGE')">Create Execution Package</button>
+					<button type="submit" class="btn btn-default btn-block side-panel-button " ng-disabled="$ctrl.isDisabled('Create_Update_Execution_package')" ng-class="{'active-context':$ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE'}" ng-click="$ctrl.setContext('CREATE_EXECUTION_PACKAGE')">Create Execution Package</button>
 				</div>
 			</div>
 		</div>
@@ -21,10 +21,13 @@
 			<div class="panel-heading side-panel-heading"><h4>Depot</h4></div>
 			<div class="panel-body side-panel-body">
 				<div class="side-panel-button-container col-md-12">
-					<button type="submit" class="btn btn-default btn-block side-panel-button" ng-class="{'active-context':$ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO'}" ng-click="$ctrl.setContext('DEPOT_ADD_SCHEDULING_TODO')">Add Depot To-Do</button>
+					<button type="submit" class="btn btn-default btn-block side-panel-button" ng-disabled="$ctrl.isDisabled('Add_Depot_To_Do')" ng-class="{'active-context':$ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO'}" ng-click="$ctrl.setContext('DEPOT_ADD_SCHEDULING_TODO')">Add Depot To-Do</button>
 				</div>
 				<div class="side-panel-button-container col-md-12">
-					<button type="submit" class="btn btn-default btn-block side-panel-button" ng-class="{'active-context':$ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'}" ng-click="$ctrl.setContext('DEPOT_VIEW_TODO_STATUS')">View To-Do Status</button>
+					<button type="submit" class="btn btn-default btn-block" ng-disabled="$ctrl.isDisabled('View_Material_Requisitions_Depot')" ng-class="{'active-context':$ctrl.activeContext == 'DEPOT_VIEW_MATERIAL_REQUISITION'}" ng-click="$ctrl.setContext('DEPOT_VIEW_MATERIAL_REQUISITION')">View Materials Req.</button>
+				</div>
+				<div class="side-panel-button-container col-md-12">
+					<button type="submit" class="btn btn-default btn-block side-panel-button" ng-disabled="$ctrl.isDisabled('View_Update_To_Do')" ng-class="{'active-context':$ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'}" ng-click="$ctrl.setContext('DEPOT_VIEW_TODO_STATUS')">View To-Do Status</button>
 				</div>
 			</div>
 		</div>

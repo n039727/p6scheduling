@@ -3,8 +3,9 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 	
 	// Authorization implementation
 	ctrl.isReadOnly = false;
-	if (ctrl.isAuthEnabled) {
+	if (userAccessService.isAuthEnabled()) {
 		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
+			console.log('has updateable in view to do status : false');
 			ctrl.isReadOnly = true;
 		}
 	}
@@ -203,7 +204,6 @@ angular.module('todoPortal').component('viewToDoResult', {
 	  activeContext: '<',
 	  data: '<',
 	  handleDataChange: '&',
-	  isAuthEnabled:'<',
 	  functionId: '<'
   }
 });

@@ -38,7 +38,7 @@
 		<servlet-name>portletWebController</servlet-name>
 	</filter-mapping>
 	
-	<login-config>
+	 <login-config>
 		<auth-method>FORM</auth-method>
 		<realm-name>active-directory</realm-name>
 		<form-login-config>
@@ -91,4 +91,5 @@
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
+	
 </web-app>

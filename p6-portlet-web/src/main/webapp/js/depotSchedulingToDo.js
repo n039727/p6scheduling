@@ -3,7 +3,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 	
 	// Authorization implementation
 	ctrl.isReadOnly = false;
-	if (ctrl.isAuthEnabled) {
+	if (userAccessService.isAuthEnabled()) {
 		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
 			ctrl.isReadOnly = true;
 		}

@@ -1,9 +1,11 @@
 <div class="panel query-result-panel panel-primary col-md-10" ng-show="$ctrl.visible == true">
 	<div class="panel-body result-container">
-		<scheduling-to-do-result function-id="ADD_SCHEDULING_TODO" ng-if="$ctrl.activeContext == 'ADD_SCHEDULING_TODO'" is-auth-enabled="false" data="$ctrl.data" metadata="$ctrl.metadata" handle-data-change="$ctrl.onDataChange(event)"></scheduling-to-do-result>
-		<material-requisition-result ng-if="$ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'" data="$ctrl.data" handle-data-change="$ctrl.onDataChange(event)"></material-requisition-result>
-		<view-to-do-result active-context="$ctrl.activeContext" ng-if="$ctrl.activeContext == 'VIEW_TODO_STATUS' || $ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'" data="$ctrl.data" handle-data-change="$ctrl.onDataChange(event)"></view-to-do-result>
-		<execution-package-result ng-if="$ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE'" data="$ctrl.data" handle-data-change="$ctrl.onDataChange(event)"></execution-package-result>
-		<depot-scheduling-to-do-result ng-if="$ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO'" data="$ctrl.data" metadata="$ctrl.metadata" handle-data-change="$ctrl.onDataChange(event)"></depot-scheduling-to-do-result>
+		<scheduling-to-do-result function-id="'Add_Scheduling_To_Do'" ng-if="$ctrl.activeContext == 'ADD_SCHEDULING_TODO'" data="$ctrl.data" metadata="$ctrl.metadata" handle-data-change="$ctrl.onDataChange(event)"></scheduling-to-do-result>
+		<material-requisition-result function-id="'View_Material_Requisitions'" ng-if="$ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'" data="$ctrl.data" handle-data-change="$ctrl.onDataChange(event)"></material-requisition-result>
+		<view-to-do-result function-id="'View_To_Do_Status'" active-context="$ctrl.activeContext" ng-if="$ctrl.activeContext == 'VIEW_TODO_STATUS'" data="$ctrl.data" handle-data-change="$ctrl.onDataChange(event)"></view-to-do-result>
+		<execution-package-result function-id="'Create_Update_Execution_package'" ng-if="$ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE'" data="$ctrl.data" handle-data-change="$ctrl.onDataChange(event)"></execution-package-result>
+		<depot-scheduling-to-do-result function-id="'Add_Depot_To_Do'" ng-if="$ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO'" data="$ctrl.data" metadata="$ctrl.metadata" handle-data-change="$ctrl.onDataChange(event)"></depot-scheduling-to-do-result>
+		<material-requisition-result function-id="'View_Material_Requisitions_Depot'" ng-if="$ctrl.activeContext == 'DEPOT_VIEW_MATERIAL_REQUISITION'" data="$ctrl.data" handle-data-change="$ctrl.onDataChange(event)"></material-requisition-result>
+		<view-to-do-result function-id="'View_Update_To_Do'" active-context="$ctrl.activeContext" ng-if="$ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'" data="$ctrl.data" handle-data-change="$ctrl.onDataChange(event)"></view-to-do-result>
 	</div>
 </div>

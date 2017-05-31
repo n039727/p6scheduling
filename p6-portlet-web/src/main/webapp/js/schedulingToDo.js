@@ -3,8 +3,10 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 	
 	// Authorization implementation
 	ctrl.isReadOnly = false;
-	if (ctrl.isAuthEnabled) {
+	console.log(ctrl.functionId);
+	if (userAccessService.isAuthEnabled()) {
 		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
+			console.log('has updateable in scheduling to do : false');
 			ctrl.isReadOnly = true;
 		}
 	}
@@ -307,7 +309,6 @@ angular.module('todoPortal').component('schedulingToDoResult', {
 	  data: '<',
 	  metadata: '<',
 	  handleDataChange: '&',
-	  isAuthEnabled:'<',
 	  functionId: '<'
   }
 });
