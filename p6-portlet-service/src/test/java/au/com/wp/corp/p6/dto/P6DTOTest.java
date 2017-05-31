@@ -252,4 +252,31 @@ public class P6DTOTest {
 		Assert.assertEquals("CRW1,CRW2", execPckg.getCrewNames());
 	}
 	
+	/**
+	 * Test case to verify the DTO object {@link ActivitySearchRequest}
+	 */
+	@Test
+	public void testActivitySearchRequest () {
+		ActivitySearchRequest activitySearchRequest = new ActivitySearchRequest();
+		List<String> crewList = new ArrayList<String>();
+		crewList.add("EMERT01");
+		crewList.add("EMERT02");
+		List<String> depotList = new ArrayList<String>();
+		depotList.add("DXCREW");
+		depotList.add("DXCREW");
+		activitySearchRequest.setCrewList(crewList);
+		activitySearchRequest.setDepotList(depotList);
+		activitySearchRequest.setPlannedStartDate("28/05/2017");
+		activitySearchRequest.setPlannedEndDate("28/05/2017");
+		activitySearchRequest.setWorkOrder("05214409002");
+		
+		Assert.assertEquals(crewList, activitySearchRequest.getCrewList());
+		Assert.assertEquals(depotList, activitySearchRequest.getDepotList());
+		Assert.assertEquals("28/05/2017", activitySearchRequest.getPlannedStartDate());
+		Assert.assertEquals("28/05/2017", activitySearchRequest.getPlannedEndDate());
+		Assert.assertEquals("05214409002", activitySearchRequest.getWorkOrder());
+	
+	}
+	
+	
 }
