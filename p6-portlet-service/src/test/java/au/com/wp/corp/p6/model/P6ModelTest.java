@@ -167,10 +167,9 @@ public class P6ModelTest {
 	public void testTodoTemplate () {
 		final long time = System.currentTimeMillis();
 		TodoTemplate todoTemplate = new TodoTemplate();
-		TodoTemplatePK pk = new TodoTemplatePK();
-		pk.setTmpltId(new Long("1"));
-		pk.setTodoId(4);
-		todoTemplate.setId(pk);
+		todoTemplate.setTmpltId(new Long("1"));
+		//todoTemplate.setTodoId(4);
+		//todoTemplate.setId(pk);
 		todoTemplate.setCrtdTs(new Timestamp(time));
 		todoTemplate.setCrtdUsr("N039126");
 		todoTemplate.setLstUpdtdTs(new Timestamp(time));
@@ -185,7 +184,6 @@ public class P6ModelTest {
 		Assert.assertEquals(time, todoTemplate.getLstUpdtdTs().getTime());
 		Assert.assertEquals("Scheduling Template", todoTemplate.getTmpltDesc());
 		Assert.assertEquals("Gas Permit", todoTemplate.getTodoNam());
-		Assert.assertEquals(pk, todoTemplate.getId());
 		Assert.assertEquals(new BigDecimal("1"), todoTemplate.getTypId());
 		
 	}
