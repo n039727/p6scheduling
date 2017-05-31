@@ -349,7 +349,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 								//create new TODO
 								logger.debug("Todo Id is null and hence creating new  #{} ", todoId);
 								TodoTemplate newToDo = addTodo(reqToDo);
-								todoId = new BigDecimal(newToDo.getId().getTodoId());
+								todoId = new BigDecimal(newToDo.getTodoId());
 							}
 							TodoAssignment todoAssignment = new TodoAssignment();
 							todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
@@ -364,7 +364,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					if(null == todoId){
 						//create new TODO
 						TodoTemplate newToDo = addTodo(reqToDo);
-						todoId = new BigDecimal(newToDo.getId().getTodoId());
+						todoId = new BigDecimal(newToDo.getTodoId());
 					}
 					TodoAssignment todoAssignment = new TodoAssignment();
 					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
@@ -477,31 +477,10 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		todoTemplate.setTmpltDesc(item.getToDoName());
 		todoTemplate.setTodoNam(item.getToDoName());
 		todoTemplate.setTypId(new BigDecimal(2));
-		/*List<TodoTemplate> lastRecFromDB = todoDAO.fetchToDoForGratestToDoId();
-		logger.debug("lastRecFromDB>>>{} ", lastRecFromDB);
-		if(null != lastRecFromDB && lastRecFromDB.size()>0 ){
-			if(null != lastRecFromDB.get(0).getId()){
-				long toDoId = lastRecFromDB.get(0).getId().getTodoId();
-				long tmplId = 2;
-				toDoId = toDoId+1;
-
-				todoTemplate.getId().setTodoId(toDoId);
-				todoTemplate.getId().setTmpltId(tmplId);
-			}
-			else{
-				todoTemplate.getId().setTodoId((long) Math.random());
-				todoTemplate.getId().setTmpltId(2);
-			}
-		}
-		else{
-			todoTemplate.getId().setTodoId((long) Math.random());
-			todoTemplate.getId().setTmpltId(2);
-		}*/
-		todoTemplate.getId().setTodoId(todoDAO.getMaxToDoId() + 1);
-		todoTemplate.getId().setTmpltId(2);
+		todoTemplate.setTmpltId(2);
 		
-		logger.debug("ToDo Id and Template Id>>>{} , {]", todoTemplate.getId().getTodoId(), todoTemplate.getId().getTmpltId());
 		todoDAO.createToDo(todoTemplate);
+		logger.debug("ToDo Id and Template Id>>>{} , {]", todoTemplate.getTodoId(), todoTemplate.getTmpltId());
 		return todoTemplate;
 	}
 	

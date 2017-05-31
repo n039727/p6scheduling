@@ -6,7 +6,11 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -20,8 +24,14 @@ import javax.persistence.Table;
 public class TodoTemplate implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private TodoTemplatePK id = new TodoTemplatePK();;
+	@Column(name="TMPLT_ID")
+	private long tmpltId;
+	
+	@Id
+	@SequenceGenerator(name="TODO_ID_GENERATOR", sequenceName="TODO_ID",initialValue=50,allocationSize= 50)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TODO_ID_GENERATOR")
+	@Column(name="TODO_ID")
+	private long todoId;
 
 	@Column(name="CRTD_TS")
 	private Timestamp crtdTs;
@@ -47,13 +57,7 @@ public class TodoTemplate implements Serializable {
 	public TodoTemplate() {
 	}
 
-	public TodoTemplatePK getId() {
-		return this.id;
-	}
 
-	public void setId(TodoTemplatePK id) {
-		this.id = id;
-	}
 
 	public Timestamp getCrtdTs() {
 		return this.crtdTs;
@@ -109,6 +113,22 @@ public class TodoTemplate implements Serializable {
 
 	public void setTypId(java.math.BigDecimal typId) {
 		this.typId = typId;
+	}
+
+	public long getTmpltId() {
+		return tmpltId;
+	}
+
+	public void setTmpltId(long tmpltId) {
+		this.tmpltId = tmpltId;
+	}
+
+	public long getTodoId() {
+		return todoId;
+	}
+
+	public void setTodoId(long todoId) {
+		this.todoId = todoId;
 	}
 
 }

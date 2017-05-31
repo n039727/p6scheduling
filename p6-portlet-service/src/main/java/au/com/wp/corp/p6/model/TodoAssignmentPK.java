@@ -6,8 +6,10 @@ package au.com.wp.corp.p6.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -29,7 +31,7 @@ public class TodoAssignmentPK implements Serializable {
 	private BigDecimal todoId;
 
 	// bi-directional many-to-one association to Task
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JoinColumn(name = "TASK_ID")
 	private Task task;
 

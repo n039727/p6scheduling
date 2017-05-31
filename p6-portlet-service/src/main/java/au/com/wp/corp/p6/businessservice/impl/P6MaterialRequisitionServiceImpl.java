@@ -15,7 +15,6 @@ import au.com.wp.corp.p6.dataservice.MaterialRequisitionDAO;
 import au.com.wp.corp.p6.dto.MaterialRequisitionDTO;
 import au.com.wp.corp.p6.dto.MaterialRequisitionRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
-import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.elipse.MaterialRequisition;
 /**
  * @author n039957

@@ -5,6 +5,7 @@ package au.com.wp.corp.p6.businessservice;
 
 import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.exception.P6ExceptionMapper;
+import au.com.wp.corp.p6.exception.P6ServiceException;
 
 /**
  * @author n039727
@@ -14,10 +15,16 @@ import au.com.wp.corp.p6.exception.P6ExceptionMapper;
 public interface P6BusinessExceptionParser extends P6ExceptionMapper{
 	
 	
-	default void parseException (Exception exc) throws P6BusinessException {
+	default void parseException (Exception throwable) throws P6BusinessException {
 	
-		if ( exc instanceof IllegalArgumentException ){
-			throw new P6BusinessException (ARGUEMENT_MISMATCH, exc);
+		if ( throwable instanceof IllegalArgumentException ){
+			throw new P6BusinessException (ARGUEMENT_MISMATCH, throwable);
+		}
+		if ( throwable instanceof IndexOutOfBoundsException ){
+			throw new P6BusinessException (ARGUEMENT_MISMATCH, throwable);
+		}
+		if ( throwable instanceof P6ServiceException ){
+			throw new P6BusinessException (INTEGRATION_FAULT, throwable);
 		}
 	}
 	

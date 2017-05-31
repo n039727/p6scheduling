@@ -48,13 +48,13 @@ public class TodoDAOImpl implements TodoDAO {
 					toDoNameMap = new HashMap<String, TodoTemplate>();
 					for (TodoTemplate todo:listToDo) {
 						//toDoMap.put(todo.getTodoId().longValue(), todo);
-						toDoMap.put(todo.getId().getTodoId(), todo);
+						toDoMap.put(todo.getTodoId(), todo);
 						toDoNameMap.put(todo.getTodoNam(), todo);
-						if (maxPk == null) {
+						/*if (maxPk == null) {
 							maxPk = todo.getId().getTodoId();
 						} else if (maxPk < todo.getId().getTodoId()) {
 							maxPk = todo.getId().getTodoId();
-						}
+						}*/
 					}
 				}
 			}
@@ -79,7 +79,7 @@ public class TodoDAOImpl implements TodoDAO {
 		fetchAllToDos();
 		if (toDoNameMap != null && toDoNameMap.containsKey(todoName)) {
 			//return toDoNameMap.get(todoName).getTodoId();
-			return new BigDecimal(toDoNameMap.get(todoName).getId().getTodoId());
+			return new BigDecimal(toDoNameMap.get(todoName).getTodoId());
 		}
 		return null;
 	}
@@ -96,6 +96,10 @@ public class TodoDAOImpl implements TodoDAO {
 	
 	@Override
 	public Long getMaxToDoId() { 
+		Criteria criteria = getSession()
+			    .createCriteria(TodoTemplate.class)
+			    .setProjection(Projections.max("id.todoId"));
+		Long maxPk = (Long)criteria.uniqueResult();
 		logger.debug("Returning Max Pk: " + maxPk);
 		return maxPk;
 	}
@@ -119,9 +123,9 @@ public class TodoDAOImpl implements TodoDAO {
 		
 		// update Max To Do Id
 		synchronized (lock) {
-			maxPk = todoTemplate.getId().getTodoId();
+			maxPk = todoTemplate.getTodoId();
 			toDoNameMap.put(todoTemplate.getTodoNam(), todoTemplate);
-			toDoMap.put(todoTemplate.getId().getTodoId(), todoTemplate);
+			toDoMap.put(todoTemplate.getTodoId(), todoTemplate);
 			logger.debug("Setting Max pk after adding new to do: " + maxPk);
 		}
 		return status;
