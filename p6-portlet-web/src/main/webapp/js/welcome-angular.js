@@ -187,7 +187,7 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 		});
 	};
 
-	ctrl.activeContext = 'ADD_SCHEDULING_TODO';
+//	ctrl.activeContext = 'ADD_SCHEDULING_TODO';
 
 	
 	ctrl.handleContext = function(context) {
