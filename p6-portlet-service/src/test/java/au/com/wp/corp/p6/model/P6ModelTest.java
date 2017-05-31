@@ -163,8 +163,91 @@ public class P6ModelTest {
 		
 	}
 	
+	@Test
 	public void testTodoTemplate () {
+		final long time = System.currentTimeMillis();
 		TodoTemplate todoTemplate = new TodoTemplate();
+		TodoTemplatePK pk = new TodoTemplatePK();
+		pk.setTmpltId(new Long("1"));
+		pk.setTodoId(4);
+		todoTemplate.setId(pk);
+		todoTemplate.setCrtdTs(new Timestamp(time));
+		todoTemplate.setCrtdUsr("N039126");
+		todoTemplate.setLstUpdtdTs(new Timestamp(time));
+		todoTemplate.setLstUpdtdUsr("N039126");
+		todoTemplate.setTmpltDesc("Scheduling Template");
+		todoTemplate.setTodoNam("Gas Permit");
+		todoTemplate.setTypId(new BigDecimal("1"));
+		
+		Assert.assertEquals("N039126", todoTemplate.getCrtdUsr());
+		Assert.assertEquals(time, todoTemplate.getCrtdTs().getTime());
+		Assert.assertEquals("N039126", todoTemplate.getLstUpdtdUsr());
+		Assert.assertEquals(time, todoTemplate.getLstUpdtdTs().getTime());
+		Assert.assertEquals("Scheduling Template", todoTemplate.getTmpltDesc());
+		Assert.assertEquals("Gas Permit", todoTemplate.getTodoNam());
+		Assert.assertEquals(pk, todoTemplate.getId());
+		Assert.assertEquals(new BigDecimal("1"), todoTemplate.getTypId());
+		
+	}
+	
+	@Test
+	public void testTodoType () {
+		final long time = System.currentTimeMillis();
+		TodoType todoType = new TodoType();
+		todoType.setCrtdTs(new Timestamp(time));
+		todoType.setCrtdUsr("N039603");
+		todoType.setLstUpdtdTs(new Timestamp(time));
+		todoType.setLstUpdtdUsr("N039603");
+		todoType.setTypDesc("scheduling TODO type");
+		todoType.setTypId(1);
+		
+		Assert.assertEquals("N039603", todoType.getCrtdUsr());
+		Assert.assertEquals(time, todoType.getCrtdTs().getTime());
+		Assert.assertEquals("N039603", todoType.getLstUpdtdUsr());
+		Assert.assertEquals(time, todoType.getLstUpdtdTs().getTime());
+		Assert.assertEquals("scheduling TODO type", todoType.getTypDesc());
+		Assert.assertEquals(1, todoType.getTypId());
+		
+	}
+	
+	@Test
+	public void testResourceDetail () {
+		final long time = System.currentTimeMillis();
+		ResourceDetail resourceDetail = new ResourceDetail();
+		resourceDetail.setDepotNam("Merredin");
+		resourceDetail.setGrpNam("DXCREW");
+		resourceDetail.setRsrcId(1);
+		resourceDetail.setRsrcNam("EMERT01");
+				
+		Assert.assertEquals("Merredin", resourceDetail.getDepotNam());
+		Assert.assertEquals("DXCREW", resourceDetail.getGrpNam());
+		Assert.assertEquals(1, resourceDetail.getRsrcId());
+		Assert.assertEquals("EMERT01", resourceDetail.getRsrcNam());
+		
+		
+	}
+	
+	@Test
+	public void testPortalFunction () {
+		final long time = System.currentTimeMillis();
+		PortalFunction portalFunction = new PortalFunction();
+		portalFunction.setFuncDesc("Screen for Scheduler to add or update TODOs");
+		portalFunction.setFuncId(1);
+		portalFunction.setFuncNam("Add_Scheduling_To_Do");
+		
+		FunctionAccess functionAccess = new FunctionAccess();
+		functionAccess.setFuncAccessId(1);
+		functionAccess.setPortalFunction(portalFunction);
+		functionAccess.setRoleNam("P6_TEM_LEDR_SCHDLR");
+		functionAccess.setWriteFlg("Y");
+		List<FunctionAccess> accesses = new ArrayList<FunctionAccess>();
+		accesses.add(functionAccess);
+		portalFunction.setFunctionAccesses(accesses);
+				
+		Assert.assertEquals("Screen for Scheduler to add or update TODOs",portalFunction.getFuncDesc());
+		Assert.assertEquals(1, portalFunction.getFuncId());
+		Assert.assertEquals("Add_Scheduling_To_Do", portalFunction.getFuncNam());
+		Assert.assertEquals(accesses, portalFunction.getFunctionAccesses());
 		
 		
 	}
