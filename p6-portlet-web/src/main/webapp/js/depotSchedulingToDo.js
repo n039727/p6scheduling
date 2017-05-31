@@ -10,6 +10,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 	}
 	
 	ctrl.successSavedMsg = "";
+	ctrl.emptyStr = "";
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
@@ -133,7 +134,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
+			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== ctrl.emptyStr){
 				ctrl.successSavedMsg = "Package has been saved successfully";
 			}else{
 				ctrl.successSavedMsg = "Work order task has been saved successfully";
@@ -172,7 +173,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			query.workOrderId = wo.workOrders[0];
 		}
 		
-		console.log('fetching To-Dos for : ' + JSON.stringify(query));
+		console.log('fetching To-Dos for depots : ' + JSON.stringify(query));
 		
 		var req = {
 				method: 'POST',
@@ -185,7 +186,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			};
 		
 		restTemplate.callService(req, function (response) {
-			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
+			console.log("Received data from server for fetchWOForTODOStatus in depots: " + JSON.stringify(response.data));
 			wo.toDoItems = [];
 			wo.schedulingToDoComment = "";
 			if (response.data[0] && response.data[0].toDoItems) {
@@ -196,7 +197,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			ctrl.populateToDoBindings(wo, wo.toDoItems);
 			ctrl.populateWorkOrderDisplayList(wo);
 			ctrl.createToDoMap(wo);
-			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
+			console.log("Work Order after fetch todo in deptos: " + JSON.stringify(wo));
 		}, null);
 	}
 	

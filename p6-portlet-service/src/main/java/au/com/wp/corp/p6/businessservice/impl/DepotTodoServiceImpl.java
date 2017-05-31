@@ -407,64 +407,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
 		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
-		
-		/*if (updatedTask == null)
-			return;
-		
-		if (null != updatedTask.getTodoAssignments()) {
-			for (Iterator<TodoAssignment> itr = updatedTask.getTodoAssignments().iterator(); itr.hasNext();) {
-				TodoAssignment todo = itr.next();
-				boolean found = false;
-				logger.debug("todo.getTodoId(): " + todo.getTodoAssignMentPK().getTodoId());
-				for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
-					ToDoItem item = itrToDo.next();
-					logger.debug("item.getTodoName(): " + item.getToDoName());
-					if (item.getToDoName().equals(todoDAO.getToDoName(todo.getTodoAssignMentPK().getTodoId().longValue())) 
-							&& item.getWorkOrders().contains(updatedTask.getTaskId())) {
-						item.getWorkOrders().remove(updatedTask.getTaskId());
-						if (item.getWorkOrders().isEmpty()) {
-							itrToDo.remove();
-						}
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					itr.remove();
-				}
-			}
-		}	
-		
-		if (null != workOrder && null != workOrder.getToDoItems()) {
-			Set<TodoAssignment> todos = new HashSet<>();
-			// Set the new values
-			for (Iterator<ToDoItem> itrToDo = workOrder.getToDoItems().iterator(); itrToDo.hasNext();) {
-				ToDoItem item = itrToDo.next();
-				//to persist new user define TODO
-				BigDecimal todoId = todoDAO.getToDoId(item.getToDoName());
-				if(null == todoId){
-					//create new TODO
-					TodoTemplate newToDo = addTodo(item);
-					//todoId = newToDo.getTodoId();
-					todoId = new BigDecimal(newToDo.getId().getTodoId());
-				}
-				if (null != item.getWorkOrders() && item.getWorkOrders().contains(updatedTask.getTaskId())) {
-					TodoAssignment todoAssignment = new TodoAssignment();
-					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
-					logger.debug("Todo id for #{} - {}", item.getToDoName(), todoId);
-					todoAssignment.getTodoAssignMentPK().setTodoId(todoId);
-					todos.add(todoAssignment);
-				}
-			}
-			if (updatedTask.getTodoAssignments() == null) {
-				updatedTask.setTodoAssignments(new HashSet<TodoAssignment>());
-			}
-			updatedTask.getTodoAssignments().addAll(todos);
-		}
-	
-		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
-		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());*/
-		
+
 	}
 	
 	private TodoTemplate addTodo(ToDoItem item) throws P6BusinessException {

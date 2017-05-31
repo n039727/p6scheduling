@@ -35,9 +35,9 @@ public class UserAuthorizationServiceImpl implements UserAuthorizationService {
 	 */
 	@Transactional
 	@Override
-	public List<UserAuthorizationDTO> getAccess(String roleName) {
-		logger.debug("Input role name>>>{}", roleName);
-		List<FunctionAccess> accesses = functionAccessDAO.getAccess(roleName);
+	public List<UserAuthorizationDTO> getAccess(List<String> roleNames) {
+		logger.debug("Input role name>>>{}", roleNames);
+		List<FunctionAccess> accesses = functionAccessDAO.getAccess(roleNames);
 		List<UserAuthorizationDTO> userAuthorizationDTOs = new ArrayList<UserAuthorizationDTO>();
 		if(accesses != null){
 			logger.debug("Number of functions returned>>>{}", accesses.size());
