@@ -270,5 +270,50 @@ public class DepotTodoServiceTest {
 		}
 
 	}
+	
+	@Test
+	public void testFetchDepotTaskForAddUpdateToDo() throws P6BusinessException {
+
+		WorkOrderSearchRequest  request =  new WorkOrderSearchRequest();
+		request.setExecPckgName("15-05-2017_05590757");
+		
+		ExecutionPackage execPckg = new ExecutionPackage();
+		execPckg.setExctnPckgNam(request.getExecPckgName());
+		
+		
+		Set<Task> tasks = new HashSet<>();
+		Task task = new Task();
+		task.setTaskId("05162583002");
+		task.setCrewId("MOMT4");
+		task.setSchdDt(new Date());
+		task.setExecutionPackage(execPckg);
+		Set<TodoAssignment> todoAssignments = new HashSet<>();
+		TodoAssignment todo = new TodoAssignment();
+		todo.getTodoAssignMentPK().setTask(task);
+		todo.getTodoAssignMentPK().setTodoId(new BigDecimal("1"));
+		todoAssignments.add(todo);
+		task.setTodoAssignments(todoAssignments);
+		tasks.add(task);
+		task = new Task();
+		task.setTaskId("05195042002");
+		task.setCrewId("MOST7");
+		task.setSchdDt(new Date());
+		task.setExecutionPackage(execPckg);
+		todoAssignments = new HashSet<>();
+		todo = new TodoAssignment();
+		todo.getTodoAssignMentPK().setTask(task);
+		todo.getTodoAssignMentPK().setTodoId(new BigDecimal("1"));
+		todoAssignments.add(todo);
+		task.setTodoAssignments(todoAssignments);
+		tasks.add(task);
+		
+		execPckg.setTasks(tasks);
+		
+		Mockito.when(todoDAO.getToDoName(1L)).thenReturn("ESA");
+		Mockito.when(executionPackageDao.fetch(request.getExecPckgName())).thenReturn(execPckg);
+		
+		List<WorkOrder> workOrders = depotTodoService.fetchDepotTaskForAddUpdateToDo(request);
+		Assert.assertNotNull(workOrders);
+	}
 
 }
