@@ -35,20 +35,20 @@
 						<div class="panel-heading panel-standard-to-do-heading"><b>Select Depot To-Do</b></div>
 						<div class="panel-body">
 							<dynamic-to-do-setter columns="2" work-orders="wo.workOrders" to-dos="$ctrl.depotToDoList" current-map="wo.todoMap" handle-data-change="$ctrl.populateDepotToDo(map, wo)">
-    
-							<div class="col-md-12">
-								<label for="comment">Depot To-Do Comment</label>
-								<textarea ng-show="{{wo.exctnPckgName === null}}"  class="form-control" rows="3" id="comment-1" ng-model="wo.depotToDoComment"></textarea> 
-								<textarea ng-show="{{wo.exctnPckgName != null}}"  class="form-control" rows="3" id="comment-1" ng-model="wo.executionPkgComment"></textarea> 
-							</div>
 						</div>
-						<div class="col-md-offset-9 col-md-2" style="padding:5px">
+						<div class="col-md-10">
+								<label for="comment">Depot To-Do Comment</label>
+								<textarea ng-show="{{wo.exctnPckgName === null || wo.exctnPckgName === ''}}"  class="form-control" rows="3" id="comment-1" ng-model="wo.depotToDoComment"></textarea> 
+								<textarea ng-show="{{wo.exctnPckgName != null && wo.exctnPckgName != ''}}"  class="form-control" rows="3" id="comment-1" ng-model="wo.executionPkgComment"></textarea> 
+						</div>
+
+						<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-4 " >
+							<p class="success-message" >{{$ctrl.successSavedMsg}}</p>
+						</div>
+						<div class="col-md-offset-8 col-md-2" style="padding:5px">
 							<button id="save-to-do-1" class="btn btn-warning btn-block" ng-click="$ctrl.saveToDo(wo)">
 								<h4><b>Save</b></h4>
 							</button>
-						</div>
-						<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-8 " >
-							<p class="success-message" >{{$ctrl.successSavedMsg}}</p>
 						</div>
 					</div>
 				</div>
