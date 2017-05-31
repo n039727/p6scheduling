@@ -32,11 +32,12 @@ public class FunctionAccessDAOImpl implements FunctionAccessDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FunctionAccess> getAccess(String roleName) {
+	public List<FunctionAccess> getAccess(List<String> roleNames) {
 		logger.debug("sessionfactory initialized ====={}", sessionFactory);
-		logger.debug("Input execution package name ====={}", roleName);
+		logger.debug("Input execution package name ====={}", roleNames);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(FunctionAccess.class);
-		criteria.add(Restrictions.eq("roleNam", roleName));
+		//criteria.add(Restrictions.eq("roleNam", roleName));
+		criteria.add(Restrictions.in("roleNam", roleNames));
 		List<FunctionAccess> accesses = (List<FunctionAccess>) criteria
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 		

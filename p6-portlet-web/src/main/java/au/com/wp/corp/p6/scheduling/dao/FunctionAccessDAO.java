@@ -7,7 +7,7 @@ import au.com.wp.corp.p6.scheduling.model.FunctionAccess;
 
 public interface FunctionAccessDAO extends P6DAOExceptionParser{
 	
-	public List<FunctionAccess> getAccess(String roleName);
+	public List<FunctionAccess> getAccess(List<String> roleNames);
 
 	List<String> fetchAllRole();
 

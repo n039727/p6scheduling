@@ -109,7 +109,7 @@ function fetchUserData(app) {
 						+ JSON.stringify(response.data));
 				userData.name = response.data.userName;
 				userData.accessMap = response.data.accessMap;
-				userData.isAuthEnabled = true;
+				userData.isAuthEnabled = response.data.authEnabled;
 				app.constant('userdata', userData);
 				return fetchMetaData(app);
 			});
