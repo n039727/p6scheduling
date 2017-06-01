@@ -161,6 +161,7 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 				}
 			}
 			wo.schedulingComment = response.data.schedulingComment;
+			wo.deportComment = response.data.deportComment;
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
 		}, null);
 		

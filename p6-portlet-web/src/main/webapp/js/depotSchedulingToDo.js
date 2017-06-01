@@ -193,6 +193,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 				wo.toDoItems = response.data[0].toDoItems;
 				wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
 				wo.executionPkgComment = response.data[0].executionPkgComment;
+				wo.depotToDoComment = response.data[0].deportComment;
 			}
 			ctrl.populateToDoBindings(wo, wo.toDoItems);
 			ctrl.populateWorkOrderDisplayList(wo);
