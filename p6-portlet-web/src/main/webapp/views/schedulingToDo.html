@@ -21,7 +21,7 @@
 			<td>{{wo.workOrders.join(',')}}</td>
 			<td>{{wo.scheduleDate}}</td>
 			<td>{{wo.crewAssigned.unique().join(',')}}</td>
-			<td> {{wo.leadCrew}}</td>
+			<td>{{wo.crewAssigned.returnIfExists(wo.leadCrew)}}</td>
 			<td>{{wo.exctnPckgName}}</td>
 			
 			<td> <span ng-show="wo.actioned == 'Y'">Yes</span>
