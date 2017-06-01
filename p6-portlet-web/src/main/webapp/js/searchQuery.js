@@ -76,11 +76,11 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 		ctrl.depots = [];
 		//console.log('ctrl.selectedDepotList:' + JSON.stringify(ctrl.selectedDepotList));
 		for (var i = 0 ; i < ctrl.selectedDepotList.length; i++) {
-			ctrl.depots.push (ctrl.selectedDepotList[i]);
+			ctrl.depots.push (ctrl.selectedDepotList[i].trim());
 		}
 		ctrl.crews = [];
 		for (var j = 0;  j < ctrl.selectedCrewList.length; j++) {
-			ctrl.crews.push (ctrl.selectedCrewList[j]);
+			ctrl.crews.push (ctrl.selectedCrewList[j].trim());
 		}
 		var queryObj = {
 			depotList: ctrl.depots,
