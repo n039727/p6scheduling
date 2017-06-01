@@ -22,7 +22,7 @@
 				</td>
 				<td>{{wo.workOrders[0]}}</td>
 				<td>{{wo.scheduleDate}}</td>
-				<td>{{wo.crewNames}}</td>
+				<td>{{wo.crewAssigned.unique().join(',')}}</td>
 				<td>{{wo.leadCrew}}</td>
 				<td>
 					<!--<select class="form-control" id="execution-package-select" >

@@ -18,7 +18,7 @@
 			</td>
 			<td>{{wo.workOrders.join(',')}}</td>
 			<td>{{wo.scheduleDate}}</td>
-			<td>{{wo.crewNames}}</td>
+			<td>{{wo.crewAssigned.unique().join(',')}}</td>
 			<td>{{wo.leadCrew}}</td>
 			<td>{{wo.exctnPckgName}}</td>
 		</tr>
