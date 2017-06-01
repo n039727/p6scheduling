@@ -73,17 +73,18 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	this.prepareSearch = function() {
 		
 		console.log('search called');
-		$scope.depots = [];
-		for (var i = 0, l = this.selectedDepotList.length; i < l; i++) {
-			$scope.depots.push (this.selectedDepotList[i].name);
+		ctrl.depots = [];
+		//console.log('ctrl.selectedDepotList:' + JSON.stringify(ctrl.selectedDepotList));
+		for (var i = 0 ; i < ctrl.selectedDepotList.length; i++) {
+			ctrl.depots.push (ctrl.selectedDepotList[i]);
 		}
-		$scope.crews = [];
-		for (var i = 0, l = this.selectedCrewList.length; i < l; i++) {
-			$scope.crews.push (this.selectedCrewList[i].crewId);
+		ctrl.crews = [];
+		for (var j = 0;  j < ctrl.selectedCrewList.length; j++) {
+			ctrl.crews.push (ctrl.selectedCrewList[j]);
 		}
 		var queryObj = {
-			depotList: $scope.depots,
-			crewList: $scope.crews,
+			depotList: ctrl.depots,
+			crewList: ctrl.crews,
 			workOrderId: this.wo,
 			fromDate: ctrl.formatDate(this.scheduleFromDate),
 			toDate: ctrl.formatDate(this.scheduleToDate)
