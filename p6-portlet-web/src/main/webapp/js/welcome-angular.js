@@ -23,6 +23,18 @@ Array.prototype.unique = function() {
 	return arr;
 };
 
+Array.prototype.returnIfExists = function(value) {
+	console.log("returnIfExists called");
+	if (angular.isUndefined(value) || value === null) {
+		return "";
+	}
+	if (this.indexOf(value) >= 0) {
+		return value;
+	} else {
+		return "";
+	}
+};
+
 app.service('userAccessService', function($http, userdata) {
 		this.hasUpdateableAccess = function(functionId) {
 			var entry = null;
