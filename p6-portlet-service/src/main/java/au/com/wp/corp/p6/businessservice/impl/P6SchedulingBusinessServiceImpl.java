@@ -571,6 +571,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				if(updatedTask.getTodoAssignments() != null){
 					updatedTask.getTodoAssignments().addAll(newToDos);
 				}else{
+					// this is only required for JUNIT
 					updatedTask.setTodoAssignments(newToDos);
 				}
 			}
@@ -591,8 +592,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
-		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
-
 	}
 
 	
