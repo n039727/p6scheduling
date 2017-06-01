@@ -29,6 +29,7 @@ import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -60,6 +61,9 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	
 	@Autowired
 	DateUtils dateUtils;
+	
+	@Autowired
+	UserTokenRequest userTokenRequest;
 	
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.businessservice.DepotTodoService#fetchDepotTaskForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchRequest)
@@ -296,7 +300,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		if (!org.springframework.util.StringUtils.isEmpty(workOrder.getExctnPckgName())){
 			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
 			if(null != executionPackage){
-				executionPackage.setExecSchdlrCmt(workOrder.getExecutionPkgComment());
+				executionPackage.setExecDeptCmt(workOrder.getDepotToDoComment());
 				dbTask.setExecutionPackage(executionPackage);
 			}
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
@@ -311,11 +315,42 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			return;
 		}
 		List<ToDoItem> requestToDos = workOrder.getToDoItems();
-		Set<TodoAssignment> newToDos =  new HashSet<>();
-		Set<TodoAssignment> deleteToDos =  new HashSet<>();
-		ToDoItem reqToDoNeedsToDeAdded = null;
-		Set<TodoAssignment> dBToDos = null;
+		Set<TodoAssignment> newToDos = new HashSet<>();
+		Set<TodoAssignment> deleteToDos = new HashSet<>();
+		Set<TodoAssignment> dBToDos = updatedTask.getTodoAssignments();
 		if(null != requestToDos && ! requestToDos.isEmpty()){
+
+			logger.debug("requestToDos is not null");
+			for (ToDoItem reqToDo : requestToDos) {
+				if (reqToDo.getWorkOrders().contains(updatedTask.getTaskId())) {
+					TodoAssignment todoAssignment = new TodoAssignment();
+					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
+					BigDecimal todoId = todoDAO.getToDoId(reqToDo.getToDoName());
+					if(null == todoId){
+						//create new TODO
+						logger.debug("Todo Id is null and hence creating new  #{} ", todoId);
+						TodoTemplate newToDo = addTodo(reqToDo);
+						todoId = new BigDecimal(newToDo.getTodoId());
+					}
+					todoAssignment.getTodoAssignMentPK().setTodoId(todoId);
+					newToDos.add(todoAssignment);
+				}
+			}
+			if (null != dBToDos && !dBToDos.isEmpty()) {
+				logger.debug("updatedTask.getTodoAssignments() is not null");
+				updatedTask.getTodoAssignments().retainAll(newToDos);
+				updatedTask.getTodoAssignments().addAll(newToDos);
+			} else {
+				if(updatedTask.getTodoAssignments() != null){
+					updatedTask.getTodoAssignments().addAll(newToDos);
+				}else{
+					// this is only required for JUNIT
+					updatedTask.setTodoAssignments(newToDos);
+				}
+			}
+
+		
+			/*
 			logger.debug("requestToDos is not null");
 			Set<TodoAssignment> existingToDos =  new HashSet<>();
 			TodoAssignment dbToDo = null;
@@ -389,7 +424,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				}
 			}
 			updatedTask.getTodoAssignments().addAll(newToDos);
-		}
+		*/}
 		else{
 			dBToDos= updatedTask.getTodoAssignments();
 			if(null != dBToDos){
@@ -406,17 +441,15 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		
 
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
-		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
-
 	}
 	
 	private TodoTemplate addTodo(ToDoItem item) throws P6BusinessException {
 		logger.debug("inside addTodo ");
 		TodoTemplate todoTemplate = new TodoTemplate();
 		todoTemplate.setCrtdTs(new Timestamp(System.currentTimeMillis()));
-		todoTemplate.setCrtdUsr("N039603");
+		todoTemplate.setCrtdUsr(userTokenRequest == null ? "test user" : userTokenRequest.getUserPrincipal());
 		todoTemplate.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
-		todoTemplate.setLstUpdtdUsr("N039603");
+		todoTemplate.setLstUpdtdUsr(userTokenRequest == null ? "test user" : userTokenRequest.getUserPrincipal());
 		todoTemplate.setTmpltDesc(item.getToDoName());
 		todoTemplate.setTodoNam(item.getToDoName());
 		todoTemplate.setTypId(new BigDecimal(2));
@@ -476,6 +509,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				workOrder.setCrewNames(task.getCrewId());
 				workOrder.setScheduleDate(task.getSchdDt().toString());
 				workOrder.setSchedulingToDoComment(task.getCmts());
+				workOrder.setDepotToDoComment(task.getCmts());
 				toDoMap = new HashMap<Long, ToDoItem>();
 				workOrderMap.put(executionPkg, workOrder);
 			}
