@@ -686,7 +686,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				workOrder.setCrewNames(task.getCrewId());
 				workOrder.setScheduleDate(task.getSchdDt().toString());
 				workOrder.setSchedulingToDoComment(task.getSchdlrCmt());
-				if (!StringUtils.isEmpty(workOrder.getDepotToDoComment())) {
+				if (StringUtils.isEmpty(workOrder.getDepotToDoComment())) {
 					workOrder.setDepotToDoComment(task.getDeptCmt());
 				}
 				toDoMap = new HashMap<Long, ToDoItem>();
