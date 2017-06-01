@@ -115,9 +115,9 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			}
 			ctrl.populateToDoItemsFromMap(wo);
 		}
-		if(wo && wo.toDoItems.length == 0){
+		if(angular.isDefined(wo) && angular.isDefined(wo.toDoItems) && wo.toDoItems.length == 0){
 			wo.actioned = 'N';
-		}else if(wo && wo.toDoItems.length > 0){
+		}else if(angular.isDefined(wo) && angular.isDefined(wo.toDoItems) && wo.toDoItems.length > 0){
 			wo.actioned = 'Y';
 		}
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));

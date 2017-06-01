@@ -674,6 +674,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				if (!StringUtils.isEmpty(executionPkg)){
 					workOrder.setExctnPckgName(executionPkg);
 					workOrder.setExecutionPkgComment(executionPackage.getExecSchdlrCmt());
+					workOrder.setDepotToDoComment(executionPackage.getExecDeptCmt());
 				}
 				else{
 					executionPkg = task.getTaskId();
@@ -685,7 +686,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				workOrder.setCrewNames(task.getCrewId());
 				workOrder.setScheduleDate(task.getSchdDt().toString());
 				workOrder.setSchedulingToDoComment(task.getSchdlrCmt());
-				workOrder.setDepotToDoComment(task.getDeptCmt());
+				if (!StringUtils.isEmpty(workOrder.getDepotToDoComment())) {
+					workOrder.setDepotToDoComment(task.getDeptCmt());
+				}
 				toDoMap = new HashMap<Long, ToDoItem>();
 				workOrderMap.put(executionPkg, workOrder);
 			}

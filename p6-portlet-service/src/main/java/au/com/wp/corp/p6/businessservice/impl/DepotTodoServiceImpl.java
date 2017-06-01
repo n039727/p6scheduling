@@ -513,7 +513,9 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				workOrder.setCrewNames(task.getCrewId());
 				workOrder.setScheduleDate(task.getSchdDt().toString());
 				workOrder.setSchedulingToDoComment(task.getSchdlrCmt());
-				workOrder.setDepotToDoComment(task.getDeptCmt());
+				if (!StringUtils.isEmpty(workOrder.getDepotToDoComment())) {
+					workOrder.setDepotToDoComment(task.getDeptCmt());
+				}
 				toDoMap = new HashMap<Long, ToDoItem>();
 				workOrderMap.put(executionPkg, workOrder);
 			}
