@@ -18,8 +18,8 @@
 			</td>
 			<td>{{wo.workOrders.join(',')}}</td>
 			<td>{{wo.scheduleDate}}</td>
-			<td>{{wo.crewNames}}</td>
-			<td>{{wo.leadCrew}}</td>
+			<td>{{wo.crewAssigned.unique().join(',')}}</td>
+			<td>{{wo.crewAssigned.returnIfExists(wo.leadCrew)}}</td>
 			<td>{{wo.exctnPckgName}}</td>
 		</tr>
 		<tr ng-repeat-end>

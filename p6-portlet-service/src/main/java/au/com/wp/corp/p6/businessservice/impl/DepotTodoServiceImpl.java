@@ -89,8 +89,8 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				viewToDoStatus.setDeportComment(task.getExecutionPackage().getExecDeptCmt());
 			} else {
 				viewToDoStatus.setExctnPckgName("");
-				viewToDoStatus.setSchedulingComment(task.getCmts());
-				viewToDoStatus.setDeportComment(task.getCmts());
+				viewToDoStatus.setSchedulingComment(task.getSchdlrCmt());
+				viewToDoStatus.setDeportComment(task.getDeptCmt());
 			}
 
 			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
@@ -288,6 +288,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			dbTask.setTaskId(workOrderId);
 		}
 		dbTask.setCmts(workOrder.getSchedulingToDoComment());
+		dbTask.setSchdlrCmt(workOrder.getSchedulingToDoComment());
 		dbTask.setCrewId(workOrder.getCrewNames());
 		dbTask.setLeadCrewId(workOrder.getLeadCrew());
 		java.util.Date scheduleDate = null;
@@ -302,6 +303,8 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			if(null != executionPackage){
 				executionPackage.setExecDeptCmt(workOrder.getDepotToDoComment());
 				dbTask.setExecutionPackage(executionPackage);
+			} else {
+				dbTask.setDeptCmt(workOrder.getDepotToDoComment());
 			}
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		}
@@ -497,6 +500,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				if (!StringUtils.isEmpty(executionPkg)){
 					workOrder.setExctnPckgName(executionPkg);
 					workOrder.setExecutionPkgComment(executionPackage.getExecSchdlrCmt());
+					workOrder.setDepotToDoComment(executionPackage.getExecDeptCmt());
 				}
 				
 				else{
@@ -508,8 +512,10 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				workOrder.setLeadCrew(task.getLeadCrewId());
 				workOrder.setCrewNames(task.getCrewId());
 				workOrder.setScheduleDate(task.getSchdDt().toString());
-				workOrder.setSchedulingToDoComment(task.getCmts());
-				workOrder.setDepotToDoComment(task.getCmts());
+				workOrder.setSchedulingToDoComment(task.getSchdlrCmt());
+				if (StringUtils.isEmpty(workOrder.getDepotToDoComment())) {
+					workOrder.setDepotToDoComment(task.getDeptCmt());
+				}
 				toDoMap = new HashMap<Long, ToDoItem>();
 				workOrderMap.put(executionPkg, workOrder);
 			}

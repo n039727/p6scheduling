@@ -115,9 +115,9 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			}
 			ctrl.populateToDoItemsFromMap(wo);
 		}
-		if(wo && wo.toDoItems.length == 0){
+		if(angular.isDefined(wo) && angular.isDefined(wo.toDoItems) && wo.toDoItems.length == 0){
 			wo.actioned = 'N';
-		}else if(wo && wo.toDoItems.length > 0){
+		}else if(angular.isDefined(wo) && angular.isDefined(wo.toDoItems) && wo.toDoItems.length > 0){
 			wo.actioned = 'Y';
 		}
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
@@ -189,10 +189,13 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			console.log("Received data from server for fetchWOForTODOStatus in depots: " + JSON.stringify(response.data));
 			wo.toDoItems = [];
 			wo.schedulingToDoComment = "";
-			if (response.data[0] && response.data[0].toDoItems) {
-				wo.toDoItems = response.data[0].toDoItems;
+			if (response.data[0]) {
+				if (response.data[0].toDoItems) {
+					wo.toDoItems = response.data[0].toDoItems;
+				}
 				wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
 				wo.executionPkgComment = response.data[0].executionPkgComment;
+				wo.depotToDoComment = response.data[0].depotToDoComment;
 			}
 			ctrl.populateToDoBindings(wo, wo.toDoItems);
 			ctrl.populateWorkOrderDisplayList(wo);

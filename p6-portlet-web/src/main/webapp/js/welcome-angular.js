@@ -1,5 +1,5 @@
 var app = angular.module("todoPortal", [ 'oi.select', 'ngMaterial',
-		'angularModalService' ]);
+		'angularModalService','ngSanitize' ]);
 
 Array.prototype.contains = function(v) {
 	for (var i = 0; i < this.length; i++) {
@@ -21,6 +21,18 @@ Array.prototype.unique = function() {
 	});
 	console.log("Unique object: " + JSON.stringify(arr));
 	return arr;
+};
+
+Array.prototype.returnIfExists = function(value) {
+	console.log("returnIfExists called");
+	if (angular.isUndefined(value) || value === null) {
+		return "";
+	}
+	if (this.indexOf(value) >= 0) {
+		return value;
+	} else {
+		return "";
+	}
 };
 
 app.service('userAccessService', function($http, userdata) {

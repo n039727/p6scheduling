@@ -152,16 +152,16 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 									WorkOrder workOrdersalreadyinGroup = mapOfExecutionPkgWO.get(dbWOExecPkg);
 									if(!workOrdersalreadyinGroup.getWorkOrders().contains(workOrderId)){
 										workOrdersalreadyinGroup.getWorkOrders().add(workOrderId);
+										workOrdersalreadyinGroup.getCrewAssigned().add(dbTask.getCrewId());
 									}
 								} else {
+									if (!StringUtils.isEmpty(dbTask.getCrewId())) {
+										workOrderNew.getCrewAssigned().add(dbTask.getCrewId());
+									}
 									mapOfExecutionPkgWO.put(dbWOExecPkg, workOrderNew);
 								}
 						}else{
 							//create separate work order list
-							//WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask,tasksForUpdate,deletetedExecPkagList);
-							/*if(dbTask.getTodoAssignments() != null){
-								workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask.getTodoAssignments())));
-							}*/
 							ungroupedWorkorders.add(workOrderNew);
 						}
 					}
@@ -288,6 +288,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrderNew.setWorkOrders(workOrder.getWorkOrders());
 		logger.debug("work orders in workorder returned from P6 =={}", workOrder.getWorkOrders());
 		workOrderNew.setCrewNames(crewAssignedForWorkOrder);
+		if (!StringUtils.isEmpty(crewAssignedForWorkOrder)) {
+			workOrderNew.getCrewAssigned().add(crewAssignedForWorkOrder);
+		}
 		workOrderNew.setScheduleDate(workOrder.getScheduleDate());
 		if(dbTask.getTodoAssignments() != null){
 			workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask.getTodoAssignments())));
@@ -471,8 +474,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			} else {
 				key = task.getTaskId();
 				returnedVal.setExctnPckgName("");
-				returnedVal.setDeportComment(task.getCmts());
-				returnedVal.setSchedulingComment(task.getCmts());
+				returnedVal.setDeportComment(task.getDeptCmt());
+				returnedVal.setSchedulingComment(task.getSchdlrCmt());
 			}
 			logger.debug("Key for fetch todo >>>{}", key);
 			// TO DO
@@ -684,6 +687,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 		
 		dbTask.setCmts(workOrder.getSchedulingToDoComment());
+		dbTask.setSchdlrCmt(workOrder.getSchedulingToDoComment());
 		dbTask.setCrewId(workOrder.getCrewNames());
 		dbTask.setLeadCrewId(workOrder.getLeadCrew());
 		java.util.Date scheduleDate = null;
@@ -698,11 +702,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			if(null != executionPackage){
 				executionPackage.setActioned(ACTIONED_Y);
 				executionPackage.setExecSchdlrCmt(workOrder.getExecutionPkgComment());
+				executionPackage.setExecDeptCmt(workOrder.getDepotToDoComment());
 				dbTask.setExecutionPackage(executionPackage); 
 				dbTask.setActioned(ACTIONED_N);
 			}
 			else{
 				dbTask.setActioned(ACTIONED_Y);
+				dbTask.setDeptCmt(workOrder.getDepotToDoComment());
 			}
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		}
@@ -751,6 +757,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				if (!StringUtils.isEmpty(executionPkg)){
 					workOrder.setExctnPckgName(executionPkg);
 					workOrder.setExecutionPkgComment(executionPackage.getExecSchdlrCmt());
+					workOrder.setDepotToDoComment(executionPackage.getExecDeptCmt());
 				}
 				else{
 					executionPkg = task.getTaskId();
@@ -761,7 +768,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				workOrder.setLeadCrew(task.getLeadCrewId());
 				workOrder.setCrewNames(task.getCrewId());
 				workOrder.setScheduleDate(task.getSchdDt().toString());
-				workOrder.setSchedulingToDoComment(task.getCmts());
+				workOrder.setSchedulingToDoComment(task.getSchdlrCmt());
+				if (StringUtils.isEmpty(workOrder.getDepotToDoComment())) {
+					workOrder.setDepotToDoComment(task.getDeptCmt());
+				}
 				toDoMap = new HashMap<Long, ToDoItem>();
 				workOrderMap.put(executionPkg, workOrder);
 			}

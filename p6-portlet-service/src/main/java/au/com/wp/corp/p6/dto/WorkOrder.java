@@ -1,5 +1,6 @@
 package au.com.wp.corp.p6.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,6 +11,7 @@ public class WorkOrder {
 	
 	private String exctnPckgName;
 	private List<String> workOrders;
+	private List<String> crewAssigned = new ArrayList<String>();
 	private String workOrderId;
 	private String scheduleDate;
 	private String leadCrew;
@@ -23,9 +25,22 @@ public class WorkOrder {
 	private String actioned;
 	private String completed;
 	private String executionPkgComment;
+	private String executionPkgDepotComment;
 	
 	
 	
+	/**
+	 * @return the executionPkgDepotComment
+	 */
+	public String getExecutionPkgDepotComment() {
+		return executionPkgDepotComment;
+	}
+	/**
+	 * @param executionPkgDepotComment the executionPkgDepotComment to set
+	 */
+	public void setExecutionPkgDepotComment(String executionPkgDepotComment) {
+		this.executionPkgDepotComment = executionPkgDepotComment;
+	}
 	/**
 	 * @return the workOrderId
 	 */
@@ -134,6 +149,18 @@ public class WorkOrder {
 	 */
 	public void setExecutionPkgComment(String executionPkgComment) {
 		this.executionPkgComment = executionPkgComment;
+	}
+	/**
+	 * @return the crewAssigned
+	 */
+	public List<String> getCrewAssigned() {
+		return crewAssigned;
+	}
+	/**
+	 * @param crewAssigned the crewAssigned to set
+	 */
+	public void setCrewAssigned(List<String> crewAssigned) {
+		this.crewAssigned = crewAssigned;
 	}
 	
 	
