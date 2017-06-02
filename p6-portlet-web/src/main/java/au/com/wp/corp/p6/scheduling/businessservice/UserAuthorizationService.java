@@ -6,6 +6,6 @@ import au.com.wp.corp.p6.scheduling.dto.UserAuthorizationDTO;
 
 public interface UserAuthorizationService {
 	
-	public List<UserAuthorizationDTO> getAccess(String roleName);
+	public List<UserAuthorizationDTO> getAccess(List<String> roleNames);
 
 }

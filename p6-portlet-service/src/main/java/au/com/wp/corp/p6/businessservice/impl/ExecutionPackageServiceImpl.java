@@ -296,6 +296,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 						workOrder.setExctnPckgName(dbWOExecPkg);
 						workOrder.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
 					}
+					workOrder.getCrewAssigned().add(dbTask.getCrewId());
 					workOrder.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate(),"/"));
 				}
 			}

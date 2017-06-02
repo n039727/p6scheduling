@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +31,7 @@ import au.com.wp.corp.p6.scheduling.dto.UserDetails;
  *
  */
 @RestController
+@PropertySource("file:/${properties.dir}/p6portal.properties")
 public class UserDetailsController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserDetailsController.class);
@@ -37,14 +40,16 @@ public class UserDetailsController {
 	private UserAuthorizationService authService;
 	@Autowired
 	private UserRoleExtractor userRoleExtractor;
+	@Value("${P6_AUTH_ENABLED:true}")
+	private String authEnabledStr;
 
 	@RequestMapping(value= "/user/name", method = RequestMethod.GET)
 	public UserDetails getUserName ( HttpServletRequest request ){
 		 /*Map<String, String>  userName = new HashMap<>();
 		 userName.put("userName", request.getRemoteUser());*/
 		Principal userPrincipal = request.getUserPrincipal();
-		String roleName = userRoleExtractor.extract(request);
-		List<UserAuthorizationDTO> userAccessList = authService.getAccess(roleName);
+		List<String> roleNames = userRoleExtractor.extract(request);
+		List<UserAuthorizationDTO> userAccessList = authService.getAccess(roleNames);
 		Map<String, UserAuthorizationDTO> accessMap = new HashMap<String, UserAuthorizationDTO>();
 		
 		if (userAccessList != null && !userAccessList.isEmpty()) {
@@ -55,6 +60,17 @@ public class UserDetailsController {
 		UserDetails userDetails = new UserDetails();
 		userDetails.setUserName(userPrincipal.getName());
 		userDetails.setAccessMap(accessMap);
+		userDetails.setRoles(roleNames);
+		
+		boolean authEnabled = true;
+		try {
+			authEnabled = Boolean.valueOf(authEnabledStr);
+			logger.debug("Auth enabled is set as: {}", authEnabled);
+		} catch (Exception e) {
+			logger.error("Error occurred while parsing auth enabled.", e);
+		}
+		
+		userDetails.setAuthEnabled(authEnabled);
 		
 		return userDetails;
 	}

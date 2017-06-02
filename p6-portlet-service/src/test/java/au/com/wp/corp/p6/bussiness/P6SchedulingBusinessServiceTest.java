@@ -471,9 +471,9 @@ public class P6SchedulingBusinessServiceTest {
 		toDo.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
 		toDo.setLstUpdtdUsr("Test user1");
 		toDo.setTmpltDesc("test template desc");
-		toDo.getId().setTmpltId(1);
+		toDo.setTmpltId(1);
 		toDo.setTypId(new BigDecimal(0.1));
-		toDo.getId().setTodoId(1);
+		toDo.setTodoId(1);
 		toDoTemplateList.add(toDo);
 		
 		Mockito.when(todoDAO.fetchAllToDos()).thenReturn(toDoTemplateList);

@@ -73,6 +73,12 @@ public class Task implements Serializable {
 	
 	@Column(name="ACTN_FLG")
 	private String actioned = "N";
+	
+	@Column(name="SCHDLR_CMT")
+	private String schdlrCmt;
+	
+	@Column(name="DEPT_CMT")
+	private String deptCmt;
 
 	/*@Column(name="ACTN_FLG")
 	private String actioned = "N";*/
@@ -241,6 +247,34 @@ public class Task implements Serializable {
 		} else if (!taskId.equals(other.taskId))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the schdlrCmt
+	 */
+	public String getSchdlrCmt() {
+		return schdlrCmt;
+	}
+
+	/**
+	 * @param schdlrCmt the schdlrCmt to set
+	 */
+	public void setSchdlrCmt(String schdlrCmt) {
+		this.schdlrCmt = schdlrCmt;
+	}
+
+	/**
+	 * @return the deptCmt
+	 */
+	public String getDeptCmt() {
+		return deptCmt;
+	}
+
+	/**
+	 * @param deptCmt the deptCmt to set
+	 */
+	public void setDeptCmt(String deptCmt) {
+		this.deptCmt = deptCmt;
 	}
 
 	

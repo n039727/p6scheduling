@@ -29,6 +29,7 @@ import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -61,6 +62,9 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	@Autowired
 	DateUtils dateUtils;
 	
+	@Autowired
+	UserTokenRequest userTokenRequest;
+	
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.businessservice.DepotTodoService#fetchDepotTaskForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchRequest)
 	 */
@@ -85,8 +89,8 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				viewToDoStatus.setDeportComment(task.getExecutionPackage().getExecDeptCmt());
 			} else {
 				viewToDoStatus.setExctnPckgName("");
-				viewToDoStatus.setSchedulingComment(task.getCmts());
-				viewToDoStatus.setDeportComment(task.getCmts());
+				viewToDoStatus.setSchedulingComment(task.getSchdlrCmt());
+				viewToDoStatus.setDeportComment(task.getDeptCmt());
 			}
 
 			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
@@ -284,6 +288,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			dbTask.setTaskId(workOrderId);
 		}
 		dbTask.setCmts(workOrder.getSchedulingToDoComment());
+		dbTask.setSchdlrCmt(workOrder.getSchedulingToDoComment());
 		dbTask.setCrewId(workOrder.getCrewNames());
 		dbTask.setLeadCrewId(workOrder.getLeadCrew());
 		java.util.Date scheduleDate = null;
@@ -296,8 +301,10 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		if (!org.springframework.util.StringUtils.isEmpty(workOrder.getExctnPckgName())){
 			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
 			if(null != executionPackage){
-				executionPackage.setExecSchdlrCmt(workOrder.getExecutionPkgComment());
+				executionPackage.setExecDeptCmt(workOrder.getDepotToDoComment());
 				dbTask.setExecutionPackage(executionPackage);
+			} else {
+				dbTask.setDeptCmt(workOrder.getDepotToDoComment());
 			}
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		}
@@ -311,11 +318,42 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			return;
 		}
 		List<ToDoItem> requestToDos = workOrder.getToDoItems();
-		Set<TodoAssignment> newToDos =  new HashSet<>();
-		Set<TodoAssignment> deleteToDos =  new HashSet<>();
-		ToDoItem reqToDoNeedsToDeAdded = null;
-		Set<TodoAssignment> dBToDos = null;
+		Set<TodoAssignment> newToDos = new HashSet<>();
+		Set<TodoAssignment> deleteToDos = new HashSet<>();
+		Set<TodoAssignment> dBToDos = updatedTask.getTodoAssignments();
 		if(null != requestToDos && ! requestToDos.isEmpty()){
+
+			logger.debug("requestToDos is not null");
+			for (ToDoItem reqToDo : requestToDos) {
+				if (reqToDo.getWorkOrders().contains(updatedTask.getTaskId())) {
+					TodoAssignment todoAssignment = new TodoAssignment();
+					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
+					BigDecimal todoId = todoDAO.getToDoId(reqToDo.getToDoName());
+					if(null == todoId){
+						//create new TODO
+						logger.debug("Todo Id is null and hence creating new  #{} ", todoId);
+						TodoTemplate newToDo = addTodo(reqToDo);
+						todoId = new BigDecimal(newToDo.getTodoId());
+					}
+					todoAssignment.getTodoAssignMentPK().setTodoId(todoId);
+					newToDos.add(todoAssignment);
+				}
+			}
+			if (null != dBToDos && !dBToDos.isEmpty()) {
+				logger.debug("updatedTask.getTodoAssignments() is not null");
+				updatedTask.getTodoAssignments().retainAll(newToDos);
+				updatedTask.getTodoAssignments().addAll(newToDos);
+			} else {
+				if(updatedTask.getTodoAssignments() != null){
+					updatedTask.getTodoAssignments().addAll(newToDos);
+				}else{
+					// this is only required for JUNIT
+					updatedTask.setTodoAssignments(newToDos);
+				}
+			}
+
+		
+			/*
 			logger.debug("requestToDos is not null");
 			Set<TodoAssignment> existingToDos =  new HashSet<>();
 			TodoAssignment dbToDo = null;
@@ -349,7 +387,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 								//create new TODO
 								logger.debug("Todo Id is null and hence creating new  #{} ", todoId);
 								TodoTemplate newToDo = addTodo(reqToDo);
-								todoId = new BigDecimal(newToDo.getId().getTodoId());
+								todoId = new BigDecimal(newToDo.getTodoId());
 							}
 							TodoAssignment todoAssignment = new TodoAssignment();
 							todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
@@ -364,7 +402,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					if(null == todoId){
 						//create new TODO
 						TodoTemplate newToDo = addTodo(reqToDo);
-						todoId = new BigDecimal(newToDo.getId().getTodoId());
+						todoId = new BigDecimal(newToDo.getTodoId());
 					}
 					TodoAssignment todoAssignment = new TodoAssignment();
 					todoAssignment.getTodoAssignMentPK().setTask(updatedTask);
@@ -389,7 +427,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				}
 			}
 			updatedTask.getTodoAssignments().addAll(newToDos);
-		}
+		*/}
 		else{
 			dBToDos= updatedTask.getTodoAssignments();
 			if(null != dBToDos){
@@ -406,45 +444,22 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		
 
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
-		logger.debug("After merging to do assignments: " + updatedTask.getTodoAssignments());
-
 	}
 	
 	private TodoTemplate addTodo(ToDoItem item) throws P6BusinessException {
 		logger.debug("inside addTodo ");
 		TodoTemplate todoTemplate = new TodoTemplate();
 		todoTemplate.setCrtdTs(new Timestamp(System.currentTimeMillis()));
-		todoTemplate.setCrtdUsr("N039603");
+		todoTemplate.setCrtdUsr(userTokenRequest == null ? "test user" : userTokenRequest.getUserPrincipal());
 		todoTemplate.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
-		todoTemplate.setLstUpdtdUsr("N039603");
+		todoTemplate.setLstUpdtdUsr(userTokenRequest == null ? "test user" : userTokenRequest.getUserPrincipal());
 		todoTemplate.setTmpltDesc(item.getToDoName());
 		todoTemplate.setTodoNam(item.getToDoName());
 		todoTemplate.setTypId(new BigDecimal(2));
-		/*List<TodoTemplate> lastRecFromDB = todoDAO.fetchToDoForGratestToDoId();
-		logger.debug("lastRecFromDB>>>{} ", lastRecFromDB);
-		if(null != lastRecFromDB && lastRecFromDB.size()>0 ){
-			if(null != lastRecFromDB.get(0).getId()){
-				long toDoId = lastRecFromDB.get(0).getId().getTodoId();
-				long tmplId = 2;
-				toDoId = toDoId+1;
-
-				todoTemplate.getId().setTodoId(toDoId);
-				todoTemplate.getId().setTmpltId(tmplId);
-			}
-			else{
-				todoTemplate.getId().setTodoId((long) Math.random());
-				todoTemplate.getId().setTmpltId(2);
-			}
-		}
-		else{
-			todoTemplate.getId().setTodoId((long) Math.random());
-			todoTemplate.getId().setTmpltId(2);
-		}*/
-		todoTemplate.getId().setTodoId(todoDAO.getMaxToDoId() + 1);
-		todoTemplate.getId().setTmpltId(2);
+		todoTemplate.setTmpltId(2);
 		
-		logger.debug("ToDo Id and Template Id>>>{} , {]", todoTemplate.getId().getTodoId(), todoTemplate.getId().getTmpltId());
 		todoDAO.createToDo(todoTemplate);
+		logger.debug("ToDo Id and Template Id>>>{} , {]", todoTemplate.getTodoId(), todoTemplate.getTmpltId());
 		return todoTemplate;
 	}
 	
@@ -485,6 +500,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				if (!StringUtils.isEmpty(executionPkg)){
 					workOrder.setExctnPckgName(executionPkg);
 					workOrder.setExecutionPkgComment(executionPackage.getExecSchdlrCmt());
+					workOrder.setDepotToDoComment(executionPackage.getExecDeptCmt());
 				}
 				
 				else{
@@ -496,7 +512,10 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				workOrder.setLeadCrew(task.getLeadCrewId());
 				workOrder.setCrewNames(task.getCrewId());
 				workOrder.setScheduleDate(task.getSchdDt().toString());
-				workOrder.setSchedulingToDoComment(task.getCmts());
+				workOrder.setSchedulingToDoComment(task.getSchdlrCmt());
+				if (StringUtils.isEmpty(workOrder.getDepotToDoComment())) {
+					workOrder.setDepotToDoComment(task.getDeptCmt());
+				}
 				toDoMap = new HashMap<Long, ToDoItem>();
 				workOrderMap.put(executionPkg, workOrder);
 			}

@@ -23,6 +23,18 @@ Array.prototype.unique = function() {
 	return arr;
 };
 
+Array.prototype.returnIfExists = function(value) {
+	console.log("returnIfExists called");
+	if (angular.isUndefined(value) || value === null) {
+		return "";
+	}
+	if (this.indexOf(value) >= 0) {
+		return value;
+	} else {
+		return "";
+	}
+};
+
 app.service('userAccessService', function($http, userdata) {
 		this.hasUpdateableAccess = function(functionId) {
 			var entry = null;
@@ -109,7 +121,7 @@ function fetchUserData(app) {
 						+ JSON.stringify(response.data));
 				userData.name = response.data.userName;
 				userData.accessMap = response.data.accessMap;
-				userData.isAuthEnabled = true;
+				userData.isAuthEnabled = response.data.authEnabled;
 				app.constant('userdata', userData);
 				return fetchMetaData(app);
 			});

@@ -4,6 +4,7 @@
 package au.com.wp.corp.p6.scheduling.auth;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,11 +27,11 @@ public class UserRoleExtractor {
 	@Autowired
 	private FunctionAccessDAO functionAccessDao;
 	
-	public String extract(HttpServletRequest request) {
+	public List<String> extract(HttpServletRequest request) {
 		
-		List<String> userRoles = functionAccessDao.fetchAllRole();
-		String roleName = userRoles.stream().filter(role -> request.isUserInRole(role)).findFirst().get();
-		logger.debug("Extracted role name: " + roleName);
-		return roleName;
+		List<String> allUserRoles = functionAccessDao.fetchAllRole();
+		List<String> roleNames = allUserRoles.stream().filter(role -> request.isUserInRole(role)).collect(Collectors.toList());
+		logger.debug("Extracted role name: " + roleNames);
+		return roleNames;
 	}
 }
