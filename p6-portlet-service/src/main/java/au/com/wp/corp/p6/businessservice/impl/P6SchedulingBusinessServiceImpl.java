@@ -140,9 +140,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 							
 							} else {
 								WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask,tasksForUpdate);
-								List<String> crewAssigned = new ArrayList<>();
-								crewAssigned.add(dbTask.getCrewId());
-								workOrderNew.setCrewAssigned(crewAssigned);
+								if (!StringUtils.isEmpty(dbTask.getCrewId())) {
+									workOrderNew.getCrewAssigned().add(dbTask.getCrewId());
+								}
 								mapOfExecutionPkgWO.put(dbWOExecPkg, workOrderNew);
 							}
 					}else{
@@ -237,6 +237,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		workOrderNew.setWorkOrders(workOrder.getWorkOrders());
 		logger.debug("work orders in workorder returned from P6 =={}", workOrder.getWorkOrders());
 		workOrderNew.setCrewNames(crewAssignedForWorkOrder);
+		if (!StringUtils.isEmpty(crewAssignedForWorkOrder)) {
+			workOrderNew.getCrewAssigned().add(crewAssignedForWorkOrder);
+		}
 		workOrderNew.setScheduleDate(workOrder.getScheduleDate());
 		if(dbTask.getTodoAssignments() != null){
 			workOrderNew.setCompleted(convertBooleanToString(getCompletedStatus(dbTask.getTodoAssignments())));
