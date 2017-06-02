@@ -386,8 +386,8 @@ public class P6WSClientImpl implements P6WSClient {
 
 
 
-
-	private Boolean removeExecutionPackage(List<Integer> foreignObjIds)
+	@Override
+	public Boolean removeExecutionPackage(List<Integer> foreignObjIds)
 			throws P6ServiceException {
 		logger.info("Calling udfvalue service in P6 Webservice to de link execution package...");
 		final RequestTrackingId trackingId = new RequestTrackingId();
