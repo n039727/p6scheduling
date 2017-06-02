@@ -31,6 +31,32 @@ public class P6MaterialRequisitionServiceImpl implements P6MaterialRequisitionSe
 		Object[] workOrderId = input.getWorkOrderList().toArray();
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
 		List<MaterialRequisition> metReqList = dao.listMetReq(workOrderId);
+		List<String> matList = new ArrayList<>();
+		
+		for ( String workOrder:input.getWorkOrderList())
+		{
+			
+			for (MaterialRequisition matr: metReqList ){
+				if (matr.getWorkOrder().equals(workOrder)){
+					if ( null == result.get(workOrder) ) {
+						matList = new ArrayList<>();
+						matList.add(matr.getId().getRequisitionNo());
+						result.put(workOrder, matList);
+					}
+					else {
+						result.get(workOrder).add(matr.getId().getRequisitionNo());
+					}
+						
+				}
+				
+				
+			}
+			
+			
+		}
+		
+		/**
+		
 		for(Object wo : workOrderId){
 			Optional<MaterialRequisition> s = findTask(metReqList, (String) wo);
 			if(s.isPresent()){
@@ -45,7 +71,7 @@ public class P6MaterialRequisitionServiceImpl implements P6MaterialRequisitionSe
 			}else{
 				result.put((String) wo, new ArrayList<String>());
 			}
-		}
+		} **/
 		MaterialRequisitionDTO response = new MaterialRequisitionDTO();
 		response.setMaterialRequisitionMap(result);
 		return response;
