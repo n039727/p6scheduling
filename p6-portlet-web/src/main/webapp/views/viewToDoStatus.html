@@ -15,7 +15,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat-start="wo in $ctrl.data" class="accordion-toggle">
+		<tr ng-repeat-start="wo in $ctrl.data" ng-init="woIndex=$index" class="accordion-toggle">
 			<td>
 				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-sm glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event, wo)" data-toggle="collapse" data-target="{{'#demo-' + wo.workOrders[0]}}">
 				</button>
@@ -50,9 +50,9 @@
 										<th class="standard-to-do-header">Supporting Document</th>
 									</thead>
 									<tbody>
-										<tr ng-repeat="todo in wo.todoAssignments | filter:{typeId:1}">
+										<tr ng-repeat="todo in wo.todoAssignments | filter:{typeId:1}" ng-init="todoIndex = $index">
 											<td>{{todo.toDoName}}</td>
-											<td>{{todo.workOrders.join(',')}}</td>
+											<td>{{todo.displayWorkOrders.join(',')}}</td>
 											<td>
 												<md-datepicker ng-model="todo.reqByDt" md-placeholder="DD/MM/YYYY"></md-datepicker>
 											</td>
@@ -65,7 +65,7 @@
 													<option>Completed</option>
 												</select>
 											</td>
-											<td><input type="text" class="form-control" ng-model="todo.supportingDoc"></td>
+											<td><span style="width:100%; height:100%" ng-hide="todo.sdEditMode==true" ng-click="$ctrl.toggleEditMode(todo, woIndex+ '-' + todoIndex + '-1')" ng-bind-html="todo.displaySupportingDoc"></span><input type="text" id="{{woIndex+ '-' + todoIndex + '-1'}}" class="form-control" ng-hide="todo.sdEditMode==false" ng-model="todo.supportingDoc" ng-blur="$ctrl.toggleNonEditMode(todo)"></td>
 										</tr>
 									</tbody>
 								</table>
@@ -86,9 +86,9 @@
 										<th class="standard-to-do-header">Supporting Document</th>
 									</thead>
 									<tbody>
-										<tr ng-repeat="todo in wo.todoAssignments | filter:{typeId:2}">
+										<tr ng-repeat="todo in wo.todoAssignments | filter:{typeId:2}" ng-init="todoIndex = $index">
 											<td>{{todo.toDoName}}</td>
-											<td>{{todo.workOrders.join(',')}}</td>
+											<td>{{todo.displayWorkOrders.join(',')}}</td>
 											<td>
 												<md-datepicker ng-model="todo.reqByDt" md-placeholder="DD/MM/YYYY"></md-datepicker>
 											</td>
@@ -101,7 +101,7 @@
 													<option>Completed</option>
 												</select>
 											</td>
-											<td><input type="text" class="form-control" ng-model="todo.supportingDoc"></td>
+											<td><span style="width:100%; height:100%" ng-hide="todo.sdEditMode==true" ng-click="$ctrl.toggleEditMode(todo,woIndex+ '-' + todoIndex + '-2'")" ng-bind-html="todo.displaySupportingDoc"></span><input type="text" id="{{woIndex+ '-' + todoIndex + '-2'}}" class="form-control" ng-hide="todo.sdEditMode==false" ng-model="todo.supportingDoc" ng-blur="$ctrl.toggleNonEditMode(todo)"></td>
 										</tr>
 									</tbody>
 								</table>

@@ -1,5 +1,5 @@
 var app = angular.module("todoPortal", [ 'oi.select', 'ngMaterial',
-		'angularModalService' ]);
+		'angularModalService','ngSanitize' ]);
 
 Array.prototype.contains = function(v) {
 	for (var i = 0; i < this.length; i++) {

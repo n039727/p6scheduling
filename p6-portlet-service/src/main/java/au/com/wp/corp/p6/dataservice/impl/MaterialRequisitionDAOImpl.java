@@ -25,6 +25,7 @@ public class MaterialRequisitionDAOImpl implements MaterialRequisitionDAO {
 	@Override
 	public List<MaterialRequisition> listMetReq(Object[] workOrderId) throws P6DataAccessException {
 		Criteria criteria = elipsSessionFactory.getCurrentSession().createCriteria(MaterialRequisition.class);
+		criteria.add(Restrictions.eq("id.dstrctCode", "CORP"));
 		criteria.add(Restrictions.in("workOrder", workOrderId));
 		@SuppressWarnings("unchecked")
 		List<MaterialRequisition> resultList = (List<MaterialRequisition>) criteria.list();

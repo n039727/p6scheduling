@@ -1,6 +1,6 @@
 function viewToDoStatusController($scope,restTemplate, userAccessService) {
 	var ctrl = this;
-	
+
 	// Authorization implementation
 	ctrl.isReadOnly = false;
 	if (userAccessService.isAuthEnabled()) {
@@ -9,16 +9,16 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 			ctrl.isReadOnly = true;
 		}
 	}
-	
+
 	ctrl.successSavedMsg = "";
 	ctrl.savedMsgVisible = false;
 	ctrl.isAllCompletedStatus = false;
 	console.log('$ctrl.activeContext in view: ' + JSON.stringify(ctrl.activeContext));
 	console.log('data received: ' + JSON.stringify(ctrl.data));
-	
+
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
-		
+
 		if($('#'+button.id).hasClass("glyphicon-plus")) {
 			$('#'+button.id).removeClass("glyphicon-plus");
 			$('#'+button.id).addClass("glyphicon-minus");
@@ -29,25 +29,25 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 		}
 		ctrl.savedMsgVisible = false;
 	};
-	
+
 	ctrl.saveToDo = function(wo){
-		
+
 		if (wo.todoAssignments) {
 			for (var i =0; i<wo.todoAssignments.length; i++) {
 				if(angular.isDefined(wo.todoAssignments[i].reqByDt) && wo.todoAssignments[i].reqByDt !== null){
 					wo.todoAssignments[i].reqByDate = ctrl.formatDate(wo.todoAssignments[i].reqByDt);
 				}else{
 					wo.todoAssignments[i].reqByDate = "";
-					
+
 				}
-				
+
 				if(wo.todoAssignments[i].status == "Completed"){
 					ctrl.isAllCompletedStatus = true;
 				}else{
 					ctrl.isAllCompletedStatus = false;
 				}
 			}
-			
+
 			if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){
 				for (var i =0; i<wo.todoAssignments.length; i++) {
 					if(wo.todoAssignments[i].status == "Completed"){
@@ -57,28 +57,28 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 						break;
 					}
 				}
-				
+
 			}
 		}
-		
+
 		if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
 			serviceUrl = "/p6-portal-service/scheduler/saveWorkOrderForViewToDoStatus";
 		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){
 			serviceUrl = "/p6-portal-service/depot/updateTodo";
-			
+
 		}
 		console.log('serviceUrl in Save To Do called with WO: ' + JSON.stringify(serviceUrl));
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
-		
+
 		var req = {
-			 method: 'POST',
-			 url: serviceUrl,
-			 headers: {
-			   'Content-Type': 'application/json'
-			 },
-			 data: JSON.stringify(wo)
+				method: 'POST',
+				url: serviceUrl,
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				data: JSON.stringify(wo)
 		};
-/*		$http(req).then(function (response) {
+		/*		$http(req).then(function (response) {
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
@@ -96,19 +96,19 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 					wo.completed = 'N';
 				}
 			}
-	
+
 			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
 				ctrl.successSavedMsg = "Package has been saved successfully";
 			}else{
 				ctrl.successSavedMsg = "Work order task has been saved successfully";
 			}
 			ctrl.savedMsgVisible = true;
-			
+
 		}, null);
-		
+
 		ctrl.handleDataChange({event: {eventId:'TO_DO_DETAILS_SAVED'}});
 	};
-	
+
 	ctrl.fetchToDoAgainstWO = function(wo) {
 		if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
 			serviceUrl = "/p6-portal-service/scheduler/fetchWOForTODOStatus";
@@ -122,18 +122,18 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 			query = {execPckgName:wo.exctnPckgName};
 		}else{
 			query = {workOrderId:wo.workOrders[0]};
-			
+
 		}
 		console.log('request fetching To-Dos for work order: ' + JSON.stringify(query));
 		var req = {
 				method: 'POST',
 				url: serviceUrl,
 				headers: {
-				   'Content-Type': 'application/json'
+					'Content-Type': 'application/json'
 				},
 				data: JSON.stringify(query)
 		};
-	/*	$http(req).then(function (response) {
+		/*	$http(req).then(function (response) {
 			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			wo.todoAssignments = [];
 			wo.todoAssignments = response.data.todoAssignments;
@@ -152,8 +152,14 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			wo.todoAssignments = [];
 			wo.todoAssignments = response.data.todoAssignments;
+			wo.todoAssignments = ctrl.formathyperLinks(wo.todoAssignments);
 			if (wo.todoAssignments) {
 				for (var i =0; i<wo.todoAssignments.length; i++) {
+					if(wo.workOrders.length==wo.todoAssignments[i].workOrders.length && wo.workOrders.length>1){
+						wo.todoAssignments[i].displayWorkOrders = ['ALL'];
+					}else{
+						wo.todoAssignments[i].displayWorkOrders = wo.todoAssignments[i].workOrders;
+					}
 					console.log("req by date for fetchWOForTODOStatus: " + JSON.stringify(wo.todoAssignments[i].reqByDate));
 					if(angular.isDefined(wo.todoAssignments[i].reqByDate) && wo.todoAssignments[i].reqByDate !== null && wo.todoAssignments[i].reqByDate !== ""){					
 						wo.todoAssignments[i].reqByDt = new Date(ctrl.formatYYYYMMDate(wo.todoAssignments[i].reqByDate));
@@ -163,47 +169,80 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 			wo.schedulingComment = response.data.schedulingComment;
 			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
 		}, null);
-		
-		
-	ctrl.formatDate = function(date) {
+
+
+		ctrl.formatDate = function(date) {
 			var d = new Date(date),
-				month = '' + (d.getMonth() + 1),
-				day = '' + d.getDate(),
-				year = d.getFullYear();
+			month = '' + (d.getMonth() + 1),
+			day = '' + d.getDate(),
+			year = d.getFullYear();
 
 			if (month.length < 2) month = '0' + month;
 			if (day.length < 2) day = '0' + day;
 
 			return [day, month, year].join('/');
-	}
-	ctrl.formatYYYYMMDate = function(date) {
-		var arr= [];
-		arr = date.split('/');
-		var dateStr = "";
-		dateStr = [arr[2],arr[1],arr[0]].join('-');
-		var d = new Date(dateStr),
+		}
+		ctrl.formatYYYYMMDate = function(date) {
+			var arr= [];
+			arr = date.split('/');
+			var dateStr = "";
+			dateStr = [arr[2],arr[1],arr[0]].join('-');
+			var d = new Date(dateStr),
 			month = '' + (d.getMonth() + 1),
 			day = '' + d.getDate(),
 			year = d.getFullYear();
 
-		if (month.length < 2) month = '0' + month;
-		if (day.length < 2) day = '0' + day;
+			if (month.length < 2) month = '0' + month;
+			if (day.length < 2) day = '0' + day;
 
-		return [year, month, day].join('-');
-	}
+			return [year, month, day].join('-');
+		}
 
 	}
-	
+	ctrl.formathyperLinks = function(todoAssignments) {
+		for (var i = 0; i< todoAssignments.length; i++){
+			console.log("Inside formathyperLinks URl");
+			todoAssignments[i].displaySupportingDoc = ctrl.formateUrl(todoAssignments[i].supportingDoc);
+			if(todoAssignments[i].displaySupportingDoc!==null && todoAssignments[i].displaySupportingDoc!==""){
+				todoAssignments[i].sdEditMode=false;
+			}
+		}
+		return todoAssignments;
+	};
+	ctrl.toggleEditMode = function(todo,id){
+		console.log("Inside edit URl");
+		$('#'+id).focus();
+		todo.sdEditMode = true;
+	}
+	ctrl.toggleNonEditMode = function(todo){
+		console.log("Inside non edit URl");
+		if(todo.supportingDoc==null || todo.supportingDoc==""){
+			todo.sdEditMode = true;
+		}else{todo.sdEditMode = false;
+		todo.displaySupportingDoc = ctrl.formateUrl(todo.supportingDoc);
+		}
+	}
+	ctrl.formateUrl = function(urlvalu){
+		if(urlvalu !== null && urlvalu!=="") {
+			console.log("Inside formate URl"+urlvalu);
+			var urlRegex = /(\b(http?|https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+			urlvalu = urlvalu.replace(urlRegex, function (url) {
+				return '<a href="' + url + '" target="_blank">' + url + '</a>';
+			});
+			console.log("formated  URl"+urlvalu);
+		}
+		return urlvalu;
+	}
 }
 
 
 angular.module('todoPortal').component('viewToDoResult', {
-  templateUrl: '../views/viewToDoStatus.html',
-  controller: viewToDoStatusController,
-  bindings: {
-	  activeContext: '<',
-	  data: '<',
-	  handleDataChange: '&',
-	  functionId: '<'
-  }
+	templateUrl: '../views/viewToDoStatus.html',
+	controller: viewToDoStatusController,
+	bindings: {
+		activeContext: '<',
+		data: '<',
+		handleDataChange: '&',
+		functionId: '<'
+	}
 });
