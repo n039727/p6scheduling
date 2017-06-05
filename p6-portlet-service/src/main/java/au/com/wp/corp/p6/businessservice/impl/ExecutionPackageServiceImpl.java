@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +101,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		final StringBuilder crewNames = new StringBuilder();
 		final StringBuilder pkgSchedulerCmt = new StringBuilder();
 		Set<ExecutionPackage> executionPackages = new HashSet<>();
+		Set<String> oldPkgName = new HashSet<>();
 		if (workOrders != null && !workOrders.isEmpty()) {
 			logger.debug("work orders size {}", workOrders.size());
 			Set<Task> tasks = new HashSet<>();
@@ -119,12 +120,18 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					logger.debug("Task {} is fecthed", task.getTaskId());
 					if(null != task.getExecutionPackage()){
 						logger.debug("Old Execution fatched {} for the  task {}", task.getExecutionPackage().getExctnPckgNam(), task.getTaskId());
+						
+						if(oldPkgName.add(task.getExecutionPackage().getExctnPckgNam())){
+							pkgSchedulerCmt.append(task.getExecutionPackage().getExecSchdlrCmt()+ " ");
+						}
 						ExecutionPackage oldExecutionPackage = task.getExecutionPackage();
 						oldExecutionPackage.getTasks().remove(task);
 						executionPackages.add(oldExecutionPackage);
 					}
-					if(null != task.getCmts()){
-						pkgSchedulerCmt.append(task.getCmts()+ " ");
+					else {
+						if (null != task.getCmts()){
+							pkgSchedulerCmt.append(task.getCmts()+ " ");
+						}
 					}
 					task.setExecutionPackage(executionPackage);
 					task.setLstUpdtdUsr(userName);
@@ -296,7 +303,9 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 						workOrder.setExctnPckgName(dbWOExecPkg);
 						workOrder.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
 					}
-					workOrder.getCrewAssigned().add(dbTask.getCrewId());
+					if (!StringUtils.isEmpty(dbTask.getCrewId())) {					
+						workOrder.getCrewAssigned().add(dbTask.getCrewId());
+					}
 					workOrder.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate(),"/"));
 				}
 			}

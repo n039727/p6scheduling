@@ -24,6 +24,8 @@ public interface P6ExceptionMapper {
 	public String ARGUEMENT_MISMATCH = "INCORRECT_ARGUEMENT_2001";
 	
 	public String INTEGRATION_FAULT = "INTEGRATION_FAULT_2001";
+	
+	public String INTERNAL_SERVICE_ERROR = "IINTERNAL_SERVICE_ERROR_2001";
 			
 	
 //	throw new P6DataAccessException(UNIQUE_CONSTRAINT_VIOLATION_1001, e);			

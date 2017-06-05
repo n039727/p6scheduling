@@ -26,6 +26,9 @@ public interface P6BusinessExceptionParser extends P6ExceptionMapper{
 		if ( throwable instanceof P6ServiceException ){
 			throw new P6BusinessException (INTEGRATION_FAULT, throwable);
 		}
+		if ( throwable instanceof P6ServiceException ){
+			throw new P6BusinessException (INTERNAL_SERVICE_ERROR , throwable);
+		}
 	}
 	
 }

@@ -26,7 +26,7 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 				if(!ctrl.selectedExecPckg)
 					ctrl.selectedExecPckg = [];
 					
-				ctrl.selectedExecPckg.push({leadCrew:wo.crewNames,crewNames:wo.crewNames, workOrders:[wo.workOrders[0]],scheduleDate:wo.scheduleDate});
+				ctrl.selectedExecPckg.push({leadCrew:wo.crewNames,crewNames:wo.crewNames, workOrders:[wo.workOrders[0]],scheduleDate:wo.scheduleDate,executionPckgName:wo.exctnPckgName});
 				console.log('WO after adding execution pckg: ' + JSON.stringify(ctrl.selectedExecPckg));
 			}
 			
@@ -103,6 +103,7 @@ app.controller('executionPkgPopupController', [
 			$scope.woList =[];
 			$scope.leadCrewList =[];
 			if(wo){
+				wo.sort(function(a,b) {return (a.executionPckgName > b.executionPckgName) ? 1 : ((b.executionPckgName > a.executionPckgName) ? -1 : 0);} ); 				
 				for(i=0; i<wo.length;i++) {  
 					$scope.woList.push(wo[i].workOrders[0]);
 					if ($scope.leadCrewList.indexOf(wo[i].leadCrew) == -1){
@@ -169,6 +170,7 @@ app.controller('executionPkgPopupController', [
 						workOrders:$scope.wo, 
 						leadCrew:$scope.selectedLeadCrew, 
 						crewNames: response.data.crewNames,
+						crewAssigned: $scope.leadCrewList,
 						scheduleDate: $scope.scheduleDate,
 						toDoItems:[]
 						}

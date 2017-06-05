@@ -53,13 +53,15 @@ function dynamicToDoSetterController($scope) {
 	ctrl.init();
 	
 	ctrl.onChange = function() {
-		ctrl.handleDataChange({map: ctrl.currentMap});
+		//ctrl.handleDataChange({map: ctrl.currentMap});
+		ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}})
 	};
 	
 	ctrl.removeItem = function(todoName, groupIndex) {
 	  console.log("[DEBUG] Remove Item called")
 	  delete ctrl.currentMap[todoName]; 
-		ctrl.handleDataChange({map: ctrl.currentMap});
+		//ctrl.handleDataChange({map: ctrl.currentMap});
+		ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}})
 		ctrl.init();
 	};
 	ctrl.newAddIndex = -1;
@@ -70,6 +72,7 @@ function dynamicToDoSetterController($scope) {
 	  if (!angular.isDefined(ctrl.currentMap)) {
 		  ctrl.currentMap = {};
 	  }
+	  ctrl.handleEvent({eventId:"ADD_TO_DO_IN_PROGRESS", data:{}})
 	  ctrl.newAddIndex = Object.keys(ctrl.currentMap).length;
 	  ctrl.columnGroup[ctrl.newAddIndex%ctrl.columns].push(ctrl.newItem);
 	}
@@ -81,7 +84,9 @@ function dynamicToDoSetterController($scope) {
 	  }
 	  console.log("[DEBUG] Done Adding");
 	  ctrl.currentMap[ctrl.newItem.todoName] = ctrl.newItem.workOrders;
-	  ctrl.handleDataChange({map: ctrl.currentMap});
+//	  ctrl.handleDataChange({map: ctrl.currentMap});
+	  ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}})
+	  ctrl.handleEvent({eventId:"ADD_TO_DO_COMPLETED", data:{}})
 	  ctrl.init();
 	  ctrl.newAddIndex = -1;
 	  ctrl.newItem = {isNewItem:true};
@@ -97,15 +102,7 @@ function dynamicToDoSetterController($scope) {
 	  return true;
 	}
 	
-	/*ctrl.onChangeWorOrders = function(row) {
-	  console.log("[DEBUG] On change work order called");
-	  if (angular.isDefined(row) && angular.isDefined(row.workOrders)) {
-	    row.enabled = row.workOrders.length > 0;
-	  } else {
-	    row.enabled = false;
-	  }
-	}*/
-	
+
 	ctrl.addToDo = function(todoName) { 
 	  console.log("[DEBUG] Add to do called");
 	  if (!angular.isDefined(ctrl.toDos)) {
@@ -125,6 +122,6 @@ angular.module('todoPortal').component('dynamicToDoSetter', {
 	  workOrders: '<',
 	  toDos: '<',
 	  currentMap: '<',
-	  handleDataChange: '&'
+	  handleEvent: '&'
   }
 });
