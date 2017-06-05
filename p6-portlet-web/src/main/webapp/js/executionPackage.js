@@ -170,6 +170,7 @@ app.controller('executionPkgPopupController', [
 						workOrders:$scope.wo, 
 						leadCrew:$scope.selectedLeadCrew, 
 						crewNames: response.data.crewNames,
+						crewAssigned: $scope.leadCrewList,
 						scheduleDate: $scope.scheduleDate,
 						toDoItems:[]
 						}
