@@ -34,7 +34,7 @@
 					<div class="panel panel-default panel-standard-to-do">
 						<div class="panel-heading panel-standard-to-do-heading"><b>Select Depot To-Do</b></div>
 						<div class="panel-body">
-							<dynamic-to-do-setter columns="2" work-orders="wo.workOrders" to-dos="$ctrl.depotToDoList" current-map="wo.todoMap" handle-data-change="$ctrl.populateDepotToDo(map, wo)">
+							<dynamic-to-do-setter columns="2" work-orders="wo.workOrders" to-dos="$ctrl.depotToDoList" handle-event="$ctrl.handleEvent(wo, eventId, data)" current-map="wo.todoMap" handle-data-change="$ctrl.populateDepotToDo(map, wo)">
 						</div>
 						<div class="col-md-12">
 								<label for="comment">Depot To-Do Comment</label>

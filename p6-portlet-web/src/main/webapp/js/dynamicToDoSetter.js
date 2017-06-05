@@ -54,12 +54,14 @@ function dynamicToDoSetterController($scope) {
 	
 	ctrl.onChange = function() {
 		ctrl.handleDataChange({map: ctrl.currentMap});
+		ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}})
 	};
 	
 	ctrl.removeItem = function(todoName, groupIndex) {
 	  console.log("[DEBUG] Remove Item called")
 	  delete ctrl.currentMap[todoName]; 
 		ctrl.handleDataChange({map: ctrl.currentMap});
+		ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}})
 		ctrl.init();
 	};
 	ctrl.newAddIndex = -1;
@@ -82,6 +84,7 @@ function dynamicToDoSetterController($scope) {
 	  console.log("[DEBUG] Done Adding");
 	  ctrl.currentMap[ctrl.newItem.todoName] = ctrl.newItem.workOrders;
 	  ctrl.handleDataChange({map: ctrl.currentMap});
+	  ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}})
 	  ctrl.init();
 	  ctrl.newAddIndex = -1;
 	  ctrl.newItem = {isNewItem:true};
@@ -125,6 +128,7 @@ angular.module('todoPortal').component('dynamicToDoSetter', {
 	  workOrders: '<',
 	  toDos: '<',
 	  currentMap: '<',
-	  handleDataChange: '&'
+	  handleDataChange: '&',
+	  handleEvent: '&'
   }
 });
