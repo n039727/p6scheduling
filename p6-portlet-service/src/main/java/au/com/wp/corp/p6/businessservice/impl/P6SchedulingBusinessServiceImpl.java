@@ -3,6 +3,7 @@ package au.com.wp.corp.p6.businessservice.impl;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +49,7 @@ import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoTemplate;
 import au.com.wp.corp.p6.utils.DateUtils;
 import au.com.wp.corp.p6.utils.P6Constant;
+import au.com.wp.corp.p6.utils.WorkOrderComparator;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 
 @Service
@@ -86,11 +88,19 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException {
 		logger.info("input date # {} ", input.getFromDate());
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
-		if(input.getCrewList() != null && input.getCrewList().size() > 0)
+		// if crew list is null then append all crew in the criteria
 		if(input.getCrewList() == null || input.getCrewList().size() == 0){
 			List<String> crewListAll = new ArrayList<String>();
 			crewListAll = depotCrewMap.values().stream().flatMap(List::stream)
 									.collect(Collectors.toList());
+			input.setCrewList(crewListAll);
+		}
+		//if depot is there select all crew for that depot
+		if(input.getDepotList() != null && input.getDepotList().size() >0){
+			List<String> crewListAll = new ArrayList<String>();
+			input.getDepotList().forEach(depot ->{
+				crewListAll.addAll(depotCrewMap.get(depot));
+			});
 			input.setCrewList(crewListAll);
 		}
 		searchRequest.setCrewList(input.getCrewList());
@@ -177,8 +187,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		removeExecutionPackageinP6(deletetedExecPkagList);
 		logger.debug("final grouped work orders size {}",mapOfExecutionPkgWO.values().size());
 		logger.debug("final grouped work orders = {}",mapOfExecutionPkgWO.values());
-		List<WorkOrder> workorders = new ArrayList<> (mapOfExecutionPkgWO.values());
-		workorders.addAll(ungroupedWorkorders);
+		List<WorkOrder> workorders = new ArrayList<> (ungroupedWorkorders);
+		workorders.addAll(mapOfExecutionPkgWO.values());
+		Collections.sort(workorders,new WorkOrderComparator());
 		logger.debug("Total time taken to execute and return search results == {}",System.currentTimeMillis() - startTime);
 		return workorders;
 	}
@@ -202,9 +213,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	
 	@Async
 	private void updateTasksInDB(List<Task> tasksForUpdate, List<ExecutionPackage> execPkgList) throws P6BusinessException {
-		logger.debug("updateTasksInDB called with tasks # {}",tasksForUpdate.size());
 		long startTime = System.currentTimeMillis();
 		if(tasksForUpdate != null && tasksForUpdate.size() >0){
+			logger.debug("updateTasksInDB called with tasks # {}",tasksForUpdate.size());
 			for (Iterator<Task> iterator = tasksForUpdate.iterator(); iterator.hasNext();) {
 				Task task = (Task) iterator.next();
 				logger.debug("Task with task id {} being updated for execution package of work order sync in portlet db",task.getTaskId());
@@ -222,23 +233,20 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 	@Async
 	private void removeExecutionPackageinP6(List<String> workOrderIds) throws P6BusinessException {
-		logger.debug("removeExecutionPackageinP6 called with tasks # {}",workOrderIds.size());
 		long startTime = System.currentTimeMillis();
 		if(workOrderIds != null && workOrderIds.size() >0){
 			try {
+				logger.debug("removeExecutionPackageinP6 called with tasks # {}",workOrderIds.size());
 				logger.debug("Calling to remove execution package for work orders {}",workOrderIds);
 				Map<String,Integer> workOrderIdMap = p6wsClient.getWorkOrderIdMap();
 				List<Integer>  listOfObjectId = new  ArrayList<Integer>();
 				workOrderIds.forEach(workOrderId -> {
 					listOfObjectId.add(workOrderIdMap.get(workOrderId));
 				});
-					
-				
 				boolean isSuccess =p6wsClient.removeExecutionPackage(listOfObjectId);
 				logger.debug("Removal suceeeded {}",isSuccess);
 			} catch (P6ServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				parseException(e);
 			}
 			workOrderIds.clear();
 			workOrderIds = null;

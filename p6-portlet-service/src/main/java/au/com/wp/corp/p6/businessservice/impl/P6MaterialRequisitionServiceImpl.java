@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,18 +29,33 @@ public class P6MaterialRequisitionServiceImpl implements P6MaterialRequisitionSe
 	@Override
 	@Transactional
 	public MaterialRequisitionDTO retriveMetReq(MaterialRequisitionRequest input) throws P6BusinessException {
-		Object[] workOrderIds = input.getWorkOrderList().toArray();
+		String[] workOrderIds = input.getWorkOrderList().toArray(new String[input.getWorkOrderList().size()]);
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
-		for(Object wo : workOrderIds){
-			List<String> reqIds = new ArrayList<String>();
-			result.put((String) wo,reqIds);
-		}
 		List<MaterialRequisition> metReqList = dao.listMetReq(workOrderIds);
-		for(MaterialRequisition metReq : metReqList){
-			result.get(metReq.getWorkOrder()).add(metReq.getId().getRequisitionNo());
+		for (String wo : workOrderIds) {
+			List<MaterialRequisition> mat = findMaterialRequisition(metReqList, wo);
+			if (mat != null && mat.size() > 0) {
+				mat.forEach(requisition -> {
+					if (result.containsKey(wo)) {
+						result.get(requisition.getWorkOrder()).add(requisition.getId().getRequisitionNo());
+					} else {
+						List<String> strList = new ArrayList<String>();
+						strList.add(requisition.getId().getRequisitionNo());
+						result.put(wo, strList);
+					}
+				});
+
+			} else {
+				result.put(wo, null);
+			}
 		}
+
 		MaterialRequisitionDTO response = new MaterialRequisitionDTO();
 		response.setMaterialRequisitionMap(result);
 		return response;
+	}
+
+	private List<MaterialRequisition> findMaterialRequisition(final List<MaterialRequisition> list, final String woId) {
+		return list.stream().filter(p -> p.getWorkOrder().equals(woId)).collect(Collectors.toList());
 	}
 }

@@ -29,13 +29,11 @@ import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.utils.CacheManager;
 import au.com.wp.corp.p6.utils.DateUtils;
-import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.resource.Resource;
 import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
-import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
 
 /**
  * 
@@ -110,7 +108,20 @@ public class P6WSClientImpl implements P6WSClient {
 		} else {
 			if (null != searchRequest.getCrewList()) {
 				int i = 0;
-				if (searchRequest.getCrewList().size() > 1)
+				if(searchRequest.getCrewList().size() > 0){
+					filter.append("PrimaryResourceId IN ");
+					filter.append("(");
+					for (String crew : searchRequest.getCrewList()) {
+						if(i== 0){
+							filter.append("'" + crew + "'");
+						}else{
+							filter.append(",'" + crew + "'");
+						}
+						i++;
+					}
+					filter.append(")");
+				}
+				/*if (searchRequest.getCrewList().size() > 1)
 					filter.append("(");
 				for (String crew : searchRequest.getCrewList()) {
 					if (i > 0)
@@ -121,6 +132,7 @@ public class P6WSClientImpl implements P6WSClient {
 				}
 				if (searchRequest.getCrewList().size() > 1)
 					filter.append(")");
+					*/
 			}
 
 			if (null != searchRequest.getPlannedStartDate()) {
@@ -311,81 +323,6 @@ public class P6WSClientImpl implements P6WSClient {
 		
 		return dto;
 	}
-	private List<ExecutionPackageDTO> readExecutionPackage(List<Integer> workOrderIds,  RequestTrackingId trackingId) throws P6ServiceException {
-		final StringBuilder filter = new StringBuilder();
-		filter.append("UDFTypeSubjectArea= ");
-		filter.append("'" + P6Constant.ACTIVITY + "'");
-		List<ExecutionPackageDTO> dtoList = new ArrayList<ExecutionPackageDTO>();
-		
-		filter.append(AND);
-		if (workOrderIds != null && workOrderIds.size() > 0) {
-			if (workOrderIds.size() == 1) {
-				filter.append("ForeignObjectId = ");
-				filter.append(workOrderIds.get(0));
-			} else {
-				List<List<Integer>> workOrderParts = chopped(workOrderIds, 10);
-				if (workOrderParts != null) {
-					if (workOrderParts.size() > 1) {
-						filter.append("(");
-					}
-					int i = 0;
-					for (List<Integer> workOrderIdsList : workOrderParts) {
-						if (i > 0) {
-							filter.append(OR);
-						}
-						filter.append("ForeignObjectId IN (");
-						String inClause = StringUtils
-								.join(workOrderIdsList.toArray(new Integer[workOrderIdsList.size()]), ",");
-						filter.append(inClause);
-						filter.append(")");
-						i++;
-					}
-					if (workOrderParts.size() > 1) {
-						filter.append(")");
-					}
-
-				}
-
-			}
-			filter.append(AND);
-			filter.append("UDFTypeTitle = ");
-			filter.append("'" + P6Constant.EXECUTION_GROUPING + "'");
-
-		}
-		logger.debug("filter criteria for search # {} ", filter.toString());
-		logger.debug("calling read UDF Values");
-		final UDFValueServiceCall<List<UDFValue>> readUdfservice = new ReadUDFValueServiceCall(trackingId, udfServiceWSDL,
-				filter.length() > 0 ? filter.toString() : null,null);
-		final Holder<List<UDFValue>> udfValues = readUdfservice.run();
-		logger.debug("returned from search {}",udfValues.value);
-		
-		if(udfValues.value != null){
-			for (UDFValue udfvalue : udfValues.value) {
-				List<WorkOrder> workOrders = new ArrayList<WorkOrder>();
-				logger.debug("Returned Package name from P6 {}", udfvalue.getText());
-				ExecutionPackageDTO dto = new ExecutionPackageDTO();
-				dto.setExctnPckgName(udfvalue.getText());
-				WorkOrder workOrder = new WorkOrder();
-				if (workOrderIdMap.containsValue(udfvalue.getForeignObjectId())) {
-					Set<Entry<String, Integer>> entrySet = workOrderIdMap.entrySet();
-					for (Entry<String, Integer> entry : entrySet) {
-						if (entry.getValue().equals(udfvalue.getForeignObjectId())) {
-							workOrder.setWorkOrderId(entry.getKey());
-							break;
-						}
-					}
-				}
-
-				workOrders.add(workOrder);
-				dto.setWorkOrders(workOrders);
-				dtoList.add(dto);
-			}
-		}
-		
-		
-		return dtoList;
-	}
-
 
 
 
