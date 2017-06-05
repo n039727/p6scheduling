@@ -78,7 +78,6 @@ public class TodoDAOImpl implements TodoDAO {
 	public BigDecimal getToDoId(String todoName) {
 		fetchAllToDos();
 		if (toDoNameMap != null && toDoNameMap.containsKey(todoName)) {
-			//return toDoNameMap.get(todoName).getTodoId();
 			return new BigDecimal(toDoNameMap.get(todoName).getTodoId());
 		}
 		return null;
@@ -88,7 +87,6 @@ public class TodoDAOImpl implements TodoDAO {
 	public Long getTypeId(String todoName) {
 		fetchAllToDos();
 		if (toDoNameMap != null && toDoNameMap.containsKey(todoName)) {
-			//return toDoNameMap.get(todoName).getTypeId();
 			return toDoNameMap.get(todoName).getTypId().longValue();
 		}
 		return null;
@@ -118,8 +116,6 @@ public class TodoDAOImpl implements TodoDAO {
 			parseException(e);
 		}
 		logger.debug("inserted the user define TodoTemplate");
-		getSession().flush();
-		getSession().clear();
 		
 		// update Max To Do Id
 		synchronized (lock) {

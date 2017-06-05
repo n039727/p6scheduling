@@ -95,6 +95,7 @@ public class ExecutionPackageServiceTest {
 	@Test
 	public void testCreateOrUpdateExecutionPackage() throws P6BusinessException {
 		ExecutionPackageDTO execPckg = new ExecutionPackageDTO();
+		execPckg.setExctnPckgName("06-05-2017_1643493");
 		execPckg.setLeadCrew("MOST1");
 		List<WorkOrder> workOrders = new ArrayList<>();
 		Set<Task> tasks = new HashSet<>();
@@ -102,21 +103,23 @@ public class ExecutionPackageServiceTest {
 		workOrder = new WorkOrder();
 		workOrder.setWorkOrderId("WO1231");
 		workOrder.setCrewNames("CREW1");
+		workOrder.setExctnPckgName("06-05-2017_1643493");
 		workOrders.add(workOrder);
 
-		ExecutionPackage excPckg = new ExecutionPackage();
-		execPckg.setExctnPckgName("06-05-2017_1643493");
-		excPckg.setTasks(tasks);
+		//ExecutionPackage excPckg = new ExecutionPackage();
 		
+		//excPckg.setTasks(tasks);
+		ExecutionPackage execPackage = new ExecutionPackage();
+		execPackage.setExctnPckgNam("06-05-2017_1643493");
 		
 		Task task = new Task();
 		task.setTaskId("WO1231");
 		task.setCrewId("CREW1");
-		task.setExecutionPackage(excPckg);
+		task.setExecutionPackage(execPackage);
 		tasks.add(task);
 		Mockito.when(workOrderDao.fetch("WO1231")).thenReturn(task);
 		execPckg.setWorkOrders(workOrders);
-		ExecutionPackage execPackage = new ExecutionPackage();
+		
 		execPackage.setTasks(tasks);
 		Mockito.when(dateUtils.getCurrentDateWithTimeStamp()).thenReturn("12345678");
 		Mockito.when(executionPckgDao.createOrUpdateExecPackage(execPackage)).thenReturn(true);

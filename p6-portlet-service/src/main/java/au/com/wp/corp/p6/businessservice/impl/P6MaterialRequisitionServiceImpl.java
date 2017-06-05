@@ -28,31 +28,18 @@ public class P6MaterialRequisitionServiceImpl implements P6MaterialRequisitionSe
 	@Override
 	@Transactional
 	public MaterialRequisitionDTO retriveMetReq(MaterialRequisitionRequest input) throws P6BusinessException {
-		Object[] workOrderId = input.getWorkOrderList().toArray();
+		Object[] workOrderIds = input.getWorkOrderList().toArray();
 		Map<String, List<String>> result = new HashMap<String, List<String>>();
-		List<MaterialRequisition> metReqList = dao.listMetReq(workOrderId);
-		for(Object wo : workOrderId){
-			Optional<MaterialRequisition> s = findTask(metReqList, (String) wo);
-			if(s.isPresent()){
-				MaterialRequisition metReq = s.get();
-				if(result.containsKey(metReq.getWorkOrder())){
-					result.get(metReq.getWorkOrder()).add(metReq.getId().getRequisitionNo());
-				}else{
-					List<String> reqIds = new ArrayList<String>();
-					reqIds.add(metReq.getId().getRequisitionNo());
-					result.put(metReq.getWorkOrder(),reqIds);
-				}
-			}else{
-				result.put((String) wo, new ArrayList<String>());
-			}
+		for(Object wo : workOrderIds){
+			List<String> reqIds = new ArrayList<String>();
+			result.put((String) wo,reqIds);
+		}
+		List<MaterialRequisition> metReqList = dao.listMetReq(workOrderIds);
+		for(MaterialRequisition metReq : metReqList){
+			result.get(metReq.getWorkOrder()).add(metReq.getId().getRequisitionNo());
 		}
 		MaterialRequisitionDTO response = new MaterialRequisitionDTO();
 		response.setMaterialRequisitionMap(result);
 		return response;
-	}
-
-	private Optional<MaterialRequisition> findTask(final List<MaterialRequisition> list, final String woId) {
-		return list.stream()
-				.filter(p -> p.getWorkOrder().equals(woId)).findAny();
 	}
 }

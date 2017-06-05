@@ -29,4 +29,5 @@ public interface P6WSClient {
 	public List<Crew> searchCrew (ResourceSearchRequest searchRequest) throws P6ServiceException;
 	ExecutionPackageDTO createExecutionPackage(List<ExecutionPackageCreateRequest> request) throws P6ServiceException;
 	public Map<String, Integer> getWorkOrderIdMap();
+	Boolean removeExecutionPackage(List<Integer> foreignObjIds) throws P6ServiceException;
 }

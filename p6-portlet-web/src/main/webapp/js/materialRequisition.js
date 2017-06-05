@@ -5,10 +5,9 @@ function materialRequisitionResultController($scope, restTemplate, userAccessSer
 	ctrl.isReadOnly = false;
 	if (userAccessService.isAuthEnabled()) {
 		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
-			ctrl.isReadOnly = true;
+			//ctrl.isReadOnly = true;
 		}
-	}
-	
+	}	
 	console.log('data received in material req.: ' + JSON.stringify(ctrl.data));
 	//ctrl.woMatReqMap = {};
 	//ctrl.woReqs = [];
