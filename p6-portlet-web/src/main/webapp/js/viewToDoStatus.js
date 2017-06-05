@@ -226,7 +226,7 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 	ctrl.formateUrl = function(urlvalu){
 		if(urlvalu !== null && urlvalu!=="") {
 			console.log("Inside formate URl"+urlvalu);
-			var urlRegex = /(\b(http?|https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+			var urlRegex = /(\b(http?|https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
 			urlvalu = urlvalu.replace(urlRegex, function (url) {
 				return '<a href="' + url + '" target="_blank">' + url + '</a>';
 			});

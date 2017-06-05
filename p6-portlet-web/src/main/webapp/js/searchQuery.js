@@ -113,19 +113,24 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 		}
 		if(ctrl.activeContext == 'ADD_SCHEDULING_TODO' || ctrl.activeContext == 'VIEW_TODO_STATUS' 
 				|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'){
-			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == ""){
-				ctrl.showErrorMsg = 'Planned Start From Date is required';
-				ctrl.isValidationErr = true;
-				return false;
-			}else if(ctrl.scheduleToDate !==""){
-				this.schFromDate = ctrl.formatDate(this.scheduleFromDate);
-				this.schToDate = ctrl.formatDate(this.scheduleToDate);
-				var isSamedate = moment(this.schFromDate).isSame(this.schToDate);
-				var isPastDate = moment(this.schFromDate).isBefore(this.schToDate); 
-				if(!isSamedate && !isPastDate){
-					ctrl.showErrorMsg = 'To Date must be future date of From Date';
+			if(this.wo == null || this.wo == ""){
+				if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == ""){
+					ctrl.showErrorMsg = 'Planned Start From Date is required';
 					ctrl.isValidationErr = true;
 					return false;
+				}else if(ctrl.scheduleToDate !==""){
+					this.schFromDate = ctrl.formatDate(this.scheduleFromDate);
+					this.schToDate = ctrl.formatDate(this.scheduleToDate);
+					var isSamedate = moment(this.schFromDate).isSame(this.schToDate);
+					var isPastDate = moment(this.schFromDate).isBefore(this.schToDate); 
+					if(!isSamedate && !isPastDate){
+						ctrl.showErrorMsg = 'To Date must be future date of From Date';
+						ctrl.isValidationErr = true;
+						return false;
+					}else{
+						ctrl.isValidationErr = false;
+						return true;
+					}
 				}else{
 					ctrl.isValidationErr = false;
 					return true;
@@ -135,23 +140,28 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 				return true;
 			}
 		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS' || ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO' || ctrl.activeContext == 'DEPOT_VIEW_MATERIAL_REQUISITION'){
-			if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == "" ){
-				ctrl.showErrorMsg = 'Planned Start From Date  is required';
-				ctrl.isValidationErr = true;
-				return false;
-			}else if(ctrl.scheduleToDate !==""){
-				this.schFromDate = ctrl.formatDate(this.scheduleFromDate);
-				this.schToDate = ctrl.formatDate(this.scheduleToDate);
-				var isSamedate = moment(this.schFromDate).isSame(this.schToDate);
-				var isPastDate = moment(this.schFromDate).isBefore(this.schToDate); 
-				if(!isSamedate && !isPastDate){
-					ctrl.showErrorMsg = 'To Date must be future date of From Date';
+			if(this.wo == null || this.wo == ""){
+				if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == "" ){
+					ctrl.showErrorMsg = 'Planned Start From Date  is required';
 					ctrl.isValidationErr = true;
 					return false;
-				}else if(moment(this.schToDate).diff(this.schFromDate,'days') >= 14){
-					ctrl.showErrorMsg = 'Search is allowed for a maximum of 2 weeks period';
-					ctrl.isValidationErr = true;
-					return false;
+				}else if(ctrl.scheduleToDate !==""){
+					this.schFromDate = ctrl.formatDate(this.scheduleFromDate);
+					this.schToDate = ctrl.formatDate(this.scheduleToDate);
+					var isSamedate = moment(this.schFromDate).isSame(this.schToDate);
+					var isPastDate = moment(this.schFromDate).isBefore(this.schToDate); 
+					if(!isSamedate && !isPastDate){
+						ctrl.showErrorMsg = 'To Date must be future date of From Date';
+						ctrl.isValidationErr = true;
+						return false;
+					}else if(moment(this.schToDate).diff(this.schFromDate,'days') >= 14){
+						ctrl.showErrorMsg = 'Search is allowed for a maximum of 2 weeks period';
+						ctrl.isValidationErr = true;
+						return false;
+					}else{
+						ctrl.isValidationErr = false;
+						return true;
+					}
 				}else{
 					ctrl.isValidationErr = false;
 					return true;
@@ -159,9 +169,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			}else{
 				ctrl.isValidationErr = false;
 				return true;
-				
 			}
-			
 		}
 	};
 	

@@ -286,6 +286,31 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 	ctrl.populateDepotToDo = function(todoMap, workOrder) {
 		workOrder.todoMap = todoMap;
 	}
+
+	ctrl.handleEvent = function(wo, eventId, data) {
+		if (angular.isUndefined(eventId) || eventId == null) {
+			return;
+		}
+
+		switch(eventId) {
+			case "DATA_CHANGE":
+				console.log("Data change called");
+				if (angular.isDefined(data) && data != null) {
+					ctrl.populateDepotToDo(data.map, wo);
+				}
+				break;
+			case "ADD_TO_DO_IN_PROGRESS":
+				console.log("Add to do in progress called");
+				ctrl.disableSaving = true;
+				break;
+			case "ADD_TO_DO_COMPLETED":
+				console.log("Add to do completed");
+				ctrl.disableSaving = false;
+				break;
+			default:
+				console.log("No handler found for event: " + eventId);
+		} 
+	}
 	
 }
 

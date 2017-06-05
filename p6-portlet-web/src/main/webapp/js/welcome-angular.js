@@ -10,7 +10,7 @@ Array.prototype.contains = function(v) {
 };
 
 Array.prototype.unique = function() {
-	console.log("unique called");
+//	console.log("unique called");
 	var itemMap = {};
 	var arr = [];
 	for (var i = 0; i < this.length; i++) {
@@ -19,12 +19,12 @@ Array.prototype.unique = function() {
 	$.each(itemMap, function (key, value) {
 	   arr.push(key);
 	});
-	console.log("Unique object: " + JSON.stringify(arr));
+//	console.log("Unique object: " + JSON.stringify(arr));
 	return arr;
 };
 
 Array.prototype.returnIfExists = function(value) {
-	console.log("returnIfExists called");
+//	console.log("returnIfExists called");
 	if (angular.isUndefined(value) || value === null) {
 		return "";
 	}

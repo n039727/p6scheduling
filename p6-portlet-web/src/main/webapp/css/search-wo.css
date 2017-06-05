@@ -1,163 +1,202 @@
-.btn-warning,
-.btn-warning:hover,
-.btn-warning:active,
-.btn-warning:visited,
-.btn-warning:focus {
-    background-color: #f37420;
-    border-color: #f37420;
+.btn-warning, .btn-warning:hover, .btn-warning:active, .btn-warning:visited,
+	.btn-warning:focus {
+	background-color: #f37420;
+	border-color: #f37420;
 }
 
 .row-expander {
-	background-color:#fee6c1 !important;
+	background-color: #fee6c1 !important;
 	padding: 0px !important;
 }
+
 body {
-	background-color: #FFFFFF;/*#428bca;*/
+	background-color: #FFFFFF; /*#428bca;*/
 	font-family: "Calibri";
 }
 
-#logo  {
+#logo {
 	background: url(../images/WesternPower.png);
 	width: 200px;
 	height: 30px;
 	margin: 15px;
 	float: right;
 }
+.td {
+  height: auto !important;
+  overflow:visible;
+  position: relative;
+}
+
+.td-val {
+  height: auto !important;
+  word-wrap: break-word;
+  overflow:visible;
+  position: absolute;
+}
 
 .navbar-top-fixed {
-	background-color:#f37420; /*#f0ad4e;*/
+	background-color: #f37420; /*#f0ad4e;*/
 	background: url(../images/Header.png);
-	color:#000000;
+	color: #000000;
 	padding: 5px 5px 5px 5px;
 }
+
 .navbar-top-link {
 	/*background-color:#f0ad4e !important;*/
-	color:#000000 !important;
+	color: #000000 !important;
 }
 
 .header-left {
 	text-align: left;
 }
+
 .header-middle {
 	padding: 5px 5px 5px 5px;
 	margin: 0px;
 	text-align: center;
 }
+
 .header-middle  h1 {
 	margin: 0px !important;
 }
 
 .header-right {
 	text-align: right;
-	display:inline-block;
+	display: inline-block;
 }
-
 
 .container-endless {
-	padding:0px;
-	overflow:hidden;
-	display:table;
-	height:100%;
+	padding: 0px;
+	overflow: hidden;
+	display: table;
+	height: 100%;
 }
-.table-striped > tbody > tr:nth-child(4n+3) > td {
-	background-color:  #f8d7ca;
+
+.table-striped>tbody>tr:nth-child(4n+3)>td {
+	background-color: #f8d7ca;
 }
-.table-striped > tbody > tr:nth-child(4n + 1) > td {
-	background-color:  #f7eae5;
+
+.table-dynamicHeight>tbody>tr:nth-child(4n+3)>td {
+	table-layout: auto !important;
 }
-.table-striped > tbody > tr:nth-child(2n) > td {
-	padding:0px;
-	margin:0px;
+
+.table-striped>tbody>tr:nth-child(4n + 1)>td {
+	background-color: #f7eae5;
 }
-.table-striped-metreq > tbody > tr:nth-child(2n) > td {
-	background-color:  #f8d7ca;
+
+.table-striped>tbody>tr:nth-child(2n)>td {
+	padding: 0px;
+	margin: 0px;
 }
-.table-striped-metreq > tbody > tr:nth-child(2n + 1) > td {
-	background-color:  #f7eae5;
+
+.table-striped-metreq>tbody>tr:nth-child(2n)>td {
+	background-color: #f8d7ca;
 }
+
+.table-striped-metreq>tbody>tr:nth-child(2n + 1)>td {
+	background-color: #f7eae5;
+}
+
 .search-query-container {
-	padding:0px;
-	margin-top:10px;
+	padding: 0px;
+	margin-top: 10px;
 }
+
 .search-query-panel-heading {
-	background-color:#f37420 !important;
-	color:#ffffff !important;
+	background-color: #f37420 !important;
+	color: #ffffff !important;
 }
+
 .side-panel {
-	padding:0px;
-	margin:0px;
-	border:0px;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
 }
+
 .side-panel-button {
-	border-radius:0px;
+	border-radius: 0px;
 }
+
 .side-panel-button-container {
-	padding:0px;
-	margin:0px;
-	border:0px;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
 }
+
 .side-panel-body {
-	padding:0px;
-	margin:0px;
-	border:0px;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
 }
+
 .search-panel-body {
-	padding-bottom:5px;
-	padding-top:15px;
+	padding-bottom: 5px;
+	padding-top: 15px;
 }
-.search-control-label{
-    font-weight: 700;
+
+.search-control-label {
+	font-weight: 700;
 	min-width: 992px;
-	margin-bottom:0;
-	text-align:left;
+	margin-bottom: 0;
+	text-align: left;
 }
+
 .side-panel-heading {
-	background-color:#f37420 !important;
-	color:#ffffff !important;
+	background-color: #f37420 !important;
+	color: #ffffff !important;
 }
+
 .side-panel-heading-disabled {
-	background-color:#d3641c !important;
-	color:#ffffff !important;
+	background-color: #d3641c !important;
+	color: #ffffff !important;
 }
+
 .side-panel-body-container {
-	height:100%;
-	background-color:#ffffff;
-	padding:0px;
+	height: 100%;
+	background-color: #ffffff;
+	padding: 0px;
 }
+
 .query-result-container {
-	height:100%;
-	background-color:#ffffff;
+	height: 100%;
+	background-color: #ffffff;
 }
+
 .query-result-panel {
-	padding:0px;
-	margin:0px;
-	border:0px;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
 }
 
 .result-container {
-	padding-top:0px !important;
-	padding-right:0px !important;
-	margin:0px;
-	border:0px;
+	padding-top: 0px !important;
+	padding-right: 0px !important;
+	margin: 0px;
+	border: 0px;
 }
+
 .query-result-header {
-	background-color:f37420;
-	border:2px;
-	color:#ffffff !important;
+	background-color: f37420;
+	border: 2px;
+	color: #ffffff !important;
 }
+
 .panel-standard-to-do {
-	padding:0px;
-	margin:0px;
+	padding: 0px;
+	margin: 0px;
 }
+
 .panel-standard-to-do-heading {
-	background-color:#f37420 !important;
-	color:#ffffff !important;
+	background-color: #f37420 !important;
+	color: #ffffff !important;
 }
+
 .standard-to-do-header {
-	background-color:#f37420;
-	border:2px;
-	color:#ffffff;
+	background-color: #f37420;
+	border: 2px;
+	color: #ffffff;
 }
+
 .saved-msg-ribbon {
 	position: relative;
 	width: 40%;
@@ -169,56 +208,60 @@ body {
 	background-color: #f37420;
 	text-shadow: 0px 1px 2px #bbb;
 	-webkit-box-shadow: 0px 2px 4px #f37420;
-	-moz-box-shadow: 0px  2px 4px #f37420;
+	-moz-box-shadow: 0px 2px 4px #f37420;
 	box-shadow: 0px 2px 4px #f37420;
-	
-}
-.dialog-background-color {
-	background-color:#f37420 !important;
 }
 
-.error-message{
-	display:inline;	
-	color:#ff0000;
+.dialog-background-color {
+	background-color: #f37420 !important;
+}
+
+.error-message {
+	display: inline;
+	color: #ff0000;
 	font-weight: bold;
 }
-.success-message{
-	display:inline;	
-	color:green;
+
+.success-message {
+	display: inline;
+	color: green;
 	font-weight: bold;
 }
-.active-context{
-	background-color:#f08b1e !important;
-	color:#ffffff !important;
+
+.active-context {
+	background-color: #f08b1e !important;
+	color: #ffffff !important;
 }
+
 .btn-floating {
-  position: fixed;
-  bottom: 20px; /* Adjust to where you want it */
+	position: fixed;
+	bottom: 20px; /* Adjust to where you want it */
 }
+
 .errormsg-floating {
-  position: fixed;
-  bottom: 70px; /* Adjust to where you want it */
-  right: 135px; /* Adjust to where you want it */
-  
+	position: fixed;
+	bottom: 70px; /* Adjust to where you want it */
+	right: 135px; /* Adjust to where you want it */
 }
 
 .error {
-  color: red;
+	color: red;
 }
+
 .warning {
-  color: orange;
+	color: orange;
 }
 
 .auth-enabled-container {
-	position:relative;
+	position: relative;
 }
 
 .read-only-cover {
 	position: absolute;
-    height: 100%;
-    width: 100%;
-    z-index: 1;
-    background-color: #ddd;
-    opacity: 0.0;
+	height: 100%;
+	width: 100%;
+	z-index: 1;
+	background-color: #ddd;
+	opacity: 0.0;
 	cursor: not-allowed;
 }

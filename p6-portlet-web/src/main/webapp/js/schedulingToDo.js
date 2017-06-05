@@ -127,11 +127,11 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 				}
 			}
 		}
-		if(wo && wo.toDoItems.length == 0){
+/*		if(wo && wo.toDoItems.length == 0){
 			wo.actioned = 'N';
 		}else if(wo && wo.toDoItems.length > 0){
 			wo.actioned = 'Y';
-		}
+		}*/
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		var req = {
 			 method: 'POST',
@@ -163,6 +163,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 			}else{
 				ctrl.successSavedMsg = "Work order task has been saved successfully";
 			}
+			wo.actioned = 'Y';
 			ctrl.savedMsgVisible = true;
 			
 		}, null);

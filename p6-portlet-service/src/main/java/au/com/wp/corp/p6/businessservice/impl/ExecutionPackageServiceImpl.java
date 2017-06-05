@@ -101,6 +101,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		final StringBuilder crewNames = new StringBuilder();
 		final StringBuilder pkgSchedulerCmt = new StringBuilder();
 		Set<ExecutionPackage> executionPackages = new HashSet<>();
+		Set<String> oldPkgName = new HashSet<>();
 		if (workOrders != null && !workOrders.isEmpty()) {
 			logger.debug("work orders size {}", workOrders.size());
 			Set<Task> tasks = new HashSet<>();
@@ -119,12 +120,18 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					logger.debug("Task {} is fecthed", task.getTaskId());
 					if(null != task.getExecutionPackage()){
 						logger.debug("Old Execution fatched {} for the  task {}", task.getExecutionPackage().getExctnPckgNam(), task.getTaskId());
+						
+						if(oldPkgName.add(task.getExecutionPackage().getExctnPckgNam())){
+							pkgSchedulerCmt.append(task.getExecutionPackage().getExecSchdlrCmt()+ " ");
+						}
 						ExecutionPackage oldExecutionPackage = task.getExecutionPackage();
 						oldExecutionPackage.getTasks().remove(task);
 						executionPackages.add(oldExecutionPackage);
 					}
-					if(null != task.getCmts()){
-						pkgSchedulerCmt.append(task.getCmts()+ " ");
+					else {
+						if (null != task.getCmts()){
+							pkgSchedulerCmt.append(task.getCmts()+ " ");
+						}
 					}
 					task.setExecutionPackage(executionPackage);
 					task.setLstUpdtdUsr(userName);

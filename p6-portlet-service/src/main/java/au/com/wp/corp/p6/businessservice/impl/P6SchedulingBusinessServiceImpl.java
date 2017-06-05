@@ -104,7 +104,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			input.setCrewList(crewListAll);
 		}
 		searchRequest.setCrewList(input.getCrewList());
-		searchRequest.setPlannedStartDate(dateUtils.convertDate(input.getFromDate()));
+		searchRequest.setPlannedStartDate(input.getFromDate() != null ? dateUtils.convertDate(input.getFromDate()): null);
 		searchRequest.setPlannedEndDate(input.getToDate() != null ? dateUtils.convertDate(input.getToDate()) : null);
 		searchRequest.setWorkOrder(input.getWorkOrderId());
 		searchRequest.setDepotList(input.getDepotList());
