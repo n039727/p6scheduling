@@ -7,8 +7,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -53,8 +51,18 @@ public class UserDetailsController {
 		Map<String, UserAuthorizationDTO> accessMap = new HashMap<String, UserAuthorizationDTO>();
 		
 		if (userAccessList != null && !userAccessList.isEmpty()) {
-			accessMap = userAccessList.stream().collect(Collectors.toMap(UserAuthorizationDTO::getFunctionName,
-                    Function.identity()));
+			userAccessList.forEach(useraccess ->{
+				String functionname = useraccess.getFunctionName();
+				if(accessMap.containsKey(functionname)){
+					if(!accessMap.get(functionname).isAccess()){
+						accessMap.put(functionname, useraccess);
+					}
+				}else{
+					accessMap.put(functionname, useraccess);
+				}
+			});
+			/*accessMap = userAccessList.stream().collect(Collectors.toMap(UserAuthorizationDTO::getFunctionName,
+                    Function.identity()));*/
 		}
 		
 		UserDetails userDetails = new UserDetails();
