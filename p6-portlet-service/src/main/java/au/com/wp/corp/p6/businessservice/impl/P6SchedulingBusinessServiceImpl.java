@@ -211,7 +211,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	
-	@Async
+	@Async("p6Executor")
 	public void updateTasksInDB(List<Task> tasksForUpdate, List<ExecutionPackage> execPkgList) throws P6BusinessException {
 		long startTime = System.currentTimeMillis();
 		if(tasksForUpdate != null && tasksForUpdate.size() >0){
@@ -231,7 +231,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 		logger.debug("Total time taken to updateTasksInDB {}",System.currentTimeMillis() - startTime );
 	}
-	@Async
+	@Async("p6Executor")
 	public void removeExecutionPackageinP6(List<String> workOrderIds) throws P6BusinessException {
 		long startTime = System.currentTimeMillis();
 		if(workOrderIds != null && workOrderIds.size() >0){

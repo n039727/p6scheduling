@@ -1,6 +1,7 @@
 package au.com.wp.corp.p6.config;
 
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 import javax.sql.DataSource;
 
@@ -16,6 +17,7 @@ import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -94,5 +96,11 @@ public class AppConfig {
 	            sessionFactory);
 	    return transactionManager;
 	}
-	
+	@Bean(name = "p6Executor")
+    public Executor createP6Executor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setMaxPoolSize(100);
+        executor.initialize();
+        return executor;
+    }
 }
