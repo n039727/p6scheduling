@@ -27,8 +27,8 @@ public class CreateUDFValueServiceCall extends UDFValueServiceCall<List<ObjectId
 
 	private final List<UDFValue> udfValues;
 
-	public CreateUDFValueServiceCall(final RequestTrackingId trackingId, String endPoint, List<UDFValue> udfValues) {
-		super(trackingId, endPoint);
+	public CreateUDFValueServiceCall(final RequestTrackingId trackingId, List<UDFValue> udfValues) {
+		super(trackingId);
 		this.udfValues = udfValues;
 	}
 

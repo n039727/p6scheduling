@@ -22,8 +22,8 @@ public class DeleteUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
 	
 
 	private List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds;
-	public DeleteUDFValueServiceCall(final RequestTrackingId trackingId, String endPoint,final List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds) {
-		super(trackingId, endPoint);
+	public DeleteUDFValueServiceCall(final RequestTrackingId trackingId, final List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds) {
+		super(trackingId);
 		this.objectIds = objectIds;
 	}
 

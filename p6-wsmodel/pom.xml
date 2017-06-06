@@ -14,6 +14,23 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.jvnet.jaxb2_commons</groupId>
+			<artifactId>jaxb2-basics</artifactId>
+			<version>0.6.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.ws</groupId>
+			<artifactId>jaxws-tools</artifactId>
+			<version>2.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jaxb2-commons</groupId>
+			<artifactId>jaxb-fluent-api</artifactId>
+			<version>2.1.8</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -81,6 +98,24 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>udftype</id>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<!-- Keep generated files -->
+							<keep>true</keep>
+							<!-- Package name -->
+							<packageName>au.com.wp.corp.p6.wsclient.udftype</packageName>
+							<!-- generated source files destination -->
+							<sourceDestDir>target/generated/src/main/java</sourceDestDir>
+							<wsdlUrls>
+								<wsdlUrl>http://sdc-tssgt01:8206/p6ws/services/UDFTypeService?wsdl</wsdlUrl>
+							</wsdlUrls>
+						</configuration>
+					</execution>
+					<execution>
 						<id>udfvalue</id>
 						<goals>
 							<goal>wsimport</goal>
@@ -99,7 +134,7 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>ellipseWorkorder</id>
+						<id>resourceAssignment</id>
 						<goals>
 							<goal>wsimport</goal>
 						</goals>
@@ -108,15 +143,94 @@
 							<!-- Keep generated files -->
 							<keep>true</keep>
 							<!-- Package name -->
-							<packageName>au.com.wp.corp.p6.wsclient.ellipse</packageName>
+							<packageName>au.com.wp.corp.p6.wsclient.resourceassignment</packageName>
 							<!-- generated source files destination -->
 							<sourceDestDir>target/generated/src/main/java</sourceDestDir>
 							<wsdlUrls>
-								<wsdlUrl>http://ellipse-np-webapp:9120/ews/services/WorkOrderTaskService?wsdl</wsdlUrl>
+								<wsdlUrl>http://sdc-tssgt01:8206/p6ws/services/ResourceAssignmentService?wsdl</wsdlUrl>
 							</wsdlUrls>
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxws-maven-plugin</artifactId>
+				<version>1.9</version> <!-- Old version required to support jaxb2-commons http://java.net/jira/browse/JAX_WS_COMMONS-46 -->
+				<executions>
+
+					<!-- Called web services go here... -->
+					<execution>
+						<id>EwsTransaction</id>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<configuration>
+							<wsdlDirectory>${basedir}/src/main/resources/META-INF</wsdlDirectory>
+							<wsdlFiles>
+								<wsdlFile>EwsTransaction.wsdl</wsdlFile>
+							</wsdlFiles>
+							<staleFile>${project.build.directory}/jaxws/EwsTransaction/.staleFlag</staleFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>EwsWorkOrder</id>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<configuration>
+							<wsdlDirectory>${basedir}/src/main/resources/META-INF</wsdlDirectory>
+							<wsdlFiles>
+								<wsdlFile>EwsWorkOrder.wsdl</wsdlFile>
+							</wsdlFiles>
+							<staleFile>${project.build.directory}/jaxws/EwsWorkOrder/.staleFlag</staleFile>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>EwsWorkOrderTask</id>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<configuration>
+							<wsdlDirectory>${basedir}/src/main/resources/META-INF</wsdlDirectory>
+							<wsdlFiles>
+								<wsdlFile>EwsWorkOrderTask.wsdl</wsdlFile>
+							</wsdlFiles>
+							<staleFile>${project.build.directory}/jaxws/EwsWorkOrderTask/.staleFlag</staleFile>
+						</configuration>
+					</execution>
+
+				</executions>
+				<!-- Common wsimport configuration -->
+
+				<!--suppress MavenModelInspection -->
+				<configuration>
+					<sourceDestDir>${project.build.directory}/generated-sources/jaxws</sourceDestDir>
+					<xjcArgs>
+						<xjcArg>-Xequals</xjcArg> <!-- generate equals() and hashCode() -->
+						<xjcArg>-XhashCode</xjcArg>
+						<xjcArg>-XtoString</xjcArg> <!-- generate a toString() -->
+						<xjcArg>-Xfluent-api</xjcArg> <!-- generate a fluent api (withXXX()) -->
+					</xjcArgs>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-basics</artifactId>
+						<version>0.6.3</version>
+					</dependency>
+					<dependency>
+						<groupId>com.sun.xml.ws</groupId>
+						<artifactId>jaxws-tools</artifactId>
+						<version>2.1.3</version>
+					</dependency>
+					<dependency>
+						<groupId>net.java.dev.jaxb2-commons</groupId>
+						<artifactId>jaxb-fluent-api</artifactId>
+						<version>2.1.8</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

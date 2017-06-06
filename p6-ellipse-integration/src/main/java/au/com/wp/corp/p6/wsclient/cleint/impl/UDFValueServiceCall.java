@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.util.CacheManager;
+import au.com.wp.corp.p6.util.P6ReloadablePropertiesReader;
+import au.com.wp.corp.p6.wsclient.constant.P6WSConstants;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
@@ -39,13 +41,16 @@ public abstract class UDFValueServiceCall<T> extends AbstractSOAPCall<T> {
 	protected UDFValuePortType servicePort;
 	private String endPoint;
 
-	public UDFValueServiceCall(final RequestTrackingId trackingId, String endPoint) {
+	public UDFValueServiceCall(final RequestTrackingId trackingId) {
 		super(trackingId);
-		this.endPoint = endPoint;
+		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_UDF_SERVICE_WSDL);
 	}
 
 	@Override
 	protected void doBefore() throws P6ServiceException {
+		if ( null == endPoint ){
+			throw new P6ServiceException("UDF Value Service end point is null ");
+		}
 		URL wsdlURL = null;
 		try {
 			wsdlURL = new URL(endPoint);

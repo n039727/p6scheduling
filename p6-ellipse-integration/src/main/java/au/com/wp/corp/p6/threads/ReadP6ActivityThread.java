@@ -3,11 +3,13 @@
  */
 package au.com.wp.corp.p6.threads;
 
+import java.io.File;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.com.wp.corp.p6.csv.CSVWriter;
 import au.com.wp.corp.p6.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.util.CacheManager;
@@ -25,7 +27,7 @@ public class ReadP6ActivityThread implements Runnable {
 	
 	public ReadP6ActivityThread(final P6WSClient p6WSClient) {
 		this.p6WSClient = p6WSClient;
-		CacheManager.getSystemReadStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.STARTED);
+		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.STARTED);
 	}
 	
 	/* (non-Javadoc)
@@ -41,14 +43,16 @@ public class ReadP6ActivityThread implements Runnable {
 			for (P6ActivityDTO activityDTO : p6WSClient.readActivities()) {
 				activities.put(activityDTO.getActivityId(), activityDTO);
 			}
+			File file = new File("C:\\test-config\\ReadActivityP6Set.csv");
+			CSVWriter.generateCSV(file, activities.values().toArray());
 		} catch (P6ServiceException e) {
 			logger.error("An error occurs while reading P6 activity : ", e);
-			CacheManager.getSystemReadStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.FAILED);			
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.FAILED);			
 			
 		}
 		logger.debug("Size of activities from P6 # {}", activities.size());
 		logger.debug("Time taken to read record from P6 # {} ", System.currentTimeMillis() - startTime);
-		CacheManager.getSystemReadStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.COMPLETED);
+		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.COMPLETED);
 		
 
 	}

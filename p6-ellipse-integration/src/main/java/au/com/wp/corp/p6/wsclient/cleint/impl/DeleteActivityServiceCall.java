@@ -20,11 +20,11 @@ import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
  */
 public class DeleteActivityServiceCall extends ActivityServiceCall<Boolean> {
 	private static final Logger logger = LoggerFactory.getLogger(DeleteActivityServiceCall.class);
-	
+
 	private final List<Integer> activitieIds;
-	
-	public DeleteActivityServiceCall(final RequestTrackingId trackingId, final String endPoint, final List<Integer> activitieIds) {
-		super(trackingId, endPoint);
+
+	public DeleteActivityServiceCall(final RequestTrackingId trackingId, final List<Integer> activitieIds) {
+		super(trackingId);
 		this.activitieIds = activitieIds;
 	}
 
@@ -37,7 +37,7 @@ public class DeleteActivityServiceCall extends ActivityServiceCall<Boolean> {
 		} catch (IntegrationFault e) {
 			throw new P6ServiceException(e);
 		}
-		
+
 		return new Holder<>(status);
 	}
 

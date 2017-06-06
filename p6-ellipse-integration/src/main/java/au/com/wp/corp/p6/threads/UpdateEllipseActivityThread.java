@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import au.com.wp.corp.p6.csv.CSVWriter;
 import au.com.wp.corp.p6.dto.EllipseActivityDTO;
+import au.com.wp.corp.p6.util.CacheManager;
+import au.com.wp.corp.p6.util.ProcessStatus;
+import au.com.wp.corp.p6.util.ReadProcessStatus;
 
 /**
  * Thread to initiates job to update the activity (work order task ) in Ellipse
@@ -33,6 +36,7 @@ public class UpdateEllipseActivityThread implements Runnable {
 		logger.info("Initiates update Activities in Ellipse thread ....");
 		File file = new File("C:\\test-config\\updateActivityEllipseSet.csv");
 		CSVWriter.generateCSV(file, updateActivityEllipseSet.toArray());
+		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS,ReadProcessStatus.COMPLETED );
 	}
 
 }

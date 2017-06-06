@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.util.CacheManager;
+import au.com.wp.corp.p6.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.wsclient.auth.AuthenticationServicePortType;
 import au.com.wp.corp.p6.wsclient.auth.IntegrationFault;
+import au.com.wp.corp.p6.wsclient.constant.P6WSConstants;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
@@ -31,19 +33,24 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 	
 	private final String userPrincipal;
 	private  final String userCredential;
-	private final int p6DBInstance;
+	private final String p6DBInstance;
 
-	public AuthenticationService(final RequestTrackingId trackingId, final String endPoint , final String userPrincipal, final String userCredential, final int p6DBInstance) {
+	public AuthenticationService(final RequestTrackingId trackingId) {
 		super(trackingId);
-		this.endPoint = endPoint;
-		this.userPrincipal = userPrincipal;
-		this.userCredential = userCredential;
-		this.p6DBInstance = p6DBInstance;
+		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_AUTH_SERVICE_WSDL);
+		this.userPrincipal = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_USER_PRINCIPAL);
+		this.userCredential = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_USER_CREDENTIAL);
+		this.p6DBInstance = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_DB_INSTANCE);
 		
 	}
 
 	@Override
 	protected void doBefore() throws P6ServiceException {
+		
+		if ( null == endPoint || null == userPrincipal || null == userCredential || null == p6DBInstance){
+			throw new P6ServiceException("Authentication Service end point or user principal or user credential or DB instance is null ");
+		}
+		
 		URL wsdlURL = null;
 		try {
 			wsdlURL = new URL(endPoint);
@@ -65,8 +72,9 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 	protected Holder<Boolean> command() throws P6ServiceException {
 		boolean status;
 		try {
-			status = servicePort.login(userPrincipal, userCredential, p6DBInstance);
-		} catch (IntegrationFault e) {
+			final int dbInstance = Integer.parseInt(p6DBInstance);
+			status = servicePort.login(userPrincipal, userCredential, dbInstance);
+		} catch (IntegrationFault | NumberFormatException e) {
 			throw new P6ServiceException(e);
 		}
 		final Holder<Boolean> holder = new Holder<>(status);
