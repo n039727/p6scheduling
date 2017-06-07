@@ -50,7 +50,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 	
 	if(ctrl.metadata.todoList){
 		for (i=0; i<ctrl.metadata.todoList.length;i++) {
-			console.log("Type Id: " + ctrl.metadata.todoList[i].typeId);
+//			console.log("Type Id: " + ctrl.metadata.todoList[i].typeId);
 			if (ctrl.metadata.todoList[i].typeId == 1) {
 				ctrl.schedulingToDoList.push(ctrl.metadata.todoList[i].toDoName);
 			} else {
@@ -80,7 +80,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 				}
 				if (angular.isDefined(wo.workOrderIdDisplayArray) 
 						&& wo.workOrderIdDisplayArray.length > 0) {
-					ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, todo)] = [wo.workOrderIdDisplayArray[0]];	
+					wo.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, todo)] = [wo.workOrderIdDisplayArray[0]];	
 				}
 			} else {
 				var index = findToDo(wo.toDoItems, todo);
@@ -88,7 +88,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 					wo.toDoItems.splice(index, 1);
 					console.log('WO after removing To Do: ' + JSON.stringify(wo));
 				}
-				ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, todo)] = [];
+				wo.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, todo)] = [];
 			}
 	};
 	
@@ -118,7 +118,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 		// populate updated to do assignments
 		if (wo && wo.toDoItems) {
 			for (var i = 0; i< wo.toDoItems.length; i++) {
-				var boundWorkOrders = ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, wo.toDoItems[i].toDoName)];
+				var boundWorkOrders = wo.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, wo.toDoItems[i].toDoName)];
 				if (boundWorkOrders) {
 					if (boundWorkOrders.indexOf('ALL') > -1) {
 						boundWorkOrders = wo.workOrders;
@@ -158,7 +158,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
+			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== ""){
 				ctrl.successSavedMsg = "Package has been saved successfully";
 			}else{
 				ctrl.successSavedMsg = "Work order task has been saved successfully";
@@ -223,7 +223,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 	ctrl.updateBindingVarOnSelect= function(wo, todoName) {
 		console.log('update binding var is called: ' + todoName);
 		var key = ctrl.getWorkOrderToDoKey(wo, todoName);
-		var selectedValArray = ctrl.toDoBindingVar[key];
+		var selectedValArray = wo.toDoBindingVar[key];
 		if (angular.isDefined(selectedValArray) && selectedValArray.length > 0) {
 			var allIndex = selectedValArray.indexOf('ALL');
 			if (allIndex > -1 && allIndex < selectedValArray.length - 1) {
@@ -234,7 +234,8 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 			} else if (selectedValArray.length == wo.workOrders.length) {
 				selectedValArray = ['ALL'];
 			}
-			ctrl.toDoBindingVar[key] = selectedValArray;
+			wo.toDoBindingVar[key] = selectedValArray;
+
 		}else{
 			var enableKey = ctrl.getWorkOrderToDoKeyForCheckBox(wo, todoName);
 			if(angular.isDefined($('#'+'enable-' + enableKey))){
@@ -243,10 +244,10 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 		}
 	}
 	
-	ctrl.toDoBindingVar = {};
+//	ctrl.toDoBindingVar = {};
 	
 	ctrl.populateToDoBindings = function(workOrder) {
-			ctrl.toDoBindingVar = {};
+		workOrder.toDoBindingVar = {};
 			if (workOrder && workOrder.toDoItems) {
 				for (var i = 0; i< workOrder.toDoItems.length; i++) {
 					var boundWorkOrders = workOrder.toDoItems[i].workOrders;
@@ -255,10 +256,10 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 								boundWorkOrders = ['ALL'];
 						}
 					}
-					ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(workOrder, workOrder.toDoItems[i].toDoName)] = boundWorkOrders;
+					workOrder.toDoBindingVar[ctrl.getWorkOrderToDoKey(workOrder, workOrder.toDoItems[i].toDoName)] = boundWorkOrders;
 				}
 			}
-			console.log("toDoBindingVar: " + JSON.stringify(ctrl.toDoBindingVar));
+			console.log("toDoBindingVar: " + JSON.stringify(workOrder.toDoBindingVar));
 	}
 	
 	ctrl.getWorkOrderToDoKey = function(workOrder, todoName) {
@@ -271,13 +272,11 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 	}
 	ctrl.disbledDropdown = function(wo, todoName){
 		var key = ctrl.getWorkOrderToDoKey(wo, todoName);
-		if(angular.isDefined(ctrl.toDoBindingVar)){
-			var selectedValArray = ctrl.toDoBindingVar[key];
+		if(angular.isDefined(wo.toDoBindingVar)){
+			var selectedValArray = wo.toDoBindingVar[key];
 			if (angular.isDefined(selectedValArray) && selectedValArray.length > 0) {
-//				console.log("selectedValArray >: " + JSON.stringify(selectedValArray));
 				return true;
 			}else if(angular.isDefined(selectedValArray) && selectedValArray.length == 0){
-//				console.log("selectedValArray =: " + JSON.stringify(selectedValArray));
 				return false;
 				
 			}
@@ -285,6 +284,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 	};
 	
 	ctrl.populateWorkOrderDisplayList = function(wo) {
+		console.log('called ctrl.populateWorkOrderDisplayList function : ' + JSON.stringify(wo));
 		wo.workOrderIdDisplayArray = [];
 		if (angular.isDefined(wo) 
 				&& angular.isDefined(wo.workOrders)) {

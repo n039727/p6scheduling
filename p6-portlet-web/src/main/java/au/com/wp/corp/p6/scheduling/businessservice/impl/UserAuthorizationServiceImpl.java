@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import au.com.wp.corp.p6.scheduling.auth.UserRoleExtractor;
 import au.com.wp.corp.p6.scheduling.businessservice.UserAuthorizationService;
 import au.com.wp.corp.p6.scheduling.dao.FunctionAccessDAO;
 import au.com.wp.corp.p6.scheduling.dto.UserAuthorizationDTO;

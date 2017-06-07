@@ -25,8 +25,8 @@ public class ReadUDFValueServiceCall extends UDFValueServiceCall<List<UDFValue>>
 	
 	private String filter;
 	private String orderBy;
-	public ReadUDFValueServiceCall(final RequestTrackingId trackingId, String endPoint, String filter, String orderBy) {
-		super(trackingId, endPoint);
+	public ReadUDFValueServiceCall(final RequestTrackingId trackingId, String filter, String orderBy) {
+		super(trackingId);
 		this.filter = filter;
 		this.orderBy = orderBy;
 	}
@@ -42,6 +42,7 @@ public class ReadUDFValueServiceCall extends UDFValueServiceCall<List<UDFValue>>
 		fields.add(UDFValueFieldType.UDF_TYPE_SUBJECT_AREA);
 		fields.add(UDFValueFieldType.UDF_TYPE_TITLE);
 		fields.add(UDFValueFieldType.TEXT);
+		fields.add(UDFValueFieldType.DOUBLE);
 		List<UDFValue> retValues = null;
 		try {
 			logger.debug("calling readUDFValues with filter == {} and fields {}",filter,fields);

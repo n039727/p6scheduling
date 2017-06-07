@@ -33,6 +33,11 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>au.com.wp.corp.sys.corporate.common</groupId>
+			<artifactId>soa-support</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
 			<groupId>net.sf.supercsv</groupId>
 			<artifactId>super-csv</artifactId>
 			<version>2.1.0</version>
@@ -171,7 +176,7 @@
 			<version>2.0.1</version>
 		</dependency>
 
-		
+
 
 		<!-- Aspect J -->
 		<dependency>

@@ -24,9 +24,8 @@ public class CreateActivityServiceCall extends ActivityServiceCall<List<Integer>
 
 	private final List<Activity> activities;
 
-	public CreateActivityServiceCall(final RequestTrackingId trackingId, final String endPoint,
-			final List<Activity> activities) {
-		super(trackingId, endPoint);
+	public CreateActivityServiceCall(final RequestTrackingId trackingId, final List<Activity> activities) {
+		super(trackingId);
 		this.activities = activities;
 	}
 

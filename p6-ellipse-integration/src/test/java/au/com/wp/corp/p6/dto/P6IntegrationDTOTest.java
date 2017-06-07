@@ -50,14 +50,29 @@ public class P6IntegrationDTOTest {
 		Assert.assertEquals("E123", activityDTO.getEquipmentCodeUDF());
 		Assert.assertEquals("12345", activityDTO.getEquipmentNoUDF());
 		Assert.assertEquals("Willington St.", activityDTO.getLocationInStreetUDF());
-		//Assert.assertEquals(20.0, activityDTO.getOriginalDuration());
-		//Assert.assertEquals(20.0, activityDTO.getRemainingDuration());
+		Assert.assertEquals(20.0, activityDTO.getOriginalDuration(),0);
+		Assert.assertEquals(20.0, activityDTO.getRemainingDuration(),0);
 		Assert.assertEquals("P123", activityDTO.getPickIdUDF());
 		Assert.assertEquals(date.toString(), activityDTO.getPlannedStartDate());
 		Assert.assertEquals(date.toString(), activityDTO.getRequiredByDateUDF());
 		Assert.assertEquals("S123", activityDTO.getSlippageCodeUDF());
 		Assert.assertEquals("Test Task", activityDTO.getTaskDescriptionUDF());
 		Assert.assertEquals("In Progress", activityDTO.getTaskUserStatusUDF());
+		
+	}
+	
+	@Test
+	public void testEllipseActivityDTO (){
+		EllipseActivityDTO ellipseDTO = new EllipseActivityDTO();
+		ellipseDTO.setAddress("Perth");
+		ellipseDTO.setEGI("EGI123");
+		ellipseDTO.setEllipseStandardJob("STJOb");
+		ellipseDTO.setEquipmentCode("EQ123");
+		ellipseDTO.setEquipmentNo("EN123");
+		ellipseDTO.setEstimatedLabourHours("8.0");
+		ellipseDTO.setFeeder("Feeder");
+		ellipseDTO.setJdCode("JD123");
+		ellipseDTO.setLocationInStreet("LocationStreet");
 		
 	}
 	

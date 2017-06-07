@@ -31,7 +31,7 @@ import org.springframework.web.util.NestedServletException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import au.com.wp.corp.p6.businessservice.impl.P6SchedulingBusinessServiceImpl;
+import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -53,7 +53,7 @@ public class PortletServiceControllerTest {
 	PortletServiceEndpointImpl portletServiceEndpoint;
 
 	@Mock
-	private P6SchedulingBusinessServiceImpl p6SchedulingBusinessService;
+	private P6SchedulingBusinessService p6SchedulingBusinessService;
 
 	@Mock
 	Validator validator;

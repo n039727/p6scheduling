@@ -24,9 +24,8 @@ public class UpdateActivityServiceCall extends ActivityServiceCall<Boolean> {
 
 	private final List<Activity> activities;
 
-	public UpdateActivityServiceCall(final RequestTrackingId trackingId, final String endPoint,
-			final List<Activity> activities) {
-		super(trackingId, endPoint);
+	public UpdateActivityServiceCall(final RequestTrackingId trackingId, final List<Activity> activities) {
+		super(trackingId);
 		this.activities = activities;
 	}
 

@@ -3,6 +3,7 @@
  */
 package au.com.wp.corp.p6.threads;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.com.wp.corp.p6.csv.CSVWriter;
 import au.com.wp.corp.p6.dao.P6EllipseDAO;
 import au.com.wp.corp.p6.dto.EllipseActivityDTO;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
@@ -32,7 +34,7 @@ public class ReadEllipseThread implements Runnable {
 
 	public ReadEllipseThread(final P6EllipseDAO p6EllipseDAO) {
 		this.p6EllipseDAO = p6EllipseDAO;
-		CacheManager.getSystemReadStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.STARTED);
+		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.STARTED);
 	}
 
 	/**
@@ -65,7 +67,7 @@ public class ReadEllipseThread implements Runnable {
 			}
 		} else 
 		{
-			CacheManager.getSystemReadStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.FAILED);
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.FAILED);
 		}
 	}
 
@@ -80,10 +82,12 @@ public class ReadEllipseThread implements Runnable {
 			}
 			logger.debug("Size of activities from Ellipse # {}", activities.size());
 			logger.debug("Time taken to read record from Ellipse # {} ", System.currentTimeMillis() - startTime);
-			CacheManager.getSystemReadStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.COMPLETED);
+			File file = new File("C:\\test-config\\ReadActivityEllipseSet.csv");
+			CSVWriter.generateCSV(file, activities.values().toArray());
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.COMPLETED);
 		} catch (P6DataAccessException e) {
 			logger.error("An error occurs while reading record from Ellipse : ", e);
-			CacheManager.getSystemReadStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.FAILED);
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.FAILED);
 		}
 	}
 
