@@ -26,6 +26,10 @@ public class DateUtils {
 	
 	private final  SimpleDateFormat DATE_FORMAT_DD_MM_YYYY_TIMESTAMP = new SimpleDateFormat("dd-MM-yyyy_hhmmssMs");
 	
+	private final  SimpleDateFormat DATE_FORMAT_DDMMYYYYTIMESTAMP = new SimpleDateFormat("ddMMyyyyhhmmssMs");
+	
+	private final  SimpleDateFormat DATE_FORMAT_DDMMYYYYT = new SimpleDateFormat("ddMMyyyy");
+	
 	
 	public String convertDate ( String date )  {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -98,11 +102,26 @@ public class DateUtils {
 		
 	}
 	
+	public  String getCurrentDateWithTimeStampNoSeparator (){
+		return DATE_FORMAT_DDMMYYYYTIMESTAMP.format(new Date());
+		
+	}
+	
 	
 	public  Date toDateFromDD_MM_YYYY (final String dtString ){
 		Date dt = null;
 		try {
 			dt = DATE_FORMAT_DD_MM_YYYY.parse(dtString);
+		} catch (ParseException e) {
+			logger.error("Error parsing date: " + dtString, e);
+		}
+		return dt;
+	}
+	
+	public  Date toDateFromDDMMYYYY (final String dtString ){
+		Date dt = null;
+		try {
+			dt = DATE_FORMAT_DDMMYYYYT.parse(dtString);
 		} catch (ParseException e) {
 			logger.error("Error parsing date: " + dtString, e);
 		}
