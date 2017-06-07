@@ -108,7 +108,15 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 		}
 		logger.info("Search String # crews - {} , start date - {}, workOrderId - {}", request.getBody().getCrewList(),
 				request.getBody().getFromDate(), request.getBody().getWorkOrderId());
-		return new ResponseEntity<List<WorkOrder>>(p6BusinessService.search(request.getBody()), HttpStatus.OK);
+		List<WorkOrder> workOrders = null;
+		try {
+			workOrders = p6BusinessService.search(request.getBody());
+			p6BusinessService.updateTasksAndExecutionPackageInP6AndDB(); //async call
+		} catch (P6BaseException e) {
+			p6BusinessService.clearApplicationMemory();
+			return new ResponseEntity<List<WorkOrder>>(workOrders, HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<List<WorkOrder>>(workOrders, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/fetchMetReqData", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)

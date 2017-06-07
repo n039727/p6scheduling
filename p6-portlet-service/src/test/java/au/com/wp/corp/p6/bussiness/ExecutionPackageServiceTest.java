@@ -23,8 +23,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.businessservice.impl.ExecutionPackageServiceImpl;
-import au.com.wp.corp.p6.businessservice.impl.P6SchedulingBusinessServiceImpl;
 import au.com.wp.corp.p6.dataservice.impl.ExecutionPackageDaoImpl;
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
@@ -60,7 +60,7 @@ public class ExecutionPackageServiceTest {
 	DateUtils dateUtils;
 	
 	@Mock
-	P6SchedulingBusinessServiceImpl p6SchedulingService;
+	P6SchedulingBusinessService p6SchedulingService;
 	@Mock
 	P6WSClient p6wsClient;
 	@Rule

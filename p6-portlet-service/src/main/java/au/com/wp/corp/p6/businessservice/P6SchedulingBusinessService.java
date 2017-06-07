@@ -21,5 +21,7 @@ public interface P6SchedulingBusinessService extends P6BusinessExceptionParser{
 	public List<WorkOrder> search(WorkOrderSearchRequest input) throws P6BusinessException;
 	public List<Crew> retrieveCrews(ResourceSearchRequest input) throws P6BusinessException;
 	List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException;
+	void updateTasksAndExecutionPackageInP6AndDB() throws P6BusinessException;
+	void clearApplicationMemory();
 
 }
