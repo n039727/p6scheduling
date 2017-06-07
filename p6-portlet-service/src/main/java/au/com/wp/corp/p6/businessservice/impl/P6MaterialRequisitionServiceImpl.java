@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +37,10 @@ public class P6MaterialRequisitionServiceImpl implements P6MaterialRequisitionSe
 			if (mat != null && mat.size() > 0) {
 				mat.forEach(requisition -> {
 					if (result.containsKey(wo)) {
-						result.get(requisition.getWorkOrder()).add(requisition.getId().getRequisitionNo());
+						result.get(requisition.getWorkOrder()).add(trimLastFourZeros(requisition.getId().getRequisitionNo()));
 					} else {
 						List<String> strList = new ArrayList<String>();
-						strList.add(requisition.getId().getRequisitionNo());
+						strList.add(trimLastFourZeros(requisition.getId().getRequisitionNo()));
 						result.put(wo, strList);
 					}
 				});
@@ -54,7 +54,16 @@ public class P6MaterialRequisitionServiceImpl implements P6MaterialRequisitionSe
 		response.setMaterialRequisitionMap(result);
 		return response;
 	}
-
+	private String trimLastFourZeros(String str){
+		String trimStr = "";
+		if(str != null){
+			int index = str.lastIndexOf(" 0000");
+			if(index > 0){
+				trimStr = str.substring(0,index);
+			}
+		}
+		return trimStr;
+	}
 	private List<MaterialRequisition> findMaterialRequisition(final List<MaterialRequisition> list, final String woId) {
 		return list.stream().filter(p -> p.getWorkOrder().equals(woId)).collect(Collectors.toList());
 	}

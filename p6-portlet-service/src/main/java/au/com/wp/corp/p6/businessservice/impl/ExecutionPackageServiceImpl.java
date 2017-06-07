@@ -281,7 +281,8 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	}
 
 	private String createExceutionPackageId() {
-		final String execPckgId = dateUtils.getCurrentDateWithTimeStamp();
+		//final String execPckgId = dateUtils.getCurrentDateWithTimeStamp();
+		final String execPckgId = dateUtils.getCurrentDateWithTimeStampNoSeparator();
 		logger.info("execution package id has been created # {} ", execPckgId);
 		return execPckgId;
 	}
