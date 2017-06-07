@@ -23,6 +23,7 @@ import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
@@ -62,6 +63,10 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	@Autowired
 	P6WSClient p6wsClient;
 	
+	@Autowired
+	UserTokenRequest userTokenRequest;
+	
+	
 	private List<ExecutionPackageDTO> executionPackageDTOFoP6List;
 	private List<String> workOrdersForExcnPkgDelP6 = new ArrayList<String>();
 	@Override
@@ -90,9 +95,13 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	 */
 	@Transactional
 	@Override
-	public ExecutionPackageDTO createOrUpdateExecutionPackage(ExecutionPackageDTO execPackgDTO, String userName)
+	public ExecutionPackageDTO createOrUpdateExecutionPackage(ExecutionPackageDTO execPackgDTO)
 			throws P6BusinessException {
-		logger.info("calling create or update execution package with # {}, and user name# {}", execPackgDTO, userName);
+		String userName = "Test User";
+		if(userTokenRequest != null && userTokenRequest.getUserPrincipal() != null){
+			userName = userTokenRequest.getUserPrincipal();
+		}
+		logger.info("calling create or update execution package with # {}, and user name# {}", execPackgDTO, userName );
 		execPackgDTO.setExctnPckgName(createExceutionPackageId());
 		ExecutionPackage executionPackage = new ExecutionPackage();
 		executionPackage.setExctnPckgNam(execPackgDTO.getExctnPckgName());
@@ -172,20 +181,21 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		List<ExecutionPackageDTO> execPkgdtos = new ArrayList<ExecutionPackageDTO>();
 		execPkgdtos.add(execPackgDTO);
 		executionPackageDTOFoP6List = execPkgdtos;
-		updateP6ForExecutionPackage(execPkgdtos);
+		updateP6ForExecutionPackage();
 		return execPackgDTO;
 
 	}
 	
+	@Override
 	@Async
-	private void updateP6ForExecutionPackage(List<ExecutionPackageDTO> execPkgdtos) {
+	public void updateP6ForExecutionPackage() {
 		logger.debug("Starting to execution package update with execPkgdtos "
-				+ execPkgdtos);
+				+ executionPackageDTOFoP6List);
 		List<ExecutionPackageCreateRequest> request = new ArrayList<>();
-		if (execPkgdtos == null) {
+		if (executionPackageDTOFoP6List == null) {
 			return;
 		}
-		for (ExecutionPackageDTO executionPackageDTOForP6 : execPkgdtos) {
+		for (ExecutionPackageDTO executionPackageDTOForP6 : executionPackageDTOFoP6List) {
 
 			if (executionPackageDTOForP6.getWorkOrders() != null
 					&& (!executionPackageDTOForP6.getWorkOrders().isEmpty())) {
@@ -230,6 +240,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			}
 
 		}
+		executionPackageDTOFoP6List.clear();
 		executionPackageDTOFoP6List = null;
 		/*List<String>  workorderIds = getWorkOrdersForExcnPkgDelP6();
 		if(workorderIds != null && workorderIds.size() >0){

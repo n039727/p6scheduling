@@ -749,6 +749,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		else{
 			dbTask.setActioned(ACTIONED_Y);
 		}
+		String  userName = "Test User";
+		if(userTokenRequest != null && userTokenRequest.getUserPrincipal() != null){
+			userName = userTokenRequest.getUserPrincipal();
+		}
+		dbTask.setCrtdUsr(userName);
+		dbTask.setLstUpdtdUsr(userName);
 		return dbTask;
 	}
 

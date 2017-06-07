@@ -123,7 +123,7 @@ public class ExecutionPackageServiceTest {
 		execPackage.setTasks(tasks);
 		Mockito.when(dateUtils.getCurrentDateWithTimeStamp()).thenReturn("12345678");
 		Mockito.when(executionPckgDao.createOrUpdateExecPackage(execPackage)).thenReturn(true);
-		execPckg = execPckgService.createOrUpdateExecutionPackage(execPckg, "Test User");
+		execPckg = execPckgService.createOrUpdateExecutionPackage(execPckg);
 
 		Assert.assertNotNull(execPckg);
 
@@ -163,7 +163,7 @@ public class ExecutionPackageServiceTest {
 		execPackage.setTasks(tasks);
 		Mockito.when(dateUtils.getCurrentDateWithTimeStamp()).thenReturn("12345678");
 		Mockito.when(executionPckgDao.createOrUpdateExecPackage(execPackage)).thenReturn(true);
-		execPckg = execPckgService.createOrUpdateExecutionPackage(execPckg, "Test User");
+		execPckg = execPckgService.createOrUpdateExecutionPackage(execPckg);
 
 		Assert.assertNotNull(execPckg);
 
@@ -202,7 +202,7 @@ public class ExecutionPackageServiceTest {
 		execPackage.setTasks(tasks);
 
 		Mockito.when(executionPckgDao.createOrUpdateExecPackage(execPackage)).thenReturn(true);
-		execPckg = execPckgService.createOrUpdateExecutionPackage(execPckg, "Test User");
+		execPckg = execPckgService.createOrUpdateExecutionPackage(execPckg);
 
 		Assert.assertNotNull(execPckg);
 

@@ -10,7 +10,6 @@ import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
-import au.com.wp.corp.p6.exception.P6DataAccessException;
 
 /**
  * ExecutionPackageService performs following tasks regarding the execution
@@ -31,7 +30,7 @@ public interface IExecutionPackageService {
 	 * @return ExecutionPackageDTO
 	 * @throws P6BusinessException
 	 */
-	public ExecutionPackageDTO createOrUpdateExecutionPackage(ExecutionPackageDTO executionPackageDTO, String user) throws P6BusinessException;
+	public ExecutionPackageDTO createOrUpdateExecutionPackage(ExecutionPackageDTO executionPackageDTO) throws P6BusinessException;
 
 	List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6BaseException;
 
@@ -42,5 +41,7 @@ public interface IExecutionPackageService {
 	void setExecutionPackageDTDOFoP6(List<ExecutionPackageDTO> executionPackageDTDOFoP6);
 
 	List<ExecutionPackageDTO> getExecutionPackageDTDOFoP6();
+
+	void updateP6ForExecutionPackage();
 
 }
