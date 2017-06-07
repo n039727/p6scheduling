@@ -50,7 +50,7 @@
 											</td>
 											<td>
 												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
-													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
+													ng-model="wo.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
 													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
 													ng-disabled="!$ctrl.disbledDropdown(wo, todo)"
 													multiple
@@ -77,7 +77,7 @@
 											</td>
 											<td>
 												<oi-select oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
-													ng-model="$ctrl.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
+													ng-model="wo.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
 													ng-disabled="!$ctrl.disbledDropdown(wo, todo)"
 													data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
 													multiple

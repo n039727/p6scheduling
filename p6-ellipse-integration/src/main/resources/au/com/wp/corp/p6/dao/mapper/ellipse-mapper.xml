@@ -23,49 +23,124 @@
 		<result property='upStreamSwitch' column='upstream_switch' />
 	</resultMap>
 	<select id="readElipseWorkorderDetails" resultMap="workOrderResultMap">
-		select a.work_order || a.wo_task_no as WOT, a.work_group as
-		work_group, b.wo_desc, 'Not Started' as Activity_Status,
-		case when trim(a.plan_str_date) is null then null else
-		substr(a.plan_str_date, 7,2) || '/' || substr(a.plan_str_date, 5, 2)
-		||'/' || substr(a.plan_str_date, 1, 4) || ' 08:00:00' end as
-		plan_str_date,
-		case when trim(a.plan_str_date) is null then null else
-		substr(a.plan_str_date, 7,2) || '/' || substr(a.plan_str_date, 5, 2)
-		||'/' || substr(a.plan_str_date, 1, 4) || ' 08:00:00' end as
-		ellipe_start_date,
-		a.job_desc_code, a.task_status_u, b.equip_no as Equipment_no, c.plant_no,
-		c.equip_grp_id as EGI, c.item_name_code as Equip_Item_code,
-		round(case when a.tsk_dur_hours > 0 then tsk_dur_hours else case when
-		est_lab_hrs > 0 then est_lab_hrs / 5 else 8 end end) as
-		original_duration_hours,
-		round(case when a.tsk_dur_hours > 0 then tsk_dur_hours else case when
-		est_lab_hrs > 0 then est_lab_hrs / 5 else 8 end end) as
-		remaining_dur_hours,
+		SELECT a.work_order || a.wo_task_no AS WOT,
+		a.work_group AS work_group,
+		b.wo_desc,
+		CASE
+		WHEN (a.task_status_m = 'C')
+		THEN
+		'Completed'
+		ELSE
+		'Not Started'
+		END
+		AS Activity_Status,
+		CASE
+		WHEN TRIM (a.plan_str_date) IS NULL
+		THEN
+		NULL
+		ELSE
+		SUBSTR (a.plan_str_date, 7, 2)
+		|| '/'
+		|| SUBSTR (a.plan_str_date, 5, 2)
+		|| '/'
+		|| SUBSTR (a.plan_str_date, 1, 4)
+		|| ' 08:00:00'
+		END
+		AS plan_str_date,
+		CASE
+		WHEN TRIM (a.plan_str_date) IS NULL
+		THEN
+		NULL
+		ELSE
+		SUBSTR (a.plan_str_date, 7, 2)
+		|| '/'
+		|| SUBSTR (a.plan_str_date, 5, 2)
+		|| '/'
+		|| SUBSTR (a.plan_str_date, 1, 4)
+		|| ' 08:00:00'
+		END
+		AS ellipe_start_date,
+		a.job_desc_code,
+		a.task_status_u,
+		b.equip_no AS Equipment_no,
+		c.plant_no,
+		c.equip_grp_id AS EGI,
+		c.item_name_code AS Equip_Item_code,
+		ROUND(CASE
+		WHEN a.tsk_dur_hours > 0
+		THEN
+		tsk_dur_hours
+		ELSE
+		CASE
+		WHEN est_lab_hrs > 0 THEN est_lab_hrs / 5
+		ELSE 8
+		END
+		END)
+		AS original_duration_hours,
+		ROUND(CASE
+		WHEN a.tsk_dur_hours > 0
+		THEN
+		tsk_dur_hours
+		ELSE
+		CASE
+		WHEN est_lab_hrs > 0 THEN est_lab_hrs / 5
+		ELSE 8
+		END
+		END)
+		AS remaining_dur_hours,
 		a.est_lab_hrs,
-		case when trim(b.req_by_date) is null then null else substr(b.req_by_date,
-		7,2) || '/' || substr(b.req_by_date, 5, 2) ||'/' ||
-		substr(b.req_by_date, 1, 4) || ' 08:00:00' end as req_by_date,
+		CASE
+		WHEN TRIM (b.req_by_date) IS NULL
+		THEN
+		NULL
+		ELSE
+		SUBSTR (b.req_by_date, 7, 2)
+		|| '/'
+		|| SUBSTR (b.req_by_date, 5, 2)
+		|| '/'
+		|| SUBSTR (b.req_by_date, 1, 4)
+		|| ' 08:00:00'
+		END
+		AS req_by_date,
 		b.std_job_no,
-		z.swsect_hv_fdr_nam as Feeder,
-		trim(z.equip_grp_id) || ' ' || z.location_desc as upstream_switch
-		from nell.msf623 a, nell.msf620 b, nell.msf600 c, (select d.equip_no,
-		swsect_hv_fdr_nam, e.equip_grp_id, f.location_desc from (
-		select equip_no, pick_id, swsect_hv_fdr_id, swsect_hv_fdr_nam,
-		swsect_nsw_nid, rpad('N' || swsect_nsw_nid, 30) as nodeId
-		from NDWu.DIST_LOCATION_ATTRIBUTE_DIM
-		where curr_flg = 'Y') d, nell.msf600 e, nell.msf011 f
-		where e.plant_no = d.nodeId
-		and e.location = f.location) z
-		where a.work_order = b.work_order
-		and b.equip_no = c.equip_no
-		and a.task_status_m = 'A'
-   <![CDATA[and a.job_desc_code <> 'D1']]>
+		z.swsect_hv_fdr_nam AS Feeder,
+		TRIM (z.equip_grp_id) || ' ' || z.location_desc AS upstream_switch,
+		a.WO_TASK_DESC AS Task_Description,
+		trim(d.STREET_NO) || ' ' || trim(d.STREET_NAME) || ' ' || trim(d.SUBURB) || ' ' ||
+		trim(d.TOWN_CITY) || ' ' || trim(d.COUNTY_SHIRE) || ' ' ||
+		trim(d.STATE) || ' ' || trim(d.ZIP_CODE) as address
+
+		FROM nell.msf623 a,
+		nell.msf620 b,
+		nell.msf600 c,
+		nell.msf011 d,
+		(SELECT d.equip_no,
+		swsect_hv_fdr_nam,
+		e.equip_grp_id,
+		f.location_desc
+		FROM (SELECT equip_no,
+		pick_id,
+		swsect_hv_fdr_id,
+		swsect_hv_fdr_nam,
+		swsect_nsw_nid,
+		RPAD ('N' || swsect_nsw_nid, 30) AS nodeId
+		FROM NDWu.DIST_LOCATION_ATTRIBUTE_DIM
+		WHERE curr_flg = 'Y') d, nell.msf600 e, nell.msf011 f
+		WHERE e.plant_no = d.nodeId AND e.location = f.location) z
+		WHERE a.work_order = b.work_order
+		AND b.equip_no = c.equip_no
+		and d.location = c.location
+		<![CDATA[AND (a.task_status_m = 'A' OR (a.task_status_m = 'C' AND a.COMPLETED_CODE
+		<> 'CX' AND a.CLOSED_DT IS NOT NULL AND
+		TO_DATE(trim(a.CLOSED_DT),'YYYYMMDD') >= ADD_MONTHS(trunc(sysdate),-2)))
+         and a.job_desc_code <> 'D1']]>
 		and z.equip_no (+) = b.equip_no
 		and a.work_group in (
 		<foreach item="item" index="index" collection="list"
 			separator=",">
 			'${item}'
-		</foreach>)
+		</foreach>
+		)
 		order by 1
 	</select>
 </mapper>

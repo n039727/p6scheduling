@@ -22,4 +22,8 @@ public interface P6EllipseIntegrationService {
 
 	public void clearApplicationMemory();
 
+	public boolean readUDFTypeMapping() throws P6BusinessException;
+
+	boolean readProjectWorkgroupMapping() throws P6BusinessException;
+
 }

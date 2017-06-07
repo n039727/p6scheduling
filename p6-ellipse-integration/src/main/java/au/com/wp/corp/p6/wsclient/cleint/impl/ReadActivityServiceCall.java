@@ -24,10 +24,10 @@ import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 public class ReadActivityServiceCall extends ActivityServiceCall<List<Activity>> {
 	private static final Logger logger = LoggerFactory.getLogger(ReadActivityServiceCall.class);
 	
-	private String filter;
+	private final String filter;
 	
-	public ReadActivityServiceCall(final RequestTrackingId trackingId, String endPoint, String filter) {
-		super(trackingId, endPoint);
+	public ReadActivityServiceCall(final RequestTrackingId trackingId, final String filter) {
+		super(trackingId);
 		this.filter = filter;
 	}
 

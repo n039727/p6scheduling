@@ -63,15 +63,62 @@ public class P6ActivityDTO  implements Serializable{
 	
 	private String upStreamSwitchUDF;
 	
-	private String estimatedLabourHoursUDF;
+	private double estimatedLabourHours;
+	
+	private int estimatedLabourHoursObjectId;
 	
 	private String workGroup;
 	
 	private int projectObjectId;
 	
-	private boolean executionPckgUDF = true;
+	private int primaryResorceObjectId;
+	
+	private String executionPckgUDF;
 	
 	
+
+	/**
+	 * @return the estimatedLabourHours
+	 */
+	public double getEstimatedLabourHours() {
+		return estimatedLabourHours;
+	}
+
+	/**
+	 * @param estimatedLabourHours the estimatedLabourHours to set
+	 */
+	public void setEstimatedLabourHours(double estimatedLabourHours) {
+		this.estimatedLabourHours = estimatedLabourHours;
+	}
+
+	/**
+	 * @return the estimatedLabourHoursObjectId
+	 */
+	public int getEstimatedLabourHoursObjectId() {
+		return estimatedLabourHoursObjectId;
+	}
+
+	/**
+	 * @param estimatedLabourHoursObjectId the estimatedLabourHoursObjectId to set
+	 */
+	public void setEstimatedLabourHoursObjectId(int estimatedLabourHoursObjectId) {
+		this.estimatedLabourHoursObjectId = estimatedLabourHoursObjectId;
+	}
+
+	/**
+	 * @return the primaryResorceObjectId
+	 */
+	public int getPrimaryResorceObjectId() {
+		return primaryResorceObjectId;
+	}
+
+	/**
+	 * @param primaryResorceObjectId the primaryResorceObjectId to set
+	 */
+	public void setPrimaryResorceObjectId(int primaryResorceObjectId) {
+		this.primaryResorceObjectId = primaryResorceObjectId;
+	}
+
 	/**
 	 * @return the activityObjectId
 	 */
@@ -324,19 +371,6 @@ public class P6ActivityDTO  implements Serializable{
 		this.upStreamSwitchUDF = upStreamSwitchUDF;
 	}
 
-	/**
-	 * @return the estimatedLabourHoursUDF
-	 */
-	public String getEstimatedLabourHoursUDF() {
-		return estimatedLabourHoursUDF;
-	}
-
-	/**
-	 * @param estimatedLabourHoursUDF the estimatedLabourHoursUDF to set
-	 */
-	public void setEstimatedLabourHoursUDF(String estimatedLabourHoursUDF) {
-		this.estimatedLabourHoursUDF = estimatedLabourHoursUDF;
-	}
 
 	/**
 	 * @return the workGroup
@@ -423,18 +457,17 @@ public class P6ActivityDTO  implements Serializable{
 		this.projectObjectId = projectObjectId;
 	}
 
-	
 	/**
 	 * @return the executionPckgUDF
 	 */
-	public boolean isExecutionPckgUDF() {
+	public String getExecutionPckgUDF() {
 		return executionPckgUDF;
 	}
 
 	/**
 	 * @param executionPckgUDF the executionPckgUDF to set
 	 */
-	public void setExecutionPckgUDF(boolean executionPckgUDF) {
+	public void setExecutionPckgUDF(String executionPckgUDF) {
 		this.executionPckgUDF = executionPckgUDF;
 	}
 

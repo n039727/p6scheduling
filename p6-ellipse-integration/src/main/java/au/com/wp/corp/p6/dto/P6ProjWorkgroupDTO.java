@@ -14,6 +14,8 @@ import java.io.Serializable;
 public class P6ProjWorkgroupDTO implements Serializable {
 
 	private int projectObjectId;
+	
+	private int primaryResourceObjectId;
 
 	private String projectName;
 
@@ -30,6 +32,19 @@ public class P6ProjWorkgroupDTO implements Serializable {
 	private String primaryResourceYN;
 
 
+	/**
+	 * @return the primaryResourceObjectId
+	 */
+	public int getPrimaryResourceObjectId() {
+		return primaryResourceObjectId;
+	}
+
+	/**
+	 * @param primaryResourceObjectId the primaryResourceObjectId to set
+	 */
+	public void setPrimaryResourceObjectId(int primaryResourceObjectId) {
+		this.primaryResourceObjectId = primaryResourceObjectId;
+	}
 
 	/**
 	 * @return the projectObjectId

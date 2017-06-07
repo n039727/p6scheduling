@@ -1,7 +1,7 @@
 /**
  * 
  */
-package au.com.wp.corp.p6.integration;
+package au.com.wp.corp.p6.dao;
 
 /**
  * @author N039126
