@@ -72,6 +72,7 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setTaskUserStatusUDF("MR");
 		activityDTO.setPickIdUDF("MH-PNJ 81");
 		activityDTO.setFeederUDF("E 316.0 SOUTH ST");
+		activityDTO.setAddressUDF("Perth WA");
 		activityDTO.setProjectObjectId(263779);
 		activities.add(activityDTO);
 		
@@ -118,6 +119,7 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setTaskUserStatusUDF("MR");
 		activityDTO.setPickIdUDF("MH-PNJ 81");
 		activityDTO.setFeederUDF("E 316.0 SOUTH ST");
+		activityDTO.setAddressUDF("Perth WA");
 		activityDTO.setProjectObjectId(263779);
 		activityDTO.setEstimatedLabourHours(8.0);
 		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
@@ -166,6 +168,7 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setExecutionPckgUDF("");
 		activityDTO.setPickIdUDF("MH-PNJ 812");
 		activityDTO.setFeederUDF("E 316.0 SOUTH ST1");
+		activityDTO.setAddressUDF("Perth WA");
 		activityDTO.setProjectObjectId(263779);
 		for ( P6ActivityDTO activityDTO2 : p6Activities )
 		{
@@ -181,15 +184,12 @@ public class P6WSClientImplIntegrationTest {
 
 	@Test
 	public void test_3_ReadActivities() throws P6ServiceException {
-		System.out.println("Reading activity test in P6");
 		p6Activities = p6WsclientImpl.readActivities();
 		Assert.assertNotNull(p6Activities);
 		
 		for ( P6ActivityDTO activityDTO : p6Activities)
 		{
-			System.out.println(activityDTO.getActivityId());
-			System.out.println("==================UDF Fields ========================================");
-			System.out.println("JD Code "+activityDTO.getActivityJDCodeUDF());
+			Assert.assertNotNull(activityDTO.getActivityId());
 		}
 	}
 
@@ -209,17 +209,28 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setWorkGroup("MONT1");
 		activityDTO.setOriginalDuration(33);
 		activityDTO.setRemainingDuration(33);
-		activityDTO.seteGIUDF("TX_LINE_OH");
-		activityDTO.setEllipseStandardJobUDF("KT1408");
+		activityDTO.setEstimatedLabourHours(35);
+		activityDTO.seteGIUDF("TX_LINE_OH_1");
+		activityDTO.setEllipseStandardJobUDF("KT1409");
+		activityDTO.setActivityJDCodeUDF("EA1");
+		activityDTO.setEquipmentNoUDF("4700218");
+		activityDTO.setEquipmentCodeUDF("PINT");
+		activityDTO.setRequiredByDateUDF("2017-07-30T08:00:00");
+		activityDTO.setUpStreamSwitchUDF("DOF 41876061");
+		activityDTO.setTaskDescriptionUDF("Test task desc1");
+		activityDTO.setTaskUserStatusUDF("MR1");
+		activityDTO.setExecutionPckgUDF("");
+		activityDTO.setPickIdUDF("MH-PNJ 812");
+		activityDTO.setFeederUDF("E 316.0 SOUTH ST1");
+		activityDTO.setAddressUDF("Perth WA");
 		activityDTO.setProjectObjectId(263779);
-		activities.add(activityDTO);
-		System.out.println(p6Activities);
+		
 		for ( P6ActivityDTO activityDTO2 : p6Activities )
 		{
 			if ( activityDTO.getActivityId().equals(activityDTO2.getActivityId()))
 			activityDTO.setActivityObjectId(activityDTO2.getActivityObjectId());
 		}
-		
+		activities.add(activityDTO);
 		p6WsclientImpl.deleteActivities(activities);
 		
 		

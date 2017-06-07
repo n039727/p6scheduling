@@ -136,5 +136,7 @@ public interface P6WSConstants {
 	public static final String  FOREIGN_OBJECT_ID = "ForeignObjectId";
 	
 	public static final String  ACTIVITY_OBJECT_ID = "ActivityObjectId";
+	
+	public static final String ACTIVITY_LIST_SIZE_TO_PROCESS_IN_P6 = "ACTIVITY_LIST_SIZE_TO_PROCESS_IN_P6";
 
 }

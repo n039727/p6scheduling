@@ -227,6 +227,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			try {
 				Thread.currentThread().sleep(sleepTimeLong);
 			} catch (InterruptedException e) {
+				logger.error("the current thread has been interupted while reading ellipse and P6");
 				throw new P6BusinessException("Current thread gets interrupted ", e);
 			}
 
@@ -321,6 +322,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			try {
 				Thread.currentThread().sleep(sleepTimeLong);
 			} catch (InterruptedException e) {
+				logger.error("the current thread has been interupted while writting ellipse and P6");
 				throw new P6BusinessException("Current thread gets interrupted ", e);
 			}
 

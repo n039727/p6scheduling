@@ -55,7 +55,7 @@ public class EllipseIntegrationTest {
 
 		final String txId = transactionService.beginTransaction();
 
-		WorkOrderDTO workOrderDTO = new WorkOrderDTO().withNo("Y0043072").withPrefix("Y");
+		WorkOrderDTO workOrderDTO = new WorkOrderDTO().withNo("04790653");
 
 		List<WorkOrderServiceReadRequestDTO> readReqs = new ArrayList<>();
 		WorkOrderServiceReadRequestDTO readReq = new WorkOrderServiceReadRequestDTO();
