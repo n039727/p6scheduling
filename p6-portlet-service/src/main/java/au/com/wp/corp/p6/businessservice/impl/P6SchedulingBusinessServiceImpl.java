@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.ResourceDetailDAO;
-import au.com.wp.corp.p6.dataservice.TaskDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
@@ -57,8 +56,7 @@ import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService {
 
 	private static final Logger logger = LoggerFactory.getLogger(P6SchedulingBusinessServiceImpl.class);
-	@Autowired
-	TaskDAO taskDAO;
+	
 	@Autowired
 	TodoDAO todoDAO;
 	@Autowired
@@ -82,6 +80,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	@Autowired
 	ResourceDetailDAO resourceDetailDAO;
+	
 	Map<String, List<String>> depotCrewMap = new HashMap<String,List<String>>();
 
 	
