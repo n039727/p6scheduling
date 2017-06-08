@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.util.CacheManager;
 import au.com.wp.corp.p6.util.P6ReloadablePropertiesReader;
-import au.com.wp.corp.p6.wsclient.constant.P6WSConstants;
+import au.com.wp.corp.p6.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
@@ -44,7 +44,7 @@ public class UDFTypeServiceCall extends AbstractSOAPCall<List<UDFType>> {
 
 	public UDFTypeServiceCall(final RequestTrackingId trackingId, final String filter) {
 		super(trackingId);
-		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_UDF_TYPE_SERVICE_WSDL);
+		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_UDF_TYPE_SERVICE_WSDL);
 		this.filter = filter;
 	}
 

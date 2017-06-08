@@ -21,7 +21,7 @@ import au.com.wp.corp.p6.util.CacheManager;
 import au.com.wp.corp.p6.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.wsclient.activity.ActivityPortType;
 import au.com.wp.corp.p6.wsclient.activity.ActivityService;
-import au.com.wp.corp.p6.wsclient.constant.P6WSConstants;
+import au.com.wp.corp.p6.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
@@ -39,7 +39,7 @@ public abstract class ActivityServiceCall<T> extends AbstractSOAPCall<T> {
 	
 	public ActivityServiceCall(final RequestTrackingId trackingId) {
 		super(trackingId);
-		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_ACTIVITY_SERVICE_WSDL);
+		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_ACTIVITY_SERVICE_WSDL);
 	}
 
 	@Override

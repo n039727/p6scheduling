@@ -34,6 +34,7 @@ public class P6IntegrationDTOTest {
 		activityDTO.setLocationInStreetUDF("Willington St.");
 		activityDTO.setRemainingDuration(20.0);
 		activityDTO.setOriginalDuration(20.0);
+		activityDTO.setEstimatedLabourHours(20.0);
 		activityDTO.setPickIdUDF("P123");
 		activityDTO.setPlannedStartDate(date.toString());
 		activityDTO.setRequiredByDateUDF(date.toString());
@@ -58,7 +59,20 @@ public class P6IntegrationDTOTest {
 		Assert.assertEquals("S123", activityDTO.getSlippageCodeUDF());
 		Assert.assertEquals("Test Task", activityDTO.getTaskDescriptionUDF());
 		Assert.assertEquals("In Progress", activityDTO.getTaskUserStatusUDF());
+		Assert.assertNotNull(activityDTO.hashCode());
 		
+		
+		P6ActivityDTO activityDTO1 = new P6ActivityDTO();
+		activityDTO1.setActivityId(activityDTO.getActivityId());
+		
+		Assert.assertTrue(activityDTO.equals(activityDTO1));
+		Assert.assertTrue(activityDTO.equals(activityDTO));
+		Assert.assertFalse(activityDTO.equals(null));
+		Assert.assertFalse(activityDTO.equals(new Object()));
+		activityDTO1.setActivityId("12234");
+		Assert.assertFalse(activityDTO.equals(activityDTO1));
+		activityDTO1.setActivityId(null);
+		Assert.assertFalse(activityDTO.equals(activityDTO1));
 	}
 	
 	@Test
@@ -73,9 +87,28 @@ public class P6IntegrationDTOTest {
 		ellipseDTO.setFeeder("Feeder");
 		ellipseDTO.setJdCode("JD123");
 		ellipseDTO.setLocationInStreet("LocationStreet");
+		ellipseDTO.setSlippageCode("SP123");
 		
 	}
 	
+	@Test
+	public void testP6ProjWorkgroupDTO (){
+		P6ProjWorkgroupDTO projWorkgroupDTO = new P6ProjWorkgroupDTO();
+		projWorkgroupDTO.setRoleId(123);
+		projWorkgroupDTO.setResourceName("Test resource");
+		projWorkgroupDTO.setRoleName("test role");
+		projWorkgroupDTO.setPrimaryResourceYN("Y");
+		
+		Assert.assertEquals(123, projWorkgroupDTO.getRoleId());
+		Assert.assertEquals("Test resource", projWorkgroupDTO.getResourceName());
+		Assert.assertEquals("test role", projWorkgroupDTO.getRoleName());
+		Assert.assertEquals("Y", projWorkgroupDTO.getPrimaryResourceYN());
+	}
 	
-	
+	@Test
+	public void testUDFTypeDTO (){
+		UDFTypeDTO udfType = new UDFTypeDTO();
+		udfType.setDataType("Text");
+		Assert.assertEquals("Text", udfType.getDataType());
+	}
 }
