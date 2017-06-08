@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -18,12 +18,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.mincom.enterpriseservice.ellipse.dependant.dto.WorkOrderDTO;
-import com.mincom.enterpriseservice.ellipse.workorder.WorkOrderServiceReadReplyDTO;
-import com.mincom.enterpriseservice.ellipse.workorder.WorkOrderServiceReadRequestDTO;
 import com.mincom.enterpriseservice.ellipse.workordertask.EnterpriseServiceOperationException;
+import com.mincom.enterpriseservice.ellipse.workordertask.WorkOrderTaskServiceModifyReplyDTO;
 import com.mincom.enterpriseservice.ellipse.workordertask.WorkOrderTaskServiceModifyRequestDTO;
-
-import au.com.wp.corp.p6.wsclient.ellipse.impl.EllipseWorkOrderService;
 
 /**
  * @author N039126
@@ -40,39 +37,15 @@ public class EllipseIntegrationTest {
 	@Autowired
 	EllipseTransactionService transactionService;
 
-	@Autowired
-	EllipseWorkOrderService workorderService;
-
-	@Before
-	public void setUp() throws Exception {
-		// MockitoAnnotations.initMocks(this);
-
-	}
-
+	
 	@Test
-	@Ignore
 	public void testEllipseWorkOrdertaskUpdate() throws EnterpriseServiceOperationException {
 
 		final String txId = transactionService.beginTransaction();
 
-		WorkOrderDTO workOrderDTO = new WorkOrderDTO().withNo("04790653");
+		WorkOrderDTO workOrderDTO = new WorkOrderDTO().withNo("790653").withPrefix("04");
 
-		List<WorkOrderServiceReadRequestDTO> readReqs = new ArrayList<>();
-		WorkOrderServiceReadRequestDTO readReq = new WorkOrderServiceReadRequestDTO();
-		readReq.setIncludeTasks(true);
-		readReq.setWorkOrder(workOrderDTO);
-		readReqs.add(readReq);
-
-		List<WorkOrderServiceReadReplyDTO> replyDtos = null;
-		try {
-			replyDtos = workorderService.readWorkOrders(readReqs, txId);
-		} catch (Exception e) { // TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		System.out.println("work orders = " + replyDtos);
-
-		System.out.println("Transaction ID - " + txId);
+		Assert.assertNotNull(txId);
 
 		Collection<WorkOrderTaskServiceModifyRequestDTO> requests = new ArrayList<>();
 		WorkOrderTaskServiceModifyRequestDTO request = new WorkOrderTaskServiceModifyRequestDTO()
@@ -80,10 +53,10 @@ public class EllipseIntegrationTest {
 				.withWOTaskDesc("z0 stdjob").withTaskStatusU("AL");
 		requests.add(request);
 		try {
-			ellipseWorkOrdertaskService.updateWorkOrderTasks(requests, txId);
-			System.out.println("Transaction successfull....");
+			List<WorkOrderTaskServiceModifyReplyDTO >  updatedTasks = ellipseWorkOrdertaskService.updateWorkOrderTasks(requests, txId);
+			Assert.assertNotNull(updatedTasks);
+			Assert.assertEquals(1, updatedTasks.size());
 		} finally {
-			System.out.println("Rolling back the transaction ");
 			transactionService.rollbackTransaction(txId);
 		}
 	}

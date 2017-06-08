@@ -70,60 +70,6 @@ public class EllipseWorkOrderTaskServiceImpl implements EllipseWorkOrderTaskServ
 			return results;
 		}
 	}
-	
-	/**
-	 * Closes one or more work order tasks in Ellipse.
-	 * 
-	 * @param closedDate The date to use for when the work order tasks have been closed. 
-	 * @param closedTime The time to use for when the work order tasks have been closed.
-	 * @param completedBy The user to record as closing the work order tasks.
-	 * @param taskNumber The task number of the tasks to be closed.
-	 * @param workOrders The list of work orders for which the tasks are being closed.
-	 * @param txId An optional transaction ID. If this is to be performed outside of a transaction, <code>null</code>
-	 *        should be used instead.
-	 * @return List of work order tasks that were closed by Ellipse.
-	 * @throws EnterpriseServiceOperationException If there is a problem with the task closure in Ellipse.
-	 */
-	@Override
-	public List<WorkOrderTaskServiceCompleteReplyDTO> closeWorkOrderTasks(String closedDate, String closedTime,
-		String completedBy, String taskNumber, List<WorkOrderDTO> workOrders, String txId)
-		throws EnterpriseServiceOperationException {
-		LOG.debug(String.format(
-			"Request to close %d work order tasks (%s) at %s, %s for user %s in Ellipse in transaction \"%s\".",
-			workOrders.size(), taskNumber, closedDate, closedTime, completedBy, txId));
-
-		// Prepare the list of requests to close (complete) the work order tasks.
-		List<WorkOrderTaskServiceCompleteRequestDTO> requests = new ArrayList<WorkOrderTaskServiceCompleteRequestDTO>();
-		for (WorkOrderDTO order : workOrders) {
-			WorkOrderTaskServiceCompleteRequestDTO request = new WorkOrderTaskServiceCompleteRequestDTO()
-				.withClosedDt(closedDate)
-				.withClosedTime(closedTime)
-				.withCompletedBy(completedBy)
-				.withWorkOrder(order)
-				.withWOTaskNo(taskNumber);
-			requests.add(request);
-		}
-		
-		// Create the request parameters to pass to the Ellipse work order service.
-		OperationContext ctx = EllipseWebServiceHelper.generateContext(txId);
-		ArrayOfWorkOrderTaskServiceCompleteRequestDTO requestParams;
-		requestParams = new ArrayOfWorkOrderTaskServiceCompleteRequestDTO()
-			.withWorkOrderTaskServiceCompleteRequestDTO(requests);
-		
-		WorkOrderTaskServiceCompleteReplyCollectionDTO reply = taskService.multipleComplete(ctx, requestParams);
-		
-		// Get the work order task information from the reply.
-		if ((reply == null) || (reply.getReplyElements() == null)) {
-			// We didn't get anything back.
-			LOG.debug("No work orders closed.");
-			return new ArrayList<WorkOrderTaskServiceCompleteReplyDTO>();
-		} else {
-			List<WorkOrderTaskServiceCompleteReplyDTO> results = reply.getReplyElements()
-				.getWorkOrderTaskServiceCompleteReplyDTO();
-			LOG.debug(String.format("Closed %d work orders.", results.size()));
-			return results;
-		}
-	}
 
 	@Autowired
 	public void setTaskService(WorkOrderTask taskService) {

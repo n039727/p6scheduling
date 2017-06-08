@@ -18,7 +18,7 @@ import au.com.wp.corp.p6.util.CacheManager;
 import au.com.wp.corp.p6.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.wsclient.auth.AuthenticationServicePortType;
 import au.com.wp.corp.p6.wsclient.auth.IntegrationFault;
-import au.com.wp.corp.p6.wsclient.constant.P6WSConstants;
+import au.com.wp.corp.p6.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
@@ -37,10 +37,10 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 
 	public AuthenticationService(final RequestTrackingId trackingId) {
 		super(trackingId);
-		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_AUTH_SERVICE_WSDL);
-		this.userPrincipal = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_USER_PRINCIPAL);
-		this.userCredential = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_USER_CREDENTIAL);
-		this.p6DBInstance = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_DB_INSTANCE);
+		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_AUTH_SERVICE_WSDL);
+		this.userPrincipal = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_USER_PRINCIPAL);
+		this.userCredential = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_USER_CREDENTIAL);
+		this.p6DBInstance = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_DB_INSTANCE);
 		
 	}
 

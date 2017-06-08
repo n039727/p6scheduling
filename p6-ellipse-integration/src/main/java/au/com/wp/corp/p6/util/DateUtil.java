@@ -32,6 +32,10 @@ public class DateUtil {
 
 	public static final String P6_DATE_FORMAT_WITH_TIMESTAMP = "yyyy-MM-dd'T'hh:mm:ss";
 
+	public static final String ELLIPSE_DATE_FORMAT = "yyyyMMdd";
+
+	
+	
 	private Calendar calendarDate;
 
 	public int getFiscalMonth() {

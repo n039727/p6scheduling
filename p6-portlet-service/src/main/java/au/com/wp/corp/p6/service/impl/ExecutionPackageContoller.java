@@ -47,11 +47,11 @@ public class ExecutionPackageContoller {
 	public ResponseEntity<ExecutionPackageDTO> createOrUpdateExecutionPackages(
 			RequestEntity<ExecutionPackageDTO> executionPackageDTO, HttpServletRequest request) throws P6BaseException {
 		logger.info(" create or update service is called ....");
-		String userName = "N039126";
 		validator.validate(executionPackageDTO.getBody());
-		return new ResponseEntity<ExecutionPackageDTO>(
-				executionPackageService.createOrUpdateExecutionPackage(executionPackageDTO.getBody(), userName),
-				HttpStatus.CREATED);
+		ExecutionPackageDTO resutltDTO = executionPackageService
+				.createOrUpdateExecutionPackage(executionPackageDTO.getBody());
+		executionPackageService.updateP6ForExecutionPackage();
+		return new ResponseEntity<ExecutionPackageDTO>(resutltDTO, HttpStatus.CREATED);
 	}
 	
 	@RequestMapping(value = "/searchByExecutionPackage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )

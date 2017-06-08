@@ -78,7 +78,7 @@ public class ExecutionPcakageControllerTest {
 		List<WorkOrder> workOrders = new ArrayList<>();
 		workOrders.add(workOrder);
 		executionPackageDTO.setWorkOrders(workOrders);
-		Mockito.when(executionPckg.createOrUpdateExecutionPackage(executionPackageDTO, "Test User"))
+		Mockito.when(executionPckg.createOrUpdateExecutionPackage(executionPackageDTO))
 				.thenReturn(executionPackageDTO);
 
 		ResultActions actions = mockMvc.perform(post("/executionpackage/createOrUpdate")

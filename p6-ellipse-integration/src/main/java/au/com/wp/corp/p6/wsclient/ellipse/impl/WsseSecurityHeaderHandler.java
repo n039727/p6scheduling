@@ -11,6 +11,9 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Set;
 
@@ -28,6 +31,8 @@ public class WsseSecurityHeaderHandler implements SOAPHandler<SOAPMessageContext
     private static final String WSU_PREFIX = "wsu";
     private static final String WSU_ID_VALUE = "UsernameToken-1478054172";
     public static final String PASSWORD_TYPE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText";
+    
+    private static final Logger logger = LoggerFactory.getLogger(WsseSecurityHeaderHandler.class);
 
     private final String userName;
     private final String password;
@@ -100,6 +105,6 @@ public class WsseSecurityHeaderHandler implements SOAPHandler<SOAPMessageContext
 			loggingStream.write("".getBytes());
 		} catch (final Exception e) {
 		}
-    	System.out.println(loggingStream.toString());
+    	logger.debug("Inbound Message #  {}", loggingStream.toString());
     }
 }

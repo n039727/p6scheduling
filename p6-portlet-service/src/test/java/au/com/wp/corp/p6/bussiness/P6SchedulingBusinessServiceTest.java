@@ -32,12 +32,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
-import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
+import au.com.wp.corp.p6.businessservice.impl.P6SchedulingBusinessServiceImpl;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.ResourceDetailDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
-import au.com.wp.corp.p6.dataservice.impl.TaskDAOImpl;
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.MetadataDTO;
@@ -67,9 +65,6 @@ public class P6SchedulingBusinessServiceTest {
 	WorkOrderDAOImpl workOrderDAO;
 	
 	@Mock
-	TaskDAOImpl taskDAO;
-
-	@Mock
 	DateUtils dateUtils;
 
 	@Mock
@@ -85,13 +80,12 @@ public class P6SchedulingBusinessServiceTest {
 	UserTokenRequest userTokenRequest;
 
 	@InjectMocks
-	P6SchedulingBusinessService p6SchedulingBusinessService;
+	P6SchedulingBusinessServiceImpl p6SchedulingBusinessService;
 
 	@Mock
 	P6WSClientImpl p6wsClient;
 	
-	@Mock
-	IExecutionPackageService executionPackageservice;
+	
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
