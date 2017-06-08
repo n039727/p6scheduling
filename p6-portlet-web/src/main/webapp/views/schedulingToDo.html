@@ -93,8 +93,8 @@
 								<textarea ng-show="{{wo.exctnPckgName === null || wo.exctnPckgName === ''}}" class="form-control" rows="3" id="comment-1" ng-model="wo.schedulingToDoComment"></textarea> 
 								<textarea ng-show="{{wo.exctnPckgName != null && wo.exctnPckgName != ''}}" class="form-control" rows="3" id="comment-1" ng-model="wo.executionPkgComment"></textarea> 
 							</div>
-							<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-8 " >
-								<p class="success-message" >{{$ctrl.successSavedMsg}}</p>
+							<div ng-show="wo.savedMsgVisible" class="col-md-offset-8 " >
+								<p class="success-message" >{{wo.successSavedMsg}}</p>
 							</div>
 							
 							<div class="col-md-offset-9 col-md-2" style="padding:5px">

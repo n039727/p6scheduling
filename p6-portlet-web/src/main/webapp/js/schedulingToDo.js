@@ -12,8 +12,8 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 	}
 	
 	
-	ctrl.successSavedMsg = "";
-	ctrl.savedMsgVisible = false;
+	//ctrl.successSavedMsg = "";
+	//ctrl.savedMsgVisible = false;
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
@@ -26,7 +26,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 			$('#'+button.id).removeClass("glyphicon-minus");
 			$('#'+button.id).addClass("glyphicon-plus");
 		}
-		ctrl.savedMsgVisible = false;
+		wo.savedMsgVisible = false;
 		
 	};
 	
@@ -159,12 +159,12 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
 			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== ""){
-				ctrl.successSavedMsg = "Package has been saved successfully";
+				wo.successSavedMsg = "Package has been saved successfully";
 			}else{
-				ctrl.successSavedMsg = "Work order task has been saved successfully";
+				wo.successSavedMsg = "Work order task has been saved successfully";
 			}
 			wo.actioned = 'Y';
-			ctrl.savedMsgVisible = true;
+			wo.savedMsgVisible = true;
 			
 		}, null);
 		

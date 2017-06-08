@@ -1,4 +1,4 @@
-function viewToDoStatusController($scope,restTemplate, userAccessService) {
+function viewToDoStatusController($scope, ModalService, restTemplate, userAccessService) {
 	var ctrl = this;
 
 	// Authorization implementation
@@ -210,19 +210,6 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 		}
 		return todoAssignments;
 	};
-	ctrl.toggleEditMode = function(todo,id){
-		console.log("Inside edit URl");
-		$('#'+id).focus();
-		todo.sdEditMode = true;
-	}
-	ctrl.toggleNonEditMode = function(todo){
-		console.log("Inside non edit URl");
-		if(todo.supportingDoc==null || todo.supportingDoc==""){
-			todo.sdEditMode = true;
-		}else{todo.sdEditMode = false;
-		todo.displaySupportingDoc = ctrl.formateUrl(todo.supportingDoc);
-		}
-	}
 	ctrl.formateUrl = function(urlvalu){
 		if(urlvalu !== null && urlvalu!=="") {
 			console.log("Inside formate URl"+urlvalu);
@@ -234,8 +221,81 @@ function viewToDoStatusController($scope,restTemplate, userAccessService) {
 		}
 		return urlvalu;
 	}
-}
+	ctrl.showPopup = function(todo) {
+		var templateUrl = "";
+		if (ctrl.activeContext === 'VIEW_TODO_STATUS') {
+			templateUrl = '../views/supportingDocumentsPopup.html';
+		} else {
+			templateUrl = '../views/supportingDocumentsPopup1.html';
+		}
+		ModalService.showModal({
+			templateUrl: templateUrl,
+			controller: "supportingDocPopupController",
+			inputs: {
+				todo: todo,
+			}
 
+		}).then(function(modal) {
+			modal.element.modal();
+			modal.close.then(function(result) {
+				if (result.status === 'SUCCESS') {
+					todo.displaySupportingDoc = ctrl.formateUrl(todo.supportingDoc);
+					todo.supportingDoc = result.data.supportingDoc;
+				}
+			});
+		});
+	}
+};
+
+app.controller('supportingDocPopupController', [
+	'$scope', '$element', 'todo', 'close', 
+	function($scope, $element, todo, close) {
+		console.log('Create Exc called with TODO in popup: ' + JSON.stringify(todo));
+
+		$scope.todo = todo;
+		$scope.leadCrews = $scope.leadCrewList;
+		$scope.toggleEditMode = function(todo){
+			console.log("Inside edit URl");
+			$scope.todo.sdEditMode = true;
+		}
+		$scope.toggleNonEditMode = function(todo){
+			console.log("Inside non edit URl");
+			if($scope.todo.supportingDoc==null || $scope.todo.supportingDoc==""){
+				$scope.todo.sdEditMode = true;
+			}else{todo.sdEditMode = false;
+			$scope.todo.displaySupportingDoc = $scope.formateUrl(todo.supportingDoc);
+			}
+		}
+		$scope.formateUrl = function(urlvalu){
+			if(urlvalu !== null && urlvalu!=="") {
+				console.log("Inside formate URl"+urlvalu);
+				var urlRegex = /(\b(http?|https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+				urlvalu = urlvalu.replace(urlRegex, function (url) {
+					return '<a href="' + url + '" target="_blank">' + url + '</a>';
+				});
+				console.log("formated  URl"+urlvalu);
+			}
+			return urlvalu;
+		}
+
+		$scope.update = function(){
+			close({
+				status: 'SUCCESS',
+				data: {
+					supportingDoc: $scope.todo.supportingDoc
+				}
+			}, 500);
+		}
+		//  This close function doesn't need to use jQuery or bootstrap, because
+		//  the button has the 'data-dismiss' attribute.
+		$scope.cancel = function() {
+			console.log('$scope.todo in close: ' + JSON.stringify($scope.todo));
+			close({
+				status: 'CANCELLED'
+			}, 500); // close, but give 500ms for bootstrap to animate
+
+		};
+	}]);
 
 angular.module('todoPortal').component('viewToDoResult', {
 	templateUrl: '../views/viewToDoStatus.html',
