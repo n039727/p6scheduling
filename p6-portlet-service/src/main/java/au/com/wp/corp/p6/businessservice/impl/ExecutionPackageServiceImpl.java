@@ -188,7 +188,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	
 	@Override
 	@Async
-	public void updateP6ForExecutionPackage() {
+	public void updateP6ForExecutionPackage() throws P6BusinessException{
 		logger.debug("Starting to execution package update with execPkgdtos "
 				+ executionPackageDTOFoP6List);
 		List<ExecutionPackageCreateRequest> request = new ArrayList<>();
@@ -234,7 +234,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 						executionPackageDTOForP6.getWorkOrders().clear();
 					}
 				} catch (P6ServiceException e) {
-					e.printStackTrace();
+					parseException(e);
 				}
 
 			}

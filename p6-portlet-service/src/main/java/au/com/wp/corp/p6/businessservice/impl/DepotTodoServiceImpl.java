@@ -73,7 +73,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	public ViewToDoStatus fetchDepotTaskForViewToDoStatus(WorkOrderSearchRequest query) throws P6DataAccessException{
 		
 		List<Task> tasks = null;
-		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> toDoAssignments = new HashMap<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>>();
+		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> toDoAssignments = new HashMap<String, List<ToDoAssignment>>();
 		ExecutionPackage executionPackage = null;
 		ViewToDoStatus viewToDoStatus = new ViewToDoStatus();
 		if (null != query && (null != query.getExecPckgName() && (!"".equals(query.getExecPckgName())))) {
@@ -123,7 +123,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					} else {
 						logger.debug("adding  todoname =={} and AssignmentDto {}", toDoName,
 								workOrderId);
-						List<au.com.wp.corp.p6.dto.ToDoAssignment> assignments = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
+						List<au.com.wp.corp.p6.dto.ToDoAssignment> assignments = new ArrayList<ToDoAssignment>();
 						assignments.add(assignmentDTO);
 						toDoAssignments.put(toDoName, assignments);
 					}
@@ -149,7 +149,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	}
 	
 	/**
-	 * To merge multiple ToDo records in single Todo records 
+	 * To merge multiple ToDo records in single to-do records 
 	 * for display
 	 * @param assignments
 	 * @return
