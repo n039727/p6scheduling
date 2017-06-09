@@ -5,7 +5,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	ctrl.isInvalidDateFormat = false;
 	ctrl.showErrorMsg = "";
 	ctrl.dateFormat = 'DD/MM/YYYY';
-//	console.log('Meta Data passed from parent: ' + JSON.stringify(this.metadata));
+	ctrl.isActiveContext = false;
 	
 	ctrl.depotList = [];
 	ctrl.depotCrewMap = {};
@@ -111,6 +111,12 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			ctrl.isValidationErr = true;
 			return false;
 		}
+		if(angular.isUndefined(ctrl.activeContext)){
+			ctrl.showErrorMsg = '*Please select an Action(Scheduling/Depot) for searching the data' ;
+			ctrl.isValidationErr = true;
+			return false;
+		}
+		
 		if(ctrl.activeContext == 'ADD_SCHEDULING_TODO' || ctrl.activeContext == 'VIEW_TODO_STATUS' 
 				|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'){
 			if(this.wo == null || this.wo == ""){

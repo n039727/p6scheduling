@@ -191,7 +191,7 @@ public class DepotTodoServiceTest {
 	 */
 	@Test
 	@Rollback(true)
-	public void testSaveToDo() throws P6BusinessException {
+	public void testSaveDepotToDo() throws P6BusinessException {
 		WorkOrder workOrder = new WorkOrder();
 
 		List<String> workOrderIds = new ArrayList<>();
@@ -234,7 +234,7 @@ public class DepotTodoServiceTest {
 	 */
 	@Test
 	//@Rollback(true)
-	public void testSaveToDo_1() throws P6BusinessException {
+	public void testSaveDepotToDo_1() throws P6BusinessException {
 		WorkOrder workOrder = new WorkOrder();
 
 		List<String> workOrderIds = new ArrayList<>();

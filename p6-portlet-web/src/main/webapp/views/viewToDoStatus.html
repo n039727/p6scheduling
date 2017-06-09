@@ -74,17 +74,16 @@
 														<option>Completed</option>
 												</select></td>
 												<td style="position: relative;"><span
-													style="width: 100%; height: 100%; position: absolute;"
-													ng-hide="todo.sdEditMode==true"
-													ng-click="$ctrl.toggleEditMode(todo, woIndex+ '-' + todoIndex + '-1')"
-													ng-bind-html="todo.displaySupportingDoc"></span><input
-													type="text" id="{{woIndex+ '-' + todoIndex + '-1'}}"
-													class="form-control" ng-hide="todo.sdEditMode==false"
-													ng-model="todo.supportingDoc"
-													ng-blur="$ctrl.toggleNonEditMode(todo)"></td>
+													style="width: 100%; height: 100%; position: absolute; word-wrap: break-word; overflow-y: scroll;"
+													ng-click="$ctrl.showPopup(todo)"
+													ng-bind-html="todo.displaySupportingDoc"></span></td>
 											</tr>
 										</tbody>
 									</table>
+								</div>
+								<div class="col-md-12">
+									<label for="comment">Scheduling To-Do Comment</label>
+									<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.schedulingComment}}</textarea>
 								</div>
 							</div>
 						</div>
@@ -122,41 +121,31 @@
 														<option>Completed</option>
 												</select></td>
 												<td style="position: relative"><span
-													style="width: 100%; height: 100%; position: absolute;"
-													ng-hide="todo.sdEditMode==true"
-													ng-click="$ctrl.toggleEditMode(todo,woIndex+ '-' + todoIndex + '-2')"
-													ng-bind-html="todo.displaySupportingDoc"></span><input
-													type="text" id="{{woIndex+ '-' + todoIndex + '-2'}}"
-													class="form-control" ng-hide="todo.sdEditMode==false"
-													ng-model="todo.supportingDoc"
-													ng-blur="$ctrl.toggleNonEditMode(todo)"></td>
+													style="width: 100%; height: 100%; position: absolute; word-wrap: break-word; overflow-y: scroll;"
+													ng-click="$ctrl.showPopup(todo)"
+													ng-bind-html="todo.displaySupportingDoc"></span></td>
 											</tr>
 										</tbody>
 									</table>
 								</div>
-							</div>
-							<div class="col-md-12">
-								<label for="comment">Scheduling To-Do Comment</label>
-								<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.schedulingComment}}</textarea>
-								<!-- <textarea ng-show="{{wo.exctnPckgName === null || wo.exctnPckgName === ''}}" class="form-control" rows="3" id="comment-1" ng-model="wo.schedulingToDoComment"></textarea> 
-							<textarea ng-show="{{wo.exctnPckgName != null && wo.exctnPckgName != ''}}" class="form-control" rows="3" id="comment-1" ng-model="wo.executionPkgComment"></textarea>  -->
-							</div>
-							<div class="col-md-12">
-								<label for="comment">Depot To-Do Comment</label>
-								<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.deportComment}}</textarea>
-							</div>
-							<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-8 ">
-								<p class="success-message">{{$ctrl.successSavedMsg}}</p>
-							</div>
-							<div class="col-md-offset-9 col-md-2" style="padding: 5px">
-								<button id="save-to-do-1" class="btn btn-warning btn-block"
-									ng-click="$ctrl.saveToDo(wo)">
-									<h4>
-										<b>Save</b>
-									</h4>
-								</button>
+								<div class="col-md-12">
+									<label for="comment">Depot To-Do Comment</label>
+									<textarea class="form-control" rows="3" id="comment-1" disabled>{{wo.deportComment}}</textarea>
+								</div>
+								<div ng-show="$ctrl.savedMsgVisible" class="col-md-offset-8 ">
+									<p class="success-message">{{$ctrl.successSavedMsg}}</p>
+								</div>
+								<div class="col-md-offset-9 col-md-2" style="padding: 5px" ng-if="$ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'">
+									<button id="save-to-do-1" class="btn btn-warning btn-block"
+										ng-click="$ctrl.saveToDo(wo)">
+										<h4>
+											<b>Save</b>
+										</h4>
+									</button>
+								</div>
 							</div>
 						</div>
+					</div>
 				</td>
 			</tr>
 		</tbody>
