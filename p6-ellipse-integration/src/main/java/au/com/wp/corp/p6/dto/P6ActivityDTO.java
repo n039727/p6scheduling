@@ -75,6 +75,10 @@ public class P6ActivityDTO  implements Serializable{
 	
 	private String executionPckgUDF;
 	
+	private String actualStartDate;
+	
+	private String actualFinishDate;
+	
 	
 
 	/**
@@ -469,6 +473,35 @@ public class P6ActivityDTO  implements Serializable{
 	 */
 	public void setExecutionPckgUDF(String executionPckgUDF) {
 		this.executionPckgUDF = executionPckgUDF;
+	}
+
+	
+	/**
+	 * @return the actualStartDate
+	 */
+	public String getActualStartDate() {
+		return actualStartDate;
+	}
+
+	/**
+	 * @param actualStartDate the actualStartDate to set
+	 */
+	public void setActualStartDate(String actualStartDate) {
+		this.actualStartDate = actualStartDate;
+	}
+
+	/**
+	 * @return the actualFinishDate
+	 */
+	public String getActualFinishDate() {
+		return actualFinishDate;
+	}
+
+	/**
+	 * @param actualFinishDate the actualFinishDate to set
+	 */
+	public void setActualFinishDate(String actualFinishDate) {
+		this.actualFinishDate = actualFinishDate;
 	}
 
 	/*

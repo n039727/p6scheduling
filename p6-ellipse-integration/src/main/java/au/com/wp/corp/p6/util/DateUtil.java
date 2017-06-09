@@ -34,18 +34,16 @@ public class DateUtil {
 
 	public static final String ELLIPSE_DATE_FORMAT = "yyyyMMdd";
 
-	
-	
 	private Calendar calendarDate;
 
 	public int getFiscalMonth() {
-		
+
 		int month = calendarDate.get(Calendar.MONTH);
 		int result = ((month - FIRST_FISCAL_MONTH - 1) % 12) + 1;
 		if (result < 0) {
 			result += 12;
 		}
-		logger.debug("Get current month index of the fiscal year - month index # {}", result );
+		logger.debug("Get current month index of the fiscal year - month index # {}", result);
 		return result;
 	}
 
@@ -101,7 +99,7 @@ public class DateUtil {
 	}
 
 	public String convertDateToString(String date, String expectedDateFormat, String proviedDateFormat) {
-		if ( null == date || date.trim().isEmpty())
+		if (null == date || date.trim().isEmpty())
 			return "";
 		SimpleDateFormat sdf = new SimpleDateFormat(expectedDateFormat);
 		return sdf.format(convertStringToDatetime(date, proviedDateFormat));
@@ -175,11 +173,12 @@ public class DateUtil {
 			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
 		} catch (DatatypeConfigurationException e) {
 			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
+		} catch (Exception e ) {
+			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
 		}
 
 		return null;
 
 	}
 
-	
 }

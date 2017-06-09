@@ -4,11 +4,8 @@
 package au.com.wp.corp.p6.wsclient.ellipse;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,10 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.mincom.enterpriseservice.ellipse.dependant.dto.WorkOrderDTO;
-import com.mincom.enterpriseservice.ellipse.workordertask.EnterpriseServiceOperationException;
-import com.mincom.enterpriseservice.ellipse.workordertask.WorkOrderTaskServiceModifyReplyDTO;
-import com.mincom.enterpriseservice.ellipse.workordertask.WorkOrderTaskServiceModifyRequestDTO;
+import au.com.wp.corp.p6.dto.EllipseActivityDTO;
+import au.com.wp.corp.p6.exception.P6ServiceException;
+import au.com.wp.corp.p6.wsclient.ellipse.impl.EllipseWSClientImpl;
 
 /**
  * @author N039126
@@ -32,33 +28,22 @@ import com.mincom.enterpriseservice.ellipse.workordertask.WorkOrderTaskServiceMo
 public class EllipseIntegrationTest {
 
 	@Autowired
-	EllipseWorkOrderTaskService ellipseWorkOrdertaskService;
+	EllipseWSClientImpl ellipseWSClient;
 
-	@Autowired
-	EllipseTransactionService transactionService;
-
-	
 	@Test
-	public void testEllipseWorkOrdertaskUpdate() throws EnterpriseServiceOperationException {
+	public void testEllipseWorkOrdertaskUpdate() throws P6ServiceException {
 
-		final String txId = transactionService.beginTransaction();
+		List<EllipseActivityDTO> activities = new ArrayList<>();
 
-		WorkOrderDTO workOrderDTO = new WorkOrderDTO().withNo("790653").withPrefix("04");
+		EllipseActivityDTO activity = new EllipseActivityDTO();
+		activity.setWorkOrderTaskId("04790653002");
+		activity.setWorkGroup("MOMT2");
+		activity.setPlannedStartDate("06/08/2017 10:12:30");
+		activity.setTaskUserStatus("AL");
+		activities.add(activity);
 
-		Assert.assertNotNull(txId);
+		ellipseWSClient.updateActivitiesEllipse(activities);
 
-		Collection<WorkOrderTaskServiceModifyRequestDTO> requests = new ArrayList<>();
-		WorkOrderTaskServiceModifyRequestDTO request = new WorkOrderTaskServiceModifyRequestDTO()
-				.withWorkOrder(workOrderDTO).withWOTaskNo("002").withWorkGroup("MOMT6").withPlanStrDate("20170602")
-				.withWOTaskDesc("z0 stdjob").withTaskStatusU("AL");
-		requests.add(request);
-		try {
-			List<WorkOrderTaskServiceModifyReplyDTO >  updatedTasks = ellipseWorkOrdertaskService.updateWorkOrderTasks(requests, txId);
-			Assert.assertNotNull(updatedTasks);
-			Assert.assertEquals(1, updatedTasks.size());
-		} finally {
-			transactionService.rollbackTransaction(txId);
-		}
 	}
 
 }

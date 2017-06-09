@@ -576,10 +576,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			p6ActivityUpd.setPlannedStartDate(dateUtil.getStartDateOfFiscalYear(dateUtil.getCurrentDate(),
 					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP));
 
-		} else {
-			p6ActivityUpd.setPlannedStartDate(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
-					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
-		}
+		} 
 
 		/*
 		 * the WO task is read from Ellipse when the corresponding activity
@@ -594,8 +591,20 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			p6ActivityUpd.setProjectObjectId(projectObjectId);
 		}
 
-		// TODO -Slippage Code
-
+		if ( null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty())
+		{
+			p6ActivityUpd.setActualStartDate(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),
+					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+		}
+		
+		
+		if ( null != ellipseActivity.getActualFinishDate() && !ellipseActivity.getActualFinishDate().trim().isEmpty())
+		{
+			p6ActivityUpd.setActualFinishDate(dateUtil.convertDateToString(ellipseActivity.getActualFinishDate(),
+					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+		}
+		
+		
 		return isUpdateReq ? p6ActivityUpd : null;
 	}
 

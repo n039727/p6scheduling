@@ -122,6 +122,8 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setAddressUDF("Perth WA");
 		activityDTO.setProjectObjectId(263779);
 		activityDTO.setEstimatedLabourHours(8.0);
+		activityDTO.setActualStartDate("2017-07-06T08:00:00");
+		activityDTO.setActualFinishDate("2017-07-08T08:00:00");
 		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
 		System.out.println("resourceMap ==  " + resourceMap.size());
 		
@@ -150,7 +152,7 @@ public class P6WSClientImplIntegrationTest {
 
 		activityDTO.setActivityId("TW245976001");
 		activityDTO.setActivityName("12 MTHS PATROL (GROUND)");
-		activityDTO.setActivityStatus("Not Started");
+		activityDTO.setActivityStatus("Completed");
 		activityDTO.setPlannedStartDate("2017-07-06T08:00:00");
 		activityDTO.setWorkGroup("MONT1");
 		activityDTO.setOriginalDuration(33);
@@ -170,6 +172,8 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setFeederUDF("E 316.0 SOUTH ST1");
 		activityDTO.setAddressUDF("Perth WA");
 		activityDTO.setProjectObjectId(263779);
+		activityDTO.setActualStartDate("2017-07-06T08:00:00");
+		activityDTO.setActualFinishDate("2017-07-08T08:00:00");
 		for ( P6ActivityDTO activityDTO2 : p6Activities )
 		{
 			if ( activityDTO.getActivityId().equals(activityDTO2.getActivityId())) {
@@ -204,7 +208,7 @@ public class P6WSClientImplIntegrationTest {
 
 		activityDTO.setActivityId("TW245976001");
 		activityDTO.setActivityName("12 MTHS PATROL (GROUND)");
-		activityDTO.setActivityStatus("Not Started");
+		activityDTO.setActivityStatus("Completed");
 		activityDTO.setPlannedStartDate("2017-07-06T08:00:00");
 		activityDTO.setWorkGroup("MONT1");
 		activityDTO.setOriginalDuration(33);
@@ -224,7 +228,8 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setFeederUDF("E 316.0 SOUTH ST1");
 		activityDTO.setAddressUDF("Perth WA");
 		activityDTO.setProjectObjectId(263779);
-		
+		activityDTO.setActualStartDate("2017-07-06T08:00:00");
+		activityDTO.setActualFinishDate("2017-07-08T08:00:00");
 		for ( P6ActivityDTO activityDTO2 : p6Activities )
 		{
 			if ( activityDTO.getActivityId().equals(activityDTO2.getActivityId()))

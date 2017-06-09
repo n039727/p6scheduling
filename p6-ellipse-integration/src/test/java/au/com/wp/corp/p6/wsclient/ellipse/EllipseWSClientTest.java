@@ -6,23 +6,18 @@ package au.com.wp.corp.p6.wsclient.ellipse;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import au.com.wp.corp.p6.dto.EllipseActivityDTO;
 import au.com.wp.corp.p6.exception.P6ServiceException;
-import au.com.wp.corp.p6.util.DateUtil;
 import au.com.wp.corp.p6.wsclient.ellipse.impl.EllipseWSClientImpl;
-import au.com.wp.corp.p6.wsclient.ellipse.impl.EllipseWorkOrderTaskServiceImpl;
+import au.com.wp.corp.p6.util.DateUtil;
 
 /**
  * @author N039126
@@ -33,20 +28,12 @@ import au.com.wp.corp.p6.wsclient.ellipse.impl.EllipseWorkOrderTaskServiceImpl;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EllipseWSClientTest {
 
-	@InjectMocks
+	@Autowired
 	EllipseWSClientImpl ellipseWSClient;
 
-	@Mock
-	EllipseWorkOrderTaskServiceImpl ellipseWorkOrdertaskService;
-
-	@Mock
-	DateUtil dateUtil;
-
-	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-
-	}
+	@Autowired
+	DateUtil dateUtil1;
+	
 
 	@Test
 	public void testUpdateActivitiesEllipse() throws P6ServiceException {
@@ -59,9 +46,6 @@ public class EllipseWSClientTest {
 		activity.setPlannedStartDate("06/08/2017 10:12:30");
 		activity.setTaskUserStatus("AL");
 		activities.add(activity);
-		Mockito.when(dateUtil.convertDateToString(activity.getPlannedStartDate(), DateUtil.ELLIPSE_DATE_FORMAT,
-				DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)).thenReturn("06082017");
-		
 		
 		ellipseWSClient.updateActivitiesEllipse(activities);
 	}
