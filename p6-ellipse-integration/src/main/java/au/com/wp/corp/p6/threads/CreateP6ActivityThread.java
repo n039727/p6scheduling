@@ -40,7 +40,7 @@ public class CreateP6ActivityThread implements Runnable {
 	public void run() {
 		logger.info("Initiates Create Activities in P6 thread ....");
 
-		List<P6ActivityDTO> subList = null;
+		List<P6ActivityDTO> subList;
 		if ( createActivityP6Set.size() > 2)
 			subList = createActivityP6Set.subList(0, 3);
 		else

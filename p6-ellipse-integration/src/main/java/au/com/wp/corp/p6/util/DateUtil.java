@@ -135,8 +135,8 @@ public class DateUtil {
 	}
 
 	public boolean isCurrentDate(String date) {
-		Date _date = convertStringToDate(date);
-		if (null != _date && _date.equals(convertStringToDate(new Date())))
+		Date dt = convertStringToDate(date);
+		if (null != dt && dt.equals(convertStringToDate(new Date())))
 			return true;
 
 		return false;
@@ -145,20 +145,16 @@ public class DateUtil {
 
 	public XMLGregorianCalendar convertStringToXMLGregorianClalander(final String date) {
 		try {
-			Date dob = null;
+			Date dt;
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-			dob = df.parse(date);
+			dt = df.parse(date);
 			GregorianCalendar cal = new GregorianCalendar();
-			cal.setTime(dob);
-			XMLGregorianCalendar xmlDate2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-			return xmlDate2;
-		} catch (ParseException e) {
+			cal.setTime(dt);
+			return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+		} catch (ParseException | DatatypeConfigurationException  e) {
 			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
-		} catch (DatatypeConfigurationException e) {
-			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
-		} catch (Exception e ) {
-			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
-		}
+			logger.error("Can't covert to XMLGregorianCalendar - ", e);
+		} 
 
 		return null;
 

@@ -30,10 +30,9 @@ import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
  *
  */
 public abstract class ResourceAssignmentServiceCall<T> extends AbstractSOAPCall<T> {
-	private static final Logger logger = LoggerFactory.getLogger(ResourceAssignmentServiceCall.class);
+	private static final Logger logger1 = LoggerFactory.getLogger(ResourceAssignmentServiceCall.class);
 
 	protected ResourceAssignmentPortType servicePort;
-	private BindingProvider bp;
 	private final String endPoint;
 
 	public ResourceAssignmentServiceCall(final RequestTrackingId trackingId) {
@@ -55,16 +54,16 @@ public abstract class ResourceAssignmentServiceCall<T> extends AbstractSOAPCall<
 
 		ResourceAssignmentService service = new ResourceAssignmentService(wsdlURL);
 		servicePort = service.getResourceAssignmentPort();
-		bp = (BindingProvider) servicePort;
+		BindingProvider bp = (BindingProvider) servicePort;
 
 		Map<String, List<String>> headers = (Map<String, List<String>>) bp.getRequestContext()
 				.get("javax.xml.ws.http.request.headers");
 		if (headers == null) {
-			headers = new HashMap<String, List<String>>();
+			headers = new HashMap<>();
 			bp.getRequestContext().put("javax.xml.ws.http.request.headers", headers);
 
 		}
-		logger.debug("WS_COOKIE == " + CacheManager.getWsHeaders().get("WS_COOKIE"));
+		logger1.debug("WS_COOKIE == " + CacheManager.getWsHeaders().get("WS_COOKIE"));
 
 		headers.put("cookie", CacheManager.getWsHeaders().get("WS_COOKIE"));
 

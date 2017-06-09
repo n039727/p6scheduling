@@ -3,6 +3,8 @@
  */
 package au.com.wp.corp.p6.rest.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,8 @@ import au.com.wp.corp.p6.exception.P6BaseException;
 @RestController
 @RequestMapping("/integration")
 public class P6EllipseIntegrationController {
+	private static final Logger logger = LoggerFactory.getLogger(P6EllipseIntegrationController.class);
+	
 	private static final String STATUS_COMLETED = "OK";
 	
 	private static final String STATUS_FAILED = "NOTOK";
@@ -30,6 +34,7 @@ public class P6EllipseIntegrationController {
 		try {
 			p6EllipseService.startEllipseToP6Integration();
 		} catch (P6BaseException e) {
+			logger.error("An error occurs during batch processing - ",e);
 			p6EllipseService.clearApplicationMemory();
 			return STATUS_FAILED;
 		}

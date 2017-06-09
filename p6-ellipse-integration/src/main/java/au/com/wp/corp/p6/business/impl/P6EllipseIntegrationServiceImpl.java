@@ -48,6 +48,11 @@ import au.com.wp.corp.p6.wsclient.ellipse.EllipseWSClient;
 public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationService {
 	private static final Logger logger = LoggerFactory.getLogger(P6EllipseIntegrationServiceImpl.class);
 
+	public static final String POLING_TIME_TO_CHECK_READ_STATUS_INMILI = "POLING_TIME_TO_CHECK_READ_STATUS_INMILI";
+	
+	public static final String USER_STATUS_AL = "AL";
+
+	
 	@Autowired
 	P6EllipseDAO p6EllipseDAO;
 
@@ -476,12 +481,12 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (p6Activity.getOriginalDuration() != ellipseActivity.getOriginalDuration()) {
+		if (Double.compare(p6Activity.getOriginalDuration(), ellipseActivity.getOriginalDuration()) != 0) {
 			p6ActivityUpd.setOriginalDuration(ellipseActivity.getOriginalDuration());
 			isUpdateReq = true;
 		}
 
-		if (p6Activity.getRemainingDuration() != ellipseActivity.getRemainingDuration()) {
+		if (Double.compare(p6Activity.getRemainingDuration(), ellipseActivity.getRemainingDuration()) != 0) {
 			p6ActivityUpd.setRemainingDuration(ellipseActivity.getRemainingDuration());
 			isUpdateReq = true;
 		}

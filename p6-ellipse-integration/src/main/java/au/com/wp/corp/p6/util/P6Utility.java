@@ -3,6 +3,9 @@
  */
 package au.com.wp.corp.p6.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Utility class to provide data type conversion
  * 
@@ -10,6 +13,10 @@ package au.com.wp.corp.p6.util;
  * @version 1.0
  */
 public class P6Utility {
+	
+	private static final Logger logger = LoggerFactory.getLogger(P6Utility.class);
+	
+	private P6Utility(){}
 
 	/**
 	 * converts String to double
@@ -21,6 +28,7 @@ public class P6Utility {
 		try {
 			return Double.valueOf(value);
 		} catch (NumberFormatException e) {
+			logger.error("An error occurs while converting string to double - ", e);
 
 		}
 
@@ -29,7 +37,7 @@ public class P6Utility {
 
 	public static boolean isEqual(double value1, double value2) {
 
-		if (value1 == value2)
+		if ( Double.compare(value1,value2) ==0)
 			return true;
 
 		return false;
@@ -46,7 +54,7 @@ public class P6Utility {
 		try {
 			return Long.valueOf(value);
 		} catch (NumberFormatException e) {
-
+			logger.error("An error occurs while converting string to long - ", e);
 		}
 
 		return 0l;
@@ -62,7 +70,7 @@ public class P6Utility {
 		try {
 			return Integer.valueOf(value);
 		} catch (NumberFormatException e) {
-
+			logger.error("An error occurs while converting string to integer - ", e);
 		}
 		return 0;
 	}
@@ -77,7 +85,7 @@ public class P6Utility {
 		try {
 			return String.valueOf(value);
 		} catch (Exception e) {
-
+			logger.error("An error occurs while converting double to string - ", e);
 		}
 
 		return null;
@@ -93,7 +101,7 @@ public class P6Utility {
 		try {
 			return String.valueOf(value);
 		} catch (Exception e) {
-
+			logger.error("An error occurs while converting long to string - ", e);
 		}
 
 		return null;
@@ -109,7 +117,7 @@ public class P6Utility {
 		try {
 			return String.valueOf(value);
 		} catch (Exception e) {
-
+			logger.error("An error occurs while converting integer to string - ", e);
 		}
 
 		return null;

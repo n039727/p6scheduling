@@ -20,7 +20,7 @@ import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
  *
  */
 public class UpdateActivityServiceCall extends ActivityServiceCall<Boolean> {
-	private static final Logger logger = LoggerFactory.getLogger(UpdateActivityServiceCall.class);
+	private static final Logger logger1 = LoggerFactory.getLogger(UpdateActivityServiceCall.class);
 
 	private final List<Activity> activities;
 
@@ -31,7 +31,7 @@ public class UpdateActivityServiceCall extends ActivityServiceCall<Boolean> {
 
 	@Override
 	protected Holder<Boolean> command() throws P6ServiceException {
-		logger.info("Calling activity service to update activity.....");
+		logger1.info("Calling activity service to update activity.....");
 		boolean status;
 		try {
 			status = servicePort.updateActivities(activities);

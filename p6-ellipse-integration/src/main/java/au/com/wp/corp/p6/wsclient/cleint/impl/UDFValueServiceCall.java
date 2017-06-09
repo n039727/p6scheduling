@@ -35,7 +35,7 @@ import au.com.wp.corp.p6.wsclient.udfvalue.UDFValueService;
  *
  */
 public abstract class UDFValueServiceCall<T> extends AbstractSOAPCall<T> {
-	private static final Logger logger = LoggerFactory.getLogger(UDFValueServiceCall.class);
+	private static final Logger log = LoggerFactory.getLogger(UDFValueServiceCall.class);
 
 	private BindingProvider bp;
 	protected UDFValuePortType servicePort;
@@ -70,7 +70,7 @@ public abstract class UDFValueServiceCall<T> extends AbstractSOAPCall<T> {
 			bp.getRequestContext().put("javax.xml.ws.http.request.headers", headers);
 
 		}
-		logger.debug("WS_COOKIE == " + CacheManager.getWsHeaders().get("WS_COOKIE"));
+		log.debug("WS_COOKIE == " + CacheManager.getWsHeaders().get("WS_COOKIE"));
 
 		headers.put("cookie", CacheManager.getWsHeaders().get("WS_COOKIE"));
 

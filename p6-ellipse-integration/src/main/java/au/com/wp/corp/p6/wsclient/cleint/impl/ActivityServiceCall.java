@@ -31,10 +31,9 @@ import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
  *
  */
 public abstract class ActivityServiceCall<T> extends AbstractSOAPCall<T> {
-	private static final Logger logger = LoggerFactory.getLogger(ActivityServiceCall.class);
+	private static final Logger log = LoggerFactory.getLogger(ActivityServiceCall.class);
 	
 	protected ActivityPortType servicePort;
-	private BindingProvider bp;
 	private final String endPoint; 
 	
 	public ActivityServiceCall(final RequestTrackingId trackingId) {
@@ -58,7 +57,7 @@ public abstract class ActivityServiceCall<T> extends AbstractSOAPCall<T> {
 				wsdlURL,
 				new QName("http://xmlns.oracle.com/Primavera/P6/WS/Activity/V1", "ActivityService"));
 		servicePort = service.getActivityPort();
-		bp = (BindingProvider) servicePort;
+		BindingProvider bp = (BindingProvider) servicePort;
 		
 		Map<String, List<String>> headers = (Map<String, List<String>>) bp.getRequestContext()
 				.get("javax.xml.ws.http.request.headers");
@@ -67,7 +66,7 @@ public abstract class ActivityServiceCall<T> extends AbstractSOAPCall<T> {
 			bp.getRequestContext().put("javax.xml.ws.http.request.headers", headers);
 
 		}
-		logger.debug("WS_COOKIE == "+ CacheManager.getWsHeaders().get("WS_COOKIE"));
+		log.debug("WS_COOKIE == "+ CacheManager.getWsHeaders().get("WS_COOKIE"));
 		
 		headers.put("cookie", CacheManager.getWsHeaders().get("WS_COOKIE"));
 		

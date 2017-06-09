@@ -62,7 +62,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		final ActivityServiceCall<List<Activity>> activityService = new ReadActivityServiceCall(trackingId, null);
 
 		final Holder<List<Activity>> activities = activityService.run();
-		logger.debug("list of activities from P6 # {}", activities);
+		logger.debug("list of activities from P6#{}", activities);
 
 		final StringBuilder udfValueFilter = createFilters(activities, P6EllipseWSConstants.FOREIGN_OBJECT_ID);
 
@@ -97,39 +97,47 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 			if (null != udfValueList)
 				for (UDFValue udfValue : udfValueList) {
-					if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EGI_TITLE))) {
-						activityDTO.seteGIUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EQUIP_CODE_TITLE))) {
-						activityDTO.setEquipmentCodeUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EQUIPMENT_NO_TITLE))) {
-						activityDTO.setEquipmentNoUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_FEEEDER_TITLE))) {
-						activityDTO.setFeederUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_PICK_ID_TITLE))) {
-						activityDTO.setPickIdUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_REQ_BY_DATE_TITLE))) {
-						activityDTO.setRequiredByDateUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_STD_JOB_TITLE))) {
-						activityDTO.setEllipseStandardJobUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_TASK_USER_STATUS_TITLE))) {
-						activityDTO.setTaskUserStatusUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_UPSTREAM_SWITCH_TITLE))) {
-						activityDTO.setUpStreamSwitchUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_ADDRESS_TITLE))) {
-						activityDTO.setAddressUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_JD_CODE_TITLE))) {
-						activityDTO.setActivityJDCodeUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_TASK_DESC_TITLE))) {
-						activityDTO.setTaskDescriptionUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EXECUTION_PCKG_TITLE))) {
-						activityDTO.setExecutionPckgUDF(udfValue.getText());
-					}
+					setUDFValues(activityDTO, udfValue);
 				}
 
 			activityDTOs.add(activityDTO);
 		}
 
 		return activityDTOs;
+	}
+
+	/**
+	 * @param activityDTO
+	 * @param udfValue
+	 */
+	private void setUDFValues(P6ActivityDTO activityDTO, UDFValue udfValue) {
+		if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EGI_TITLE))) {
+			activityDTO.seteGIUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EQUIP_CODE_TITLE))) {
+			activityDTO.setEquipmentCodeUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EQUIPMENT_NO_TITLE))) {
+			activityDTO.setEquipmentNoUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_FEEEDER_TITLE))) {
+			activityDTO.setFeederUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_PICK_ID_TITLE))) {
+			activityDTO.setPickIdUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_REQ_BY_DATE_TITLE))) {
+			activityDTO.setRequiredByDateUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_STD_JOB_TITLE))) {
+			activityDTO.setEllipseStandardJobUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_TASK_USER_STATUS_TITLE))) {
+			activityDTO.setTaskUserStatusUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_UPSTREAM_SWITCH_TITLE))) {
+			activityDTO.setUpStreamSwitchUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_ADDRESS_TITLE))) {
+			activityDTO.setAddressUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_JD_CODE_TITLE))) {
+			activityDTO.setActivityJDCodeUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_TASK_DESC_TITLE))) {
+			activityDTO.setTaskDescriptionUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EXECUTION_PCKG_TITLE))) {
+			activityDTO.setExecutionPckgUDF(udfValue.getText());
+		}
 	}
 
 	/**
@@ -260,7 +268,6 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 						crtdActivities);
 				final Holder<List<Integer>> activityIds = crActivityService.run();
 				logger.debug("list of activities from P6 # {}", activityIds);
-
 				int j = 0;
 				final StringBuilder filter = new StringBuilder();
 				filter.append("ObjectId IN (");
@@ -296,7 +303,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 				final ActivityServiceCall<Boolean> crActivityService = new UpdateActivityServiceCall(trackingId,
 						crtdActivities);
 				final Holder<Boolean> status = crActivityService.run();
-				logger.debug("list of activities from P6 # {}", status.value.booleanValue());
+				logger.debug("list of activities from P6 # {}", status.value);
 				updateActivityFieldsUDF(trackingId, activities, chunkSize);
 
 			}
@@ -360,14 +367,14 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 				activity.setPrimaryResourceObjectId(
 						objectFactory.createActivityPrimaryResourceObjectId(p6ActivityDTO.getPrimaryResorceObjectId()));
 			activity.setPrimaryResourceId(p6ActivityDTO.getWorkGroup());
-			
-			if ( p6ActivityDTO.getOriginalDuration() > 0)
+
+			if (p6ActivityDTO.getOriginalDuration() > 0)
 				activity.setPlannedDuration(p6ActivityDTO.getOriginalDuration());
-			
-			if ( p6ActivityDTO.getRemainingDuration() > 0)
-			activity.setRemainingDuration(
-					objectFactory.createActivityRemainingDuration(p6ActivityDTO.getRemainingDuration()));
-			
+
+			if (p6ActivityDTO.getRemainingDuration() > 0) {
+				activity.setRemainingDuration(
+						objectFactory.createActivityRemainingDuration(p6ActivityDTO.getRemainingDuration()));
+			}
 			activity.setPlannedLaborUnits(p6ActivityDTO.getEstimatedLabourHours());
 
 			_activities.add(activity);
