@@ -85,7 +85,6 @@ public class DateUtilTest {
 	
 	@Test
 	public void testIsCurrentDate_Error1 () {
-		thrown.expect(NullPointerException.class);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		
 		Assert.assertFalse(dateUtil.isCurrentDate(sdf.format(new Date())));
