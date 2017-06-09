@@ -36,16 +36,6 @@ public class DateUtil {
 
 	private Calendar calendarDate;
 
-	public int getFiscalMonth() {
-
-		int month = calendarDate.get(Calendar.MONTH);
-		int result = ((month - FIRST_FISCAL_MONTH - 1) % 12) + 1;
-		if (result < 0) {
-			result += 12;
-		}
-		logger.debug("Get current month index of the fiscal year - month index # {}", result);
-		return result;
-	}
 
 	public int getFiscalYear() {
 		int month = calendarDate.get(Calendar.MONTH);
@@ -53,13 +43,6 @@ public class DateUtil {
 		return (month >= FIRST_FISCAL_MONTH) ? year : year - 1;
 	}
 
-	public int getCalendarMonth() {
-		return calendarDate.get(Calendar.MONTH);
-	}
-
-	public int getCalendarYear() {
-		return calendarDate.get(Calendar.YEAR);
-	}
 
 	public Calendar getStartDateOfFiscalYear(final Calendar calendarDate) {
 		this.calendarDate = calendarDate;
@@ -145,7 +128,7 @@ public class DateUtil {
 		return null;
 
 	}
-
+	
 	public String getCurrentDate() {
 		SimpleDateFormat sdf = new SimpleDateFormat(P6_DATE_FORMAT_WITH_TIMESTAMP);
 		return sdf.format(new Date());
