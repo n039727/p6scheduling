@@ -38,6 +38,11 @@
 			<version>2.1.0</version>
 		</dependency>
 		<dependency>
+			<groupId>au.com.wp.corp.p6.scheduling</groupId>
+			<artifactId>p6-wsmodel</artifactId>
+			<version>0.3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
             <groupId>au.com.wp.corp.integration</groupId>
             <artifactId>ellipse-ws-util</artifactId>
             <version>1.13</version>
