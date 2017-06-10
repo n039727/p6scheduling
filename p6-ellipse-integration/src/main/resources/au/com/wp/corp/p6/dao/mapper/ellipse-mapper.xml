@@ -21,6 +21,10 @@
 		<result property='ellipseStandardJob' column='std_job_no' />
 		<result property='feeder' column='Feeder' />
 		<result property='upStreamSwitch' column='upstream_switch' />
+		<result property='taskDescription' column='Task_Description' />
+		<result property='actualStartDate' column='ACTUAL_START_DATE' />
+		<result property='actualFinishDate' column='ACTUAL_FINISH_DATE' />
+		
 	</resultMap>
 	<select id="readElipseWorkorderDetails" resultMap="workOrderResultMap">
 		SELECT a.work_order || a.wo_task_no AS WOT,
@@ -108,9 +112,28 @@
 		a.WO_TASK_DESC AS Task_Description,
 		trim(d.STREET_NO) || ' ' || trim(d.STREET_NAME) || ' ' || trim(d.SUBURB) || ' ' ||
 		trim(d.TOWN_CITY) || ' ' || trim(d.COUNTY_SHIRE) || ' ' ||
-		trim(d.STATE) || ' ' || trim(d.ZIP_CODE) as address
-
-		FROM nell.msf623 a,
+		trim(d.STATE) || ' ' || trim(d.ZIP_CODE) as address,   
+    CASE
+		WHEN TRIM (a.ACTUAL_START_DATE) IS NULL
+		THEN
+		NULL
+		ELSE
+    TO_CHAR(TO_DATE(a.ACTUAL_START_DATE||' '|| CASE
+		WHEN TRIM (a.ACTUAL_START_TIME) IS NULL
+		THEN
+		'00:00:00'
+		ELSE a.ACTUAL_START_TIME END, 'YYYYMMDD HH24:MI:SS'), 'DD/MM/YYYY HH24:MI:SS') END AS ACTUAL_START_DATE,
+    CASE
+		WHEN TRIM (a.ACTUAL_FINISH_DATE) IS NULL
+		THEN
+		NULL
+		ELSE
+    TO_CHAR(TO_DATE(a.ACTUAL_FINISH_DATE||' '||CASE
+		WHEN TRIM (a.ACTUAL_FINISH_TIME) IS NULL
+		THEN
+		'00:00:00'
+		ELSE a.ACTUAL_FINISH_TIME END, 'YYYYMMDD HH24:MI:SS'), 'DD/MM/YYYY HH24:MI:SS') END AS ACTUAL_FINISH_DATE
+    FROM nell.msf623 a,
 		nell.msf620 b,
 		nell.msf600 c,
 		nell.msf011 d,
@@ -135,12 +158,9 @@
 		TO_DATE(trim(a.CLOSED_DT),'YYYYMMDD') >= ADD_MONTHS(trunc(sysdate),-2)))
          and a.job_desc_code <> 'D1']]>
 		and z.equip_no (+) = b.equip_no
-		and a.work_group in (
-		<foreach item="item" index="index" collection="list"
+		and a.work_group in (<foreach item="item" index="index" collection="list"
 			separator=",">
 			'${item}'
-		</foreach>
-		)
-		order by 1
+		</foreach>) order by 1
 	</select>
 </mapper>

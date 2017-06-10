@@ -19,7 +19,7 @@
 	<!-- Class that resolves ${...} placeholders against local properties and/or 
 		system properties and environment variables. In case property is defined 
 		more than one time, last property file is the most important -->
-	<bean id="mailProperties"
+	<bean id="p6Properties"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
@@ -28,6 +28,9 @@
 		</property>
 	</bean>
 	<import resource="/mybatis/mybatis-context.xml"/>
+	<import resource="classpath:spring-ws-transaction-context.xml"/>
+	<import resource="classpath:spring-ws-work-order-task-context.xml"/>
+	
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	<!-- DispatcherServlet Context: defines this servlet's request-processing 
 		infrastructure -->
@@ -35,49 +38,4 @@
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<mvc:annotation-driven />
 	<context:component-scan base-package="au.com.wp.corp.p6" />
-	
-	<!-- Definitions for the Ellipse work order service. -->
-    <bean id="ewsWorkOrderService" class="au.com.wp.corp.sys.corporate.common.soa.jaxws.LoggingJaxWsPortProxyFactoryBean">
-        <property name="serviceInterface" value="com.mincom.enterpriseservice.ellipse.workorder.WorkOrder"/>
-        <property name="wsdlDocumentUrl" value="classpath:META-INF/EwsWorkOrder.wsdl"/>
-        <property name="namespaceUri" value="http://workorder.ellipse.enterpriseservice.mincom.com"/>
-        <property name="serviceName" value="WorkOrderService"/>
-        <property name="endpointAddress" value="${ewsWorkOrderService.endpoint}"/>
-    </bean>
-
-    <bean class="au.com.wp.corp.p6.wsclient.ellipse.impl.WsseSecurityConfigurator">
-        <property name="bindingProvider" ref="ewsWorkOrderService" />
-        <property name="userName" value="${ewsWorkOrderService.username}" />
-        <property name="password" value="${ewsWorkOrderService.password}" />
-    </bean>
-    
-    <!-- Definitions for the Ellipse work order task service. -->
-    <bean id="ewsWorkOrderTaskService" class="au.com.wp.corp.sys.corporate.common.soa.jaxws.LoggingJaxWsPortProxyFactoryBean">
-        <property name="serviceInterface" value="com.mincom.enterpriseservice.ellipse.workordertask.WorkOrderTask"/>
-        <property name="wsdlDocumentUrl" value="classpath:META-INF/EwsWorkOrderTask.wsdl"/>
-        <property name="namespaceUri" value="http://workordertask.ellipse.enterpriseservice.mincom.com"/>
-        <property name="serviceName" value="WorkOrderTaskService"/>
-        <property name="endpointAddress" value="${ewsWorkOrderTaskService.endpoint}"/>
-    </bean>
-
-    <bean class="au.com.wp.corp.p6.wsclient.ellipse.impl.WsseSecurityConfigurator">
-        <property name="bindingProvider" ref="ewsWorkOrderTaskService" />
-        <property name="userName" value="${ewsWorkOrderTaskService.username}" />
-        <property name="password" value="${ewsWorkOrderTaskService.password}" />
-    </bean>
-    
-     <!-- Definitions for the Ellipse transaction service. -->
-    <bean id="ewsTransactionService" class="au.com.wp.corp.sys.corporate.common.soa.jaxws.LoggingJaxWsPortProxyFactoryBean">
-        <property name="serviceInterface" value="com.mincom.ews.service.transaction.Transaction"/>
-        <property name="wsdlDocumentUrl" value="classpath:META-INF/EwsTransaction.wsdl"/>
-        <property name="namespaceUri" value="http://transaction.service.ews.mincom.com"/>
-        <property name="serviceName" value="TransactionService"/>
-        <property name="endpointAddress" value="${ewsTransactionService.endpoint}"/>
-    </bean>
-
-    <bean class="au.com.wp.corp.p6.wsclient.ellipse.impl.WsseSecurityConfigurator">
-        <property name="bindingProvider" ref="ewsTransactionService" />
-        <property name="userName" value="${ewsTransactionService.username}" />
-        <property name="password" value="${ewsTransactionService.password}" />
-    </bean>
 </beans>

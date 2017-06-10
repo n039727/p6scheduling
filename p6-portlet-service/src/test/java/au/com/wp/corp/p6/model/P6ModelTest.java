@@ -249,4 +249,52 @@ public class P6ModelTest {
 		
 		
 	}
+	@Test
+	public void testTodoAssignment(){
+		final long time = System.currentTimeMillis();
+		final Date date = new Date();
+		TodoAssignment todoAssignment = new TodoAssignment();
+		todoAssignment.setCmts("Test comments");
+		todoAssignment.setCrtdTs(new Timestamp(time));
+		todoAssignment.setCrtdUsr("Test User");
+		todoAssignment.setLstUpdtdTs(new Timestamp(time));
+		todoAssignment.setLstUpdtdUsr("Test User1");
+		todoAssignment.setReqdByDt(date);
+		todoAssignment.setStat("Completed");
+		TodoAssignmentPK todoAssignMentPK = new TodoAssignmentPK();
+		todoAssignment.setTodoAssignMentPK(todoAssignMentPK);
+		todoAssignment.setSuprtngDocLnk("Test docs");
+		
+		
+		Assert.assertEquals("Test comments", todoAssignment.getCmts());
+		Assert.assertEquals(time, todoAssignment.getCrtdTs().getTime());
+		Assert.assertEquals("Test User", todoAssignment.getCrtdUsr());
+		Assert.assertEquals(time, todoAssignment.getLstUpdtdTs().getTime());
+		Assert.assertEquals(date, todoAssignment.getReqdByDt());
+		Assert.assertEquals("Completed", todoAssignment.getStat());
+		Assert.assertEquals("Test docs", todoAssignment.getSuprtngDocLnk());
+		Assert.assertEquals(todoAssignMentPK, todoAssignment.getTodoAssignMentPK());
+		Assert.assertEquals("Test User1", todoAssignment.getLstUpdtdUsr());
+	}
+	
+	@Test
+	public void testFunctionAccess(){
+		
+		FunctionAccess functionAccess = new FunctionAccess();
+		PortalFunction portalFunction = new PortalFunction();
+		portalFunction.setFuncDesc("Screen for Scheduler to add or update TODOs");
+		portalFunction.setFuncId(1);
+		portalFunction.setFuncNam("Add_Scheduling_To_Do");
+		
+		functionAccess.setFuncAccessId(1);
+		functionAccess.setPortalFunction(portalFunction);
+		functionAccess.setRoleNam("P6_TEM_LEDR_SCHDLR");
+		functionAccess.setWriteFlg("Y");
+		
+		Assert.assertEquals(1, functionAccess.getFuncAccessId());
+		Assert.assertEquals("P6_TEM_LEDR_SCHDLR", functionAccess.getRoleNam());
+		Assert.assertEquals("Y", functionAccess.getWriteFlg());
+		Assert.assertEquals(portalFunction, functionAccess.getPortalFunction());
+	
+	}
 }

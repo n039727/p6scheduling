@@ -20,7 +20,7 @@ import au.com.wp.corp.p6.exception.P6BusinessException;
  * @author n039126
  * @version 1.0
  */
-public interface IExecutionPackageService {
+public interface IExecutionPackageService extends P6BusinessExceptionParser{
 
 	/**
 	 * Updates the execution package with adding new job/jobs or removing
@@ -42,6 +42,6 @@ public interface IExecutionPackageService {
 
 	List<ExecutionPackageDTO> getExecutionPackageDTDOFoP6();
 
-	void updateP6ForExecutionPackage();
+	void updateP6ForExecutionPackage()throws P6BusinessException;
 
 }

@@ -32,18 +32,10 @@ public class DateUtil {
 
 	public static final String P6_DATE_FORMAT_WITH_TIMESTAMP = "yyyy-MM-dd'T'hh:mm:ss";
 
+	public static final String ELLIPSE_DATE_FORMAT = "yyyyMMdd";
+
 	private Calendar calendarDate;
 
-	public int getFiscalMonth() {
-		
-		int month = calendarDate.get(Calendar.MONTH);
-		int result = ((month - FIRST_FISCAL_MONTH - 1) % 12) + 1;
-		if (result < 0) {
-			result += 12;
-		}
-		logger.debug("Get current month index of the fiscal year - month index # {}", result );
-		return result;
-	}
 
 	public int getFiscalYear() {
 		int month = calendarDate.get(Calendar.MONTH);
@@ -51,13 +43,6 @@ public class DateUtil {
 		return (month >= FIRST_FISCAL_MONTH) ? year : year - 1;
 	}
 
-	public int getCalendarMonth() {
-		return calendarDate.get(Calendar.MONTH);
-	}
-
-	public int getCalendarYear() {
-		return calendarDate.get(Calendar.YEAR);
-	}
 
 	public Calendar getStartDateOfFiscalYear(final Calendar calendarDate) {
 		this.calendarDate = calendarDate;
@@ -97,7 +82,7 @@ public class DateUtil {
 	}
 
 	public String convertDateToString(String date, String expectedDateFormat, String proviedDateFormat) {
-		if ( null == date || date.trim().isEmpty())
+		if (null == date || date.trim().isEmpty())
 			return "";
 		SimpleDateFormat sdf = new SimpleDateFormat(expectedDateFormat);
 		return sdf.format(convertStringToDatetime(date, proviedDateFormat));
@@ -143,15 +128,15 @@ public class DateUtil {
 		return null;
 
 	}
-
+	
 	public String getCurrentDate() {
 		SimpleDateFormat sdf = new SimpleDateFormat(P6_DATE_FORMAT_WITH_TIMESTAMP);
 		return sdf.format(new Date());
 	}
 
 	public boolean isCurrentDate(String date) {
-		Date _date = convertStringToDate(date);
-		if (null != _date && _date.equals(convertStringToDate(new Date())))
+		Date dt = convertStringToDate(date);
+		if (null != dt && dt.equals(convertStringToDate(new Date())))
 			return true;
 
 		return false;
@@ -160,22 +145,19 @@ public class DateUtil {
 
 	public XMLGregorianCalendar convertStringToXMLGregorianClalander(final String date) {
 		try {
-			Date dob = null;
+			Date dt;
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-			dob = df.parse(date);
+			dt = df.parse(date);
 			GregorianCalendar cal = new GregorianCalendar();
-			cal.setTime(dob);
-			XMLGregorianCalendar xmlDate2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-			return xmlDate2;
-		} catch (ParseException e) {
+			cal.setTime(dt);
+			return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
+		} catch (ParseException | DatatypeConfigurationException  e) {
 			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
-		} catch (DatatypeConfigurationException e) {
-			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
-		}
+			logger.error("Can't covert to XMLGregorianCalendar - ", e);
+		} 
 
 		return null;
 
 	}
 
-	
 }

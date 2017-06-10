@@ -44,7 +44,7 @@ package au.com.wp.corp.p6.wsclient.constant;
  * @author N039126
  *
  */
-public interface P6WSConstants {
+public interface P6EllipseWSConstants {
 	
 
 	/**
@@ -137,6 +137,11 @@ public interface P6WSConstants {
 	
 	public static final String  ACTIVITY_OBJECT_ID = "ActivityObjectId";
 	
-	public static final String ACTIVITY_LIST_SIZE_TO_PROCESS_IN_P6 = "ACTIVITY_LIST_SIZE_TO_PROCESS_IN_P6";
+	public static final String NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6 = "NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6";
+
+	public static final String  NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_ELLIPSE = "NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_ELLIPSE";
+	public static final String Y="Y";
+	
+	public static final String RR= "RR";
 
 }

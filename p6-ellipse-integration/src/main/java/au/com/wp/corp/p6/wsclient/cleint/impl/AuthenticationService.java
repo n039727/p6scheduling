@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import javax.xml.ws.handler.Handler;
@@ -18,17 +17,17 @@ import au.com.wp.corp.p6.util.CacheManager;
 import au.com.wp.corp.p6.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.wsclient.auth.AuthenticationServicePortType;
 import au.com.wp.corp.p6.wsclient.auth.IntegrationFault;
-import au.com.wp.corp.p6.wsclient.constant.P6WSConstants;
+import au.com.wp.corp.p6.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
 
 public class AuthenticationService extends AbstractSOAPCall<Boolean> {
-	private static final Logger logger = LoggerFactory.getLogger(ActivityServiceCall.class);
+	private static final Logger logger1 = LoggerFactory.getLogger(ActivityServiceCall.class);
 	
 	private BindingProvider bp;
 	private AuthenticationServicePortType servicePort;
-	private static List<String> cookieHeaders = null;
+	private List<String> cookieHeaders = null;
 	private final String endPoint;
 	
 	private final String userPrincipal;
@@ -37,10 +36,10 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 
 	public AuthenticationService(final RequestTrackingId trackingId) {
 		super(trackingId);
-		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_AUTH_SERVICE_WSDL);
-		this.userPrincipal = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_USER_PRINCIPAL);
-		this.userCredential = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_USER_CREDENTIAL);
-		this.p6DBInstance = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_DB_INSTANCE);
+		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_AUTH_SERVICE_WSDL);
+		this.userPrincipal = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_USER_PRINCIPAL);
+		this.userCredential = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_USER_CREDENTIAL);
+		this.p6DBInstance = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_DB_INSTANCE);
 		
 	}
 
@@ -57,10 +56,9 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 		} catch (MalformedURLException e) {
 			throw new P6ServiceException(e);
 		}
-		au.com.wp.corp.p6.wsclient.auth.AuthenticationService Service = new au.com.wp.corp.p6.wsclient.auth.AuthenticationService(
-				wsdlURL,
-				new QName("http://xmlns.oracle.com/Primavera/P6/WS/Authentication/V1", "AuthenticationService"));
-		servicePort = Service.getAuthenticationServiceSOAP12PortHttp();
+		au.com.wp.corp.p6.wsclient.auth.AuthenticationService authService = new au.com.wp.corp.p6.wsclient.auth.AuthenticationService(
+				wsdlURL);
+		servicePort = authService.getAuthenticationServiceSOAP12PortHttp();
 		bp = (BindingProvider) servicePort;
 	
 		final List<Handler> handlerChain = bp.getBinding().getHandlerChain();
@@ -87,7 +85,7 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 	@Override
 	protected void doAfter() {
 		CacheManager.getWsHeaders().put("WS_COOKIE", cookieHeaders);
-		logger.info("WS_COOKIE == "+ CacheManager.getWsHeaders().get("WS_COOKIE"));
+		logger1.info("WS_COOKIE == "+ CacheManager.getWsHeaders().get("WS_COOKIE"));
 	}
 
 }

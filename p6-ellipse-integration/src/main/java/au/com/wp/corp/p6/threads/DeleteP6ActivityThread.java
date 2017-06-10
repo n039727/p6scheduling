@@ -40,7 +40,7 @@ public class DeleteP6ActivityThread implements Runnable {
 	public void run() {
 		logger.info("Initiates delete Activities in P6 thread ....");
 		final File file = new File("C:\\test-config\\deleteActivityP6Set.csv");
-		List<P6ActivityDTO> subList = null;
+		List<P6ActivityDTO> subList;
 		if ( deleteActivityP6Set.size() > 1)
 			subList = deleteActivityP6Set.subList(0, 1);
 		else
@@ -54,7 +54,6 @@ public class DeleteP6ActivityThread implements Runnable {
 		} catch (P6ServiceException e) {
 			logger.error("An error occur while deleting activities in P6 ", e);
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_DELETE_STATUS,ReadProcessStatus.FAILED );
-			e.printStackTrace();
 		}
 		
 		

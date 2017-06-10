@@ -21,6 +21,10 @@ public class P6ReloadablePropertiesReader {
 	private static final Logger logger = LoggerFactory.getLogger(P6ReloadablePropertiesReader.class);
 
 	private static PropertiesConfiguration configuration = null;
+	
+	private P6ReloadablePropertiesReader(){
+		
+	}
 
 	static {
 		try {

@@ -25,7 +25,7 @@ import au.com.wp.corp.p6.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.activity.ObjectFactory;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
-import au.com.wp.corp.p6.wsclient.constant.P6WSConstants;
+import au.com.wp.corp.p6.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.resource.Resource;
 import au.com.wp.corp.p6.wsclient.resourceassignment.ResourceAssignment;
@@ -39,7 +39,7 @@ import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
  * @version 1.0
  */
 @Service
-public class P6WSClientImpl implements P6WSClient, P6WSConstants {
+public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	private static final Logger logger = LoggerFactory.getLogger(P6WSClientImpl.class);
 
 	@Autowired
@@ -62,12 +62,13 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 		final ActivityServiceCall<List<Activity>> activityService = new ReadActivityServiceCall(trackingId, null);
 
 		final Holder<List<Activity>> activities = activityService.run();
-		logger.debug("list of activities from P6 # {}", activities);
+		logger.debug("list of activities from P6#{}", activities);
 
-		final StringBuilder udfValueFilter = createFilters(activities, P6WSConstants.FOREIGN_OBJECT_ID);
+		final StringBuilder udfValueFilter = createFilters(activities, P6EllipseWSConstants.FOREIGN_OBJECT_ID);
 
 		final Map<Integer, List<UDFValue>> udfValueMap = readUDFvalues(trackingId, udfValueFilter);
-		final StringBuilder resourceAssignmentFilter = createFilters(activities, P6WSConstants.ACTIVITY_OBJECT_ID);
+		final StringBuilder resourceAssignmentFilter = createFilters(activities,
+				P6EllipseWSConstants.ACTIVITY_OBJECT_ID);
 		final Map<Integer, ResourceAssignment> resourceAssignments = readResourceAssignments(trackingId,
 				resourceAssignmentFilter);
 
@@ -96,39 +97,47 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 
 			if (null != udfValueList)
 				for (UDFValue udfValue : udfValueList) {
-					if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EGI_TITLE))) {
-						activityDTO.seteGIUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EQUIP_CODE_TITLE))) {
-						activityDTO.setEquipmentCodeUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EQUIPMENT_NO_TITLE))) {
-						activityDTO.setEquipmentNoUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_FEEEDER_TITLE))) {
-						activityDTO.setFeederUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_PICK_ID_TITLE))) {
-						activityDTO.setPickIdUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_REQ_BY_DATE_TITLE))) {
-						activityDTO.setRequiredByDateUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_STD_JOB_TITLE))) {
-						activityDTO.setEllipseStandardJobUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_TASK_USER_STATUS_TITLE))) {
-						activityDTO.setTaskUserStatusUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_UPSTREAM_SWITCH_TITLE))) {
-						activityDTO.setUpStreamSwitchUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_ADDRESS_TITLE))) {
-						activityDTO.setAddressUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_JD_CODE_TITLE))) {
-						activityDTO.setActivityJDCodeUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_TASK_DESC_TITLE))) {
-						activityDTO.setTaskDescriptionUDF(udfValue.getText());
-					} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EXECUTION_PCKG_TITLE))) {
-						activityDTO.setExecutionPckgUDF(udfValue.getText());
-					}
+					setUDFValues(activityDTO, udfValue);
 				}
 
 			activityDTOs.add(activityDTO);
 		}
 
 		return activityDTOs;
+	}
+
+	/**
+	 * @param activityDTO
+	 * @param udfValue
+	 */
+	private void setUDFValues(P6ActivityDTO activityDTO, UDFValue udfValue) {
+		if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EGI_TITLE))) {
+			activityDTO.seteGIUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EQUIP_CODE_TITLE))) {
+			activityDTO.setEquipmentCodeUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EQUIPMENT_NO_TITLE))) {
+			activityDTO.setEquipmentNoUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_FEEEDER_TITLE))) {
+			activityDTO.setFeederUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_PICK_ID_TITLE))) {
+			activityDTO.setPickIdUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_REQ_BY_DATE_TITLE))) {
+			activityDTO.setRequiredByDateUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_STD_JOB_TITLE))) {
+			activityDTO.setEllipseStandardJobUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_TASK_USER_STATUS_TITLE))) {
+			activityDTO.setTaskUserStatusUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_UPSTREAM_SWITCH_TITLE))) {
+			activityDTO.setUpStreamSwitchUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_ADDRESS_TITLE))) {
+			activityDTO.setAddressUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_JD_CODE_TITLE))) {
+			activityDTO.setActivityJDCodeUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_TASK_DESC_TITLE))) {
+			activityDTO.setTaskDescriptionUDF(udfValue.getText());
+		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EXECUTION_PCKG_TITLE))) {
+			activityDTO.setExecutionPckgUDF(udfValue.getText());
+		}
 	}
 
 	/**
@@ -200,9 +209,9 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 
 		final Map<Integer, ResourceAssignment> resourceAssignmenteMap = new HashMap<>();
 		Integer activityObjectId;
-		for (ResourceAssignment udfValue : resourceAssignments.value) {
-			activityObjectId = udfValue.getActivityObjectId();
-			resourceAssignmenteMap.put(activityObjectId, udfValue);
+		for (ResourceAssignment resourceAssignment : resourceAssignments.value) {
+			activityObjectId = resourceAssignment.getActivityObjectId();
+			resourceAssignmenteMap.put(activityObjectId, resourceAssignment);
 		}
 		return resourceAssignmenteMap;
 	}
@@ -243,7 +252,7 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
 
-		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty(ACTIVITY_LIST_SIZE_TO_PROCESS_IN_P6);
+		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty(NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6);
 		logger.debug("Defined P6 UDFValueService webservice call trigger value# {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
 		int crdActivitySize = activities.size();
@@ -259,7 +268,6 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 						crtdActivities);
 				final Holder<List<Integer>> activityIds = crActivityService.run();
 				logger.debug("list of activities from P6 # {}", activityIds);
-
 				int j = 0;
 				final StringBuilder filter = new StringBuilder();
 				filter.append("ObjectId IN (");
@@ -295,7 +303,7 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 				final ActivityServiceCall<Boolean> crActivityService = new UpdateActivityServiceCall(trackingId,
 						crtdActivities);
 				final Holder<Boolean> status = crActivityService.run();
-				logger.debug("list of activities from P6 # {}", status.value.booleanValue());
+				logger.debug("list of activities from P6 # {}", status.value);
 				updateActivityFieldsUDF(trackingId, activities, chunkSize);
 
 			}
@@ -315,9 +323,13 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 			final Map<String, P6ActivityDTO> activityMap) {
 		ObjectFactory objectFactory = new ObjectFactory();
 		final List<Activity> _activities = new ArrayList<>();
-		Activity activity = null;
-		for (P6ActivityDTO p6ActivityDTO : activities.subList(i,
-				i + chunkSize <= activities.size() ? i + chunkSize : activities.size())) {
+		Activity activity;
+		int startIndex = i * chunkSize;
+		int endIndex = ((i + 1) * chunkSize - 1) < activities.size() ? ((i + 1) * chunkSize - 1) : activities.size();
+
+		logger.debug("constructing activity start index # {}  - end index # {}", startIndex, endIndex);
+
+		for (P6ActivityDTO p6ActivityDTO : activities.subList(startIndex, endIndex)) {
 			activity = new Activity();
 			activity.setId(p6ActivityDTO.getActivityId());
 			activity.setName(p6ActivityDTO.getActivityName());
@@ -331,6 +343,20 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 				activity.setPlannedStartDate(plannedStartDate);
 			else
 				logger.error("Invalid planned start date# {}", p6ActivityDTO.getPlannedStartDate());
+
+			if (null != p6ActivityDTO.getActualFinishDate()) {
+				final XMLGregorianCalendar actualStartDate = dateUtil
+						.convertStringToXMLGregorianClalander(p6ActivityDTO.getActualStartDate());
+				if (null != actualStartDate) {
+					activity.setActualStartDate(objectFactory.createActivityActualStartDate(actualStartDate));
+				}
+				final XMLGregorianCalendar actualFinishDate = dateUtil
+						.convertStringToXMLGregorianClalander(p6ActivityDTO.getActualFinishDate());
+				if (null != actualFinishDate) {
+					activity.setActualFinishDate(objectFactory.createActivityActualStartDate(actualFinishDate));
+				}
+			}
+
 			activity.setProjectObjectId(p6ActivityDTO.getProjectObjectId());
 			logger.debug("p6ActivityDTO.getActivityObjectId() #{} ", p6ActivityDTO.getActivityObjectId());
 			if (p6ActivityDTO.getActivityObjectId() != null)
@@ -341,9 +367,14 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 				activity.setPrimaryResourceObjectId(
 						objectFactory.createActivityPrimaryResourceObjectId(p6ActivityDTO.getPrimaryResorceObjectId()));
 			activity.setPrimaryResourceId(p6ActivityDTO.getWorkGroup());
-			activity.setPlannedDuration(p6ActivityDTO.getOriginalDuration());
-			activity.setRemainingDuration(
-					objectFactory.createActivityRemainingDuration(p6ActivityDTO.getRemainingDuration()));
+
+			if (p6ActivityDTO.getOriginalDuration() > 0)
+				activity.setPlannedDuration(p6ActivityDTO.getOriginalDuration());
+
+			if (p6ActivityDTO.getRemainingDuration() > 0) {
+				activity.setRemainingDuration(
+						objectFactory.createActivityRemainingDuration(p6ActivityDTO.getRemainingDuration()));
+			}
 			activity.setPlannedLaborUnits(p6ActivityDTO.getEstimatedLabourHours());
 
 			_activities.add(activity);
@@ -362,7 +393,7 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 	 */
 	private void createActivityFieldsUDF(final RequestTrackingId trackingId, List<P6ActivityDTO> activityDTOs)
 			throws P6ServiceException {
-		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty("ACTIVITY_LIST_SIZE_TO_PROCESS_IN_P6");
+		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty(NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6);
 		logger.debug("Defined P6 UDFValueService webservice call trigger value # {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
 
@@ -373,9 +404,13 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 
 		int udfValueSize = udfValues.size();
 		logger.debug("Number of calls to P6 UDFValue web service #{}", (udfValueSize / chunkSize) + 1);
+
 		for (int i = 0; i < (udfValueSize / chunkSize) + 1; i++) {
-			callUDFvalueService(trackingId,
-					udfValues.subList(i, i + chunkSize <= udfValueSize ? i + chunkSize : udfValueSize));
+			int startIndex = i * chunkSize;
+			int endIndex = ((i + 1) * chunkSize - 1) < udfValues.size() ? ((i + 1) * chunkSize - 1) : udfValues.size();
+
+			logger.debug("constructing activity start index # {}  - end index # {}", startIndex, endIndex);
+			callUDFvalueService(trackingId, udfValues.subList(startIndex, endIndex));
 
 		}
 
@@ -608,9 +643,13 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 		int createUDFValueSize = createUDFFields.size();
 		logger.debug("Number of calls to P6 UDFValue Create web service #{}", (createUDFValueSize / chunkSize) + 1);
 		for (int i = 0; i < (createUDFValueSize / chunkSize) + 1; i++) {
+			int startIndex = i * chunkSize;
+			int endIndex = ((i + 1) * chunkSize - 1) < createUDFValueSize ? ((i + 1) * chunkSize - 1)
+					: createUDFValueSize;
+
+			logger.debug("creating udf values start index # {}  - end index # {}", startIndex, endIndex);
 			UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService = new CreateUDFValueServiceCall(
-					trackingId, createUDFFields.subList(i,
-							i + chunkSize <= createUDFValueSize ? i + chunkSize : createUDFValueSize));
+					trackingId, createUDFFields.subList(startIndex, endIndex));
 			udfValueService.run();
 
 		}
@@ -618,8 +657,13 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 		int udfValueSize = updateUDFFields.size();
 		logger.debug("Number of calls to P6 UDFValue Update web service #{}", (udfValueSize / chunkSize) + 1);
 		for (int i = 0; i < (udfValueSize / chunkSize) + 1; i++) {
+			int startIndex = i * chunkSize;
+			int endIndex = ((i + 1) * chunkSize - 1) < udfValueSize ? ((i + 1) * chunkSize - 1) : udfValueSize;
+
+			logger.debug("updating udf values start index # {}  - end index # {}", startIndex, endIndex);
+
 			UDFValueServiceCall<Boolean> udfValueService = new UpdateUDFValueServiceCall(trackingId,
-					updateUDFFields.subList(i, i + chunkSize <= udfValueSize ? i + chunkSize : udfValueSize));
+					updateUDFFields.subList(startIndex, endIndex));
 			udfValueService.run();
 
 		}
@@ -639,18 +683,22 @@ public class P6WSClientImpl implements P6WSClient, P6WSConstants {
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
 
-		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty("ACTIVITY_LIST_SIZE_TO_PROCESS_IN_P6");
+		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty(NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6);
 		logger.debug("Defined P6 UDFValueService webservice call trigger value # {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
-		int crdActivitySize = activities.size();
-		logger.debug("Number of calls to P6 UDFValue web service #{}", (crdActivitySize / chunkSize) + 1);
+		int deleteActivitySize = activities.size();
+		logger.debug("Number of calls to P6 UDFValue web service #{}", (deleteActivitySize / chunkSize) + 1);
 		Holder<Boolean> status = null;
-		for (int i = 0; i < (crdActivitySize / chunkSize) + 1; i++) {
+		for (int i = 0; i < (deleteActivitySize / chunkSize) + 1; i++) {
 
 			final List<Integer> activityIds = new ArrayList<>();
 			final List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds = new ArrayList<>();
-			for (P6ActivityDTO p6ActivityDTO : activities.subList(i,
-					i + chunkSize <= activities.size() ? i + chunkSize : activities.size())) {
+			int startIndex = i * chunkSize;
+			int endIndex = ((i + 1) * chunkSize - 1) < deleteActivitySize ? ((i + 1) * chunkSize - 1)
+					: deleteActivitySize;
+
+			logger.debug("deleting activity start index # {}  - end index # {}", startIndex, endIndex);
+			for (P6ActivityDTO p6ActivityDTO : activities.subList(startIndex, endIndex)) {
 
 				prepareDeleteUDFValues(p6ActivityDTO, objectIds);
 				activityIds.add(p6ActivityDTO.getActivityObjectId());

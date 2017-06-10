@@ -22,7 +22,7 @@ import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
  * @version 1.0
  */
 public class UpdateUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
-	private static final Logger logger = LoggerFactory.getLogger(UpdateUDFValueServiceCall.class);
+	private static final Logger logger1 = LoggerFactory.getLogger(UpdateUDFValueServiceCall.class);
 
 	private final List<UDFValue> udfValues;
 
@@ -36,7 +36,7 @@ public class UpdateUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
 
 		Boolean status = null;
 		try {
-			logger.debug("calling update UDFValues with udf values == {}", udfValues);
+			logger1.debug("calling update UDFValues with udf values == {}", udfValues);
 			status = servicePort.updateUDFValues(udfValues);
 		} catch (IntegrationFault e) {
 			throw new P6ServiceException(e);

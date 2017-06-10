@@ -63,6 +63,12 @@ public class EllipseActivityDTO  implements Serializable{
 	private String taskDescription;
 
 	private String slippageCode;
+	
+	private String actualStartDate;
+	
+	private String actualFinishDate;
+	
+	
 
 	/**
 	 * @return the workOrderTaskId
@@ -371,6 +377,34 @@ public class EllipseActivityDTO  implements Serializable{
 	public void setSlippageCode(String slippageCode) {
 		this.slippageCode = slippageCode;
 	}
+
+	/**
+	 * @return the actualStartDate
+	 */
+	public String getActualStartDate() {
+		return actualStartDate;
+	}
+
+	/**
+	 * @param actualStartDate the actualStartDate to set
+	 */
+	public void setActualStartDate(String actualStartDate) {
+		this.actualStartDate = actualStartDate;
+	}
+
+	/**
+	 * @return the actualFinishDate
+	 */
+	public String getActualFinishDate() {
+		return actualFinishDate;
+	}
+
+	/**
+	 * @param actualFinishDate the actualFinishDate to set
+	 */
+	public void setActualFinishDate(String actualFinishDate) {
+		this.actualFinishDate = actualFinishDate;
+	}
+
 	
-		
 }

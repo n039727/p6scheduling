@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.util.CacheManager;
 import au.com.wp.corp.p6.util.P6ReloadablePropertiesReader;
-import au.com.wp.corp.p6.wsclient.constant.P6WSConstants;
+import au.com.wp.corp.p6.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
@@ -35,16 +35,15 @@ import au.com.wp.corp.p6.wsclient.udftype.UDFTypeService;
  * @version 1.0
  */
 public class UDFTypeServiceCall extends AbstractSOAPCall<List<UDFType>> {
-	private static final Logger logger = LoggerFactory.getLogger(UDFTypeServiceCall.class);
+	private static final Logger logger1 = LoggerFactory.getLogger(UDFTypeServiceCall.class);
 
 	protected UDFTypePortType servicePort;
-	private BindingProvider bp;
 	private String endPoint;
 	private final String filter;
 
 	public UDFTypeServiceCall(final RequestTrackingId trackingId, final String filter) {
 		super(trackingId);
-		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6WSConstants.P6_UDF_TYPE_SERVICE_WSDL);
+		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_UDF_TYPE_SERVICE_WSDL);
 		this.filter = filter;
 	}
 
@@ -62,15 +61,15 @@ public class UDFTypeServiceCall extends AbstractSOAPCall<List<UDFType>> {
 
 		UDFTypeService service = new UDFTypeService(wsdlURL);
 		servicePort = service.getUDFTypePort();
-		bp = (BindingProvider) servicePort;
+		BindingProvider bp = (BindingProvider) servicePort;
 
 		Map<String, List<String>> headers = (Map<String, List<String>>) bp.getRequestContext()
 				.get("javax.xml.ws.http.request.headers");
 		if (headers == null) {
-			headers = new HashMap<String, List<String>>();
+			headers = new HashMap<>();
 			bp.getRequestContext().put("javax.xml.ws.http.request.headers", headers);
 		}
-		logger.debug("WS_COOKIE == " + CacheManager.getWsHeaders().get("WS_COOKIE"));
+		logger1.debug("WS_COOKIE == " + CacheManager.getWsHeaders().get("WS_COOKIE"));
 
 		headers.put("cookie", CacheManager.getWsHeaders().get("WS_COOKIE"));
 
@@ -81,7 +80,7 @@ public class UDFTypeServiceCall extends AbstractSOAPCall<List<UDFType>> {
 
 	@Override
 	protected Holder<List<UDFType>> command() throws P6ServiceException {
-		logger.info("Calling activity service to update activity.....");
+		logger1.info("Calling activity service to update activity.....");
 		
 		List<UDFTypeFieldType> fields = new ArrayList<>();
 		

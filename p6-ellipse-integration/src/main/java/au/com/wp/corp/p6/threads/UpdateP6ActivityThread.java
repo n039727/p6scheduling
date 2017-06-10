@@ -37,7 +37,7 @@ public class UpdateP6ActivityThread implements Runnable {
 	public void run() {
 		logger.info ("Initiates Update Activities in P6 thread ....");
 		File file = new File(System.getProperty("properties.dir")+"\\updateActivityP6Set.csv");
-		List<P6ActivityDTO> subList = null;
+		List<P6ActivityDTO> subList;
 		if ( updateActivityP6Set.size() > 2)
 			subList = updateActivityP6Set.subList(0, 3);
 		else
@@ -51,7 +51,6 @@ public class UpdateP6ActivityThread implements Runnable {
 		} catch (P6ServiceException e) {
 			logger.error("An error occur while deleting activities in P6 ", e);
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_UPDATE_STATUS,ReadProcessStatus.FAILED );
-			e.printStackTrace();
 		}
 	}
 
