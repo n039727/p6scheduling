@@ -5,10 +5,12 @@ package au.com.wp.corp.p6.wsclient.cleint.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.ws.Holder;
 
@@ -121,18 +123,6 @@ public class P6WSClientImpl implements P6WSClient {
 					}
 					filter.append(")");
 				}
-				/*if (searchRequest.getCrewList().size() > 1)
-					filter.append("(");
-				for (String crew : searchRequest.getCrewList()) {
-					if (i > 0)
-						filter.append(OR);
-					filter.append("PrimaryResourceId = ");
-					filter.append("'" + crew + "'");
-					i++;
-				}
-				if (searchRequest.getCrewList().size() > 1)
-					filter.append(")");
-					*/
 			}
 
 			if (null != searchRequest.getPlannedStartDate()) {
@@ -336,6 +326,49 @@ public class P6WSClientImpl implements P6WSClient {
 			throw new P6ServiceException("NO_SEARCH_CRITERIA_FOUND");
 		}
 		List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds = new ArrayList<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId>();
+		List<String>  workOrderIdsNotFound = workOrderIdMap.entrySet().stream()
+                .filter(map -> 0 == map.getValue())
+                .map(map -> map.getKey())
+                .collect(Collectors.toList());
+		logger.info("workOrderIds not found {}",workOrderIdsNotFound);
+		if (workOrderIdsNotFound != null && workOrderIdsNotFound.size() > 0) {
+			ActivitySearchRequest activitySearchRequest = new ActivitySearchRequest();
+			activitySearchRequest.setFilter("Id in(");
+			StringBuilder filter = new StringBuilder();
+			for (String string : workOrderIdsNotFound) {
+
+				if (filter.length() > 0) {
+					filter.append(",'" + string + "'");
+				} else {
+					filter.append("'" + string + "'");
+				}
+			}
+			logger.info("filter {}", filter);
+			final ActivityServiceCall activityService = new ActivityServiceCall(trackingId, activityServiceWSDL,
+					filter.length() > 0 ? filter.toString() : null);
+
+			final Holder<List<Activity>> activities = activityService.run();
+			logger.debug("list of activities from P6 # {}", activities);
+			if (null != activities) {
+				logger.debug("size of activity list from P6 # {}", activities.value.size());
+				for (Activity activity : activities.value) {
+					
+					workOrderIdMap.put(activity.getId(), activity.getObjectId());
+					foreignObjIds.add(activity.getObjectId());
+				}
+
+			}
+
+		}
+		if (foreignObjIds.contains(null)) {
+			for (Iterator<Integer> iterator = foreignObjIds.iterator(); iterator.hasNext();) {
+				Integer objId = (Integer) iterator.next();
+				if (objId == null) {
+					iterator.remove();
+				}
+
+			}
+		}
 		for (Integer workOrderId : foreignObjIds) {
 			au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId deletedObjId = new au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId();
 			deletedObjId.setForeignObjectId(workOrderId);

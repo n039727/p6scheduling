@@ -102,12 +102,12 @@ public class AppConfig {
 	            sessionFactory);
 	    return transactionManager;
 	}
-	@Bean(autowire= Autowire.BY_NAME,name = "p6Executor")
+	/*@Bean(autowire= Autowire.BY_NAME,name = "p6Executor")
 	@Qualifier("p6Executor")
     public TaskExecutor p6Executor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setMaxPoolSize(100);
         executor.initialize();
         return executor;
-    }
+    }*/
 }

@@ -181,7 +181,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		List<ExecutionPackageDTO> execPkgdtos = new ArrayList<ExecutionPackageDTO>();
 		execPkgdtos.add(execPackgDTO);
 		executionPackageDTOFoP6List = execPkgdtos;
-		updateP6ForExecutionPackage();
+		//updateP6ForExecutionPackage();
 		return execPackgDTO;
 
 	}
