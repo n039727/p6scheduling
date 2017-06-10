@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -173,7 +174,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			List<Task> tasksInDb = fetchListOfTasksBySearchedDate(input,listWOData);
 			for (Task task : tasksInDb) {
 				Optional<WorkOrder> wo = findWOByTaskId(listWOData, task.getTaskId());
-				if(!wo.isPresent()&& null !=task.getExecutionPackage()){
+				if(!wo.isPresent() && null !=task.getExecutionPackage()){
 					removExecutionPackageFromTask(task);
 					
 				}
@@ -368,6 +369,23 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				Map<String,Integer> workOrderIdMap = p6wsClient.getWorkOrderIdMap();
 				List<Integer>  listOfObjectId = new  ArrayList<Integer>();
 				workOrderIds.forEach(workOrderId -> {
+					Integer objectId = workOrderIdMap.get(workOrderId);
+					if((!workOrderIdMap.containsKey(workOrderId)) || objectId == null){
+						logger.info("input id # {} ", workOrderId);
+						workOrderIdMap.put(workOrderId, 0);
+						
+						/*ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+						searchRequest.setWorkOrder(workOrderId);
+						
+							List<WorkOrder> workOrders = null;
+							try {
+								workOrders = p6wsClient.searchWorkOrder(searchRequest);
+							} catch (P6ServiceException e) {
+								throw new IllegalArgumentException(e);
+							}
+							logger.info("list of work orders from P6# {}", workOrders);*/
+						
+					}
 					listOfObjectId.add(workOrderIdMap.get(workOrderId));
 				});
 				boolean isSuccess =p6wsClient.removeExecutionPackage(listOfObjectId);
