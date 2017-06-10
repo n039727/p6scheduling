@@ -91,8 +91,8 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 		executionPackage.setLstUpdtdUsr("N039603");
 		sessionFactory.getCurrentSession().saveOrUpdate(executionPackage);
 
-		sessionFactory.getCurrentSession().flush();
-		sessionFactory.getCurrentSession().clear();
+		//sessionFactory.getCurrentSession().flush();
+		//sessionFactory.getCurrentSession().clear();
 
 		return executionPackageDTO;
 	}

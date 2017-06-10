@@ -241,5 +241,32 @@ public class ExecutionPackage implements Serializable {
 		this.execDeptCmt = execDeptCmt;
 	}
 
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((exctnPckgNam == null) ? 0 : exctnPckgNam.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ExecutionPackage other = (ExecutionPackage) obj;
+		if (exctnPckgNam == null) {
+			if (other.exctnPckgNam != null)
+				return false;
+		} else if (!exctnPckgNam.equals(other.exctnPckgNam))
+			return false;
+		return true;
+	}
+
 	
 }

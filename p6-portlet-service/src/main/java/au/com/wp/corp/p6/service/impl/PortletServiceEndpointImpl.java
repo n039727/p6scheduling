@@ -28,6 +28,7 @@ import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.service.PortletServiceEndpoint;
+import au.com.wp.corp.p6.utils.CacheManager;
 import au.com.wp.corp.p6.validation.Validator;
 
 /**
@@ -111,6 +112,9 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 		List<WorkOrder> workOrders = null;
 		try {
 			workOrders = p6BusinessService.search(request.getBody());
+			logger.debug("Checking data from Cachemanager taskforUpdate {}",CacheManager.getTasksforupdate());
+			logger.debug("Checking data from Cachemanager getExecpkglistforupdate {}",CacheManager.getExecpkglistforupdate());
+			logger.debug("Checking data from Cachemanager getDeletetedexecpkaglist {}",CacheManager.getDeletetedexecpkaglist());
 			p6BusinessService.updateTasksAndExecutionPackageInP6AndDB(); //async call
 		} catch (P6BaseException e) {
 			p6BusinessService.clearApplicationMemory();
