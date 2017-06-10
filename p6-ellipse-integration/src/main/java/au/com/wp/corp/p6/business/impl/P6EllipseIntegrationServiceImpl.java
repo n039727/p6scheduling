@@ -49,10 +49,9 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	private static final Logger logger = LoggerFactory.getLogger(P6EllipseIntegrationServiceImpl.class);
 
 	public static final String POLING_TIME_TO_CHECK_READ_STATUS_INMILI = "POLING_TIME_TO_CHECK_READ_STATUS_INMILI";
-	
+
 	public static final String USER_STATUS_AL = "AL";
 
-	
 	@Autowired
 	P6EllipseDAO p6EllipseDAO;
 
@@ -64,7 +63,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 	@Autowired
 	DateUtil dateUtil;
-	
+
 	@Autowired
 	EllipseWSClient ellipseWSClient;
 
@@ -403,7 +402,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * the status from Ellipse to P6
 		 */
 		if ((null != p6Activity.getWorkGroup() && !p6Activity.getWorkGroup().equals(ellipseActivity.getWorkGroup()))
-						|| (null != p6Activity.getPlannedStartDate() && !p6Activity.getPlannedStartDate()
+				|| (null != p6Activity.getPlannedStartDate() && !p6Activity.getPlannedStartDate()
 						.equals(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
 								DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 								DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)))) {
@@ -481,12 +480,12 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (Double.compare(p6Activity.getOriginalDuration(), ellipseActivity.getOriginalDuration()) != 0) {
+		if (!P6Utility.isEqual(p6Activity.getOriginalDuration(), ellipseActivity.getOriginalDuration())) {
 			p6ActivityUpd.setOriginalDuration(ellipseActivity.getOriginalDuration());
 			isUpdateReq = true;
 		}
 
-		if (Double.compare(p6Activity.getRemainingDuration(), ellipseActivity.getRemainingDuration()) != 0) {
+		if (!P6Utility.isEqual(p6Activity.getRemainingDuration(), ellipseActivity.getRemainingDuration())) {
 			p6ActivityUpd.setRemainingDuration(ellipseActivity.getRemainingDuration());
 			isUpdateReq = true;
 		}
@@ -515,8 +514,10 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		}
 
 		if (null != ellipseActivity.getEstimatedLabourHours()
-				&& !P6Utility.isEqual(P6Utility.covertStringToDouble(ellipseActivity.getEstimatedLabourHours()), p6Activity.getEstimatedLabourHours())) {
-			p6ActivityUpd.setEstimatedLabourHours(P6Utility.covertStringToDouble(ellipseActivity.getEstimatedLabourHours()));
+				&& !P6Utility.isEqual(P6Utility.covertStringToDouble(ellipseActivity.getEstimatedLabourHours()),
+						p6Activity.getEstimatedLabourHours())) {
+			p6ActivityUpd
+					.setEstimatedLabourHours(P6Utility.covertStringToDouble(ellipseActivity.getEstimatedLabourHours()));
 			isUpdateReq = true;
 		}
 
@@ -564,8 +565,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 */
 
 		if (null != projectWorkgroup.get(ellipseActivity.getWorkGroup())
-				&& null != projectWorkgroup.get(ellipseActivity.getWorkGroup()).getSchedulerinbox()
-				&& projectWorkgroup.get(ellipseActivity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y)) {
+				&& null != projectWorkgroup.get(ellipseActivity.getWorkGroup()).getSchedulerinbox() && projectWorkgroup
+						.get(ellipseActivity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y)) {
 			p6ActivityUpd.setExecutionPckgUDF("");
 		} else {
 			p6ActivityUpd.setExecutionPckgUDF(p6Activity.getExecutionPckgUDF());
@@ -581,7 +582,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			p6ActivityUpd.setPlannedStartDate(dateUtil.getStartDateOfFiscalYear(dateUtil.getCurrentDate(),
 					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP));
 
-		} 
+		}
 
 		/*
 		 * the WO task is read from Ellipse when the corresponding activity
@@ -596,20 +597,16 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			p6ActivityUpd.setProjectObjectId(projectObjectId);
 		}
 
-		if ( null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty())
-		{
+		if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()) {
 			p6ActivityUpd.setActualStartDate(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),
 					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 		}
-		
-		
-		if ( null != ellipseActivity.getActualFinishDate() && !ellipseActivity.getActualFinishDate().trim().isEmpty())
-		{
+
+		if (null != ellipseActivity.getActualFinishDate() && !ellipseActivity.getActualFinishDate().trim().isEmpty()) {
 			p6ActivityUpd.setActualFinishDate(dateUtil.convertDateToString(ellipseActivity.getActualFinishDate(),
 					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 		}
-		
-		
+
 		return isUpdateReq ? p6ActivityUpd : null;
 	}
 

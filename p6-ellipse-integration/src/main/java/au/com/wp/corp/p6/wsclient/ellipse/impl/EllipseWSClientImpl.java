@@ -61,7 +61,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 	@Autowired
 	TransactionWsClient transactionWsClient;
 
-	private String startTransaction() {
+	public String startTransaction() {
 		Begin begin = new Begin();
 		OperationContext beginOperationContext = new OperationContext();
 		beginOperationContext.setDistrict("CORP");
@@ -71,7 +71,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 		return beginResponse.getTransactionId();
 	}
 
-	private void rollbackTransaction(String transactionId) {
+	public void rollbackTransaction(String transactionId) {
 		Rollback rollback = new Rollback();
 		OperationContext rollbackOperationContext = new OperationContext();
 		rollbackOperationContext.setDistrict("CORP");
@@ -88,7 +88,8 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 	 * updateActivitiesEllipse(java.util.List)
 	 */
 	@Override
-	public void updateActivitiesEllipse(List<EllipseActivityDTO> activities) throws P6ServiceException {
+	public void updateActivitiesEllipse(List<EllipseActivityDTO> activities, String transactionId)
+			throws P6ServiceException {
 		logger.info("Updating activities in Ellipse..");
 		int noOfActvtyTobeProccessedAtATime;
 		try {
@@ -101,8 +102,9 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 		logger.debug("Number of activties to be updated in Ellipse in a single service call #{}",
 				noOfActvtyTobeProccessedAtATime);
 
-		String transactionId = startTransaction();
-		
+		if (null == transactionId)
+			transactionId = startTransaction();
+
 		MultipleModify multipleModify = new MultipleModify();
 		OperationContext operationContext = new OperationContext();
 		operationContext.setRunAs(new RunAs());
@@ -110,8 +112,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 		operationContext.setTransaction(transactionId);
 		multipleModify.setContext(operationContext);
 
-		
-		ArrayOfWorkOrderTaskServiceModifyRequestDTO arrayModify = new ArrayOfWorkOrderTaskServiceModifyRequestDTO();
+		ArrayOfWorkOrderTaskServiceModifyRequestDTO arrayModify;
 		WorkOrderTaskServiceModifyRequestDTO woTaskModifyDTO;
 		WorkOrderDTO workOrder;
 		Map<String, String> workorderTask;
@@ -146,12 +147,9 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				arrayModify.getWorkOrderTaskServiceModifyRequestDTO().add(woTaskModifyDTO);
 				multipleModify.setRequestParameters(arrayModify);
 			}
-			try {
-				logger.debug("Updating ellipse with list of work order task -{}", arrayModify.getWorkOrderTaskServiceModifyRequestDTO().size());
-				MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
-			}finally {
-				rollbackTransaction(transactionId);
-			}
+			logger.debug("Updating ellipse with list of work order task -{}",
+					arrayModify.getWorkOrderTaskServiceModifyRequestDTO().size());
+			MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
 		}
 
 	}

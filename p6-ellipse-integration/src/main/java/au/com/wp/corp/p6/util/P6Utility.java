@@ -13,10 +13,11 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  */
 public class P6Utility {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(P6Utility.class);
-	
-	private P6Utility(){}
+
+	private P6Utility() {
+	}
 
 	/**
 	 * converts String to double
@@ -37,7 +38,7 @@ public class P6Utility {
 
 	public static boolean isEqual(double value1, double value2) {
 
-		if ( Double.compare(value1,value2) ==0)
+		if (Double.compare(value1, value2) == 0)
 			return true;
 
 		return false;
@@ -82,13 +83,7 @@ public class P6Utility {
 	 * @return
 	 */
 	public static String covertDoubleToString(Double value) {
-		try {
-			return String.valueOf(value);
-		} catch (Exception e) {
-			logger.error("An error occurs while converting double to string - ", e);
-		}
-
-		return null;
+		return String.valueOf(value);
 	}
 
 	/**
@@ -98,13 +93,8 @@ public class P6Utility {
 	 * @return
 	 */
 	public static String covertLongToString(Long value) {
-		try {
-			return String.valueOf(value);
-		} catch (Exception e) {
-			logger.error("An error occurs while converting long to string - ", e);
-		}
+		return String.valueOf(value);
 
-		return null;
 	}
 
 	/**
@@ -114,13 +104,8 @@ public class P6Utility {
 	 * @return
 	 */
 	public static String covertIntegerToString(Integer value) {
-		try {
-			return String.valueOf(value);
-		} catch (Exception e) {
-			logger.error("An error occurs while converting integer to string - ", e);
-		}
+		return String.valueOf(value);
 
-		return null;
 	}
 
 }
