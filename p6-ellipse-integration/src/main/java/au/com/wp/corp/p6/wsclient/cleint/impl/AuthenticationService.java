@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import javax.xml.ws.handler.Handler;
@@ -24,11 +23,11 @@ import au.com.wp.corp.p6.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.wsclient.soap.SOAPLoggingHandler;
 
 public class AuthenticationService extends AbstractSOAPCall<Boolean> {
-	private static final Logger logger = LoggerFactory.getLogger(ActivityServiceCall.class);
+	private static final Logger logger1 = LoggerFactory.getLogger(ActivityServiceCall.class);
 	
 	private BindingProvider bp;
 	private AuthenticationServicePortType servicePort;
-	private static List<String> cookieHeaders = null;
+	private List<String> cookieHeaders = null;
 	private final String endPoint;
 	
 	private final String userPrincipal;
@@ -57,10 +56,9 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 		} catch (MalformedURLException e) {
 			throw new P6ServiceException(e);
 		}
-		au.com.wp.corp.p6.wsclient.auth.AuthenticationService Service = new au.com.wp.corp.p6.wsclient.auth.AuthenticationService(
-				wsdlURL,
-				new QName("http://xmlns.oracle.com/Primavera/P6/WS/Authentication/V1", "AuthenticationService"));
-		servicePort = Service.getAuthenticationServiceSOAP12PortHttp();
+		au.com.wp.corp.p6.wsclient.auth.AuthenticationService authService = new au.com.wp.corp.p6.wsclient.auth.AuthenticationService(
+				wsdlURL);
+		servicePort = authService.getAuthenticationServiceSOAP12PortHttp();
 		bp = (BindingProvider) servicePort;
 	
 		final List<Handler> handlerChain = bp.getBinding().getHandlerChain();
@@ -87,7 +85,7 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 	@Override
 	protected void doAfter() {
 		CacheManager.getWsHeaders().put("WS_COOKIE", cookieHeaders);
-		logger.info("WS_COOKIE == "+ CacheManager.getWsHeaders().get("WS_COOKIE"));
+		logger1.info("WS_COOKIE == "+ CacheManager.getWsHeaders().get("WS_COOKIE"));
 	}
 
 }

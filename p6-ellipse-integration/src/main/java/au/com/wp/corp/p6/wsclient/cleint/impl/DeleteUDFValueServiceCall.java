@@ -18,7 +18,7 @@ import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
  *
  */
 public class DeleteUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
-	private static final Logger logger = LoggerFactory.getLogger(DeleteUDFValueServiceCall.class);
+	private static final Logger logger1 = LoggerFactory.getLogger(DeleteUDFValueServiceCall.class);
 	
 
 	private List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds;
@@ -32,13 +32,12 @@ public class DeleteUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
 		Boolean returnVal = Boolean.FALSE;
 		
 		try {
-			logger.debug("calling deleteUDFValues with udf values == {}",objectIds);
+			logger1.debug("calling deleteUDFValues with udf values == {}",objectIds);
 			
 			returnVal = servicePort.deleteUDFValues(objectIds);
 			
 		} catch (au.com.wp.corp.p6.wsclient.udfvalue.IntegrationFault e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new P6ServiceException(e);
 		}
 		return new Holder<>(returnVal);
 	}
