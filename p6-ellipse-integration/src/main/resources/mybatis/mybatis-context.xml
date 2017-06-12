@@ -20,7 +20,7 @@
 	
 	<!-- Mapper Factory Bean to intialize and register mappers -->
 	<bean id="ellipseDataMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<property name="mapperInterface" value="au.com.wp.corp.p6.dao.mapper.P6EllipseMapper" />
+		<property name="mapperInterface" value="au.com.wp.corp.p6.integration.dao.mapper.P6EllipseMapper" />
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 
@@ -78,7 +78,7 @@
 
 	<!-- Mapper Factory Bean to intialize and register mappers -->
 	<bean id="p6PortalDataMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<property name="mapperInterface" value="au.com.wp.corp.p6.dao.mapper.P6PortalMapper" />
+		<property name="mapperInterface" value="au.com.wp.corp.p6.integration.dao.mapper.P6PortalMapper" />
 		<property name="sqlSessionFactory" ref="p6SqlSessionFactory" />
 	</bean>
 
