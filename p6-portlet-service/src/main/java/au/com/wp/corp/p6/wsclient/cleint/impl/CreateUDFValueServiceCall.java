@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
+import au.com.wp.corp.p6.wsclient.udftype.UDFType;
 import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
 import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
 
@@ -40,7 +41,7 @@ public class CreateUDFValueServiceCall extends UDFValueServiceCall<List<ObjectId
 			udfValue.setForeignObjectId(request.getForeignObjectId());
 			udfValue.setText(request.getText());
 			udfValue.setUDFTypeDataType(request.getUdfTypeDataType());
-			udfValue.setUDFTypeObjectId(request.getUdfTypeObjectId());
+			udfValue.setUDFTypeObjectId(readUDFTypeForExecutionPackage());
 			udfValue.setUDFTypeSubjectArea(request.getUdfTypeSubjectArea());
 			udfValue.setUDFTypeTitle(request.getUdfTypeTitle());
 			createUDFValues.add(udfValue);
@@ -56,6 +57,15 @@ public class CreateUDFValueServiceCall extends UDFValueServiceCall<List<ObjectId
 		}
 		return new Holder<List<ObjectId>>(objectIds);
 	}
+	
+	private int readUDFTypeForExecutionPackage() throws P6ServiceException {
+		logger.info("Reading UDF type details from P6 ..");
+	
+		StringBuilder filter = new StringBuilder();
+		filter.append("SubjectArea='Activity' and Title = 'Execution Grouping'");
 
-
+		UDFTypeServiceCall udfTypeServiceCall = new UDFTypeServiceCall(trackingId, filter.toString());
+		Holder<List<UDFType>> udfTypes = udfTypeServiceCall.run();
+		return udfTypes.value.get(0).getObjectId();
+	}
 }
