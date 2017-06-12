@@ -191,13 +191,16 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 							String dbWOExecPkg = dbTask.getExecutionPackage().getExctnPckgNam();
 							Set<Task> taskForExePak = dbTask.getExecutionPackage().getTasks();
 							if (mapOfExecutionPkgWO.containsKey(dbWOExecPkg)) {
-								regroupEPForOtherWO(mapOfExecutionPkgWO, taskForExePak, dbWOExecPkg);
+								workOrderNew.getCrewAssigned().add(workOrderNew.getCrewNames());
+								taskForExePak.remove(dbTask);
+								regroupEPForOtherWO(listWOData,mapOfExecutionPkgWO, taskForExePak, dbWOExecPkg);
 							} else {
 								if (!StringUtils.isEmpty(dbTask.getCrewId())) {
-									workOrderNew.getCrewAssigned().add(dbTask.getCrewId());
+									workOrderNew.getCrewAssigned().add(workOrderNew.getCrewNames());
 								}
 								mapOfExecutionPkgWO.put(dbWOExecPkg, workOrderNew);
-								regroupEPForOtherWO(mapOfExecutionPkgWO, taskForExePak, dbWOExecPkg);
+								taskForExePak.remove(dbTask);
+								regroupEPForOtherWO(listWOData,mapOfExecutionPkgWO, taskForExePak, dbWOExecPkg);
 							}
 						
 						}else{
@@ -223,14 +226,23 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		logger.debug("Total time taken to execute and return search results == {}",System.currentTimeMillis() - startTime);
 		return workorders;
 	}
-	private void regroupEPForOtherWO(Map<String, WorkOrder> mapOfExecutionPkgWO, Set<Task> taskForExePak, String dbWOExecPkg){
+	private void regroupEPForOtherWO(List<WorkOrder> listOfWo, Map<String, WorkOrder> mapOfExecutionPkgWO, Set<Task> taskForExePak, String dbWOExecPkg){
 		WorkOrder workOrdersalreadyinGroup = mapOfExecutionPkgWO.get(dbWOExecPkg);
 		if(taskForExePak.size()>0){
 			for(Task tsk : taskForExePak){
-				String workOrderId = tsk.getTaskId();
+				Optional<WorkOrder> wo = findWOByTaskId(listOfWo, tsk.getTaskId());
+				if(wo.isPresent()){
+					WorkOrder workOrdr = wo.get();
+					if(!workOrdersalreadyinGroup.getWorkOrders().contains(workOrdr.getWorkOrderId())){
+						workOrdersalreadyinGroup.getWorkOrders().add(workOrdr.getWorkOrderId());
+						workOrdersalreadyinGroup.getCrewAssigned().add(workOrdr.getCrewNames());
+					}
+				}else{
+					String workOrderId = tsk.getTaskId();
 				if(!workOrdersalreadyinGroup.getWorkOrders().contains(workOrderId)){
 					workOrdersalreadyinGroup.getWorkOrders().add(workOrderId);
 					workOrdersalreadyinGroup.getCrewAssigned().add(tsk.getCrewId());
+				}
 				}
 			}
 		}
@@ -242,31 +254,14 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		Set<ExecutionPackage> execPkgListForUpdate = CacheManager.getExecpkglistforupdate();
 		/*********Using Cachemanager for temp data store************/
 		ExecutionPackage executionpackage = task.getExecutionPackage();
-		String executionPkgLeadCrew = executionpackage.getLeadCrewId() == null ? "" : executionpackage.getLeadCrewId();
+		
+		/*
+		 * Before removing check of other tasks on the execution package if
+		 * for all other tasks the dates are same then don't remove the
+		 * package(TBD)
+		 */
 		executionpackage.removeTask(task);
-		Set<Task> tasksInExecutionPkg = executionpackage.getTasks();
-		StringBuilder crewPresent = new StringBuilder();
-		tasksInExecutionPkg.forEach(taskInPkg -> {
-			if (!taskInPkg.getTaskId().equals(task.getTaskId())) {
-				logger.debug("in removExecutionPackageFromTask  creew id from task ()", taskInPkg.getCrewId());
-				crewPresent.append(taskInPkg.getCrewId());
-			}
-		});
-
-		logger.debug("in removExecutionPackageFromTask creew id from exec pakage ()", executionPkgLeadCrew);
-		/* turn blank the lead crew if matching remove the task */
-
-		if ((!executionPkgLeadCrew.equals("")) && (!StringUtils.contains(crewPresent, executionPkgLeadCrew))) {
-			/*
-			 * Before removing check of other tasks on the execution package if
-			 * for all other tasks the dates are same then don't remove the
-			 * package(TBD)
-			 */
-			logger.debug("in prepare workorder removed lead creew id from exec pakage ()",
-					executionpackage.getLeadCrewId());
-			executionpackage.setLeadCrewId("");
-			executionpackage.setActioned("N");
-		}
+		updateExecutionPackageLeadCrew(executionpackage,task,false);
 		// update for scheduled date or any change in task
 		if (!StringUtils.isEmpty(task.getTaskId())) {
 			tasksForUpdate.add(task);
@@ -276,6 +271,33 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		execPkgListForUpdate.add(executionpackage);
 		deletetedExecPkagList.add(task.getTaskId());
 	}
+
+	private void updateExecutionPackageLeadCrew(ExecutionPackage executionpackage, Task task, boolean updateAble) {
+		Set<Task> tasksInExecutionPkg = executionpackage.getTasks();
+		StringBuilder crewPresent = new StringBuilder();
+		tasksInExecutionPkg.forEach(taskInPkg -> {
+			if (!updateAble) {
+				if (!taskInPkg.getTaskId().equals(task.getTaskId())) {
+					logger.debug("in removExecutionPackageFromTask  creew id from task ()", taskInPkg.getCrewId());
+					crewPresent.append(taskInPkg.getCrewId());
+				}
+			}else{
+				logger.debug("in removExecutionPackageFromTask  creew id from task ()", taskInPkg.getCrewId());
+				crewPresent.append(taskInPkg.getCrewId());
+			}
+		});
+		String executionPkgLeadCrew = executionpackage.getLeadCrewId() == null ? "" : executionpackage.getLeadCrewId();
+		logger.debug("in removExecutionPackageFromTask creew id from exec pakage ()", executionPkgLeadCrew);
+		/* turn blank the lead crew if matching remove the task */
+		if ((!executionPkgLeadCrew.equals("")) && (!StringUtils.contains(crewPresent, executionPkgLeadCrew))) {
+			logger.debug("in prepare workorder removed lead creew id from exec pakage ()",
+					executionpackage.getLeadCrewId());
+			executionpackage.setLeadCrewId("");
+			executionpackage.setActioned("N");
+		}
+
+	}
+
 	private Optional<Task> findTaskByWoId(final List<Task> list, final String woId) {
 		return list.stream()
 				.filter(p -> p.getTaskId().equals(woId)).findAny();
@@ -288,18 +310,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return list.stream().filter(p -> p.getCrewNames().equals(crew)).collect(Collectors.toList());
 	}
 
-	private List<Task> fetchListOfTasksForWorkOrders(List<WorkOrder> listWOData) throws P6BusinessException{
-		long startTime = System.currentTimeMillis();
-		List<String> worOrders = new ArrayList<String>();
-		if (listWOData != null) {
-			listWOData.forEach(workOrder->{
-				worOrders.add(workOrder.getWorkOrderId());
-			});
-
-		}
-		logger.debug("Total time taken to updateTasksInDB {}",System.currentTimeMillis() - startTime );
-		return workOrderDAO.fetchTasks(worOrders);
-	}
 	private List<Task> fetchListOfTasksBySearchedDate(WorkOrderSearchRequest input, List<WorkOrder> listWOData) throws P6BusinessException{
 		long startTime = System.currentTimeMillis();
 		List<String> worOrders = new ArrayList<String>();
@@ -373,18 +383,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					if((!workOrderIdMap.containsKey(workOrderId)) || objectId == null){
 						logger.info("input id # {} ", workOrderId);
 						workOrderIdMap.put(workOrderId, 0);
-						
-						/*ActivitySearchRequest searchRequest = new ActivitySearchRequest();
-						searchRequest.setWorkOrder(workOrderId);
-						
-							List<WorkOrder> workOrders = null;
-							try {
-								workOrders = p6wsClient.searchWorkOrder(searchRequest);
-							} catch (P6ServiceException e) {
-								throw new IllegalArgumentException(e);
-							}
-							logger.info("list of work orders from P6# {}", workOrders);*/
-						
 					}
 					listOfObjectId.add(workOrderIdMap.get(workOrderId));
 				});
@@ -428,16 +426,18 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	 * @param deletetedExecPkagList 
 	 * @param execPkgListForUpdate 
 	 * @return
+	 * @throws P6DataAccessException 
 	 */
-	private WorkOrder prepareWorkOrder(WorkOrder workOrder, Task dbTask) {
+	private WorkOrder prepareWorkOrder(WorkOrder workOrder, Task dbTask) throws P6DataAccessException {
+		logger.debug("work order id in workorder returned from P6 =={}", workOrder.getWorkOrderId());
 		Date scheduledDateForWorkOrder = dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate());
 		Date scheduledDateInTask = dbTask.getSchdDt();
 		String crewAssignedForWorkOrder = workOrder.getCrewNames() == null ? "" : workOrder.getCrewNames();
+		logger.debug("crewAssignedForWorkOrder in workorder returned from P6 =={}", crewAssignedForWorkOrder);
 		String crewAssignedForTask = dbTask.getCrewId() == null ? "" : dbTask.getCrewId();
+		logger.debug("crewAssignedForTask in workorder returned from Portal db =={}", crewAssignedForTask);
 		String leadCrewWorkOrder = workOrder.getLeadCrew() == null ? "" : workOrder.getLeadCrew();
-		String leadCrewForTask = dbTask.getLeadCrewId() == null ? "" : dbTask.getLeadCrewId();
 		WorkOrder workOrderNew = new WorkOrder();
-		logger.debug("work order id in workorder returned from P6 =={}", workOrder.getWorkOrderId());
 		workOrderNew.setWorkOrders(workOrder.getWorkOrders());
 		logger.debug("work orders in workorder returned from P6 =={}", workOrder.getWorkOrders());
 		workOrderNew.setCrewNames(crewAssignedForWorkOrder);
@@ -451,7 +451,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		dbTask.setCrtdUsr(userTokenRequest.getUserPrincipal());
 		dbTask.setLstUpdtdUsr(userTokenRequest.getUserPrincipal());
 		Set<Task> tasksForUpdate = CacheManager.getTasksforupdate();
-
+		Set<ExecutionPackage> executionPackageUpdateList = CacheManager.getExecpkglistforupdate();
 		if (scheduledDateForWorkOrder != null && scheduledDateInTask != null) {
 			logger.debug("in prepare workorder scheduledDateForWorkOrder {}", scheduledDateForWorkOrder);
 			logger.debug("in prepare workorder scheduledDateInTask {}", scheduledDateInTask);
@@ -476,24 +476,27 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			workOrderNew.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
 			workOrderNew.setExctnPckgName(dbTask.getExecutionPackage().getExctnPckgNam());
 			workOrderNew.setActioned(dbTask.getExecutionPackage().getActioned());
-		} else { // not present in portal so delete from p6
+		} else { 
 			workOrderNew.setLeadCrew(leadCrewWorkOrder);
 			workOrderNew.setExctnPckgName("");
 			workOrderNew.setActioned(dbTask.getActioned());
 		}
-
-		if ((!crewAssignedForWorkOrder.equalsIgnoreCase(crewAssignedForTask))
-				|| (!leadCrewWorkOrder.equalsIgnoreCase(leadCrewForTask))) {
-			logger.debug("prepare work order scheduled date in task updating for this work order ==={}",
-					scheduledDateInTask);
+		if(!crewAssignedForWorkOrder.equalsIgnoreCase(crewAssignedForTask)){
+			logger.debug("prepare work order crew id updating in  task {} updating for this work order ==={}",
+					crewAssignedForTask,crewAssignedForWorkOrder);
 			dbTask.setCrewId(crewAssignedForWorkOrder);
 			if (dbTask.getExecutionPackage() == null) {
 				dbTask.setLeadCrewId(leadCrewWorkOrder);
+			}else{
+				updateExecutionPackageLeadCrew(dbTask.getExecutionPackage(), dbTask,true);
+				executionPackageUpdateList.add(dbTask.getExecutionPackage());
 			}
+			
 			if(!StringUtils.isEmpty(dbTask.getTaskId())){
 				tasksForUpdate.add(dbTask);
 			}
 		}
+		
 
 		return workOrderNew;
 
