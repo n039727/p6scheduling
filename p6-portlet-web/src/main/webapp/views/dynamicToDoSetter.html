@@ -21,10 +21,10 @@
 							</oi-select>
 						</td>
 						<td >
-							<oi-select required oi-options="workOrderId for workOrderId in $ctrl.workOrders"
+							<oi-select required oi-options="workOrderId for workOrderId in $ctrl.workOrderListWithAll"
 								ng-model="row.workOrders"
 								multiple
-								data-ng-change="$ctrl.onChange(row)"
+								data-ng-change="$ctrl.onChange(row.workOrders)"
 								placeholder="Select">
 							</oi-select>
 							<div class="warning" ng-show="row.isNewItem == false && row.workOrders == undefined || row.workOrders.length == 0">This item will be removed when you save</div>
