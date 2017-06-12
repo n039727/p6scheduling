@@ -23,7 +23,7 @@
 				<td>{{wo.workOrders[0]}}</td>
 				<td>{{wo.scheduleDate}}</td>
 				<td>{{wo.crewAssigned.unique().join(',')}}</td>
-				<td>{{wo.crewAssigned.returnIfExists(wo.leadCrew)}}</td>
+				<td>{{wo.leadCrew}}</td>
 				<td>
 					<!--<select class="form-control" id="execution-package-select" >
 						<option>{{wo.executionPackage}}</option>
