@@ -435,7 +435,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		String crewAssignedForTask = dbTask.getCrewId() == null ? "" : dbTask.getCrewId();
 		String leadCrewWorkOrder = workOrder.getLeadCrew() == null ? "" : workOrder.getLeadCrew();
 		String leadCrewForTask = dbTask.getLeadCrewId() == null ? "" : dbTask.getLeadCrewId();
-		Set<String> deletetedExecPkagList = CacheManager.getDeletetedexecpkaglist();
 		WorkOrder workOrderNew = new WorkOrder();
 		logger.debug("work order id in workorder returned from P6 =={}", workOrder.getWorkOrderId());
 		workOrderNew.setWorkOrders(workOrder.getWorkOrders());

@@ -35,6 +35,7 @@ import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.resource.Resource;
+import au.com.wp.corp.p6.wsclient.udftype.UDFType;
 import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
 
 /**
@@ -70,6 +71,8 @@ public class P6WSClientImpl implements P6WSClient {
 	
 	@Value("${P6_UDF_SERVICE_WSDL}")
 	private String udfServiceWSDL;
+	
+	
 	
 	@Autowired
 	DateUtils dateUtils;
@@ -161,40 +164,23 @@ public class P6WSClientImpl implements P6WSClient {
 				workOrder.setWorkOrders(wos);
 				workOrders.add(workOrder);
 			}
-				/*	
-				 List<ExecutionPackageDTO> dtoList = readExecutionPackage(new ArrayList<Integer>(workOrderIdMap.values()), trackingId);
-				if(dtoList != null){
-					//TODO
-					if(dtoList != null){
-						for (ExecutionPackageDTO executionPackageDTO : dtoList) {
-							if(executionPackageDTO != null && executionPackageDTO.getWorkOrders().size() >0){
-								return workOrders.stream()
-								        .filter(p -> p.getName().equals(name)).findAny();
-								
-								if(workOrders.s)
-							}
-						}
-						
-					}
-					}
-					//workOrder.setExctnPckgName(dto.getExctnPckgName());
-			 */			
+				
 			}
 		logger.debug("Total time taken to execute method search work order via ActivityService {}",System.currentTimeMillis() - starttime);
 		return workOrders;
 	}
 	
 	
-	// chops a list into non-view sublists of length L
-	private static <T> List<List<T>> chopped(List<T> list, final int L) {
-	    List<List<T>> parts = new ArrayList<List<T>>();
-	    final int N = list.size();
-	    for (int i = 0; i < N; i += L) {
-	        parts.add(new ArrayList<T>(
-	            list.subList(i, Math.min(N, i + L)))
-	        );
-	    }
-	    return parts;
+	private int readUDFTypeForExecutionPackage() throws P6ServiceException {
+		logger.info("Reading UDF type details from P6 ..");
+		final RequestTrackingId trackingId = new RequestTrackingId();
+		getAuthenticated(trackingId);
+		StringBuilder filter = new StringBuilder();
+		filter.append("SubjectArea='Activity' and Title = 'Execution Grouping'");
+
+		UDFTypeServiceCall udfTypeServiceCall = new UDFTypeServiceCall(trackingId, filter.toString());
+		Holder<List<UDFType>> udfTypes = udfTypeServiceCall.run();
+		return udfTypes.value.get(0).getObjectId();
 	}
 	
 	
@@ -325,6 +311,7 @@ public class P6WSClientImpl implements P6WSClient {
 		if (null == foreignObjIds) {
 			throw new P6ServiceException("NO_SEARCH_CRITERIA_FOUND");
 		}
+		int udfObjectId = readUDFTypeForExecutionPackage();
 		List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds = new ArrayList<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId>();
 		List<String>  workOrderIdsNotFound = workOrderIdMap.entrySet().stream()
                 .filter(map -> 0 == map.getValue())
@@ -343,6 +330,7 @@ public class P6WSClientImpl implements P6WSClient {
 					filter.append("'" + string + "'");
 				}
 			}
+			filter.append(")");
 			logger.info("filter {}", filter);
 			final ActivityServiceCall activityService = new ActivityServiceCall(trackingId, activityServiceWSDL,
 					filter.length() > 0 ? filter.toString() : null);
@@ -352,7 +340,6 @@ public class P6WSClientImpl implements P6WSClient {
 			if (null != activities) {
 				logger.debug("size of activity list from P6 # {}", activities.value.size());
 				for (Activity activity : activities.value) {
-					
 					workOrderIdMap.put(activity.getId(), activity.getObjectId());
 					foreignObjIds.add(activity.getObjectId());
 				}
@@ -372,7 +359,7 @@ public class P6WSClientImpl implements P6WSClient {
 		for (Integer workOrderId : foreignObjIds) {
 			au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId deletedObjId = new au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId();
 			deletedObjId.setForeignObjectId(workOrderId);
-			deletedObjId.setUDFTypeObjectId(5920);
+			deletedObjId.setUDFTypeObjectId(udfObjectId);
 			objectIds.add(deletedObjId);
 		}
 		logger.debug("request {}",objectIds);
