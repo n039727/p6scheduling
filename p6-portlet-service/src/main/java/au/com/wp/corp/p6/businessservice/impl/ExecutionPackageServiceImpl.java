@@ -5,6 +5,7 @@ package au.com.wp.corp.p6.businessservice.impl;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,7 @@ import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.utils.DateUtils;
 import au.com.wp.corp.p6.utils.P6Constant;
+import au.com.wp.corp.p6.utils.WorkOrderComparator;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 
 /**
@@ -56,17 +58,17 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 
 	@Autowired
 	DateUtils dateUtils;
-	
+
 	@Autowired
 	P6SchedulingBusinessService p6SchedulingService;
-	
+
 	@Autowired
 	P6WSClient p6wsClient;
-	
+
 	@Autowired
 	UserTokenRequest userTokenRequest;
-	
-	
+
+
 	private List<ExecutionPackageDTO> executionPackageDTOFoP6List;
 	private List<String> workOrdersForExcnPkgDelP6 = new ArrayList<String>();
 	@Override
@@ -85,8 +87,8 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	public void setWorkOrdersForExcnPkgDelP6(List<String> workOrdersForExcnPkgDelP6) {
 		this.workOrdersForExcnPkgDelP6 = workOrdersForExcnPkgDelP6;
 	}
-	
-	
+
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -115,7 +117,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			logger.debug("work orders size {}", workOrders.size());
 			Set<Task> tasks = new HashSet<>();
 			String scheduledStartDate = "";
-			
+
 			for (WorkOrder workOrder : workOrders) {
 				logger.debug("For each workorder {} corresponding Task is fecthed", workOrder.getWorkOrderId());
 				if (null != crewNames.toString() && !crewNames.toString().contains(workOrder.getCrewNames())){
@@ -129,7 +131,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					logger.debug("Task {} is fecthed", task.getTaskId());
 					if(null != task.getExecutionPackage()){
 						logger.debug("Old Execution fatched {} for the  task {}", task.getExecutionPackage().getExctnPckgNam(), task.getTaskId());
-						
+
 						if(oldPkgName.add(task.getExecutionPackage().getExctnPckgNam())){
 							pkgSchedulerCmt.append(task.getExecutionPackage().getExecSchdlrCmt()+ " ");
 						}
@@ -185,7 +187,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		return execPackgDTO;
 
 	}
-	
+
 	@Override
 	@Async
 	public void updateP6ForExecutionPackage() throws P6BusinessException{
@@ -256,7 +258,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			workorderIds = null;
 		}*/
 	}
-		
+
 	private void updateOldExecutionPackages(Set<ExecutionPackage> executionPackages) throws P6BusinessException{
 		if(null != executionPackages){
 			logger.debug("Number of old Execution package>> {} ", executionPackages.size());
@@ -286,7 +288,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					executionPackage.setActioned("N");
 					executionPackageDao.createOrUpdateExecPackage(executionPackage);
 				}
-				
+
 			}
 		}
 	}
@@ -301,6 +303,8 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	@Transactional
 	public List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6BaseException {
 		List<WorkOrder> listWOData = p6SchedulingService.retrieveWorkOrders(input);
+		List<WorkOrder> listWODataWithEp = new ArrayList<WorkOrder>();
+		List<WorkOrder> listWODataWithOutEp = new ArrayList<WorkOrder>();
 		List<Task> tasksInDb = fetchListOfTasksForWorkOrders(listWOData);
 		for (WorkOrder workOrder : listWOData) {
 			if (workOrder.getWorkOrders() != null) {
@@ -309,25 +313,31 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					//Task dbTask = workOrderDAO.fetch(workOrderId); //2
 					Task dbTask = task.isPresent() ? task.get() : new Task();
 					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
+					if (!StringUtils.isEmpty(dbTask.getCrewId())) {					
+						workOrder.getCrewAssigned().add(dbTask.getCrewId());
+					}
+					workOrder.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate(),"/"));
 					if (dbTask.getExecutionPackage() != null) {
 						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());
 						String dbWOExecPkg = dbTask.getExecutionPackage().getExctnPckgNam();
 						workOrder.setExctnPckgName(dbWOExecPkg);
 						workOrder.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
+						listWODataWithEp.add(workOrder);
+					}else{
+						listWODataWithOutEp.add(workOrder);
 					}
-					if (!StringUtils.isEmpty(dbTask.getCrewId())) {					
-						workOrder.getCrewAssigned().add(dbTask.getCrewId());
-					}
-					workOrder.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate(),"/"));
 				}
 			}
 		}
-		logger.debug("final grouped work orders size {}",listWOData.size());
-		return listWOData;
+		List<WorkOrder> workorders = new ArrayList<> (listWODataWithOutEp);
+		workorders.addAll(listWODataWithEp);
+		Collections.sort(workorders,new WorkOrderComparator());
+		logger.debug("final grouped work orders size {}",workorders.size());
+		return workorders;
 	}
 	private Optional<Task> findTask(final List<Task> list, final String woId) {
-	    return list.stream()
-	        .filter(p -> p.getTaskId().equals(woId)).findAny();
+		return list.stream()
+				.filter(p -> p.getTaskId().equals(woId)).findAny();
 	}
 	private List<Task> fetchListOfTasksForWorkOrders(List<WorkOrder> listWOData) throws P6BusinessException{
 		long startTime = System.currentTimeMillis();
@@ -335,8 +345,8 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		if (listWOData != null) {
 			listWOData.forEach(workOrder->{
 				worOrders.add(workOrder.getWorkOrderId());
-				});
-			
+			});
+
 		}
 		logger.debug("Total time taken to updateTasksInDB {}",System.currentTimeMillis() - startTime );
 		return workOrderDao.fetchTasks(worOrders);
