@@ -110,6 +110,7 @@ function dynamicToDoSetterController($scope) {
 	  delete ctrl.currentMap[todoName]; 
 		//ctrl.handleDataChange({map: ctrl.currentMap});
 		ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}});
+	    ctrl.isToDoRemoved = true;
 		ctrl.init();
 	};
 	ctrl.newAddIndex = -1;
@@ -120,6 +121,7 @@ function dynamicToDoSetterController($scope) {
 	  if (!angular.isDefined(ctrl.currentMap)) {
 		  ctrl.currentMap = {};
 	  }
+	  ctrl.isToDoRemoved = false;
 	  ctrl.handleEvent({eventId:"ADD_TO_DO_IN_PROGRESS", data:{}})
 	  ctrl.newAddIndex = Object.keys(ctrl.currentMap).length;
 	  ctrl.columnGroup[ctrl.newAddIndex%ctrl.columns].push(ctrl.newItem);
@@ -127,23 +129,22 @@ function dynamicToDoSetterController($scope) {
 	};
 	
 	ctrl.doneAdding = function() {
-	  if (!ctrl.validateNewItem(ctrl.newItem)) {
-	    console.log("[DEBUG] invalid new Item");
-	    return;
-	  }
+	  if(!ctrl.isToDoRemoved){
+		  if (!ctrl.validateNewItem(ctrl.newItem)) {
+			    console.log("[DEBUG] invalid new Item");
+			    return;
+			  }
+		  
+		  ctrl.currentMap[ctrl.newItem.todoName] = (ctrl.newItem.workOrders.indexOf('All') >= 0) ? ctrl.workOrders: ctrl.newItem.workOrders;
+//		  ctrl.handleDataChange({map: ctrl.currentMap});
+		  ctrl.newItem = {isNewItem:true};
+	  }	  
 	  console.log("[DEBUG] Done Adding");
-	  console.log("[DEBUG] ctrl.newItem.workOrders Done :" + ctrl.newItem.workOrders);
-	  console.log("[DEBUG] allIndex Done :" + ctrl.newItem.workOrders.indexOf('All') );
-	  console.log("[DEBUG] ctrl.currentMap before Done :" + JSON.stringify(ctrl.currentMap) );
-	  
-	  ctrl.currentMap[ctrl.newItem.todoName] = (ctrl.newItem.workOrders.indexOf('All') >= 0) ? ctrl.workOrders: ctrl.newItem.workOrders;
-	  console.log("[DEBUG] ctrl.currentMap after Done :" + JSON.stringify(ctrl.currentMap) );
-//	  ctrl.handleDataChange({map: ctrl.currentMap});
 	  ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}})
 	  ctrl.handleEvent({eventId:"ADD_TO_DO_COMPLETED", data:{}})
+	  
 	  ctrl.init();
 	  ctrl.newAddIndex = -1;
-	  ctrl.newItem = {isNewItem:true};
 	};
 	
 	ctrl.validateNewItem = function(newItem) {
