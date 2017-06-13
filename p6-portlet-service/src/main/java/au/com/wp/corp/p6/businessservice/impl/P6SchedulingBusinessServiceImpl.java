@@ -939,16 +939,19 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			if (task.getTodoAssignments() != null) {
 				for (TodoAssignment todo : task.getTodoAssignments()) {
 					Long todoId = todo.getTodoAssignMentPK().getTodoId().longValue();
-					if (toDoMap.containsKey(todoId)) {
-						toDoMap.get(todoId).getWorkOrders().add(todo.getTodoAssignMentPK().getTask().getTaskId());
-					} else {
-						ToDoItem item = new ToDoItem();
-						item.setTodoId(String.valueOf(todoId));
-						item.setToDoName(todoDAO.getToDoName(todoId));
-						List<String> workOrders = new ArrayList<String>();
-						workOrders.add(todo.getTodoAssignMentPK().getTask().getTaskId());
-						item.setWorkOrders(workOrders);
-						toDoMap.put(todoId, item);
+					Task taskToDo = todo.getTodoAssignMentPK().getTask();
+					if (tasks.contains(taskToDo)) {
+						if (toDoMap.containsKey(todoId)) {
+							toDoMap.get(todoId).getWorkOrders().add(taskToDo.getTaskId());
+						} else {
+							ToDoItem item = new ToDoItem();
+							item.setTodoId(String.valueOf(todoId));
+							item.setToDoName(todoDAO.getToDoName(todoId));
+							List<String> workOrders = new ArrayList<String>();
+							workOrders.add(taskToDo.getTaskId());
+							item.setWorkOrders(workOrders);
+							toDoMap.put(todoId, item);
+						}
 					}
 				}
 				workOrderToDoMap.put(executionPkg, toDoMap);
