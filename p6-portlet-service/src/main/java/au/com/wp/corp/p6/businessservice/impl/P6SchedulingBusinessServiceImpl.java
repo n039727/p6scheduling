@@ -225,23 +225,25 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		logger.debug("Total time taken to execute and return search results == {}",System.currentTimeMillis() - startTime);
 		return workorders;
 	}
-	private void regroupEPForOtherWO(List<WorkOrder> listOfWo, Map<String, WorkOrder> mapOfExecutionPkgWO, Set<Task> taskForExePak, String dbWOExecPkg){
+
+	private void regroupEPForOtherWO(List<WorkOrder> listOfWo, Map<String, WorkOrder> mapOfExecutionPkgWO,
+			Set<Task> taskForExePak, String dbWOExecPkg) {
 		WorkOrder workOrdersalreadyinGroup = mapOfExecutionPkgWO.get(dbWOExecPkg);
-		if(taskForExePak.size()>0){
-			for(Task tsk : taskForExePak){
+		if (taskForExePak.size() > 0) {
+			for (Task tsk : taskForExePak) {
 				Optional<WorkOrder> wo = findWOByTaskId(listOfWo, tsk.getTaskId());
-				if(wo.isPresent()){
+				if (wo.isPresent()) {
 					WorkOrder workOrdr = wo.get();
-					if(!workOrdersalreadyinGroup.getWorkOrders().contains(workOrdr.getWorkOrderId())){
+					if (!workOrdersalreadyinGroup.getWorkOrders().contains(workOrdr.getWorkOrderId())) {
 						workOrdersalreadyinGroup.getWorkOrders().add(workOrdr.getWorkOrderId());
 						workOrdersalreadyinGroup.getCrewAssigned().add(workOrdr.getCrewNames());
 					}
-				}else{
+				} else {
 					String workOrderId = tsk.getTaskId();
-				if(!workOrdersalreadyinGroup.getWorkOrders().contains(workOrderId)){
-					workOrdersalreadyinGroup.getWorkOrders().add(workOrderId);
-					workOrdersalreadyinGroup.getCrewAssigned().add(tsk.getCrewId());
-				}
+					if (!workOrdersalreadyinGroup.getWorkOrders().contains(workOrderId)) {
+						workOrdersalreadyinGroup.getWorkOrders().add(workOrderId);
+						workOrdersalreadyinGroup.getCrewAssigned().add(tsk.getCrewId());
+					}
 				}
 			}
 		}
