@@ -289,6 +289,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		}
 		dbTask.setCmts(workOrder.getSchedulingToDoComment());
 		dbTask.setSchdlrCmt(workOrder.getSchedulingToDoComment());
+		dbTask.setDeptCmt(workOrder.getDepotToDoComment());
 		dbTask.setCrewId(workOrder.getCrewNames());
 		dbTask.setLeadCrewId(workOrder.getLeadCrew());
 		java.util.Date scheduleDate = null;
@@ -303,9 +304,9 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			if(null != executionPackage){
 				executionPackage.setExecDeptCmt(workOrder.getDepotToDoComment());
 				dbTask.setExecutionPackage(executionPackage);
-			} else {
+			} /*else {
 				dbTask.setDeptCmt(workOrder.getDepotToDoComment());
-			}
+			}*/
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		}
 		String  userName = "Test User";
