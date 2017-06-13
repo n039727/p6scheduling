@@ -87,6 +87,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			activityDTO.setOriginalDuration(activity.getPlannedDuration());
 			activityDTO.setRemainingDuration(activity.getRemainingDuration().getValue());
 			activityDTO.setProjectObjectId(activity.getProjectObjectId());
+			activityDTO.setEstimatedLabourHours(activity.getPlannedLaborUnits());
 			ResourceAssignment resAssign = resourceAssignments.get(activity.getObjectId());
 			if (null != resAssign) {
 				activityDTO.setEstimatedLabourHours(resAssign.getPlannedDuration().getValue());
@@ -263,7 +264,8 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 			final List<Activity> crtdActivities = constructActivities(activities, chunkSize, i, activityMap);
 
-			if (isCreateActivities) {
+			if (isCreateActivities && !crtdActivities.isEmpty() ) {
+				logger.debug("Creating activites in P6...................");
 				final ActivityServiceCall<List<Integer>> crActivityService = new CreateActivityServiceCall(trackingId,
 						crtdActivities);
 				final Holder<List<Integer>> activityIds = crActivityService.run();
@@ -299,7 +301,8 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 				final List<P6ActivityDTO> crdActivityFileds = new ArrayList<>();
 				crdActivityFileds.addAll(activityMap.values());
 				createActivityFieldsUDF(trackingId, crdActivityFileds);
-			} else {
+			} else if (!crtdActivities.isEmpty()) {
+				logger.debug("Updating activites in P6 ........................");
 				final ActivityServiceCall<Boolean> crActivityService = new UpdateActivityServiceCall(trackingId,
 						crtdActivities);
 				final Holder<Boolean> status = crActivityService.run();
@@ -337,13 +340,15 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			if (null != p6ActivityDTO.getActivityStatus() && !p6ActivityDTO.getActivityStatus().trim().isEmpty())
 				activity.setStatus(p6ActivityDTO.getActivityStatus());
 
-			final XMLGregorianCalendar plannedStartDate = dateUtil
-					.convertStringToXMLGregorianClalander(p6ActivityDTO.getPlannedStartDate());
-			if (null != plannedStartDate)
-				activity.setPlannedStartDate(plannedStartDate);
-			else
-				logger.error("Invalid planned start date# {}", p6ActivityDTO.getPlannedStartDate());
-
+			logger.debug("plan start date for p6 ## {}", p6ActivityDTO.getPlannedStartDate());
+			if (null != p6ActivityDTO.getPlannedStartDate() && !p6ActivityDTO.getPlannedStartDate().trim().isEmpty()) {
+				final XMLGregorianCalendar plannedStartDate = dateUtil
+						.convertStringToXMLGregorianClalander(p6ActivityDTO.getPlannedStartDate());
+				if (null != plannedStartDate)
+					activity.setPlannedStartDate(plannedStartDate);
+				else
+					logger.error("Invalid planned start date# {}", p6ActivityDTO.getPlannedStartDate());
+			}
 			if (null != p6ActivityDTO.getActualFinishDate()) {
 				final XMLGregorianCalendar actualStartDate = dateUtil
 						.convertStringToXMLGregorianClalander(p6ActivityDTO.getActualStartDate());
@@ -410,7 +415,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			int startIndex = i * chunkSize;
 			int endIndex = ((i + 1) * chunkSize - 1) < udfValues.size() ? ((i + 1) * chunkSize - 1) : udfValues.size();
 
-			logger.debug("constructing activity start index # {}  - end index # {}", startIndex, endIndex);
+			logger.debug("calling UDFValue service with start index # {}  - end index # {}", startIndex, endIndex);
 			callUDFvalueService(trackingId, udfValues.subList(startIndex, endIndex));
 
 		}
@@ -592,9 +597,11 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 */
 	private void callUDFvalueService(final RequestTrackingId trackingId, final List<UDFValue> udfValues)
 			throws P6ServiceException {
-		final UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService = new CreateUDFValueServiceCall(
-				trackingId, udfValues);
-		udfValueService.run();
+		if (null != udfValues && !udfValues.isEmpty()) {
+			final UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService = new CreateUDFValueServiceCall(
+					trackingId, udfValues);
+			udfValueService.run();
+		}
 	}
 
 	/**
@@ -700,19 +707,13 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 			logger.debug("deleting activity start index # {}  - end index # {}", startIndex, endIndex);
 			for (P6ActivityDTO p6ActivityDTO : activities.subList(startIndex, endIndex)) {
-
-				prepareDeleteUDFValues(p6ActivityDTO, objectIds);
 				activityIds.add(p6ActivityDTO.getActivityObjectId());
 			}
 
 			logger.debug("list of activities to be deleted in P6 # {}", activityIds);
-
-			Boolean deleteUDFStatus = deleteActivityFieldsUDF(trackingId, objectIds);
-			logger.debug("Related UDF are deleted .....# {}", deleteUDFStatus);
-			if (deleteUDFStatus.booleanValue()) {
-				ActivityServiceCall<Boolean> activityService = new DeleteActivityServiceCall(trackingId, activityIds);
-				status = activityService.run();
-			}
+			logger.debug("number of activities to be deleted in P6 # {}", activityIds.size());
+			ActivityServiceCall<Boolean> activityService = new DeleteActivityServiceCall(trackingId, activityIds);
+			status = activityService.run();
 
 		}
 
@@ -730,93 +731,6 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			final List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds) {
 
 		au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId objectId;
-		if (null != activity.getActivityJDCodeUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_JD_CODE_TITLE)));
-			objectIds.add(objectId);
-		}
-
-		if (null != activity.geteGIUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_EGI_TITLE)));
-			objectIds.add(objectId);
-		}
-
-		if (null != activity.getUpStreamSwitchUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_UPSTREAM_SWITCH_TITLE)));
-			objectIds.add(objectId);
-		}
-
-		if (null != activity.getAddressUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_ADDRESS_TITLE)));
-			objectIds.add(objectId);
-		}
-		if (null != activity.getEllipseStandardJobUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_STD_JOB_TITLE)));
-			objectIds.add(objectId);
-
-		}
-		if (null != activity.getEquipmentCodeUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_EQUIP_CODE_TITLE)));
-			objectIds.add(objectId);
-
-		}
-		if (null != activity.getEquipmentNoUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_EQUIPMENT_NO_TITLE)));
-			objectIds.add(objectId);
-
-		}
-
-		if (null != activity.getFeederUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_FEEEDER_TITLE)));
-			objectIds.add(objectId);
-
-		}
-		if (null != activity.getLocationInStreetUDF()) {
-			objectId = new ObjectId();
-			objectIds.add(objectId);
-
-		}
-		if (null != activity.getPickIdUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_PICK_ID_TITLE)));
-			objectIds.add(objectId);
-
-		}
-		if (null != activity.getRequiredByDateUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_REQ_BY_DATE_TITLE)));
-			objectIds.add(objectId);
-
-		}
-		if (null != activity.getTaskDescriptionUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_TASK_DESC_TITLE)));
-			objectIds.add(objectId);
-		}
-		if (null != activity.getTaskUserStatusUDF()) {
-			objectId = new ObjectId();
-			objectId.setForeignObjectId(activity.getActivityObjectId());
-			objectId.setUDFTypeObjectId(getUdfTypeId(getProperty(ELLIPSE_TASK_USER_STATUS_TITLE)));
-			objectIds.add(objectId);
-		}
 		if (null != activity.getExecutionPckgUDF()) {
 			objectId = new ObjectId();
 			objectId.setForeignObjectId(activity.getActivityObjectId());
@@ -875,11 +789,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 */
 	private Integer getUdfTypeId(String udfTitle) {
 		Map<String, UDFTypeDTO> udfTypes = CacheManager.getP6UDFTypeMap();
-		logger.debug(" size of UDF Type map # {}", udfTypes.size());
-		logger.debug("UDF Type tile from create or update # {}", udfTitle);
 		UDFTypeDTO udfTypeDTO = udfTypes.get(udfTitle);
-		logger.debug("udf type #{}", udfTypeDTO);
-
 		return udfTypeDTO != null ? udfTypeDTO.getObjectId() : null;
 	}
 

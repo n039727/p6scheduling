@@ -23,6 +23,8 @@ import com.mincom.ews.service.connectivity.OperationContext;
 import com.mincom.ews.service.connectivity.RunAs;
 import com.mincom.ews.service.transaction.Begin;
 import com.mincom.ews.service.transaction.BeginResponse;
+import com.mincom.ews.service.transaction.Commit;
+import com.mincom.ews.service.transaction.CommitResponse;
 import com.mincom.ews.service.transaction.Rollback;
 import com.mincom.ews.service.transaction.RollbackResponse;
 
@@ -81,6 +83,16 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 		RollbackResponse rollbackResponse = transactionWsClient.rollback(rollback);
 	}
 
+	public void commitTransaction(String transactionId) {
+		Commit commit = new Commit();
+		OperationContext commitOperationContext = new OperationContext();
+		commitOperationContext.setDistrict("CORP");
+		commitOperationContext.setRunAs(new RunAs());
+		commitOperationContext.setTransaction(transactionId);
+		commit.setContext(commitOperationContext);
+		CommitResponse commitResponse = transactionWsClient.commit(commit);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -137,9 +149,12 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				woTaskModifyDTO.setWOTaskNo(workorderTask.get(TASK_NO));
 				if (null != activity.getWorkGroup() && !activity.getWorkGroup().trim().isEmpty())
 					woTaskModifyDTO.setWorkGroup(activity.getWorkGroup());
-				if (null != activity.getPlannedStartDate())
-					woTaskModifyDTO.setPlanStrDate(dateUtil.convertDateToString(activity.getPlannedStartDate(),
-							DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+				
+				final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
+						DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
+				
+				if (null != plantStrDate && !plantStrDate.trim().isEmpty())
+					woTaskModifyDTO.setPlanStrDate(plantStrDate);
 
 				if (null != activity.getTaskUserStatus() && !activity.getTaskUserStatus().trim().isEmpty())
 					woTaskModifyDTO.setTaskStatusU(activity.getTaskUserStatus());
@@ -149,7 +164,13 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			}
 			logger.debug("Updating ellipse with list of work order task -{}",
 					arrayModify.getWorkOrderTaskServiceModifyRequestDTO().size());
-			MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
+			try {
+				MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
+				commitTransaction(transactionId);
+			} catch (Exception e) {
+				rollbackTransaction(transactionId);
+				throw new P6ServiceException(e);
+			}
 		}
 
 	}
