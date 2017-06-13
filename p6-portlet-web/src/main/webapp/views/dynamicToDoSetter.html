@@ -23,7 +23,7 @@
 						<td >
 							<oi-select required oi-options="workOrderId for workOrderId in $ctrl.workOrderListWithAll"
 								ng-model="row.workOrders"
-								multiple
+								multiple=true
 								data-ng-change="$ctrl.onChange(row.workOrders)"
 								placeholder="Select">
 							</oi-select>
