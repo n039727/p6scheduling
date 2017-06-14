@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import au.com.wp.corp.p6.businessservice.DepotTodoService;
+import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -31,6 +32,8 @@ public class DepotController {
 	private static final Logger logger = LoggerFactory.getLogger(DepotController.class);
 	@Autowired
 	private DepotTodoService dpotTodoService;
+	@Autowired
+	private IExecutionPackageService executionPackageService;
 	@Autowired
 	Validator validator;
 
@@ -74,17 +77,20 @@ public class DepotController {
 	@ResponseBody
 	public ResponseEntity<WorkOrder> saveDepotToDo(RequestEntity<WorkOrder> request)
 			throws P6BaseException {
+		WorkOrder savedWorkOrder = null;
 		if (request.getBody() == null) {
 			logger.error(" Invalid request - {}", request.getBody());
 			throw new P6BaseException("invalid request");
 		}
 		try {
 			logger.debug("The json for save to do depot : {}", mapper.writeValueAsString(request.getBody()));
+			savedWorkOrder = dpotTodoService.saveDepotToDo(request.getBody());
+			executionPackageService.updateP6ForExecutionPackage();
 		} catch (JsonProcessingException e) {
 			logger.error("Error occurred while printing json ", e);
 			e.printStackTrace();
 		}
-		return new ResponseEntity<WorkOrder>(dpotTodoService.saveDepotToDo(request.getBody()), HttpStatus.OK);
+		return new ResponseEntity<WorkOrder>(savedWorkOrder, HttpStatus.OK);
 	}
 
 }

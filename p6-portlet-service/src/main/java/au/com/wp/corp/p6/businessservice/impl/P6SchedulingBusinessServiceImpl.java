@@ -786,7 +786,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			wo.setWorkOrderId(workOrderId);
 			Task task = prepareTaskFromWorkOrderId(workOrderId, workOrder);
 			if(null != task.getExecutionPackage()){
-				logger.debug("task.getExecutionPackage()>> {}", task.getExecutionPackage().getActioned());
+				logger.debug("task.getExecutionPackage()>> {}", task.getExecutionPackage().getExctnPckgNam());
 				executionPackageDTO = new ExecutionPackageDTO();
 				executionPackageDTO.setExctnPckgName(task.getExecutionPackage().getExctnPckgNam());
 				workOrderList.add(wo);
