@@ -59,8 +59,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	@Autowired
 	DateUtils dateUtils;
 
-	@Autowired
-	P6SchedulingBusinessService p6SchedulingService;
+	private P6SchedulingBusinessService p6SchedulingService;
 
 	@Autowired
 	P6WSClient p6wsClient;
@@ -199,10 +198,6 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		}
 		for (ExecutionPackageDTO executionPackageDTOForP6 : executionPackageDTOFoP6List) {
 
-			if (executionPackageDTOForP6.getWorkOrders() != null
-					&& (!executionPackageDTOForP6.getWorkOrders().isEmpty())) {
-			}
-
 			List<WorkOrder> workOrders = executionPackageDTOForP6.getWorkOrders();
 			if (workOrders != null) {
 				for (WorkOrder workOrder : workOrders) {
@@ -222,7 +217,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					executionPackageCreateRequest.setForeignObjectId(foreignObjId);
 					executionPackageCreateRequest.setText(executionPackageDTOForP6.getExctnPckgName());
 					executionPackageCreateRequest.setUdfTypeDataType(P6Constant.TEXT);
-					executionPackageCreateRequest.setUdfTypeObjectId(5920);
+					//executionPackageCreateRequest.setUdfTypeObjectId(5920);
 					executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.ACTIVITY);
 					executionPackageCreateRequest.setUdfTypeTitle(P6Constant.EXECUTION_GROUPING);
 					request.add(executionPackageCreateRequest);
@@ -244,19 +239,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		}
 		executionPackageDTOFoP6List.clear();
 		executionPackageDTOFoP6List = null;
-		/*List<String>  workorderIds = getWorkOrdersForExcnPkgDelP6();
-		if(workorderIds != null && workorderIds.size() >0){
-			try {
-				logger.debug("Calling to remove execution package for work orders {}",workorderIds);
-				boolean isSuccess =p6wsClient.removeExecutionPackage(workorderIds);
-				logger.debug("Removal suceeeded {}",isSuccess);
-			} catch (P6ServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			workorderIds.clear();
-			workorderIds = null;
-		}*/
+	
 	}
 
 	private void updateOldExecutionPackages(Set<ExecutionPackage> executionPackages) throws P6BusinessException{
@@ -350,6 +333,11 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		}
 		logger.debug("Total time taken to updateTasksInDB {}",System.currentTimeMillis() - startTime );
 		return workOrderDao.fetchTasks(worOrders);
+	}
+	@Override
+	public void setP6BusinessService(P6SchedulingBusinessServiceImpl p6SchedulingBusinessServiceImpl) {
+		this.p6SchedulingService = p6SchedulingBusinessServiceImpl;
+		
 	}
 
 }

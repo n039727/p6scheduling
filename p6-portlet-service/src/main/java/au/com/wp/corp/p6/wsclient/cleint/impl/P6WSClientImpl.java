@@ -222,9 +222,7 @@ public class P6WSClientImpl implements P6WSClient {
 			for (Resource resource : resources.value) {
 				Crew crew = new Crew();
 				crew.setCrewId(resource.getId());
-				;
 				crew.setCrewName(resource.getName());
-
 				crews.add(crew);
 			}
 		}
@@ -319,17 +317,18 @@ public class P6WSClientImpl implements P6WSClient {
                 .collect(Collectors.toList());
 		logger.info("workOrderIds not found {}",workOrderIdsNotFound);
 		if (workOrderIdsNotFound != null && workOrderIdsNotFound.size() > 0) {
-			ActivitySearchRequest activitySearchRequest = new ActivitySearchRequest();
-			activitySearchRequest.setFilter("Id in(");
 			StringBuilder filter = new StringBuilder();
+			filter.append("Id in(");
+			StringBuilder filterWithIn = new StringBuilder();
 			for (String string : workOrderIdsNotFound) {
 
-				if (filter.length() > 0) {
-					filter.append(",'" + string + "'");
+				if (filterWithIn.length() > 0) {
+					filterWithIn.append(",'" + string + "'");
 				} else {
-					filter.append("'" + string + "'");
+					filterWithIn.append("'" + string + "'");
 				}
 			}
+			filter.append(filterWithIn);
 			filter.append(")");
 			logger.info("filter {}", filter);
 			final ActivityServiceCall activityService = new ActivityServiceCall(trackingId, activityServiceWSDL,

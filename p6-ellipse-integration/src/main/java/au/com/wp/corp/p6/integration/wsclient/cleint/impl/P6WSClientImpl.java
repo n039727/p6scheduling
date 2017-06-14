@@ -307,7 +307,10 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 						crtdActivities);
 				final Holder<Boolean> status = crActivityService.run();
 				logger.debug("list of activities from P6 # {}", status.value);
-				updateActivityFieldsUDF(trackingId, activities, chunkSize);
+				int startIndex = i * chunkSize;
+				int endIndex = ((i + 1) * chunkSize - 1) < activities.size() ? ((i + 1) * chunkSize - 1) : activities.size();
+				
+				updateActivityFieldsUDF(trackingId, activities.subList(startIndex, endIndex), chunkSize);
 
 			}
 

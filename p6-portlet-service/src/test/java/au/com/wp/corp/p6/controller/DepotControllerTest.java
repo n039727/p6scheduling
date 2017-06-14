@@ -31,6 +31,7 @@ import org.springframework.web.util.NestedServletException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.impl.DepotTodoServiceImpl;
 import au.com.wp.corp.p6.businessservice.impl.ExecutionPackageServiceImpl;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
@@ -57,6 +58,9 @@ public class DepotControllerTest {
 
 	@Mock
 	private DepotTodoServiceImpl deportService;
+	
+	@Mock
+	private IExecutionPackageService executionPackageService;
 	
 	@Mock
 	Validator validator;

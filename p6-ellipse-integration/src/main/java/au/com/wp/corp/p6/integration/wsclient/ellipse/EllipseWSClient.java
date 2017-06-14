@@ -17,5 +17,5 @@ import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 @FunctionalInterface
 public interface EllipseWSClient {
 
-	public void updateActivitiesEllipse(List<EllipseActivityDTO> activities, String transactionId) throws P6ServiceException;
+	public void updateActivitiesEllipse(List<EllipseActivityDTO> activities) throws P6ServiceException;
 }

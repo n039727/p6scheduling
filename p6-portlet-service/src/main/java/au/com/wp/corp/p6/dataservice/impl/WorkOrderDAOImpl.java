@@ -38,9 +38,6 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	private static final Logger logger = LoggerFactory.getLogger(WorkOrderDAOImpl.class);
 	@Autowired
 	SessionFactory sessionFactory; 
-	/*@Autowired
-	UserTokenRequest userTokenRequest;*/
-	private  String currentUser =null;
 
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.dataservice.WorkOrderDAO#fetchWorkOrdersForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchInput)
@@ -65,7 +62,9 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			parseException(e);
 		}
 		/* This list size should always be 1*/
-		logger.info("size={}",listTask.size());
+		if(null != listTask){
+			logger.info("size={}",listTask.size());
+		}
         return listTask;
 	}
 	
@@ -101,7 +100,9 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			parseException(e);
 		}
 		/* This list size should always be 1 */
-		logger.info("size={}", listTask.size());
+		if(null != listTask){
+			logger.info("size={}", listTask.size());
+		}
 		return listTask;
 	}
 	
@@ -114,11 +115,8 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			long currentTime = System.currentTimeMillis();
 			if (task.getCrtdTs() == null) {
 				task.setCrtdTs(new Timestamp(currentTime));
-				//task.setCrtdUsr(currentUser); //TODO update the user name here
 			}
 			task.setLstUpdtdTs(new Timestamp(currentTime));
-		//	task.setLstUpdtdUsr(currentUser); //TODO update the user name here
-					
 			if (task.getTodoAssignments() != null) {
 				for (TodoAssignment todo: task.getTodoAssignments()) {
 					if (todo.getCrtdTs() == null) {
@@ -137,27 +135,6 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 		return task;
 	}
 	
-	@Override
-	@Transactional
-	public Task saveTaskForExecutionPackage(Task task) throws P6DataAccessException {
-		try {
-			logger.debug("Current User: {} ", task.getCrtdUsr());
-			logger.debug("Current session: {} ", getSession().getTransaction());
-			long currentTime = System.currentTimeMillis();
-			if (task.getCrtdTs() == null) {
-				task.setCrtdTs(new Timestamp(currentTime));
-				//task.setCrtdUsr(currentUser); //TODO update the user name here
-			}
-			task.setLstUpdtdTs(new Timestamp(currentTime));
-		//	task.setLstUpdtdUsr(currentUser); //TODO update the user name here
-					
-			
-			sessionFactory.getCurrentSession().saveOrUpdate(task);
-		} catch (HibernateException e) {
-			parseException(e);
-		}
-		return task;
-	}
 
 	@Override
 	@Transactional
