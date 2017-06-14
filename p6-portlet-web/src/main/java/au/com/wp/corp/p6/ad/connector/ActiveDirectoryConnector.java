@@ -67,7 +67,7 @@ public class ActiveDirectoryConnector {
 		try {
 			dirContext = new InitialDirContext();
 		} catch (NamingException e) {
-			logger.error(e.getMessage());
+			logger.error("an error occurs while getting initial context  ", e );
 		}
 		
 		logger.debug("Active directory connector created: " + dirContext);

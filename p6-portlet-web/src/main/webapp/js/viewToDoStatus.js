@@ -232,7 +232,7 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 			templateUrl: templateUrl,
 			controller: "supportingDocPopupController",
 			inputs: {
-				todo: todo,
+				todo: todo
 			}
 
 		}).then(function(modal) {

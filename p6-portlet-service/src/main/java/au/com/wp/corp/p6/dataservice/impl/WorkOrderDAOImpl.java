@@ -65,7 +65,9 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			parseException(e);
 		}
 		/* This list size should always be 1*/
-		logger.info("size={}",listTask.size());
+		if(null != listTask){
+			logger.info("size={}",listTask.size());
+		}
         return listTask;
 	}
 	
@@ -101,7 +103,9 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			parseException(e);
 		}
 		/* This list size should always be 1 */
-		logger.info("size={}", listTask.size());
+		if(null != listTask){
+			logger.info("size={}", listTask.size());
+		}
 		return listTask;
 	}
 	
