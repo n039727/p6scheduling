@@ -239,19 +239,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		}
 		executionPackageDTOFoP6List.clear();
 		executionPackageDTOFoP6List = null;
-		/*List<String>  workorderIds = getWorkOrdersForExcnPkgDelP6();
-		if(workorderIds != null && workorderIds.size() >0){
-			try {
-				logger.debug("Calling to remove execution package for work orders {}",workorderIds);
-				boolean isSuccess =p6wsClient.removeExecutionPackage(workorderIds);
-				logger.debug("Removal suceeeded {}",isSuccess);
-			} catch (P6ServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			workorderIds.clear();
-			workorderIds = null;
-		}*/
+	
 	}
 
 	private void updateOldExecutionPackages(Set<ExecutionPackage> executionPackages) throws P6BusinessException{
