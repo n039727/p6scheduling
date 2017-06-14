@@ -1467,7 +1467,7 @@ public class P6EllipseIntegrationServiceTest {
 		Mockito.when(p6WSClient.readActivities()).thenReturn(p6Activities);
 
 		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration();
-		Assert.assertEquals(0, deleteActivites.size());
+		Assert.assertEquals(1, deleteActivites.size());
 	}
 
 	@After
