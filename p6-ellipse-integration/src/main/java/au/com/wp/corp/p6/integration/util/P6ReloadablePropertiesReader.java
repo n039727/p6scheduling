@@ -38,7 +38,6 @@ public class P6ReloadablePropertiesReader {
 
 	public static synchronized String getProperty(final String key) {
 		final String value = (String) configuration.getProperty(key);
-		logger.debug("property value for the key # {}, --value #{}", key, value);
 		return value;
 	}
 

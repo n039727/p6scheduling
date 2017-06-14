@@ -27,6 +27,8 @@ public class DateUtil {
 	private static final Logger logger = LoggerFactory.getLogger(DateUtil.class);
 
 	private static final int FIRST_FISCAL_MONTH = Calendar.JULY;
+	
+	public static final String DATE_FORMAT_DDMMYYYY = "dd/MM/yyyy";
 
 	public static final String ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP = "dd/MM/yyyy hh:mm:ss";
 
@@ -36,13 +38,11 @@ public class DateUtil {
 
 	private Calendar calendarDate;
 
-
 	public int getFiscalYear() {
 		int month = calendarDate.get(Calendar.MONTH);
 		int year = calendarDate.get(Calendar.YEAR);
 		return (month >= FIRST_FISCAL_MONTH) ? year : year - 1;
 	}
-
 
 	public Calendar getStartDateOfFiscalYear(final Calendar calendarDate) {
 		this.calendarDate = calendarDate;
@@ -76,7 +76,7 @@ public class DateUtil {
 
 	public String convertDateToString(Date date) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(P6_DATE_FORMAT_WITH_TIMESTAMP);
 		return sdf.format(date);
 
 	}
@@ -85,7 +85,13 @@ public class DateUtil {
 		if (null == date || date.trim().isEmpty())
 			return "";
 		SimpleDateFormat sdf = new SimpleDateFormat(expectedDateFormat);
-		return sdf.format(convertStringToDatetime(date, proviedDateFormat));
+		try {
+			return sdf.format(convertStringToDatetime(date, proviedDateFormat));
+		} catch (Exception e) {
+			logger.error("Invalid date - cant parse date# {}  - proviedDateFormat# {}  - expectedDateFormat# {}", date,
+					proviedDateFormat, expectedDateFormat);
+		}
+		return null;
 
 	}
 
@@ -128,7 +134,7 @@ public class DateUtil {
 		return null;
 
 	}
-	
+
 	public String getCurrentDate() {
 		SimpleDateFormat sdf = new SimpleDateFormat(P6_DATE_FORMAT_WITH_TIMESTAMP);
 		return sdf.format(new Date());
@@ -151,16 +157,40 @@ public class DateUtil {
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.setTime(dt);
 			return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-		} catch (ParseException | DatatypeConfigurationException  e) {
+		} catch (ParseException | DatatypeConfigurationException e) {
 			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
 			logger.error("Can't covert to XMLGregorianCalendar - ", e);
-		} catch (Exception e )
-		{
+		} catch (Exception e) {
 			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
 			logger.error("Can't covert to XMLGregorianCalendar - ", e);
 		}
 		return null;
 
+	}
+	
+	
+	
+	public boolean isSameDate (String date1, String date1Format, String date2, String date2Format) {
+		SimpleDateFormat sdf1 = new SimpleDateFormat(date1Format);
+		
+		SimpleDateFormat sdf2 = new SimpleDateFormat(date2Format);
+		
+		SimpleDateFormat sdf3 = new SimpleDateFormat(DATE_FORMAT_DDMMYYYY);
+		
+		try {
+			Date dt1 =  sdf3.parse(sdf3.format(sdf1.parse(date1)));
+			Date dt2 = sdf3.parse(sdf3.format(sdf2.parse(date2)));
+			
+			if ( dt1.compareTo(dt2) == 0)
+			{
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error("Invalid date - cant parse date1# {}  - date2# {}", date1, date2);
+			logger.error("Can't parse input date - ", e);
+		}
+		
+		return false;
 	}
 
 }

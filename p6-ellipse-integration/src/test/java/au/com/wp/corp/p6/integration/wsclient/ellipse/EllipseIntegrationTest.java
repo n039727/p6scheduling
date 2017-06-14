@@ -45,7 +45,7 @@ public class EllipseIntegrationTest {
 		activities.add(activity);
 		ellipseWSClient.updateActivitiesEllipse(activities, transId);
 
-		ellipseWSClient.rollbackTransaction(transId);
+		//ellipseWSClient.rollbackTransaction(transId);
 	}
 
 }

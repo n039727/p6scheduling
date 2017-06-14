@@ -194,6 +194,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 	@Override
 	public List<P6ActivityDTO> startEllipseToP6Integration() throws P6BusinessException {
+		clearApplicationMemory();
 		readUDFTypeMapping();
 		readProjectWorkgroupMapping();
 		logger.info("Starting all rading threads ....");
@@ -318,14 +319,23 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					&& CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadProcessStatus.COMPLETED) {
 				break;
-			} else if (CacheManager.getSystemReadWriteStatusMap()
-					.get(ProcessStatus.ELLIPSE_UPDATE_STATUS) == ReadProcessStatus.FAILED
+			} else if ((CacheManager.getSystemReadWriteStatusMap()
+					.get(ProcessStatus.ELLIPSE_UPDATE_STATUS) == ReadProcessStatus.COMPLETED
 					|| CacheManager.getSystemReadWriteStatusMap()
+							.get(ProcessStatus.ELLIPSE_UPDATE_STATUS) == ReadProcessStatus.FAILED)
+					&& (CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_CREATE_STATUS) == ReadProcessStatus.FAILED
-					|| CacheManager.getSystemReadWriteStatusMap()
+							|| CacheManager.getSystemReadWriteStatusMap()
+									.get(ProcessStatus.P6_ACTIVITY_CREATE_STATUS) == ReadProcessStatus.COMPLETED)
+					&& (CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_UPDATE_STATUS) == ReadProcessStatus.FAILED
-					|| CacheManager.getSystemReadWriteStatusMap()
-							.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadProcessStatus.FAILED) {
+							|| CacheManager.getSystemReadWriteStatusMap()
+									.get(ProcessStatus.P6_ACTIVITY_UPDATE_STATUS) == ReadProcessStatus.COMPLETED)
+					&& (CacheManager.getSystemReadWriteStatusMap()
+							.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadProcessStatus.FAILED
+							|| CacheManager.getSystemReadWriteStatusMap()
+									.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadProcessStatus.COMPLETED)) {
+
 				throw new P6BusinessException("An error occurs while create /update/ delete  data");
 			}
 
@@ -354,8 +364,9 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		logger.debug("Activity details in P6 - activity Id # {}, - workgroup # {}, - planned start date # {}",
 				p6Activity.getActivityId(), p6Activity.getWorkGroup(), p6Activity.getPlannedStartDate());
 
-		logger.debug("Activity details in P6 - activity Id # {}, - workgroup # {}, - planned start date # {}",
-				p6Activity.getActivityId(), p6Activity.getWorkGroup(), p6Activity.getPlannedStartDate());
+		logger.debug("Activity details in Ellipse - activity Id # {}, - workgroup # {}, - planned start date # {}",
+				ellipseActivity.getWorkOrderTaskId(), ellipseActivity.getWorkGroup(),
+				ellipseActivity.getPlannedStartDate());
 
 		final EllipseActivityDTO ellipseActivityUpd = new EllipseActivityDTO();
 		boolean isUpdateReq = false;
@@ -382,10 +393,9 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 
 		} else if (null == ellipseActivity.getPlannedStartDate() || ellipseActivity.getPlannedStartDate().isEmpty()
-				|| (null != p6Activity.getPlannedStartDate() && !p6Activity.getPlannedStartDate()
-						.equals(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
-								DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
-								DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)))) {
+				|| (null != p6Activity.getPlannedStartDate() && !dateUtil.isSameDate(p6Activity.getPlannedStartDate(),
+						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, ellipseActivity.getPlannedStartDate(),
+						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))) {
 			/*
 			 * in P6 activity is in Crew Work group when while comparing the
 			 * Planned Start Date between Ellipse and P6 is different then
@@ -402,10 +412,9 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * the status from Ellipse to P6
 		 */
 		if ((null != p6Activity.getWorkGroup() && !p6Activity.getWorkGroup().equals(ellipseActivity.getWorkGroup()))
-				|| (null != p6Activity.getPlannedStartDate() && !p6Activity.getPlannedStartDate()
-						.equals(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
-								DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
-								DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)))) {
+				|| (null != p6Activity.getPlannedStartDate() && !dateUtil.isSameDate(p6Activity.getPlannedStartDate(),
+						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, ellipseActivity.getPlannedStartDate(),
+						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))) {
 			ellipseActivityUpd.setTaskUserStatus("AL");
 			isUpdateReq = true;
 		}
@@ -568,8 +577,10 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 				&& null != projectWorkgroup.get(ellipseActivity.getWorkGroup()).getSchedulerinbox() && projectWorkgroup
 						.get(ellipseActivity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y)) {
 			p6ActivityUpd.setExecutionPckgUDF("");
+			isUpdateReq = true;
 		} else {
 			p6ActivityUpd.setExecutionPckgUDF(p6Activity.getExecutionPckgUDF());
+			isUpdateReq = true;
 		}
 
 		/*
@@ -581,7 +592,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		if (null == ellipseActivity.getPlannedStartDate() || ellipseActivity.getPlannedStartDate().isEmpty()) {
 			p6ActivityUpd.setPlannedStartDate(dateUtil.getStartDateOfFiscalYear(dateUtil.getCurrentDate(),
 					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP));
-
+			isUpdateReq = true;
 		}
 
 		/*
@@ -595,16 +606,20 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 		if (projectObjectId != 0) {
 			p6ActivityUpd.setProjectObjectId(projectObjectId);
+			isUpdateReq = true;
 		}
 
 		if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()) {
 			p6ActivityUpd.setActualStartDate(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),
 					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+			isUpdateReq = true;
 		}
 
 		if (null != ellipseActivity.getActualFinishDate() && !ellipseActivity.getActualFinishDate().trim().isEmpty()) {
 			p6ActivityUpd.setActualFinishDate(dateUtil.convertDateToString(ellipseActivity.getActualFinishDate(),
 					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+			isUpdateReq = true;
+
 		}
 
 		return isUpdateReq ? p6ActivityUpd : null;
@@ -677,6 +692,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 	@Override
 	public void clearApplicationMemory() {
+		logger.debug("Clearing cache memory........");
 		CacheManager.getEllipseActivitiesMap().clear();
 		CacheManager.getP6ActivitiesMap().clear();
 		CacheManager.getP6ProjectWorkgroupMap().clear();

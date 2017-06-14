@@ -30,7 +30,7 @@ public class DateUtilTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
+
 	@Test
 	public void testGetCurrentDate() {
 		String currentDate = dateUtil.getCurrentDate();
@@ -54,13 +54,11 @@ public class DateUtilTest {
 		Assert.assertNotNull(dateUtil.convertStringToXMLGregorianClalander("2017-04-19T08:00:00"));
 	}
 
-	
 	@Test
 	public void testConvertStringToXMLGregorianClalander_Error1() {
 		Assert.assertNull(dateUtil.convertStringToXMLGregorianClalander("08:00:00"));
 	}
-	
-	
+
 	@Test
 	public void testConvertDateToString() {
 		String date = dateUtil.convertDateToString("09/06/2017 08:00:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
@@ -68,30 +66,51 @@ public class DateUtilTest {
 		Assert.assertEquals("2017-06-09T08:00:00", date);
 
 	}
-	
+
 	@Test
 	public void testConvertDateToString_Error1() {
-		thrown.expect(NullPointerException.class);
 		String date = dateUtil.convertDateToString("09/06/2017", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 				DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
 
+		Assert.assertNull(date);
+
 	}
-	
+
 	@Test
-	public void testIsCurrentDate () {
+	public void testIsCurrentDate() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
+
 		Assert.assertTrue(dateUtil.isCurrentDate(sdf.format(new Date())));
 	}
 
-	
 	@Test
-	public void testIsCurrentDate_Error1 () {
+	public void testIsCurrentDate_Error1() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		
+
 		Assert.assertFalse(dateUtil.isCurrentDate(sdf.format(new Date())));
 	}
+
+	@Test
+	public void testIsSameDate() {
+		Assert.assertTrue(dateUtil.isSameDate("2017-03-13T00:00:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
+				"13/03/2017 08:00:00", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+	}
+
+	@Test
+	public void testIsSameDate1() {
+		Assert.assertTrue(dateUtil.isSameDate("2017-06-20T08:00:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
+				"20/06/2017 08:00:00", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+	}
+
+	@Test
+	public void testIsSameDate_ERORR1() {
+		Assert.assertFalse(dateUtil.isSameDate("2017-06-20", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
+				"20/06/2017 08:00:00", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+	}
 	
+	@Test
+	public void testIsSameDate_ERROR2() {
+		Assert.assertFalse(dateUtil.isSameDate("2017-06-21T08:00:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
+				"20/06/2017 08:00:00", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+	}
 }
-
-

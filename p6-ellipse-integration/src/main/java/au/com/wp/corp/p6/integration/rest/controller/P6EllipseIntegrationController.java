@@ -35,7 +35,6 @@ public class P6EllipseIntegrationController {
 			p6EllipseService.startEllipseToP6Integration();
 		} catch (P6BaseException e) {
 			logger.error("An error occurs during batch processing - ",e);
-			p6EllipseService.clearApplicationMemory();
 			return STATUS_FAILED;
 		}
 		p6EllipseService.clearApplicationMemory();
