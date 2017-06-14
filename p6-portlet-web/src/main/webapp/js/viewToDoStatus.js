@@ -6,7 +6,7 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 	if (userAccessService.isAuthEnabled()) {
 		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
 			console.log('has updateable in view to do status : false');
-			ctrl.isReadOnly = true;
+		//	ctrl.isReadOnly = true;
 		}
 	}
 
