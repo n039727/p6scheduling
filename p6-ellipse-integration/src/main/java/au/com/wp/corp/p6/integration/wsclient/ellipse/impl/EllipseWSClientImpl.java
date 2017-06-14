@@ -166,6 +166,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 					arrayModify.getWorkOrderTaskServiceModifyRequestDTO().size());
 			try {
 				MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
+				if ( response.getOut() != null)
 				commitTransaction(transactionId);
 			} catch (Exception e) {
 				rollbackTransaction(transactionId);
