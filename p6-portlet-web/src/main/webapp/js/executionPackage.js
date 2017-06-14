@@ -77,7 +77,7 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 	            templateUrl: '../views/executionPackagePopup.html',
 	            controller: "executionPkgPopupController",
 	            inputs: {
-	                wo: wo,
+	                wo: wo
 	              }
 	            
 	        }).then(function(modal) {
