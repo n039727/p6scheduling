@@ -88,7 +88,6 @@ public class DepotController {
 			executionPackageService.updateP6ForExecutionPackage();
 		} catch (JsonProcessingException e) {
 			logger.error("Error occurred while printing json ", e);
-			e.printStackTrace();
 		}
 		return new ResponseEntity<WorkOrder>(savedWorkOrder, HttpStatus.OK);
 	}

@@ -118,7 +118,7 @@ public class ActiveDirectoryConnector {
 			if (dirContext != null)
 				dirContext.close();
 		} catch (NamingException e) {
-			logger.error(e.getMessage());
+			logger.error("an error occurs while closing ldap connectiont  ", e );
 		}
 	}
 
