@@ -82,7 +82,6 @@ public class DepotController {
 			logger.debug("The json for save to do depot : {}", mapper.writeValueAsString(request.getBody()));
 		} catch (JsonProcessingException e) {
 			logger.error("Error occurred while printing json ", e);
-			e.printStackTrace();
 		}
 		return new ResponseEntity<WorkOrder>(dpotTodoService.saveDepotToDo(request.getBody()), HttpStatus.OK);
 	}
