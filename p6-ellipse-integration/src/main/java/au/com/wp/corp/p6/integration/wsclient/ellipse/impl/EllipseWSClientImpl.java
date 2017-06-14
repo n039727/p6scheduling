@@ -100,7 +100,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 	 * updateActivitiesEllipse(java.util.List)
 	 */
 	@Override
-	public void updateActivitiesEllipse(List<EllipseActivityDTO> activities, String transactionId)
+	public void updateActivitiesEllipse(List<EllipseActivityDTO> activities)
 			throws P6ServiceException {
 		logger.info("Updating activities in Ellipse..");
 		int noOfActvtyTobeProccessedAtATime;
@@ -117,12 +117,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 		List<EllipseActivityDTO> ellipseActivities;
 		int noOfIteration = (activities.size() / noOfActvtyTobeProccessedAtATime) + 1;
 		for (int i = 0; i < noOfIteration; i++) {
-			String transId;
-			if (null == transactionId)
-				transId = startTransaction();
-			else
-				transId = transactionId;
-			
+			String transId =startTransaction();
 			MultipleModify multipleModify = new MultipleModify();
 			OperationContext operationContext = new OperationContext();
 			operationContext.setRunAs(new RunAs());
