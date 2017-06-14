@@ -38,9 +38,6 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	private static final Logger logger = LoggerFactory.getLogger(WorkOrderDAOImpl.class);
 	@Autowired
 	SessionFactory sessionFactory; 
-	/*@Autowired
-	UserTokenRequest userTokenRequest;*/
-	private  String currentUser =null;
 
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.dataservice.WorkOrderDAO#fetchWorkOrdersForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchInput)
@@ -118,11 +115,8 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			long currentTime = System.currentTimeMillis();
 			if (task.getCrtdTs() == null) {
 				task.setCrtdTs(new Timestamp(currentTime));
-				//task.setCrtdUsr(currentUser); //TODO update the user name here
 			}
 			task.setLstUpdtdTs(new Timestamp(currentTime));
-		//	task.setLstUpdtdUsr(currentUser); //TODO update the user name here
-					
 			if (task.getTodoAssignments() != null) {
 				for (TodoAssignment todo: task.getTodoAssignments()) {
 					if (todo.getCrtdTs() == null) {

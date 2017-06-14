@@ -319,14 +319,16 @@ public class P6WSClientImpl implements P6WSClient {
 		if (workOrderIdsNotFound != null && workOrderIdsNotFound.size() > 0) {
 			StringBuilder filter = new StringBuilder();
 			filter.append("Id in(");
+			StringBuilder filterWithIn = new StringBuilder();
 			for (String string : workOrderIdsNotFound) {
 
-				if (filter.length() > 0) {
-					filter.append(",'" + string + "'");
+				if (filterWithIn.length() > 0) {
+					filterWithIn.append(",'" + string + "'");
 				} else {
-					filter.append("'" + string + "'");
+					filterWithIn.append("'" + string + "'");
 				}
 			}
+			filter.append(filterWithIn);
 			filter.append(")");
 			logger.info("filter {}", filter);
 			final ActivityServiceCall activityService = new ActivityServiceCall(trackingId, activityServiceWSDL,
