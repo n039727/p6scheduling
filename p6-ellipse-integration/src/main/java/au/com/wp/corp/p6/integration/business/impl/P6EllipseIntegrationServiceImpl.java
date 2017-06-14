@@ -319,14 +319,22 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					&& CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadProcessStatus.COMPLETED) {
 				break;
-			} else if (CacheManager.getSystemReadWriteStatusMap()
-					.get(ProcessStatus.ELLIPSE_UPDATE_STATUS) == ReadProcessStatus.FAILED
+			} else if ((CacheManager.getSystemReadWriteStatusMap()
+					.get(ProcessStatus.ELLIPSE_UPDATE_STATUS) == ReadProcessStatus.COMPLETED
 					|| CacheManager.getSystemReadWriteStatusMap()
+							.get(ProcessStatus.ELLIPSE_UPDATE_STATUS) == ReadProcessStatus.FAILED)
+					&& (CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_CREATE_STATUS) == ReadProcessStatus.FAILED
-					|| CacheManager.getSystemReadWriteStatusMap()
+							|| CacheManager.getSystemReadWriteStatusMap()
+									.get(ProcessStatus.P6_ACTIVITY_CREATE_STATUS) == ReadProcessStatus.COMPLETED)
+					&& (CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_UPDATE_STATUS) == ReadProcessStatus.FAILED
-					|| CacheManager.getSystemReadWriteStatusMap()
-							.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadProcessStatus.FAILED) {
+							|| CacheManager.getSystemReadWriteStatusMap()
+									.get(ProcessStatus.P6_ACTIVITY_UPDATE_STATUS) == ReadProcessStatus.COMPLETED)
+					&& (CacheManager.getSystemReadWriteStatusMap()
+							.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadProcessStatus.FAILED
+							|| CacheManager.getSystemReadWriteStatusMap()
+									.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadProcessStatus.COMPLETED)) {
 
 				throw new P6BusinessException("An error occurs while create /update/ delete  data");
 			}

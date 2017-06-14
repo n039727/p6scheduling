@@ -114,23 +114,28 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 		logger.debug("Number of activties to be updated in Ellipse in a single service call #{}",
 				noOfActvtyTobeProccessedAtATime);
 
-		if (null == transactionId)
-			transactionId = startTransaction();
-
-		MultipleModify multipleModify = new MultipleModify();
-		OperationContext operationContext = new OperationContext();
-		operationContext.setRunAs(new RunAs());
-		operationContext.setDistrict("CORP");
-		operationContext.setTransaction(transactionId);
-		multipleModify.setContext(operationContext);
-
-		ArrayOfWorkOrderTaskServiceModifyRequestDTO arrayModify;
-		WorkOrderTaskServiceModifyRequestDTO woTaskModifyDTO;
-		WorkOrderDTO workOrder;
-		Map<String, String> workorderTask;
 		List<EllipseActivityDTO> ellipseActivities;
 		int noOfIteration = (activities.size() / noOfActvtyTobeProccessedAtATime) + 1;
 		for (int i = 0; i < noOfIteration; i++) {
+			String transId;
+			if (null == transactionId)
+				transId = startTransaction();
+			else
+				transId = transactionId;
+			
+			MultipleModify multipleModify = new MultipleModify();
+			OperationContext operationContext = new OperationContext();
+			operationContext.setRunAs(new RunAs());
+			operationContext.setDistrict("CORP");
+			operationContext.setTransaction(transId);
+			multipleModify.setContext(operationContext);
+
+			ArrayOfWorkOrderTaskServiceModifyRequestDTO arrayModify;
+			WorkOrderTaskServiceModifyRequestDTO woTaskModifyDTO;
+			WorkOrderDTO workOrder;
+			Map<String, String> workorderTask;
+			
+			
 			arrayModify = new ArrayOfWorkOrderTaskServiceModifyRequestDTO();
 			int startIndex = i * noOfActvtyTobeProccessedAtATime;
 			int endIndex = ((i + 1) * noOfActvtyTobeProccessedAtATime - 1) < activities.size()
@@ -167,9 +172,9 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			try {
 				MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
 				if ( response.getOut() != null)
-				commitTransaction(transactionId);
+				commitTransaction(transId);
 			} catch (Exception e) {
-				rollbackTransaction(transactionId);
+				rollbackTransaction(transId);
 				throw new P6ServiceException(e);
 			}
 		}
