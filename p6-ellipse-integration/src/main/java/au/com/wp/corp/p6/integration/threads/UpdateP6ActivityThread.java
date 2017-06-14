@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
-import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.ProcessStatus;
 import au.com.wp.corp.p6.integration.util.ReadProcessStatus;
@@ -49,7 +48,7 @@ public class UpdateP6ActivityThread implements Runnable {
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_UPDATE_STATUS,
 					ReadProcessStatus.COMPLETED);
 		} catch (Exception e) {
-			logger.error("An error occur while deleting activities in P6 ", e);
+			logger.error("An error occur while updating activities in P6 ", e);
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_UPDATE_STATUS,
 					ReadProcessStatus.FAILED);
 		}

@@ -10,8 +10,8 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 		}
 	}
 
-	ctrl.successSavedMsg = "";
-	ctrl.savedMsgVisible = false;
+	//ctrl.successSavedMsg = "";
+	//ctrl.savedMsgVisible = false;
 	ctrl.isAllCompletedStatus = false;
 	console.log('$ctrl.activeContext in view: ' + JSON.stringify(ctrl.activeContext));
 	console.log('data received: ' + JSON.stringify(ctrl.data));
@@ -27,7 +27,7 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 			$('#'+button.id).removeClass("glyphicon-minus");
 			$('#'+button.id).addClass("glyphicon-plus");
 		}
-		ctrl.savedMsgVisible = false;
+		wo.savedMsgVisible = false;
 	};
 
 	ctrl.saveToDo = function(wo){
@@ -97,12 +97,12 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 				}
 			}
 
-			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
-				ctrl.successSavedMsg = "Package has been saved successfully";
+			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== ""){
+				wo.successSavedMsg = "Package has been saved successfully";
 			}else{
-				ctrl.successSavedMsg = "Work order task has been saved successfully";
+				wo.successSavedMsg = "Work order task has been saved successfully";
 			}
-			ctrl.savedMsgVisible = true;
+			wo.savedMsgVisible = true;
 
 		}, null);
 
@@ -232,7 +232,7 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 			templateUrl: templateUrl,
 			controller: "supportingDocPopupController",
 			inputs: {
-				todo: todo,
+				todo: todo
 			}
 
 		}).then(function(modal) {

@@ -375,7 +375,7 @@ public class P6EllipseIntegrationServiceTest {
 
 		Mockito.when(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
 				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
-				.thenReturn("2012-06-11 08:00:00");
+				.thenReturn("2012-06-11T08:00:00");
 
 		Mockito.when(p6EllipseDAO.readElipseWorkorderDetails(workgroupList)).thenReturn(activities);
 
@@ -488,15 +488,15 @@ public class P6EllipseIntegrationServiceTest {
 
 		Mockito.when(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
 				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
-				.thenReturn("2012-06-11 08:00:00");
+				.thenReturn("2012-06-11T08:00:00");
 
 		Mockito.when(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),
 				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
-				.thenReturn("2012-06-11 08:00:00");
+				.thenReturn("2012-06-11T08:00:00");
 
 		Mockito.when(dateUtil.convertDateToString(ellipseActivity.getActualFinishDate(),
 				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
-				.thenReturn("2012-06-12 08:00:00");
+				.thenReturn("2012-06-12T08:00:00");
 
 		Map<String, P6ProjWorkgroupDTO> projectWorkGropMap = CacheManager.getP6ProjectWorkgroupMap();
 
@@ -604,7 +604,7 @@ public class P6EllipseIntegrationServiceTest {
 
 		Mockito.when(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
 				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
-				.thenReturn("2017-05-27 08:00:00");
+				.thenReturn("2017-05-27T08:00:00");
 
 		Map<String, P6ProjWorkgroupDTO> projectWorkGropMap = CacheManager.getP6ProjectWorkgroupMap();
 
@@ -706,7 +706,7 @@ public class P6EllipseIntegrationServiceTest {
 
 		Mockito.when(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
 				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
-				.thenReturn("2017-05-27 08:00:00");
+				.thenReturn("2017-05-27T08:00:00");
 
 		Method method = P6EllipseIntegrationServiceImpl.class.getDeclaredMethod("syncEllipseP6Activity",
 				P6ActivityDTO.class, EllipseActivityDTO.class, Map.class);
@@ -1061,7 +1061,7 @@ public class P6EllipseIntegrationServiceTest {
 
 		Mockito.when(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
 				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
-				.thenReturn("2017-07-27 08:00:00");
+				.thenReturn("2017-07-27T08:00:00");
 
 		Mockito.when(dateUtil.convertDateToString(p6Activity.getPlannedStartDate(),
 				DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP))
@@ -1467,7 +1467,7 @@ public class P6EllipseIntegrationServiceTest {
 		Mockito.when(p6WSClient.readActivities()).thenReturn(p6Activities);
 
 		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration();
-		Assert.assertEquals(0, deleteActivites.size());
+		Assert.assertEquals(1, deleteActivites.size());
 	}
 
 	@After

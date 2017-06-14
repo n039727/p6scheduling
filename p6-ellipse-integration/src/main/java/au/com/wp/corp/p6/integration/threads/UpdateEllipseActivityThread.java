@@ -42,10 +42,9 @@ public class UpdateEllipseActivityThread implements Runnable {
 		
 		try {
 			if ( !updateActivityEllipseSet.isEmpty() )
-			ellipseWSClient.updateActivitiesEllipse(updateActivityEllipseSet, null);
+			ellipseWSClient.updateActivitiesEllipse(updateActivityEllipseSet);
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS,ReadProcessStatus.COMPLETED );
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error("An error occurs while updating ellipse activity : ", e);
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS, ReadProcessStatus.FAILED);	
 		}

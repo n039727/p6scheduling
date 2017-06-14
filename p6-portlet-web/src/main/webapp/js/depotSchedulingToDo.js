@@ -9,7 +9,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 		}
 	}
 	
-	ctrl.successSavedMsg = "";
+//	ctrl.successSavedMsg = "";
 	ctrl.emptyStr = "";
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	ctrl.toggleExpansion  = function($event, wo) {
@@ -25,7 +25,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			$('#'+button.id).addClass("glyphicon-plus");
 			//wo.expanded = false;
 		}
-		ctrl.savedMsgVisible = false;
+		wo.savedMsgVisible = false;
 		//$scope.$digest();
 	};
 	
@@ -37,7 +37,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 	
 	if(ctrl.metadata.todoList){
 		for (i=0; i<ctrl.metadata.todoList.length;i++) {
-			console.log("Type Id: " + ctrl.metadata.todoList[i].typeId);
+//			console.log("Type Id: " + ctrl.metadata.todoList[i].typeId);
 			if (ctrl.metadata.todoList[i].typeId == 1) {
 				ctrl.schedulingToDoList.push(ctrl.metadata.todoList[i].toDoName);
 			} else {
@@ -135,11 +135,11 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
 			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== ctrl.emptyStr){
-				ctrl.successSavedMsg = "Depot To Do Saved Successfully";
+				wo.successSavedMsg = "Depot To Do Saved Successfully";
 			}else{
-				ctrl.successSavedMsg = "Work order task has been saved successfully";
+				wo.successSavedMsg = "Work order task has been saved successfully";
 			}
-			ctrl.savedMsgVisible = true;
+			wo.savedMsgVisible = true;
 			
 		}, null);
 		
