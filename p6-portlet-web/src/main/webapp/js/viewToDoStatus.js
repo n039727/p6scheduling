@@ -254,6 +254,7 @@ app.controller('supportingDocPopupController', [
 
 		$scope.todo = todo;
 		$scope.leadCrews = $scope.leadCrewList;
+		$scope.todo.sdEditMode = false;
 		$scope.toggleEditMode = function(todo){
 			console.log("Inside edit URl");
 			$scope.todo.sdEditMode = true;
