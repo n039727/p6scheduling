@@ -24,9 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.businessservice.DepotTodoService;
+import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
+import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.UserTokenRequest;
@@ -55,6 +57,9 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	
 	@Autowired
 	private ExecutionPackageDao executionPackageDao;
+	
+	@Autowired
+    private IExecutionPackageService executionPackageService;
 	
 	@Autowired
 	TodoDAO todoDAO;
@@ -259,14 +264,25 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 
 		if (workOrder == null)
 			throw new IllegalArgumentException("Work Order canot be null");
-
+		List<ExecutionPackageDTO> executionPackageDTOList = new ArrayList<ExecutionPackageDTO>();
+		ExecutionPackageDTO executionPackageDTO = null;
+		List<WorkOrder> workOrderList = new ArrayList<>();
 		if (workOrder.getWorkOrders() != null) {
 			for (String workOrderId : workOrder.getWorkOrders()) {
+				WorkOrder wo = new WorkOrder();
 				Task task = prepareTaskFromWorkOrderId(workOrderId, workOrder);
 				if(null != task.getExecutionPackage()){
 					logger.debug("task.getExecutionPackage()>> {}", task.getExecutionPackage().getActioned());
+					executionPackageDTO = new ExecutionPackageDTO();
+					executionPackageDTO.setExctnPckgName(task.getExecutionPackage().getExctnPckgNam());
+					workOrderList.add(wo);
 				}
 				workOrderDAO.saveTask(task);
+			}
+			if(executionPackageDTO != null){
+				executionPackageDTO.setWorkOrders(workOrderList);
+				executionPackageDTOList.add(executionPackageDTO);
+				executionPackageService.setExecutionPackageDTDOFoP6(executionPackageDTOList);
 			}
 		}
 

@@ -5,6 +5,7 @@ package au.com.wp.corp.p6.businessservice;
 
 import java.util.List;
 
+import au.com.wp.corp.p6.businessservice.impl.P6SchedulingBusinessServiceImpl;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -43,5 +44,7 @@ public interface IExecutionPackageService extends P6BusinessExceptionParser{
 	List<ExecutionPackageDTO> getExecutionPackageDTDOFoP6();
 
 	void updateP6ForExecutionPackage()throws P6BusinessException;
+
+	public void setP6BusinessService(P6SchedulingBusinessServiceImpl p6SchedulingBusinessServiceImpl);
 
 }

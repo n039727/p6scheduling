@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.P6MaterialRequisitionService;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dto.MaterialRequisitionDTO;
@@ -42,6 +43,8 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	private static final Logger logger = LoggerFactory.getLogger(PortletServiceEndpointImpl.class);
 	@Autowired
 	private P6SchedulingBusinessService p6BusinessService;
+	@Autowired
+	private IExecutionPackageService executionPackageService;
 	@Autowired
 	private P6MaterialRequisitionService materialRequisitionService;
 	@Autowired
@@ -74,7 +77,9 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	@ResponseBody
 	@Override
 	public ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) throws P6BusinessException {
-		return new ResponseEntity<WorkOrder>(p6BusinessService.saveToDo(workOrder.getBody()), HttpStatus.CREATED);
+		WorkOrder worder = p6BusinessService.saveToDo(workOrder.getBody());
+		executionPackageService.updateP6ForExecutionPackage();
+		return new ResponseEntity<WorkOrder>(worder, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/saveWorkOrderForViewToDoStatus", method = RequestMethod.POST, produces = {

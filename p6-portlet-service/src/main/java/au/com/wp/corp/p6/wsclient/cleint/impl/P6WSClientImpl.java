@@ -222,9 +222,7 @@ public class P6WSClientImpl implements P6WSClient {
 			for (Resource resource : resources.value) {
 				Crew crew = new Crew();
 				crew.setCrewId(resource.getId());
-				;
 				crew.setCrewName(resource.getName());
-
 				crews.add(crew);
 			}
 		}
@@ -319,9 +317,8 @@ public class P6WSClientImpl implements P6WSClient {
                 .collect(Collectors.toList());
 		logger.info("workOrderIds not found {}",workOrderIdsNotFound);
 		if (workOrderIdsNotFound != null && workOrderIdsNotFound.size() > 0) {
-			ActivitySearchRequest activitySearchRequest = new ActivitySearchRequest();
-			activitySearchRequest.setFilter("Id in(");
 			StringBuilder filter = new StringBuilder();
+			filter.append("Id in(");
 			for (String string : workOrderIdsNotFound) {
 
 				if (filter.length() > 0) {

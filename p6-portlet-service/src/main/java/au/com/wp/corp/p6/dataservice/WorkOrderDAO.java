@@ -18,6 +18,5 @@ public interface WorkOrderDAO extends P6DAOExceptionParser {
 	List<Task> fetchTasksByOnlyDate(List<Date> dateRange) throws P6DataAccessException;
 	List<Task> fetchTasksByDateAndWo(List<Date> dateRange, List<String> workOrderId)
 			throws P6DataAccessException;
-	Task saveTaskForExecutionPackage(Task task) throws P6DataAccessException;
 	
 }

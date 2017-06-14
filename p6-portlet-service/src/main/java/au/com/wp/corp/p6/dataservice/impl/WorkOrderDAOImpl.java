@@ -137,27 +137,6 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 		return task;
 	}
 	
-	@Override
-	@Transactional
-	public Task saveTaskForExecutionPackage(Task task) throws P6DataAccessException {
-		try {
-			logger.debug("Current User: {} ", task.getCrtdUsr());
-			logger.debug("Current session: {} ", getSession().getTransaction());
-			long currentTime = System.currentTimeMillis();
-			if (task.getCrtdTs() == null) {
-				task.setCrtdTs(new Timestamp(currentTime));
-				//task.setCrtdUsr(currentUser); //TODO update the user name here
-			}
-			task.setLstUpdtdTs(new Timestamp(currentTime));
-		//	task.setLstUpdtdUsr(currentUser); //TODO update the user name here
-					
-			
-			sessionFactory.getCurrentSession().saveOrUpdate(task);
-		} catch (HibernateException e) {
-			parseException(e);
-		}
-		return task;
-	}
 
 	@Override
 	@Transactional
