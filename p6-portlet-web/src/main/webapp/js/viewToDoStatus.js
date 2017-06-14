@@ -6,7 +6,7 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 	if (userAccessService.isAuthEnabled()) {
 		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
 			console.log('has updateable in view to do status : false');
-		//	ctrl.isReadOnly = true;
+			//	ctrl.isReadOnly = true;
 		}
 	}
 
@@ -254,7 +254,11 @@ app.controller('supportingDocPopupController', [
 
 		$scope.todo = todo;
 		$scope.leadCrews = $scope.leadCrewList;
-		$scope.todo.sdEditMode = false;
+		if($scope.todo.supportingDoc==null || $scope.todo.supportingDoc==""){
+			$scope.todo.sdEditMode = true;
+		}else{
+			$scope.todo.sdEditMode = false;
+		}
 		$scope.toggleEditMode = function(todo){
 			console.log("Inside edit URl");
 			$scope.todo.sdEditMode = true;
