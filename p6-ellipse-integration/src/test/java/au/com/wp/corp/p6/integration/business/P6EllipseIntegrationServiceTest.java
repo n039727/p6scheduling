@@ -15,7 +15,9 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,6 +33,7 @@ import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
 import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.integration.dto.P6ProjWorkgroupDTO;
 import au.com.wp.corp.p6.integration.exception.P6BusinessException;
+import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.DateUtil;
 import au.com.wp.corp.p6.integration.util.EllipseReadParameter;
@@ -62,6 +65,9 @@ public class P6EllipseIntegrationServiceTest {
 
 	@Mock
 	DateUtil dateUtil;
+	
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 
 	List<String> workgroupList = null;
 
@@ -104,6 +110,7 @@ public class P6EllipseIntegrationServiceTest {
 
 		projWorkgroupDTOs.put("MONT1", 12345);
 		projWorkgroupDTOs.put("MOMT2", 12346);
+		projWorkgroupDTOs.put("MOMT3", 12346);
 		projWorkgroupDTOs.put("NGERT01", 12347);
 		projWorkgroupDTOs.put("NGERSCH", 12348);
 
@@ -1470,6 +1477,126 @@ public class P6EllipseIntegrationServiceTest {
 		Assert.assertEquals(1, deleteActivites.size());
 	}
 
+	
+	/**
+	 * Update activity in p6 as the activity created in ellipse
+	 * 
+	 * @throws P6BusinessException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
+	@Test
+	public void testStartEllipseToP6Integration_UpdateActivity_P6_3() throws P6BusinessException, NoSuchMethodException,
+			SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		EllipseActivityDTO ellipseActivity = new EllipseActivityDTO();
+		ellipseActivity.setWorkOrderTaskId("03940943001");
+		ellipseActivity.setWorkGroup("MOMT2");
+		ellipseActivity.setWorkOrderDescription("TCS: HV Cross Arm");
+		ellipseActivity.setTaskUserStatus("");
+		ellipseActivity.setTaskStatus("Not Started");
+		ellipseActivity.setEGI("PWOD");
+		ellipseActivity.setEllipseStandardJob("");
+		ellipseActivity.setEquipmentCode("PINT");
+		ellipseActivity.setEquipmentNo("000001076909");
+		ellipseActivity.setEstimatedLabourHours("");
+		ellipseActivity.setFeeder("MSS 505.0 L327 FREMANTLE RD");
+		ellipseActivity.setJdCode("");
+		ellipseActivity.setLocationInStreet("");
+		ellipseActivity.setOriginalDuration(8.00);
+		ellipseActivity.setPlannedStartDate("");
+		ellipseActivity.setPlantNoOrPickId("S72257");
+		ellipseActivity.setRemainingDuration(8.00);
+		ellipseActivity.setRequiredByDate("27/07/2012 08:00:00");
+		ellipseActivity.setTaskDescription("");
+		ellipseActivity.setUpStreamSwitch("DOF 8473");
+
+		List<EllipseActivityDTO> activities = new ArrayList<>();
+		activities.add(ellipseActivity);
+
+		Map<String, EllipseActivityDTO> ellipseActivities = CacheManager.getEllipseActivitiesMap();
+
+		ellipseActivities.put(ellipseActivity.getWorkOrderTaskId(), ellipseActivity);
+		Mockito.when(p6EllipseDAO.readElipseWorkorderDetails(workgroupList)).thenReturn(activities);
+
+		P6ActivityDTO p6Activity = new P6ActivityDTO();
+		p6Activity.setActivityId("03940943001");
+		p6Activity.setWorkGroup("MOMT3");
+		p6Activity.setActivityName("Test");
+		p6Activity.setPlannedStartDate("2017-07-28'T'08:00:00");
+		
+		List<P6ActivityDTO> p6Activities = new ArrayList<>();
+		p6Activities.add(p6Activity);
+		Mockito.when(p6WSClient.readActivities()).thenReturn(p6Activities);
+
+		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration();
+		Assert.assertEquals(0, deleteActivites.size());
+	}
+	
+	/**
+	 * Update activity in p6 as the activity created in ellipse
+	 * 
+	 * @throws P6BusinessException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
+	@Test
+	public void testStartEllipseToP6Integration_1() throws P6BusinessException, NoSuchMethodException,
+			SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		thrown.expect(P6BusinessException.class);
+		thrown.expectMessage("An error occurs while create /update/ delete  data");
+		EllipseActivityDTO ellipseActivity = new EllipseActivityDTO();
+		ellipseActivity.setWorkOrderTaskId("03940943001");
+		ellipseActivity.setWorkGroup("MOMT2");
+		ellipseActivity.setWorkOrderDescription("TCS: HV Cross Arm");
+		ellipseActivity.setTaskUserStatus("");
+		ellipseActivity.setTaskStatus("Not Started");
+		ellipseActivity.setEGI("PWOD");
+		ellipseActivity.setEllipseStandardJob("");
+		ellipseActivity.setEquipmentCode("PINT");
+		ellipseActivity.setEquipmentNo("000001076909");
+		ellipseActivity.setEstimatedLabourHours("");
+		ellipseActivity.setFeeder("MSS 505.0 L327 FREMANTLE RD");
+		ellipseActivity.setJdCode("");
+		ellipseActivity.setLocationInStreet("");
+		ellipseActivity.setOriginalDuration(8.00);
+		ellipseActivity.setPlannedStartDate("");
+		ellipseActivity.setPlantNoOrPickId("S72257");
+		ellipseActivity.setRemainingDuration(8.00);
+		ellipseActivity.setRequiredByDate("27/07/2012 08:00:00");
+		ellipseActivity.setTaskDescription("");
+		ellipseActivity.setUpStreamSwitch("DOF 8473");
+
+		List<EllipseActivityDTO> activities = new ArrayList<>();
+		activities.add(ellipseActivity);
+
+		Map<String, EllipseActivityDTO> ellipseActivities = CacheManager.getEllipseActivitiesMap();
+
+		ellipseActivities.put(ellipseActivity.getWorkOrderTaskId(), ellipseActivity);
+
+		P6ActivityDTO p6Activity = new P6ActivityDTO();
+		p6Activity.setActivityId("03940943001");
+		p6Activity.setWorkGroup("MOMT1");
+		p6Activity.setActivityName("Test");
+		p6Activity.setPlannedStartDate("2017-07-28'T'08:00:00");
+		
+		List<P6ActivityDTO> p6Activities = new ArrayList<>();
+		p6Activities.add(p6Activity);
+		Mockito.when(p6WSClient.readActivities()).thenReturn(p6Activities);
+		Mockito.when(p6WSClient.deleteActivities(p6Activities)).thenThrow(P6ServiceException.class);
+
+		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration();
+		Assert.assertEquals(1, deleteActivites.size());
+	}
+	
+	
+	
+	
 	@After
 	public void testClearApplicationMemory() {
 		p6EllipseIntegrationService.clearApplicationMemory();
