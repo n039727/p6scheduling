@@ -440,6 +440,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		p6ActivityUpd.setActivityObjectId(p6Activity.getActivityObjectId());
 		p6ActivityUpd.setActivityId(p6Activity.getActivityId());
 
+		/**
 		if (null != ellipseActivity.getWorkGroup()
 				&& !ellipseActivity.getWorkGroup().equals(p6Activity.getWorkGroup())) {
 			p6ActivityUpd.setWorkGroup(ellipseActivity.getWorkGroup());
@@ -447,7 +448,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					projectWorkgroup.get(ellipseActivity.getWorkGroup()).getPrimaryResourceObjectId());
 			isUpdateReq = true;
 		}
-
+     **/
 		if (!ellipseActivity.getWorkOrderDescription().equals(p6Activity.getActivityName())) {
 			p6ActivityUpd.setActivityName(ellipseActivity.getWorkOrderDescription());
 			isUpdateReq = true;
@@ -589,11 +590,13 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * 1st of the financial year (1-July) based on the required by date in
 		 * Ellipse
 		 */
-		if (null == ellipseActivity.getPlannedStartDate() || ellipseActivity.getPlannedStartDate().isEmpty()) {
-			p6ActivityUpd.setPlannedStartDate(dateUtil.getStartDateOfFiscalYear(dateUtil.getCurrentDate(),
-					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP));
+		/**
+		if ((null == ellipseActivity.getPlannedStartDate() || ellipseActivity.getPlannedStartDate().isEmpty())
+				&& (null == ellipseActivity.getRequiredByDate() || !ellipseActivity.getRequiredByDate().isEmpty())) {
+			p6ActivityUpd.setPlannedStartDate(dateUtil.getStartDateOfFiscalYear(ellipseActivity.getRequiredByDate(),
+					DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 			isUpdateReq = true;
-		}
+		} **/
 
 		/*
 		 * the WO task is read from Ellipse when the corresponding activity
@@ -659,9 +662,10 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * 1st of the financial year (1-July) based on the required by date in
 		 * Ellipse
 		 */
-		if (null == ellipseActivity.getPlannedStartDate() || ellipseActivity.getPlannedStartDate().isEmpty()) {
-			p6Activity.setPlannedStartDate(dateUtil.getStartDateOfFiscalYear(new Date()));
-
+		if ((null == ellipseActivity.getPlannedStartDate() || ellipseActivity.getPlannedStartDate().isEmpty())
+				&& (null == ellipseActivity.getRequiredByDate() || !ellipseActivity.getRequiredByDate().isEmpty())) {
+			p6Activity.setPlannedStartDate(dateUtil.getStartDateOfFiscalYear(ellipseActivity.getRequiredByDate(),
+					DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 		} else {
 			p6Activity.setPlannedStartDate(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
 					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));

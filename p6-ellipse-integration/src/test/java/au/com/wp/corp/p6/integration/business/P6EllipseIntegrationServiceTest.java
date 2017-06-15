@@ -289,16 +289,16 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setPlannedStartDate("");
 		ellipseActivity.setPlantNoOrPickId("S72257");
 		ellipseActivity.setRemainingDuration(8.00);
-		ellipseActivity.setRequiredByDate("27/07/2012 08:00:00");
+		ellipseActivity.setRequiredByDate("27/07/2018 08:00:00");
 		ellipseActivity.setTaskDescription("");
 		ellipseActivity.setUpStreamSwitch("DOF 8473");
 
 		List<EllipseActivityDTO> activities = new ArrayList<>();
 		activities.add(ellipseActivity);
 
-		String startDateOfFiscalYear = dateUtil.getStartDateOfFiscalYear(new Date());
+		String startDateOfFiscalYear = dateUtil.getStartDateOfFiscalYear(ellipseActivity.getRequiredByDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
 		Mockito.when(
-				dateUtil.getStartDateOfFiscalYear(dateUtil.getCurrentDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP))
+				dateUtil.getStartDateOfFiscalYear(ellipseActivity.getRequiredByDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
 				.thenReturn(startDateOfFiscalYear);
 
 		Mockito.when(p6EllipseDAO.readElipseWorkorderDetails(workgroupList)).thenReturn(activities);
@@ -324,7 +324,7 @@ public class P6EllipseIntegrationServiceTest {
 		Assert.assertEquals(ellipseActivity.getJdCode(), p6AtivityDTO.getActivityJDCodeUDF());
 		Assert.assertEquals(ellipseActivity.getLocationInStreet(), p6AtivityDTO.getLocationInStreetUDF());
 		Assert.assertEquals(ellipseActivity.getOriginalDuration(), p6AtivityDTO.getOriginalDuration(), 0);
-		Assert.assertEquals(dateUtil.getStartDateOfFiscalYear(new Date()), p6AtivityDTO.getPlannedStartDate());
+		Assert.assertEquals(startDateOfFiscalYear, p6AtivityDTO.getPlannedStartDate());
 
 		Assert.assertEquals(ellipseActivity.getPlantNoOrPickId(), p6AtivityDTO.getPickIdUDF());
 		Assert.assertEquals(ellipseActivity.getRemainingDuration(), p6AtivityDTO.getRemainingDuration(), 0);
