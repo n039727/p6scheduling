@@ -88,8 +88,8 @@ public class DateUtil {
 		try {
 			return sdf.format(convertStringToDatetime(date, proviedDateFormat));
 		} catch (Exception e) {
-			logger.error("Invalid date - cant parse date# {}  - proviedDateFormat# {}  - expectedDateFormat# {}", date,
-					proviedDateFormat, expectedDateFormat);
+			logger.error("Invalid date - cant parse date# {}  - proviedDateFormat# {}  - expectedDateFormat# {} - the exception# {}", date,
+					proviedDateFormat, expectedDateFormat, e);
 		}
 		return null;
 
