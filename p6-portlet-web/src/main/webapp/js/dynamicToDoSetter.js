@@ -88,21 +88,25 @@ function dynamicToDoSetterController($scope) {
 					tempColumnGroup = ctrl.columnGroup[0];
 					for(var i=0;i< tempColumnGroup.length;i++){
 						if(ctrl.isEqArrays(tempColumnGroup[i].workOrders ,workOrders)){
+							//console.log("[DEBUG] tempColumnGroup[i].workOrders1 in onChange: " + JSON.stringify(tempColumnGroup[i].workOrders));
 							tempTodoName = tempColumnGroup[i].todoName;
+							//console.log("[DEBUG] tempTodoName1 in onChange: " + JSON.stringify(tempTodoName));
 							isTempNewItem = tempColumnGroup[i].isNewItem;
 							if(!isTempNewItem && workOrders.length > 1){
 								workOrders.splice(allIndex, 1);
-								console.log("[DEBUG] workOrders in onChange: " + JSON.stringify(workOrders));
 							}
 							tempColumnGroup[i].workOrders = workOrders;
 							ctrl.columnGroup[i] = tempColumnGroup;
+							if(isTempNewItem){
+								break;
+							}
 						}
 					}
 					if(!isTempNewItem){
 						ctrl.currentMap[tempTodoName] = workOrders;
 					}
-//					console.log("[DEBUG] ctrl.columnGroup in onChange: " + JSON.stringify(ctrl.columnGroup));
-//					console.log("[DEBUG] ctrl.currentMap in onChange: " + JSON.stringify(ctrl.currentMap));
+					//console.log("[DEBUG] ctrl.columnGroup in onChange: " + JSON.stringify(ctrl.columnGroup));
+					//console.log("[DEBUG] ctrl.currentMap in onChange: " + JSON.stringify(ctrl.currentMap));
 				}
 			} else if (allIndex > -1 && allIndex < ctrl.workOrderListWithAll.length - 1) {
 				if(ctrl.columnGroup.length > 0){
@@ -113,38 +117,45 @@ function dynamicToDoSetterController($scope) {
 					tempColumnGroup = ctrl.columnGroup[0];
 					for(var i=0;i< tempColumnGroup.length;i++){
 						if(ctrl.isEqArrays(tempColumnGroup[i].workOrders ,workOrders)){
+						//	console.log("[DEBUG] tempColumnGroup[i].workOrders2 in onChange: " + JSON.stringify(tempColumnGroup[i].workOrders));
 							tempTodoName = tempColumnGroup[i].todoName;
+						//	console.log("[DEBUG] tempTodoName2 in onChange: " + JSON.stringify(tempTodoName));
 							isTempNewItem = tempColumnGroup[i].isNewItem;
 							tempColumnGroup[i].workOrders = ['ALL'];
 							ctrl.columnGroup[i] = tempColumnGroup;
+							break;
 						}
 					}
 					if(!isTempNewItem){
 						ctrl.currentMap[tempTodoName] = ctrl.workOrders;
 					}
-//					console.log("[DEBUG] ctrl.columnGroup in onChange: " + JSON.stringify(ctrl.columnGroup));
-//					console.log("[DEBUG] ctrl.currentMap in onChange: " + JSON.stringify(ctrl.currentMap));
+					//console.log("[DEBUG] ctrl.columnGroup in onChange: " + JSON.stringify(ctrl.columnGroup));
+					//console.log("[DEBUG] ctrl.currentMap in onChange: " + JSON.stringify(ctrl.currentMap));
 				}
 			} else if (ctrl.workOrderListWithAll.length-1 == workOrders.length) {
 				if(ctrl.columnGroup.length > 0){
-//					console.log("[DEBUG] ctrl.workOrderListWithAll.length-1 == workOrders.length in onChange: " + JSON.stringify(allIndex));
+					console.log("[DEBUG] ctrl.workOrderListWithAll.length-1 == workOrders.length in onChange: " + JSON.stringify(allIndex));
 					var tempColumnGroup = [];
 					var tempTodoName = "";
 					var isTempNewItem = false;
 					tempColumnGroup = ctrl.columnGroup[0];
 					for(var i=0;i< tempColumnGroup.length;i++){
 						if(ctrl.isEqArrays(tempColumnGroup[i].workOrders ,workOrders)){
+						//	console.log("[DEBUG] tempColumnGroup[i].workOrders3 in onChange: " + JSON.stringify(tempColumnGroup[i].workOrders));
 							tempColumnGroup[i].workOrders = ['ALL'];
 							tempTodoName = tempColumnGroup[i].todoName;
+						//	console.log("[DEBUG] tempTodoName3 in onChange: " + JSON.stringify(tempTodoName));
+							
 							isTempNewItem = tempColumnGroup[i].isNewItem;
 							ctrl.columnGroup[i] = tempColumnGroup;
+							break;
 						}
 					}
 					if(!isTempNewItem){
 						ctrl.currentMap[tempTodoName] = workOrders;
 					}
-//					console.log("[DEBUG] ctrl.columnGroup in onChange: " + JSON.stringify(ctrl.columnGroup));
-//					console.log("[DEBUG] ctrl.currentMap in onChange: " + JSON.stringify(ctrl.currentMap));
+					//console.log("[DEBUG] ctrl.columnGroup in onChange: " + JSON.stringify(ctrl.columnGroup));
+					//console.log("[DEBUG] ctrl.currentMap in onChange: " + JSON.stringify(ctrl.currentMap));
 				}
 			}
 		}
