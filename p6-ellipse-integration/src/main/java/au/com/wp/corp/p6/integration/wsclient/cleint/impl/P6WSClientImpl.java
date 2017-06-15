@@ -361,7 +361,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 				final XMLGregorianCalendar actualFinishDate = dateUtil
 						.convertStringToXMLGregorianClalander(p6ActivityDTO.getActualFinishDate());
 				if (null != actualFinishDate) {
-					activity.setActualFinishDate(objectFactory.createActivityActualStartDate(actualFinishDate));
+					activity.setActualFinishDate(objectFactory.createActivityActualFinishDate(actualFinishDate));
 				}
 			}
 

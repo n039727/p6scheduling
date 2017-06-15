@@ -185,9 +185,9 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 * @see au.com.wp.corp.p6.business.P6EllipseIntegrationService#
 	 * getActivityTobeCreatedInP6()
 	 */
-	public void createActivityInP6(final List<P6ActivityDTO> createActivityP6Set) {
+	public void createActivityInP6(final List<P6ActivityDTO> createActivityP6Set, final List<P6ActivityDTO> deleteActivityP6BforCreate) {
 		logger.debug("create activites in p6 - number of activities # {}", createActivityP6Set.size());
-		CreateP6ActivityThread thread = new CreateP6ActivityThread(createActivityP6Set, p6WSClient);
+		CreateP6ActivityThread thread = new CreateP6ActivityThread(createActivityP6Set, deleteActivityP6BforCreate, p6WSClient);
 		new Thread(thread).start();
 
 	}
@@ -252,6 +252,9 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		final List<P6ActivityDTO> deleteActivityP6Set = new ArrayList<>();
 
 		final List<EllipseActivityDTO> updateActivityEllipseSet = new ArrayList<>();
+		
+		final List<P6ActivityDTO> deleteActivityP6BforCreate = new ArrayList<>();
+		
 
 		Set<String> ellipseActivityIds = ellipseActivites.keySet();
 		for (String activityId : ellipseActivityIds) {
@@ -280,7 +283,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 										.get(p6Activites.get(activityId).getWorkGroup()).getProjectObjectId()) {
 					P6ActivityDTO p6Activity = constructP6ActivityDTO(ellipseActivity, projectWorkGropMap);
 					createActivityP6Set.add(p6Activity);
-					deleteActivityP6Set.add(p6Activites.get(activityId));
+					deleteActivityP6BforCreate.add(p6Activites.get(activityId));
 				} else {
 					logger.debug(
 							"Ellipse and P6 activity id matched ... updating P6 and ellipse based on master information");
@@ -303,7 +306,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 		deleteActivityP6Set.addAll(p6Activites.values());
 
-		createActivityInP6(createActivityP6Set);
+		createActivityInP6(createActivityP6Set, deleteActivityP6BforCreate);
 		updateActivitiesInP6(updateActivityP6Set);
 		deleteActivityInP6(deleteActivityP6Set);
 		updateActivitiesInEllipse(updateActivityEllipseSet);

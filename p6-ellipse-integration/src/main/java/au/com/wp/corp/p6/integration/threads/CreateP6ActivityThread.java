@@ -26,10 +26,13 @@ public class CreateP6ActivityThread implements Runnable {
 
 	private final List<P6ActivityDTO> createActivityP6Set;
 
+	private final List<P6ActivityDTO> deleteActivityP6BforCreate;
+	
 	private final P6WSClient p6WSClient;
 
-	public CreateP6ActivityThread(final List<P6ActivityDTO> createActivityP6Set, final P6WSClient p6WSClient) {
+	public CreateP6ActivityThread(final List<P6ActivityDTO> createActivityP6Set, final List<P6ActivityDTO> deleteActivityP6BforCreate, final P6WSClient p6WSClient) {
 		this.createActivityP6Set = createActivityP6Set;
+		this.deleteActivityP6BforCreate = deleteActivityP6BforCreate;
 		this.p6WSClient = p6WSClient;
 	}
 
@@ -37,18 +40,13 @@ public class CreateP6ActivityThread implements Runnable {
 	public void run() {
 		logger.info("Initiates Create Activities in P6 thread ....");
 
-		/**
-		 * List<P6ActivityDTO> subList; if ( createActivityP6Set.size() > 2)
-		 * subList = createActivityP6Set.subList(0, 3); else subList =
-		 * createActivityP6Set;
-		 * 
-		 * final File file = new File(System.getProperty("properties.dir") +
-		 * "\\createActivityP6Set.csv"); CSVWriter.generateCSV(file,
-		 * subList.toArray());
-		 **/
-
 		try {
-			if (!createActivityP6Set.isEmpty())
+			boolean deleteStatus = false;
+			if ( !deleteActivityP6BforCreate.isEmpty())
+			{
+				deleteStatus = p6WSClient.deleteActivities(deleteActivityP6BforCreate);
+			}
+			if (!createActivityP6Set.isEmpty() && deleteStatus)
 				p6WSClient.createActivities(createActivityP6Set);
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_CREATE_STATUS,
 					ReadProcessStatus.COMPLETED);
