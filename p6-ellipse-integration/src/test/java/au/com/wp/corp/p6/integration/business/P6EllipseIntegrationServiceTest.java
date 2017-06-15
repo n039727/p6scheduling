@@ -1216,7 +1216,7 @@ public class P6EllipseIntegrationServiceTest {
 		Mockito.when(p6WSClient.readActivities()).thenReturn(p6Activities);
 
 		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration();
-		Assert.assertEquals(1, deleteActivites.size());
+		Assert.assertEquals(0, deleteActivites.size());
 
 		for (P6ActivityDTO p6AtivityDTO : deleteActivites) {
 			Assert.assertEquals(p6Activity.getActivityId(), p6AtivityDTO.getActivityId());
@@ -1388,8 +1388,7 @@ public class P6EllipseIntegrationServiceTest {
 		Mockito.when(p6WSClient.readActivities()).thenReturn(p6Activities);
 
 		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration();
-		System.out.println(CacheManager.getEllipseActivitiesMap());
-		Assert.assertEquals(1, deleteActivites.size());
+		Assert.assertEquals(0, deleteActivites.size());
 
 		for (P6ActivityDTO p6AtivityDTO : deleteActivites) {
 			Assert.assertEquals(p6Activity.getActivityId(), p6AtivityDTO.getActivityId());
