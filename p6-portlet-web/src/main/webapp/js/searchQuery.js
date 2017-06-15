@@ -74,6 +74,10 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 		
 		console.log('search called');
 		ctrl.depots = [];
+		if(ctrl.activeContext == 'ADD_SCHEDULING_TODO' || ctrl.activeContext == 'VIEW_TODO_STATUS' 
+			|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'){
+			this.scheduleToDate = "";
+		}	
 		//console.log('ctrl.selectedDepotList:' + JSON.stringify(ctrl.selectedDepotList));
 		for (var i = 0 ; i < ctrl.selectedDepotList.length; i++) {
 			ctrl.depots.push (ctrl.selectedDepotList[i].trim());
@@ -124,7 +128,8 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 					ctrl.showErrorMsg = 'Planned Start From Date is required';
 					ctrl.isValidationErr = true;
 					return false;
-				}else if(ctrl.scheduleToDate !==""){
+				}
+				/*else if(ctrl.scheduleToDate !==""){
 					this.schFromDate = ctrl.formatDate(this.scheduleFromDate);
 					this.schToDate = ctrl.formatDate(this.scheduleToDate);
 					var isSamedate = moment(this.schFromDate).isSame(this.schToDate);
@@ -137,7 +142,8 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 						ctrl.isValidationErr = false;
 						return true;
 					}
-				}else{
+				}*/
+				else{
 					ctrl.isValidationErr = false;
 					return true;
 				}
@@ -192,6 +198,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			return null;
 		}
 	};
+
 	
 	this.refresh();
 	
@@ -205,6 +212,8 @@ angular.module("todoPortal").component('searchQuery', {
 	activeContext: '<',
     metadata: '<',
     visible: '<',
-	search: '&'
+	search: '&',
+	handleActiveContext: '&'
+	
   }
 });

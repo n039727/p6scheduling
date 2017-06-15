@@ -141,6 +141,7 @@ function fetchMetaData(app) {
 				metadata.todoList = response.data.toDoItems;
 				metadata.depotCrewMap = response.data.resourceDTO.depotCrewMap;
 				metadata.isErrdataAvail = false;
+				metadata.setToDateDisable = true;
 				app.constant('metadata', metadata);
 			});
 }
@@ -206,8 +207,25 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 		console.log('handle context called with context: ' + context);
 		ctrl.activeContext = context;
 		ctrl.resultVisible = false;
+		ctrl.handleActiveContext({eventId:"ACTIVE_CONTEXT_CHANGE"});
 	};
 
+	ctrl.handleActiveContext = function(eventId){
+		console.log('Data has changed for handleActiveContext: ' + JSON.stringify(eventId));
+		if (angular.isUndefined(eventId) || eventId == null) {
+			return;
+		}
+		
+			if(ctrl.activeContext == 'ADD_SCHEDULING_TODO' || ctrl.activeContext == 'VIEW_TODO_STATUS' 
+				|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'){
+				console.log('schudular context in handleActiveContext: ' + JSON.stringify(eventId));
+				metadata.setToDateDisable = true;
+			}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS' || ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO' || ctrl.activeContext == 'DEPOT_VIEW_MATERIAL_REQUISITION'){
+				console.log('depot context in handleActiveContext: ' + JSON.stringify(eventId));
+				metadata.setToDateDisable = false;
+			}
+	}
+	
 	ctrl.handleDataChange = function(event) {
 		console.log('Data has changed for event: ' + JSON.stringify(event));
 		if (event && event.eventId === 'EXECUTION_PKG_CREATED') {
