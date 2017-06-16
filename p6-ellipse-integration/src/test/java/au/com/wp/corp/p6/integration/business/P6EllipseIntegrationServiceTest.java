@@ -194,10 +194,10 @@ public class P6EllipseIntegrationServiceTest {
 		Map<String, P6ProjWorkgroupDTO> projectWorkGropMap = CacheManager.getP6ProjectWorkgroupMap();
 
 		Method method = P6EllipseIntegrationServiceImpl.class.getDeclaredMethod("constructP6ActivityDTO",
-				EllipseActivityDTO.class, Map.class);
+				EllipseActivityDTO.class, Map.class, String.class);
 		method.setAccessible(true);
 		P6ActivityDTO p6AtivityDTO = (P6ActivityDTO) method.invoke(p6EllipseIntegrationService, ellipseActivity,
-				projectWorkGropMap);
+				projectWorkGropMap, null);
 
 		Assert.assertEquals(ellipseActivity.getWorkOrderTaskId(), p6AtivityDTO.getActivityId());
 
@@ -251,10 +251,10 @@ public class P6EllipseIntegrationServiceTest {
 		Map<String, P6ProjWorkgroupDTO> projectWorkGropMap = CacheManager.getP6ProjectWorkgroupMap();
 
 		Method method = P6EllipseIntegrationServiceImpl.class.getDeclaredMethod("constructP6ActivityDTO",
-				EllipseActivityDTO.class, Map.class);
+				EllipseActivityDTO.class, Map.class, String.class);
 		method.setAccessible(true);
 		P6ActivityDTO p6AtivityDTO = (P6ActivityDTO) method.invoke(p6EllipseIntegrationService, ellipseActivity,
-				projectWorkGropMap);
+				projectWorkGropMap, null);
 
 		Assert.assertEquals(ellipseActivity.getWorkOrderTaskId(), p6AtivityDTO.getActivityId());
 		P6ProjWorkgroupDTO projWG = CacheManager.getP6ProjectWorkgroupMap().get(ellipseActivity.getWorkGroup());
@@ -311,10 +311,10 @@ public class P6EllipseIntegrationServiceTest {
 		Map<String, P6ProjWorkgroupDTO> projectWorkGropMap = CacheManager.getP6ProjectWorkgroupMap();
 
 		Method method = P6EllipseIntegrationServiceImpl.class.getDeclaredMethod("constructP6ActivityDTO",
-				EllipseActivityDTO.class, Map.class);
+				EllipseActivityDTO.class, Map.class, String.class);
 		method.setAccessible(true);
 		P6ActivityDTO p6AtivityDTO = (P6ActivityDTO) method.invoke(p6EllipseIntegrationService, ellipseActivity,
-				projectWorkGropMap);
+				projectWorkGropMap, null);
 
 		Assert.assertEquals(ellipseActivity.getWorkOrderTaskId(), p6AtivityDTO.getActivityId());
 		Assert.assertEquals(ellipseActivity.getWorkGroup(), p6AtivityDTO.getWorkGroup());
@@ -399,13 +399,13 @@ public class P6EllipseIntegrationServiceTest {
 		Map<String, P6ProjWorkgroupDTO> projectWorkGropMap = CacheManager.getP6ProjectWorkgroupMap();
 
 		Method method = P6EllipseIntegrationServiceImpl.class.getDeclaredMethod("constructP6ActivityDTO",
-				EllipseActivityDTO.class, Map.class);
+				EllipseActivityDTO.class, Map.class, String.class);
 		method.setAccessible(true);
 		P6ActivityDTO p6AtivityDTO = (P6ActivityDTO) method.invoke(p6EllipseIntegrationService, ellipseActivity,
-				projectWorkGropMap);
+				projectWorkGropMap, p6Activity.getWorkGroup());
 
 		Assert.assertEquals(ellipseActivity.getWorkOrderTaskId(), p6AtivityDTO.getActivityId());
-		Assert.assertEquals(ellipseActivity.getWorkGroup(), p6AtivityDTO.getWorkGroup());
+		Assert.assertEquals(p6Activity.getWorkGroup(), p6AtivityDTO.getWorkGroup());
 		Assert.assertEquals(ellipseActivity.getWorkOrderDescription(), p6AtivityDTO.getActivityName());
 		Assert.assertEquals(ellipseActivity.getEGI(), p6AtivityDTO.geteGIUDF());
 		Assert.assertEquals(ellipseActivity.getAddress(), p6AtivityDTO.getAddressUDF());
@@ -431,7 +431,7 @@ public class P6EllipseIntegrationServiceTest {
 		Assert.assertEquals(ellipseActivity.getTaskUserStatus(), p6AtivityDTO.getTaskUserStatusUDF());
 		Assert.assertEquals(ellipseActivity.getUpStreamSwitch(), p6AtivityDTO.getUpStreamSwitchUDF());
 
-		P6ProjWorkgroupDTO projWG = CacheManager.getP6ProjectWorkgroupMap().get(ellipseActivity.getWorkGroup());
+		P6ProjWorkgroupDTO projWG = CacheManager.getP6ProjectWorkgroupMap().get(p6Activity.getWorkGroup());
 		Assert.assertEquals(projWG.getProjectObjectId(), p6AtivityDTO.getProjectObjectId());
 
 	}
