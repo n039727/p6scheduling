@@ -4,7 +4,6 @@
 package au.com.wp.corp.p6.integration.business.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -107,27 +106,30 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		Map<String, Integer> projWorkgroupDTOs = p6WSClient.readResources();
 
 		logger.debug("List of resource from P6# {}", projWorkgroupDTOs.keySet());
+		
+		Map<String, Integer> projectsMap = p6WSClient.readProjects();
 
 		Map<String, P6ProjWorkgroupDTO> projectWorkgroupMap = CacheManager.getP6ProjectWorkgroupMap();
 
 		Map<String, List<String>> projectWorkgroupListMap = CacheManager.getProjectWorkgroupListMap();
 
 		try {
-			List<String> projects;
+			List<String> primaryResIds;
 			for (P6ProjWorkgroupDTO projectWG : p6PortalDAO.getProjectResourceMappingList()) {
 
 				if (null == projectWorkgroupListMap.get(projectWG.getProjectName())) {
-					projects = new ArrayList<>();
-					projectWorkgroupListMap.put(projectWG.getProjectName(), projects);
+					primaryResIds = new ArrayList<>();
+					projectWorkgroupListMap.put(projectWG.getProjectName(), primaryResIds);
 				} else {
-					projects = projectWorkgroupListMap.get(projectWG.getProjectName());
+					primaryResIds = projectWorkgroupListMap.get(projectWG.getProjectName());
 				}
 
 				logger.debug("primary resource - resource id # {}", projectWG.getPrimaryResourceId());
 				if (null != projectWG.getPrimaryResourceId()
 						&& null != projWorkgroupDTOs.get(projectWG.getPrimaryResourceId())) {
 					projectWG.setPrimaryResourceObjectId(projWorkgroupDTOs.get(projectWG.getPrimaryResourceId()));
-					projects.add(projectWG.getPrimaryResourceId());
+					projectWG.setProjectObjectId(projectsMap.get(projectWG.getProjectName().trim()));
+					primaryResIds.add(projectWG.getPrimaryResourceId());
 					projectWorkgroupMap.put(projectWG.getPrimaryResourceId(), projectWG);
 				}
 
@@ -261,7 +263,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			EllipseActivityDTO ellipseActivity = ellipseActivites.get(activityId);
 			if (!p6Activites.containsKey(activityId)) {
 				// Identifying the activities which will be created in P6
-				P6ActivityDTO p6Activity = constructP6ActivityDTO(ellipseActivity, projectWorkGropMap);
+				P6ActivityDTO p6Activity = constructP6ActivityDTO(ellipseActivity, projectWorkGropMap, null);
 				createActivityP6Set.add(p6Activity);
 
 			} else if (p6Activites.containsKey(activityId)) {
@@ -281,7 +283,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 						&& projectWorkGropMap.get(ellipseActivity.getWorkGroup())
 								.getProjectObjectId() != projectWorkGropMap
 										.get(p6Activites.get(activityId).getWorkGroup()).getProjectObjectId()) {
-					P6ActivityDTO p6Activity = constructP6ActivityDTO(ellipseActivity, projectWorkGropMap);
+					P6ActivityDTO p6Activity = constructP6ActivityDTO(ellipseActivity, projectWorkGropMap, p6Activites.get(activityId).getWorkGroup());
 					createActivityP6Set.add(p6Activity);
 					deleteActivityP6BforCreate.add(p6Activites.get(activityId));
 				} else {
@@ -641,8 +643,9 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 * @return
 	 */
 	private P6ActivityDTO constructP6ActivityDTO(EllipseActivityDTO ellipseActivity,
-			Map<String, P6ProjWorkgroupDTO> projectWorkgroup) throws P6BusinessException {
+			Map<String, P6ProjWorkgroupDTO> projectWorkgroup, final String woGroup) throws P6BusinessException {
 		logger.debug("Constructing new activity for p6...");
+		final String workGroup = null == woGroup ? ellipseActivity.getWorkGroup() : woGroup; 
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId(ellipseActivity.getWorkOrderTaskId());
 		p6Activity.setActivityJDCodeUDF(ellipseActivity.getJdCode());
@@ -679,17 +682,18 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		p6Activity.setTaskDescriptionUDF(ellipseActivity.getTaskDescription());
 		p6Activity.setTaskUserStatusUDF(ellipseActivity.getTaskUserStatus());
 		p6Activity.setUpStreamSwitchUDF(ellipseActivity.getUpStreamSwitch());
-		p6Activity.setWorkGroup(ellipseActivity.getWorkGroup());
+		p6Activity.setWorkGroup(workGroup);
 		p6Activity.setPrimaryResorceObjectId(
-				projectWorkgroup.get(ellipseActivity.getWorkGroup()).getPrimaryResourceObjectId());
+				projectWorkgroup.get(workGroup).getPrimaryResourceObjectId());
 		/*
 		 * the WO task is read from Ellipse when the corresponding activity
 		 * needs to be created in P6 with all the details then it should be
 		 * created in the project based on the work group that is assigned on
 		 * the task
 		 */
-		final int projectObjectId = projectWorkgroup.get(ellipseActivity.getWorkGroup()) != null
-				? projectWorkgroup.get(ellipseActivity.getWorkGroup()).getProjectObjectId() : 0;
+		
+		final int projectObjectId = projectWorkgroup.get(workGroup) != null
+				? projectWorkgroup.get(workGroup).getProjectObjectId() : 0;
 
 		if (projectObjectId != 0) {
 			p6Activity.setProjectObjectId(projectObjectId);

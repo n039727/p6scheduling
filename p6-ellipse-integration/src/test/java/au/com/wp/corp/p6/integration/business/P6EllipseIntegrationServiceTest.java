@@ -115,6 +115,12 @@ public class P6EllipseIntegrationServiceTest {
 		projWorkgroupDTOs.put("NGERSCH", 12348);
 
 		Mockito.when(p6WSClient.readResources()).thenReturn(projWorkgroupDTOs);
+		
+		Map<String, Integer> projectsMap = new HashMap<>();
+		projectsMap.put("DxMetro", 263779);
+		projectsMap.put("DxNorth", 263780);
+		
+		Mockito.when(p6WSClient.readProjects()).thenReturn(projectsMap);
 
 		p6EllipseIntegrationService.readProjectWorkgroupMapping();
 

@@ -132,6 +132,8 @@ public interface P6EllipseWSConstants {
 	
 	public static final String P6_RESOURCE_ASSIGNMENT_SERVICE_WSDL="P6_RESOURCE_ASSIGNMENT_SERVICE_WSDL";
 	
+	public static final String P6_PROJECT_SERVICE_WSDL ="P6_PROJECT_SERVICE_WSDL";
+	
 	
 	public static final String  FOREIGN_OBJECT_ID = "ForeignObjectId";
 	
@@ -143,5 +145,7 @@ public interface P6EllipseWSConstants {
 	public static final String Y="Y";
 	
 	public static final String RR= "RR";
+	
+	public static final String WS_COOKIE="WS_COOKIE";
 
 }
