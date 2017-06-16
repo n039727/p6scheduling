@@ -113,4 +113,27 @@ public class DateUtilTest {
 		Assert.assertFalse(dateUtil.isSameDate("2017-06-21T08:00:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 				"20/06/2017 08:00:00", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 	}
+	
+	@Test
+	public void testCompare (){
+		String actualStartDate = "2017-06-20T08:01:00";
+		String actualEndDate = "2017-06-20T08:00:00";
+		
+		int status = dateUtil.compare(actualStartDate, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
+				actualEndDate, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP);
+		Assert.assertEquals(1, status);
+	}
+	
+	@Test
+	public void testSubstractMinuteFromDate (){
+		String excpectedActualStartDate = "2017-06-20T08:00:00";
+		String actualEndDate = "2017-06-20T08:01:00";
+		
+		String actualStartDate = dateUtil.substractMinuteFromDate(actualEndDate, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP);
+		
+		
+		Assert.assertEquals(excpectedActualStartDate, actualStartDate);
+		
+	}
+	
 }

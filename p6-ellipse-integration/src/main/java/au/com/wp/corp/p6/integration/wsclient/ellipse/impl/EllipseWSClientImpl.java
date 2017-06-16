@@ -155,7 +155,10 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				
 				if (null != plantStrDate && !plantStrDate.trim().isEmpty())
 					woTaskModifyDTO.setPlanStrDate(plantStrDate);
-
+				else {
+					woTaskModifyDTO.setPlanStrDate("");
+					woTaskModifyDTO.setPlanFinDate("");
+				}
 				if (null != activity.getTaskUserStatus() && !activity.getTaskUserStatus().trim().isEmpty())
 					woTaskModifyDTO.setTaskStatusU(activity.getTaskUserStatus());
 
