@@ -7,6 +7,7 @@ function dynamicToDoSetterController($scope) {
 	// Create Column Groups
 	ctrl.init = function() {
 		console.log("[DEBUG] Current Map changed");
+		ctrl.disableRemove = false;
 		if (angular.isDefined(ctrl.columns)) {
 			console.log("[DEBUG] Number of columns in dynamic to do setter: " + ctrl.columns);
 			ctrl.columnGroup = [];
@@ -177,6 +178,8 @@ function dynamicToDoSetterController($scope) {
 	  if (!angular.isDefined(ctrl.currentMap)) {
 		  ctrl.currentMap = {};
 	  }
+	  ctrl.disableRemove = true;
+	  
 	  ctrl.isToDoRemoved = false;
 	  ctrl.handleEvent({eventId:"ADD_TO_DO_IN_PROGRESS", data:{}})
 	  ctrl.newAddIndex = Object.keys(ctrl.currentMap).length;
@@ -198,6 +201,7 @@ function dynamicToDoSetterController($scope) {
 	  console.log("[DEBUG] Done Adding");
 	  ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}})
 	  ctrl.handleEvent({eventId:"ADD_TO_DO_COMPLETED", data:{}})
+	  ctrl.disableRemove = false;
 	  
 	  ctrl.init();
 	  ctrl.newAddIndex = -1;
