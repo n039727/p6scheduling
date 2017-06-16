@@ -92,18 +92,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 				HttpStatus.CREATED);
 	}
 
-	/**
-	@RequestMapping(value = "/saveExecutionPackages", method = RequestMethod.POST, produces = {
-			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	@Override
-	public ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(
-			RequestEntity<ExecutionPackageDTO> executionPackageDTO) throws P6BaseException {
-		validator.validate(executionPackageDTO.getBody());
-		return new ResponseEntity<ExecutionPackageDTO>(
-				p6BusinessService.saveExecutionPackage(executionPackageDTO.getBody()), HttpStatus.CREATED);
-	}
-	**/
-
+	
 	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<List<WorkOrder>> search(RequestEntity<WorkOrderSearchRequest> request)

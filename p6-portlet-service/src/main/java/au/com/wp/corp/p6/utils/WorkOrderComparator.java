@@ -25,11 +25,10 @@ public class WorkOrderComparator implements Comparator<WorkOrder> {
 				/*Date executionPkgNam1 = dateUtils.toDateFromYYYY_MM_DD(o1.getExctnPckgName().split("_")[0]);
 				Date executionPkgNam2 = dateUtils.toDateFromYYYY_MM_DD(o2.getExctnPckgName().split("_")[0]);*/
 	    		
-	    		Date executionPkgNam1 = dateUtils.toDateFromDDMMYYYY(o1.getExctnPckgName().substring(0, 8));
+	    		/*Date executionPkgNam1 = dateUtils.toDateFromDDMMYYYY(o1.getExctnPckgName().substring(0, 8));
 				Date executionPkgNam2 = dateUtils.toDateFromDDMMYYYY(o2.getExctnPckgName().substring(0, 8));
-				compareBuilder.append(executionPkgNam1, executionPkgNam2);
+				compareBuilder.append(executionPkgNam1, executionPkgNam2);*/
 				compareBuilder.append(o1.getWorkOrderId(), o2.getWorkOrderId());
-				//c = executionPkgNam1.compareTo(executionPkgNam2);
 			}
 	      
 	  //  }
