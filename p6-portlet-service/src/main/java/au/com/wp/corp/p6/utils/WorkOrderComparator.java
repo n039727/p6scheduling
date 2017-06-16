@@ -3,7 +3,6 @@ package au.com.wp.corp.p6.utils;
 import java.util.Comparator;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -18,6 +17,7 @@ public class WorkOrderComparator implements Comparator<WorkOrder> {
 		Date scheduledDate2 = dateUtils.toDateFromDD_MM_YYYY(o2.getScheduleDate());
 		CompareToBuilder compareBuilder=  new CompareToBuilder();
 		
+<<<<<<< HEAD
 	//	int c;
 	    //c = scheduledDate1.compareTo(scheduledDate2);
 	  //  if (c == 0){
@@ -33,6 +33,9 @@ public class WorkOrderComparator implements Comparator<WorkOrder> {
 	      
 	  //  }
 	    compareBuilder.append(scheduledDate1, scheduledDate2);
+=======
+		compareBuilder.append(scheduledDate1, scheduledDate2);
+>>>>>>> 3ab15a069a741579363020eb4624bc2734109fae
 		return compareBuilder.toComparison();
 	}
 	

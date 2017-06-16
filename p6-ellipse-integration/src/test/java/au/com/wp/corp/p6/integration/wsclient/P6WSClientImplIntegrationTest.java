@@ -199,8 +199,6 @@ public class P6WSClientImplIntegrationTest {
 
 	@Test
 	public void test_4_DeleteActivitiesP6() throws P6ServiceException {
-		System.out.println("Delete activity test in P6");
-		
 		p6Activities = p6WsclientImpl.readActivities();
 		List<P6ActivityDTO> activities = new ArrayList<>();
 
@@ -241,4 +239,15 @@ public class P6WSClientImplIntegrationTest {
 		
 	}
 
+	@Test
+	public void test_6_ReadProjects() throws P6ServiceException{
+		Map<String, Integer> projects = p6WsclientImpl.readProjects();
+		for ( String key :  projects.keySet()){
+			System.out.println("project name=="+ key);
+			System.out.println("project id =="+projects.get(key));
+			Assert.assertNotNull(key);
+			Assert.assertNotNull(projects.get(key));
+		}
+		
+	}
 }

@@ -32,5 +32,7 @@ public interface P6WSClient {
 	public List<UDFTypeDTO> readUDFTypes() throws P6ServiceException;
 
 	public Map<String, Integer> readResources() throws P6ServiceException;
+
+	public Map<String, Integer> readProjects() throws P6ServiceException;
 	
 }

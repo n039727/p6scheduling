@@ -216,16 +216,16 @@ public class P6WSClientImpl implements P6WSClient {
 
 		final Holder<List<Resource>> resources = resourceService.run();
 		final List<Crew> crews = new ArrayList<Crew>();
-		logger.debug("list of crew from P6 # {}", crews);
-		if (null != crews) {
-			logger.debug("size of cres list from P6 # {}", crews.size());
+		//logger.debug("list of crew from P6 # {}", crews);
+		//if (null != crews) {
+			//logger.debug("size of cres list from P6 # {}", crews.size());
 			for (Resource resource : resources.value) {
 				Crew crew = new Crew();
 				crew.setCrewId(resource.getId());
 				crew.setCrewName(resource.getName());
 				crews.add(crew);
 			}
-		}
+		//}
 
 		return crews;
 	}
