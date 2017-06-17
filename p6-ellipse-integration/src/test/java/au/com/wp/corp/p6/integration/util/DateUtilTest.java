@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import au.com.wp.corp.p6.integration.util.DateUtil;
-
 /**
  * @author N039126
  *
@@ -107,33 +105,60 @@ public class DateUtilTest {
 		Assert.assertFalse(dateUtil.isSameDate("2017-06-20", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 				"20/06/2017 08:00:00", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 	}
-	
+
 	@Test
 	public void testIsSameDate_ERROR2() {
 		Assert.assertFalse(dateUtil.isSameDate("2017-06-21T08:00:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 				"20/06/2017 08:00:00", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 	}
-	
+
 	@Test
-	public void testCompare (){
+	public void testCompare() {
 		String actualStartDate = "2017-06-20T08:01:00";
 		String actualEndDate = "2017-06-20T08:00:00";
-		
-		int status = dateUtil.compare(actualStartDate, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
-				actualEndDate, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP);
+
+		int status = dateUtil.compare(actualStartDate, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, actualEndDate,
+				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP);
 		Assert.assertEquals(1, status);
 	}
-	
+
 	@Test
-	public void testSubstractMinuteFromDate (){
+	public void testCompare_Error() {
+		String actualStartDate = "2017-06-20";
+		String actualEndDate = "2017-06-20T08:00:00";
+
+		int status = dateUtil.compare(actualStartDate, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, actualEndDate,
+				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP);
+		Assert.assertEquals(-1, status);
+	}
+
+	@Test
+	public void testSubstractMinuteFromDate() {
 		String excpectedActualStartDate = "2017-06-20T08:00:00";
 		String actualEndDate = "2017-06-20T08:01:00";
-		
-		String actualStartDate = dateUtil.substractMinuteFromDate(actualEndDate, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP);
-		
-		
+
+		String actualStartDate = dateUtil.substractMinuteFromDate(actualEndDate,
+				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP);
+
 		Assert.assertEquals(excpectedActualStartDate, actualStartDate);
-		
+
 	}
-	
+
+	@Test
+	public void testSubstractMinuteFromDate_Error() {
+		String excpectedActualStartDate = "2017-06-20T08:00:00";
+		String actualEndDate = "2017-06-20";
+
+		String actualStartDate = dateUtil.substractMinuteFromDate(actualEndDate,
+				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP);
+
+		Assert.assertNull(actualStartDate);
+
+	}
+
+	@Test
+	public void testGetStartDateOfFiscalYear1() {
+		Assert.assertNotNull(
+				dateUtil.getStartDateOfFiscalYear("2017-06-20T08:00:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP));
+	}
 }

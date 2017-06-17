@@ -10,7 +10,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -110,7 +109,7 @@ public class DateUtil {
 
 	public Date convertStringToDate(String date) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_DDMMYYYY);
 
 		try {
 			return sdf.parse(date);
@@ -124,7 +123,7 @@ public class DateUtil {
 
 	public Date convertStringToDate(Date date) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_DDMMYYYY);
 
 		try {
 			return sdf.parse(sdf.format(date));
@@ -157,9 +156,6 @@ public class DateUtil {
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.setTime(dt);
 			return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-		} catch (ParseException | DatatypeConfigurationException e) {
-			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
-			logger.error("Can't covert to XMLGregorianCalendar - ", e);
 		} catch (Exception e) {
 			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
 			logger.error("Can't covert to XMLGregorianCalendar - ", e);

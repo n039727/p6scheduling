@@ -10,7 +10,6 @@ import au.com.wp.corp.p6.dto.WorkOrder;
 
 public class WorkOrderComparator implements Comparator<WorkOrder> {
 
-	
 	@Override
 	public int compare(WorkOrder o1, WorkOrder o2) {
 		DateUtils dateUtils = new DateUtils();
@@ -18,15 +17,15 @@ public class WorkOrderComparator implements Comparator<WorkOrder> {
 		Date scheduledDate2 = dateUtils.toDateFromDD_MM_YYYY(o2.getScheduleDate());
 		CompareToBuilder compareBuilder = new CompareToBuilder();
 
+
 		if ((!StringUtils.isEmpty(o1.getExctnPckgName())) && 
 				(!StringUtils.isEmpty(o2.getExctnPckgName()))) {
 			compareBuilder.append(o1.getWorkOrderId(), o2.getWorkOrderId());
 		}
 
 		compareBuilder.append(scheduledDate1, scheduledDate2);
+
 		return compareBuilder.toComparison();
 	}
-	
-	
 
 }
