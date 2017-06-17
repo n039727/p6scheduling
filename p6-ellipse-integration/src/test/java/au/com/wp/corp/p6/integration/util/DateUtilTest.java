@@ -76,7 +76,7 @@ public class DateUtilTest {
 
 	@Test
 	public void testIsCurrentDate() {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat(DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
 
 		Assert.assertTrue(dateUtil.isCurrentDate(sdf.format(new Date())));
 	}
