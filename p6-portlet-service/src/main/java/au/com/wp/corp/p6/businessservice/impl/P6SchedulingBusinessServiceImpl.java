@@ -173,10 +173,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			tasksInDb = fetchListOfTasksBySearchedDate(input,listWOData); //clear and nullify after remove
 			for (Task task : tasksInDb) {
 				Optional<WorkOrder> wo = findWOByTaskId(listWOData, task.getTaskId());
-				if(!wo.isPresent() && null !=task.getExecutionPackage()){
-					
+				if (!wo.isPresent() && null != task.getExecutionPackage()) {
 					removExecutionPackageFromTask(task);
-					
 				}
 			}
 			listWOData = applyFilters(listWOData, input);
@@ -480,12 +478,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					 * other tasks the dates are same then don't remove the
 					 * package
 					 */
-					if(isExecutionPackageTobeRetained(dbTask)){
+					/*if(isExecutionPackageTobeRetained(dbTask)){
 						//update execution package in 
 						
-					}else{
+					}else{*/
 						removExecutionPackageFromTask(dbTask);
-					}
+					//}
 					//deletetedExecPkagList.add(workOrder.getWorkOrderId());
 				}
 			}

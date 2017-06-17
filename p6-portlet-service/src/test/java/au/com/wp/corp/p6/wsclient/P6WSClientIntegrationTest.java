@@ -10,6 +10,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -36,6 +38,7 @@ public class P6WSClientIntegrationTest {
 	
 	@Autowired
 	P6WSClient p6WSClient;
+	private Logger logger = LoggerFactory.getLogger(P6WSClientIntegrationTest.class);;
 	
 	@Before
 	public void setup() {
@@ -94,4 +97,13 @@ public class P6WSClientIntegrationTest {
 
 	}
 
+	@Test
+	public void testRemoveExecutionPackage() throws P6ServiceException {
+		List<Integer> foreignIds = new ArrayList<Integer>();
+		foreignIds.add(5401390);
+		Boolean  success = p6WSClient.removeExecutionPackage(foreignIds);
+		logger.info("success {}",success);
+		Assert.assertNotNull(success);
+
+	}
 }
