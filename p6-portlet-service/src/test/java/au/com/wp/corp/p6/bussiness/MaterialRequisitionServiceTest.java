@@ -19,6 +19,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.businessservice.P6MaterialRequisitionService;
+import au.com.wp.corp.p6.dataservice.MaterialRequisitionDAO;
 import au.com.wp.corp.p6.dataservice.impl.MaterialRequisitionDAOImpl;
 import au.com.wp.corp.p6.dto.MaterialRequisitionDTO;
 import au.com.wp.corp.p6.dto.MaterialRequisitionRequest;
@@ -30,11 +31,10 @@ import junit.framework.Assert;
 
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { AppConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-@Ignore
 public class MaterialRequisitionServiceTest {
 
 	@Mock
-	MaterialRequisitionDAOImpl dao;
+	MaterialRequisitionDAO dao;
 	
 	@Autowired
 	P6MaterialRequisitionService service;
@@ -44,10 +44,6 @@ public class MaterialRequisitionServiceTest {
 		MockitoAnnotations.initMocks(this);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-	}
-	
 	@Test
 	@Transactional
 	@Rollback(true)
@@ -62,15 +58,19 @@ public class MaterialRequisitionServiceTest {
 		resultList.add(prepareMetReq("EC000158", "12345678"));
 		resultList.add(prepareMetReq("EC000158", "12345679"));
 		resultList.add(prepareMetReq("EC000132", "12345679"));
-		Mockito.when(dao.listMetReq(re.getWorkOrderList().toArray(new String[re.getWorkOrderList().size()]))).thenReturn(resultList);
+		String[] workOrderIds = re.getWorkOrderList().toArray(new String[re.getWorkOrderList().size()]);
+		Mockito.when(dao.listMetReq(workOrderIds)).thenReturn(resultList);
 		MaterialRequisitionDTO result = service.retriveMetReq(re);
-		Assert.assertNotNull(result.getMaterialRequisitionMap().get("EC000158"));
+		Assert.assertNotNull(result.getMaterialRequisitionMap());
 	}
 	private MaterialRequisition prepareMetReq(String wo, String reqNo){
 		MaterialRequisition marteq1 = new MaterialRequisition();
 		MaterialRequisitionPK pk = new MaterialRequisitionPK();
 		marteq1.setWorkOrder(wo);
 		pk.setRequisitionNo(reqNo);
+		pk.setAllocCount("abcde");
+		pk.setDstrctCode("ABCDE");
+		pk.setReq232Type("AbCdE");
 		marteq1.setId(pk);
 		return marteq1;
 	}
