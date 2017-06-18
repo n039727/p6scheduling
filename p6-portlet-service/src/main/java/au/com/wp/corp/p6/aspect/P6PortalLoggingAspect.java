@@ -16,21 +16,28 @@ public class P6PortalLoggingAspect {
 	    private void logAround(){}*/
 
 	    // Use "logAround" pointcut declaration in the advice
-	   @Before("within(au.com.wp.corp.p6..*) && !within(au.com.wp.corp.p6.config..*) && !within(au.com.wp.corp.p6.utils.DateUtils*)")
+	   @Before("within(au.com.wp.corp.p6..*) && !within(au.com.wp.corp.p6.config..*) && !within(au.com.wp.corp.p6.utils.DateUtils*) "
+	   		+ "&& !within(au.com.wp.corp.p6.dto..*)")
 	    public void logBefore(JoinPoint joinPoint) {
-	    	String nameOfClass = joinPoint.getSignature().getDeclaringTypeName();
-	    	String nameOfMethod = joinPoint.getSignature().getName();
-	    	String arguments = Arrays.toString(joinPoint.getArgs());
-	    	logger.info("Before: {} gets called with {} from {}", nameOfMethod, arguments,nameOfClass);  
+		   String[] retval = returnMetaValues(joinPoint);
+			logger.info("After returning: {} gets called with {} from {}", retval[0], retval[1],retval[2]);
 	    }
 	    
 	    // Use "logAround" pointcut declaration in the advice
-	   @After("within(au.com.wp.corp.p6..*) && !within(au.com.wp.corp.p6.config..*) && !within(au.com.wp.corp.p6.utils.DateUtils*)")
+	   @After("within(au.com.wp.corp.p6..*) && !within(au.com.wp.corp.p6.config..*) && !within(au.com.wp.corp.p6.utils.DateUtils*) "
+	   		+ "&& !within(au.com.wp.corp.p6.dto..*)")
 	    public void logAfterReturning(JoinPoint joinPoint) {
-		   String nameOfClass = joinPoint.getSignature().getDeclaringTypeName();
+		   
+	    	String[] retval = returnMetaValues(joinPoint);
+			logger.info("After returning: {} gets called with {} from {}", retval[0], retval[1],retval[2]);
+	    }
+	   
+	  private String[] returnMetaValues(JoinPoint joinPoint){
+		  String nameOfClass = joinPoint.getSignature().getDeclaringTypeName();
 	    	String nameOfMethod = joinPoint.getSignature().getName();
 	    	String arguments = Arrays.toString(joinPoint.getArgs());
-	    	logger.info("After returning: {} gets called with {} from {}", nameOfMethod, arguments,nameOfClass);
-	    }
-	  
+	    	String retval[] = new  String[] {nameOfClass , nameOfMethod , arguments};
+	    	
+	    	return retval;
+	  }
 }

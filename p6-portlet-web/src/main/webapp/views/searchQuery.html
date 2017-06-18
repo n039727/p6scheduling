@@ -31,7 +31,7 @@
 					
 						<md-datepicker md-current-view="month"   ng-model="$ctrl.scheduleFromDate" md-placeholder="DD/MM/YYYY" ></md-datepicker>
 						 &nbsp;&nbsp;To
-						<md-datepicker md-current-view="month"  ng-model="$ctrl.scheduleToDate" md-placeholder="DD/MM/YYYY"></md-datepicker>
+						<md-datepicker md-current-view="month"  ng-model="$ctrl.scheduleToDate" ng-disabled="$ctrl.metadata.setToDateDisable" md-placeholder="DD/MM/YYYY"></md-datepicker>
 					</div>
 					<div class="col-md-offset-5" ng-show="$ctrl.isValidationErr">
 							<p class="error-message" >{{$ctrl.showErrorMsg}}</p>

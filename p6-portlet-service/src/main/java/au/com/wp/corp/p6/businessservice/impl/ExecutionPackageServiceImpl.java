@@ -293,7 +293,6 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			if (workOrder.getWorkOrders() != null) {
 				for (String workOrderId : workOrder.getWorkOrders()) {
 					Optional<Task> task = findTask(tasksInDb, workOrderId);
-					//Task dbTask = workOrderDAO.fetch(workOrderId); //2
 					Task dbTask = task.isPresent() ? task.get() : new Task();
 					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
 					if (!StringUtils.isEmpty(dbTask.getCrewId())) {					

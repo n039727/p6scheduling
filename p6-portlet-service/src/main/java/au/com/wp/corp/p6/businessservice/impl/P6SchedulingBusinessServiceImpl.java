@@ -19,8 +19,6 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Hibernate;
-import org.mockito.internal.util.collections.ListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,13 +169,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		Map<String, WorkOrder> mapOfExecutionPkgWO = new HashMap<String, WorkOrder>();
 		List<WorkOrder> ungroupedWorkorders = new ArrayList<WorkOrder>();
 		try {
-			listWOData = retrieveWorkOrders(input);  //1
-			tasksInDb = fetchListOfTasksBySearchedDate(input,listWOData);
+			listWOData = retrieveWorkOrders(input);  //1 clear and nullify after remove
+			tasksInDb = fetchListOfTasksBySearchedDate(input,listWOData); //clear and nullify after remove
 			for (Task task : tasksInDb) {
 				Optional<WorkOrder> wo = findWOByTaskId(listWOData, task.getTaskId());
-				if(!wo.isPresent() && null !=task.getExecutionPackage()){
+				if (!wo.isPresent() && null != task.getExecutionPackage()) {
 					removExecutionPackageFromTask(task);
-					
 				}
 			}
 			listWOData = applyFilters(listWOData, input);
@@ -187,21 +184,22 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					for (String workOrderId : workOrders) {
 						Optional<Task> task = findTaskByWoId(tasksInDb, workOrderId);
 						Task dbTask = task.isPresent() ? task.get() : new Task();
+						ExecutionPackage executionPackage = dbTask.getExecutionPackage();
 						WorkOrder workOrderNew = prepareWorkOrder(workOrder,dbTask);
 						if (dbTask.getExecutionPackage() != null) {
-							String dbWOExecPkg = dbTask.getExecutionPackage().getExctnPckgNam();
-							Set<Task> taskForExePak = dbTask.getExecutionPackage().getTasks();
-							if (mapOfExecutionPkgWO.containsKey(dbWOExecPkg)) {
+							String dbWOExecPkgName = executionPackage.getExctnPckgNam(); //store in a different variable 
+							Set<Task> taskForExePak = executionPackage.getTasks();
+							if (mapOfExecutionPkgWO.containsKey(dbWOExecPkgName)) {
 								workOrderNew.getCrewAssigned().add(workOrderNew.getCrewNames());
 								taskForExePak.remove(dbTask);
-								regroupEPForOtherWO(listWOData,mapOfExecutionPkgWO, taskForExePak, dbWOExecPkg);
+								regroupEPForOtherWO(listWOData,mapOfExecutionPkgWO, taskForExePak, dbWOExecPkgName);
 							} else {
 								if (!StringUtils.isEmpty(dbTask.getCrewId())) {
 									workOrderNew.getCrewAssigned().add(workOrderNew.getCrewNames());
 								}
-								mapOfExecutionPkgWO.put(dbWOExecPkg, workOrderNew);
+								mapOfExecutionPkgWO.put(dbWOExecPkgName, workOrderNew);
 								taskForExePak.remove(dbTask);
-								regroupEPForOtherWO(listWOData,mapOfExecutionPkgWO, taskForExePak, dbWOExecPkg);
+								regroupEPForOtherWO(listWOData,mapOfExecutionPkgWO, taskForExePak, dbWOExecPkgName);
 							}
 						
 						}else{
@@ -216,9 +214,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		} catch (Exception e) {
 			parseException(e);
 		}
-		/*synchronization of task*/
-		//	updateTasksInDB(tasksForUpdate,execPkgListForUpdate); 
-		//	removeExecutionPackageinP6(deletetedExecPkagList);
+		
 		logger.debug("final grouped work orders size {}",mapOfExecutionPkgWO.values().size());
 		logger.debug("final grouped work orders = {}",mapOfExecutionPkgWO.values());
 		List<WorkOrder> workorders = new ArrayList<> (ungroupedWorkorders);
@@ -346,7 +342,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		Set<ExecutionPackage> execPkgList = CacheManager.getExecpkglistforupdate();
 		try {
 			if(!CollectionUtils.isEmpty(tasksForUpdate)){
-				logger.debug("updateTasksInDB called with tasks # {}",tasksForUpdate.size());
+				logger.debug("updateTasksInDB called with tasks # {}",tasksForUpdate.size());//can be considerd for add batch
 				for (Iterator<Task> iterator = tasksForUpdate.iterator(); iterator.hasNext();) {
 					Task task = (Task) iterator.next();
 					logger.debug("Task with task id {} being updated for execution package of work order sync in portlet db",task.getTaskId());
@@ -358,7 +354,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		}
 		try {
 			if(!CollectionUtils.isEmpty(execPkgList)){
-				for (Iterator<ExecutionPackage> iterator = execPkgList.iterator(); iterator.hasNext();) {
+				for (Iterator<ExecutionPackage> iterator = execPkgList.iterator(); iterator.hasNext();) {//can be considerd for add batch
 					ExecutionPackage exectionPkg = (ExecutionPackage) iterator.next();
 					logger.debug("Execution Package {} being updated in portlet db",exectionPkg.getExctnPckgNam());
 					executionPackageDao.createOrUpdateExecPackage(exectionPkg);
@@ -367,8 +363,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		} catch (P6DataAccessException e) {
 			logger.error("Error occurred in DB persist {}",e.getCause().getMessage());
 		}
-		CacheManager.getTasksforupdate().clear();
-		CacheManager.getExecpkglistforupdate().clear();
 		logger.debug("Total time taken to updateTasksInDB {}",System.currentTimeMillis() - startTime );
 		removeExecutionPackageinP6();
 	}
@@ -383,14 +377,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				Map<String,Integer> workOrderIdMap = p6wsClient.getWorkOrderIdMap();
 				List<Integer>  listOfObjectId = new  ArrayList<Integer>();
 				workOrderIds.forEach(workOrderId -> {
-					if (!isExecutionPackageTobeRetained(workOrderId)) {
-						Integer objectId = workOrderIdMap.get(workOrderId);
-						if ((!workOrderIdMap.containsKey(workOrderId)) || objectId == null) {
-							logger.info("input id # {} ", workOrderId);
-							workOrderIdMap.put(workOrderId, 0);
-						}
-						listOfObjectId.add(workOrderIdMap.get(workOrderId));
+					Integer objectId = workOrderIdMap.get(workOrderId);
+					if ((!workOrderIdMap.containsKey(workOrderId)) || objectId == null) {
+						logger.info("input id # {} ", workOrderId);
+						workOrderIdMap.put(workOrderId, 0);
 					}
+					listOfObjectId.add(workOrderIdMap.get(workOrderId));
 				});
 				boolean isSuccess =p6wsClient.removeExecutionPackage(listOfObjectId);
 				logger.debug("Removal suceeeded {}",isSuccess);
@@ -399,21 +391,22 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			}
 			//	workOrderIds.clear();
 			//workOrderIds = null;
-			CacheManager.getDeletetedexecpkaglist().clear();
-		}
-
-		logger.debug("Total time taken to removeExecutionPackageinP6 {}",System.currentTimeMillis() - startTime );
-	}
-	private boolean isExecutionPackageTobeRetained(String workOrderId) {
-		if ((!CollectionUtils.isEmpty(listWOData))
-				&& (!CollectionUtils.isEmpty(tasksInDb))) {
-			//find the execution package for the wo
-			//check of o
 			
 		}
-		
-		
-		return false;
+		clearApplicationMemory();
+		logger.debug("Total time taken to removeExecutionPackageinP6 {}",System.currentTimeMillis() - startTime );
+	}
+
+	private boolean isExecutionPackageTobeRetained(Task task) {
+		boolean retValue = false;
+		if ((!CollectionUtils.isEmpty(listWOData)) && (!CollectionUtils.isEmpty(tasksInDb))) {
+				ExecutionPackage executionPackage = task.getExecutionPackage();
+				if (executionPackage != null) {
+					Set<Task> associatedTasks = executionPackage.getTasks();
+					retValue = listWOData.containsAll(associatedTasks);
+				}
+		}
+		return retValue;
 	}
 	public boolean convertStringToBoolean(String completed) {
 		return P6Constant.ACTIONED_Y.equals(completed);
@@ -469,6 +462,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		dbTask.setLstUpdtdUsr(userTokenRequest.getUserPrincipal());
 		Set<Task> tasksForUpdate = CacheManager.getTasksforupdate();
 		Set<ExecutionPackage> executionPackageUpdateList = CacheManager.getExecpkglistforupdate();
+		
+		ExecutionPackage executionPackage = dbTask.getExecutionPackage();
 		if (scheduledDateForWorkOrder != null && scheduledDateInTask != null) {
 			logger.debug("in prepare workorder scheduledDateForWorkOrder {}", scheduledDateForWorkOrder);
 			logger.debug("in prepare workorder scheduledDateInTask {}", scheduledDateInTask);
@@ -477,22 +472,27 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 						scheduledDateInTask);
 				dbTask.setSchdDt(scheduledDateForWorkOrder);
 				// if date is changed then execution package is null
-				if (dbTask.getExecutionPackage() != null) {
+				if (executionPackage != null) {
 					/*
 					 * check of other tasks on the execution package if for all
 					 * other tasks the dates are same then don't remove the
 					 * package
 					 */
-					removExecutionPackageFromTask(dbTask);
+					/*if(isExecutionPackageTobeRetained(dbTask)){
+						//update execution package in 
+						
+					}else{*/
+						removExecutionPackageFromTask(dbTask);
+					//}
 					//deletetedExecPkagList.add(workOrder.getWorkOrderId());
 				}
 			}
 		}
 		// to update remaining fields from p6 if exec pkg is not null
-		if (dbTask.getExecutionPackage() != null) {
-			workOrderNew.setLeadCrew(dbTask.getExecutionPackage().getLeadCrewId());
-			workOrderNew.setExctnPckgName(dbTask.getExecutionPackage().getExctnPckgNam());
-			workOrderNew.setActioned(dbTask.getExecutionPackage().getActioned());
+		if (executionPackage != null) {
+			workOrderNew.setLeadCrew(executionPackage.getLeadCrewId());
+			workOrderNew.setExctnPckgName(executionPackage.getExctnPckgNam());
+			workOrderNew.setActioned(executionPackage.getActioned());
 		} else { 
 			workOrderNew.setLeadCrew(leadCrewWorkOrder);
 			workOrderNew.setExctnPckgName("");
@@ -502,11 +502,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			logger.debug("prepare work order crew id updating in  task {} updating for this work order ==={}",
 					crewAssignedForTask,crewAssignedForWorkOrder);
 			dbTask.setCrewId(crewAssignedForWorkOrder);
-			if (dbTask.getExecutionPackage() == null) {
+			if (executionPackage == null) {
 				dbTask.setLeadCrewId(leadCrewWorkOrder);
 			}else{
-				updateExecutionPackageLeadCrew(dbTask.getExecutionPackage(), dbTask,true);
-				executionPackageUpdateList.add(dbTask.getExecutionPackage());
+				updateExecutionPackageLeadCrew(executionPackage, dbTask,true);
+				executionPackageUpdateList.add(executionPackage);
 			}
 			
 			if(!StringUtils.isEmpty(dbTask.getTaskId())){
@@ -781,10 +781,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		List<ExecutionPackageDTO> executionPackageDTOList = new ArrayList<ExecutionPackageDTO>();
 		ExecutionPackageDTO executionPackageDTO = null;
 		List<WorkOrder> workOrderList = new ArrayList<>();
-		for (String workOrderId : workOrder.getWorkOrders()) {
+		for (String workOrderId : workOrder.getWorkOrders()) { //can be conisdered for add batch
 			WorkOrder wo = new WorkOrder();
 			wo.setWorkOrderId(workOrderId);
-			Task task = prepareTaskFromWorkOrderId(workOrderId, workOrder);
+			Task task = prepareTaskFromWorkOrderId(workOrderId, workOrder); //can be fectehd in single call
 			if(null != task.getExecutionPackage()){
 				logger.debug("task.getExecutionPackage()>> {}", task.getExecutionPackage().getExctnPckgNam());
 				executionPackageDTO = new ExecutionPackageDTO();
@@ -1056,6 +1056,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		CacheManager.getDeletetedexecpkaglist().clear();
 		CacheManager.getTasksforupdate().clear();
 		CacheManager.getExecpkglistforupdate().clear();
+		CacheManager.getDeletetedexecpkaglist().clear();
+		listWOData.clear();
+		tasksInDb.clear();
+		listWOData = null;
+		tasksInDb = null;
 	}
 
 }

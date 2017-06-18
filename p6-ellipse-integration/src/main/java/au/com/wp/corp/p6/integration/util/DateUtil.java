@@ -10,7 +10,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -110,7 +109,7 @@ public class DateUtil {
 
 	public Date convertStringToDate(String date) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_DDMMYYYY);
 
 		try {
 			return sdf.parse(date);
@@ -124,7 +123,7 @@ public class DateUtil {
 
 	public Date convertStringToDate(Date date) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_DDMMYYYY);
 
 		try {
 			return sdf.parse(sdf.format(date));
@@ -157,9 +156,6 @@ public class DateUtil {
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.setTime(dt);
 			return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-		} catch (ParseException | DatatypeConfigurationException e) {
-			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
-			logger.error("Can't covert to XMLGregorianCalendar - ", e);
 		} catch (Exception e) {
 			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
 			logger.error("Can't covert to XMLGregorianCalendar - ", e);
@@ -193,4 +189,44 @@ public class DateUtil {
 		return false;
 	}
 
+
+	
+	public String substractMinuteFromDate ( String date, String format){
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat(format);
+			Date dt = sdf.parse(date);
+			Calendar calender = Calendar.getInstance();
+			calender.setTime(dt);
+			calender.add(Calendar.MINUTE, -1);
+			Date newDt = calender.getTime();
+			
+			return sdf.format(newDt);
+			
+		} catch (ParseException e) {
+			logger.error("Invalid date - cant parse date# {}  - format# {}", date, format);
+			logger.error("Can't parse input date - ", e);
+		}
+		
+		return null;
+		
+	}
+	
+	public int compare(String date1, String date1Format, String date2, String date2Format) {
+		SimpleDateFormat sdf1 = new SimpleDateFormat(date1Format);
+		SimpleDateFormat sdf2 = new SimpleDateFormat(date2Format);
+		
+		try {
+			Date dt1 = sdf1.parse(date1);
+			Date dt2 = sdf2.parse(date2);
+			return dt1.compareTo(dt2) ;
+			
+		} catch (Exception e) {
+			logger.error("Invalid date - cant parse date1# {}  - date2# {}", date1, date2);
+			logger.error("Can't parse input date - ", e);
+		}
+		
+		return -1;
+		
+	}
+	
 }

@@ -27,6 +27,7 @@ import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.activity.ObjectFactory;
+import au.com.wp.corp.p6.wsclient.project.Project;
 import au.com.wp.corp.p6.wsclient.resource.Resource;
 import au.com.wp.corp.p6.wsclient.resourceassignment.ResourceAssignment;
 import au.com.wp.corp.p6.wsclient.udftype.UDFType;
@@ -45,6 +46,30 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	@Autowired
 	DateUtil dateUtil;
 
+
+	@Override
+	public Map<String, Integer> readProjects() throws P6ServiceException {
+		logger.info("Calling project service in P6 Webservice ...");
+		final RequestTrackingId trackingId = new RequestTrackingId();
+		getAuthenticated(trackingId);
+
+		final ProjectServiceCall projectService = new ProjectServiceCall(trackingId);
+
+		final Holder<List<Project>> projects = projectService.run();
+		logger.debug("list of projects from P6#{}", projects);
+		
+		Map<String, Integer> projectsMap = new HashMap<>();
+		if ( null == projects || projects.value == null)
+		{
+			throw new P6ServiceException("No projects available in P6");
+		}
+		for ( Project project: projects.value)
+			projectsMap.put(project.getName(), project.getObjectId());
+		return projectsMap;
+
+	}
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -222,7 +247,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @throws P6ServiceException
 	 */
 	private Boolean getAuthenticated(final RequestTrackingId trackingId) throws P6ServiceException {
-		if (CacheManager.getWsHeaders().isEmpty()) {
+		if (CacheManager.getWsHeaders().isEmpty() || null == CacheManager.getWsHeaders().get(WS_COOKIE) ) {
 			AuthenticationService authService = new AuthenticationService(trackingId);
 			Holder<Boolean> holder = authService.run();
 			logger.debug("Is authentication successfull ??  {} ", holder.value);
@@ -264,7 +289,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 			final List<Activity> crtdActivities = constructActivities(activities, chunkSize, i, activityMap);
 
-			if (isCreateActivities && !crtdActivities.isEmpty() ) {
+			if (isCreateActivities && !crtdActivities.isEmpty()) {
 				logger.debug("Creating activites in P6...................");
 				final ActivityServiceCall<List<Integer>> crActivityService = new CreateActivityServiceCall(trackingId,
 						crtdActivities);
@@ -308,8 +333,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 				final Holder<Boolean> status = crActivityService.run();
 				logger.debug("list of activities from P6 # {}", status.value);
 				int startIndex = i * chunkSize;
-				int endIndex = ((i + 1) * chunkSize - 1) < activities.size() ? ((i + 1) * chunkSize - 1) : activities.size();
-				
+				int endIndex = ((i + 1) * chunkSize - 1) < activities.size() ? ((i + 1) * chunkSize - 1)
+						: activities.size();
+
 				updateActivityFieldsUDF(trackingId, activities.subList(startIndex, endIndex), chunkSize);
 
 			}
@@ -353,8 +379,15 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 					logger.error("Invalid planned start date# {}", p6ActivityDTO.getPlannedStartDate());
 			}
 			if (null != p6ActivityDTO.getActualFinishDate()) {
-				final XMLGregorianCalendar actualStartDate = dateUtil
-						.convertStringToXMLGregorianClalander(p6ActivityDTO.getActualStartDate());
+				String actStartDate = p6ActivityDTO.getActualStartDate();
+				if (dateUtil.compare(p6ActivityDTO.getActualStartDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
+						p6ActivityDTO.getActualFinishDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP) == 1) {
+
+					actStartDate = dateUtil.substractMinuteFromDate(p6ActivityDTO.getActualFinishDate(),
+							DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP);
+				}
+
+				XMLGregorianCalendar actualStartDate = dateUtil.convertStringToXMLGregorianClalander(actStartDate);
 				if (null != actualStartDate) {
 					activity.setActualStartDate(objectFactory.createActivityActualStartDate(actualStartDate));
 				}
@@ -383,9 +416,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 				activity.setRemainingDuration(
 						objectFactory.createActivityRemainingDuration(p6ActivityDTO.getRemainingDuration()));
 			}
-			if (p6ActivityDTO.getEstimatedLabourHours() > 0) {
-				activity.setPlannedLaborUnits(p6ActivityDTO.getEstimatedLabourHours());
-			}
+
+			activity.setPlannedLaborUnits(p6ActivityDTO.getEstimatedLabourHours());
+			
 			_activities.add(activity);
 
 			activityMap.put(p6ActivityDTO.getActivityId(), p6ActivityDTO);
