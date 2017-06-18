@@ -174,18 +174,6 @@ function dynamicToDoSetterController($scope) {
 	ctrl.newItem = {isNewItem:true};
 
 	ctrl.addItem = function() {
-<<<<<<< HEAD
-		ctrl.isAddError = false;
-		console.log("[DEBUG] Add Item called");
-		if (!angular.isDefined(ctrl.currentMap)) {
-			ctrl.currentMap = {};
-		}
-		ctrl.isToDoRemoved = false;
-		ctrl.handleEvent({eventId:"ADD_TO_DO_IN_PROGRESS", data:{}})
-		ctrl.newAddIndex = Object.keys(ctrl.currentMap).length;
-		ctrl.columnGroup[ctrl.newAddIndex%ctrl.columns].push(ctrl.newItem);
-		console.log("[DEBUG] ctrl.columnGroup in addItem: " + JSON.stringify(ctrl.columnGroup));
-=======
 	  console.log("[DEBUG] Add Item called");
 	  if (!angular.isDefined(ctrl.currentMap)) {
 		  ctrl.currentMap = {};
@@ -197,29 +185,9 @@ function dynamicToDoSetterController($scope) {
 	  ctrl.newAddIndex = Object.keys(ctrl.currentMap).length;
 	  ctrl.columnGroup[ctrl.newAddIndex%ctrl.columns].push(ctrl.newItem);
 	 console.log("[DEBUG] ctrl.columnGroup in addItem: " + JSON.stringify(ctrl.columnGroup));
->>>>>>> fae0572c6339ec62b9dffaf912472362a574807c
 	};
 
 	ctrl.doneAdding = function() {
-<<<<<<< HEAD
-		console.log("[DEBUG] new Item is : " + JSON.stringify(ctrl.newItem));
-		if(!ctrl.isToDoRemoved){
-			if (!ctrl.validateNewItem(ctrl.newItem)) {
-				console.log("[DEBUG] invalid new Item");
-				return;
-			}
-
-			ctrl.currentMap[ctrl.newItem.todoName] = (ctrl.newItem.workOrders.indexOf('ALL') >= 0) ? ctrl.workOrders: ctrl.newItem.workOrders;
-//			ctrl.handleDataChange({map: ctrl.currentMap});
-			ctrl.newItem = {isNewItem:true};
-		}	  
-		console.log("[DEBUG] Done Adding");
-		console.log("[DEBUG] new Item is : " + JSON.stringify(ctrl.currentMap));
-		ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}})
-		ctrl.handleEvent({eventId:"ADD_TO_DO_COMPLETED", data:{}})
-		ctrl.init();
-		ctrl.newAddIndex = -1;
-=======
 	  if(!ctrl.isToDoRemoved){
 		  if (!ctrl.validateNewItem(ctrl.newItem)) {
 			    console.log("[DEBUG] invalid new Item");
@@ -237,7 +205,6 @@ function dynamicToDoSetterController($scope) {
 	  
 	  ctrl.init();
 	  ctrl.newAddIndex = -1;
->>>>>>> fae0572c6339ec62b9dffaf912472362a574807c
 	};
 
 	ctrl.validateNewItem = function(newItem) {

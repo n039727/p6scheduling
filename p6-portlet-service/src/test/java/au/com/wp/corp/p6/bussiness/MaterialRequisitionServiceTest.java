@@ -30,6 +30,7 @@ import junit.framework.Assert;
 
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { AppConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
+@Ignore
 public class MaterialRequisitionServiceTest {
 
 	@Mock
