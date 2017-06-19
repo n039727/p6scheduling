@@ -44,6 +44,7 @@ public class FunctionAccessDAOImpl implements FunctionAccessDAO {
 		return accesses;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public List<String> fetchAllRole() {
@@ -52,13 +53,6 @@ public class FunctionAccessDAOImpl implements FunctionAccessDAO {
 	       criteria.setProjection(
 	                 Projections.distinct(Projections.property("roleNam"))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 	       List<String> roles = criteria.list();
-	       
-	       //List<FunctionAccess> roles = criteria.list();
-			/*@SuppressWarnings("unchecked")
-			List<FunctionAccess> roles = (List<FunctionAccess>) getSession()
-					.createCriteria(FunctionAccess.class)
-					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();*/
-						
 
 		return roles;
 		

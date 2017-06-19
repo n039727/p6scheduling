@@ -33,6 +33,7 @@ public class TaskDAOImpl implements TaskDAO {
 		return sessionFactory.getCurrentSession();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public List<Task> listTasks() throws P6DataAccessException {

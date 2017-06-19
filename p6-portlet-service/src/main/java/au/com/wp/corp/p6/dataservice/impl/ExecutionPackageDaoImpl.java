@@ -3,9 +3,6 @@
  */
 package au.com.wp.corp.p6.dataservice.impl;
 
-import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -21,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
-import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
-import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
@@ -60,43 +55,7 @@ public class ExecutionPackageDaoImpl implements ExecutionPackageDao {
 		return retValue;
 	}
 
-	@Transactional
-	@Override
-	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO){
-		logger.debug("sessionfactory initialized =====" + sessionFactory);
-		ExecutionPackage executionPackage = new ExecutionPackage();
-		logger.debug("Creating Execution Package");
-		executionPackage.setExctnPckgNam(executionPackageDTO.getExctnPckgName());
-		executionPackage.setLeadCrewId(executionPackageDTO.getLeadCrew());
-		List<WorkOrder> workOrders = executionPackageDTO.getWorkOrders();
-		if (workOrders != null && workOrders.size() > 0) {
-			logger.debug("work orders size {}", workOrders.size());
-
-			Set<Task> tasks = new HashSet<Task>();
-			for (WorkOrder workOrder : workOrders) {
-				logger.debug("For each workorder {} corresponding Task is fecthed", workOrder.getWorkOrderId());
-				Task task = (Task) sessionFactory.getCurrentSession().get(Task.class, workOrder.getWorkOrderId());
-				if (task != null) {
-					logger.debug("Task {} is fecthed", task.getTaskId());
-					task.setExecutionPackage(executionPackage);
-					tasks.add(task);
-				}
-			}
-			executionPackage.setTasks(tasks);
-
-		}
-		executionPackage.setCrtdTs(new Timestamp(System.currentTimeMillis()));
-		executionPackage.setCrtdUsr("N039603");
-		executionPackage.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
-		executionPackage.setLstUpdtdUsr("N039603");
-		sessionFactory.getCurrentSession().saveOrUpdate(executionPackage);
-
-		//sessionFactory.getCurrentSession().flush();
-		//sessionFactory.getCurrentSession().clear();
-
-		return executionPackageDTO;
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
