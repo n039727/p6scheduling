@@ -4,6 +4,7 @@
 package au.com.wp.corp.p6.wsclient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -58,6 +59,34 @@ public class P6WSClientIntegrationTest {
 			Assert.assertNotNull(workOrder.getScheduleDate());
 		}
 		
+	}
+	@Test
+	public void testSearchWorkOrder_withCrew () throws P6ServiceException {
+		ActivitySearchRequest request = new ActivitySearchRequest();
+		request.setPlannedStartDate("2017-07-26");
+		request.setCrewList(Arrays.asList("MONT1,MONT2"));
+		List<WorkOrder> workOrders =  p6WSClient.searchWorkOrder(request);
+		Assert.assertNotNull(workOrders);
+		for ( WorkOrder workOrder : workOrders)
+		{
+			Assert.assertNotNull(workOrder.getWorkOrderId());
+			Assert.assertNotNull(workOrder.getCrewNames());
+			Assert.assertNotNull(workOrder.getWorkOrders());
+			Assert.assertNotNull(workOrder.getScheduleDate());
+		}
+		
+	}
+	@Test
+	public void testSearchWorkOrder_withNullRequest () throws P6ServiceException {
+		List<WorkOrder> workOrders = null;
+		try {
+			 workOrders =  p6WSClient.searchWorkOrder(null);
+			
+		} catch (P6ServiceException e) {
+			Assert.assertEquals(e.getMessage(), "NO_SEARCH_CRITERIA_FOUND");
+		}
+		
+		Assert.assertNull(workOrders);
 	}
 	
 	@Test
