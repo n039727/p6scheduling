@@ -219,11 +219,10 @@ function dynamicToDoSetterController($scope) {
 
 					ctrl.addErrorMessage = "This TODO is a duplicate one try addimg diuffrent one";
 					ctrl.isAddError = true;
-					return true;
+					return false;
 
 				}else{
 					ctrl.isAddError = false;
-					return true;
 				}
 			}
 		}else{

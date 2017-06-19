@@ -58,7 +58,7 @@ public class AppConfig {
 		sessionBuilder.setProperty("hibernate.show_sql", "true");
 		sessionBuilder.addProperties(getHibernateProperties());
 		SessionFactory factory = sessionBuilder.buildSessionFactory();
-		
+		System.out.println("factory == "+ factory);
 		return factory;
 	}
 	
@@ -70,6 +70,7 @@ public class AppConfig {
 	    sessionBuilder.setProperty("hibernate.show_sql", "true");
 	    sessionBuilder.addProperties(getElipsHibernateProperties());
 	    SessionFactory factory = sessionBuilder.buildSessionFactory();
+	    System.out.println("elipsfactory == "+ factory);
 	    return factory;
 	}
 
