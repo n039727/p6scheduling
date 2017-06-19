@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -19,6 +20,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.businessservice.P6MaterialRequisitionService;
+import au.com.wp.corp.p6.businessservice.impl.P6MaterialRequisitionServiceImpl;
 import au.com.wp.corp.p6.dataservice.MaterialRequisitionDAO;
 import au.com.wp.corp.p6.dataservice.impl.MaterialRequisitionDAOImpl;
 import au.com.wp.corp.p6.dto.MaterialRequisitionDTO;
@@ -36,8 +38,8 @@ public class MaterialRequisitionServiceTest {
 	@Mock
 	MaterialRequisitionDAO dao;
 	
-	@Autowired
-	P6MaterialRequisitionService service;
+	@InjectMocks
+	P6MaterialRequisitionServiceImpl service;
 
 	@Before
 	public void setUp() throws Exception {
@@ -57,7 +59,7 @@ public class MaterialRequisitionServiceTest {
 		List<MaterialRequisition> resultList = new ArrayList<MaterialRequisition>();
 		resultList.add(prepareMetReq("EC000158", "12345678"));
 		resultList.add(prepareMetReq("EC000158", "12345679"));
-		resultList.add(prepareMetReq("EC000132", "12345679"));
+		resultList.add(prepareMetReq("EC000132", "1234567"));
 		String[] workOrderIds = re.getWorkOrderList().toArray(new String[re.getWorkOrderList().size()]);
 		Mockito.when(dao.listMetReq(workOrderIds)).thenReturn(resultList);
 		MaterialRequisitionDTO result = service.retriveMetReq(re);
