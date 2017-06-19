@@ -55,14 +55,13 @@ public class P6MaterialRequisitionServiceImpl implements P6MaterialRequisitionSe
 		return response;
 	}
 	private String trimLastFourZeros(String str){
-		String trimStr = "";
 		if(str != null){
 			int index = str.lastIndexOf(" 0000");
 			if(index > 0){
-				trimStr = str.substring(0,index);
+				str = str.substring(0,index);
 			}
 		}
-		return trimStr;
+		return str;
 	}
 	private List<MaterialRequisition> findMaterialRequisition(final List<MaterialRequisition> list, final String woId) {
 		return list.stream().filter(p -> p.getWorkOrder().equals(woId)).collect(Collectors.toList());
