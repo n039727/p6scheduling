@@ -47,14 +47,8 @@ public class TodoDAOImpl implements TodoDAO {
 					toDoMap = new HashMap<Long, TodoTemplate>();
 					toDoNameMap = new HashMap<String, TodoTemplate>();
 					for (TodoTemplate todo:listToDo) {
-						//toDoMap.put(todo.getTodoId().longValue(), todo);
 						toDoMap.put(todo.getTodoId(), todo);
 						toDoNameMap.put(todo.getTodoNam(), todo);
-						/*if (maxPk == null) {
-							maxPk = todo.getId().getTodoId();
-						} else if (maxPk < todo.getId().getTodoId()) {
-							maxPk = todo.getId().getTodoId();
-						}*/
 					}
 				}
 			}

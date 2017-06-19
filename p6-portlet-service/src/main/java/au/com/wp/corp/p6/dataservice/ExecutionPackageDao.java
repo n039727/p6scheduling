@@ -19,14 +19,6 @@ public interface ExecutionPackageDao extends P6DAOExceptionParser {
 	ExecutionPackage fetch(String name);
 
 	/**
-	 * 
-	 * @param executionPackageDTO
-	 * @return
-	 * @throws P6DataAccessException
-	 */
-	public ExecutionPackageDTO saveExecutionPackage(ExecutionPackageDTO executionPackageDTO);
-
-	/**
 	 * returns work order details by work order id
 	 * 
 	 * @param taskId

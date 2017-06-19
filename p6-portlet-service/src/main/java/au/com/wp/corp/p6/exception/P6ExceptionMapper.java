@@ -26,19 +26,6 @@ public interface P6ExceptionMapper {
 	public String INTEGRATION_FAULT = "INTEGRATION_FAULT_2001";
 	
 	public String INTERNAL_SERVICE_ERROR = "IINTERNAL_SERVICE_ERROR_2001";
-			
-	
-//	throw new P6DataAccessException(UNIQUE_CONSTRAINT_VIOLATION_1001, e);			
-//			
-//	ConstraintViolationException
-//	JDBCConnectionException
-//	LockAcquisitionException
-//	DataException
-//	LockTimeoutException
-//	GenericJDBCException
-//	SQLGrammarException
-//	IOException
-	
-	
+
 	
 }

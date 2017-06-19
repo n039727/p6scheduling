@@ -63,17 +63,7 @@ public class ExecutionPackageDaoIntegrationTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Transactional
-	@Rollback(true)
-	@Test
-	public void testSaveExecutionPackage() {
-		ExecutionPackageDTO executionPackageDTO = new ExecutionPackageDTO();
-		String name = getCurrentDateTimeMS();
-		executionPackageDTO.setExctnPckgName(name);
-		executionPackageDTO = executionPackageDao.saveExecutionPackage(executionPackageDTO);
-		assertEquals(executionPackageDTO.getExctnPckgName(), name);
-	}
-	
+		
 	private  String getCurrentDateTimeMS() {
 		java.util.Date dNow = new java.util.Date();
         SimpleDateFormat ft = new SimpleDateFormat("dd-MM-yyyy-hhmmssMs");
