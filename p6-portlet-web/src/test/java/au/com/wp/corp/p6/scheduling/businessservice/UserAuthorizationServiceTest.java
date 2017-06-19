@@ -1,7 +1,8 @@
 /**
  * 
  */
-package au.com.wp.corp.p6.bussiness;
+
+package au.com.wp.corp.p6.scheduling.businessservice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import au.com.wp.corp.p6.businessservice.impl.UserAuthorizationServiceImpl;
-import au.com.wp.corp.p6.dataservice.impl.FunctionAccessDAOImpl;
-import au.com.wp.corp.p6.dto.UserAuthorizationDTO;
-import au.com.wp.corp.p6.model.FunctionAccess;
-import au.com.wp.corp.p6.model.PortalFunction;
+import au.com.wp.corp.p6.scheduling.businessservice.impl.UserAuthorizationServiceImpl;
+import au.com.wp.corp.p6.scheduling.dao.impl.FunctionAccessDAOImpl;
+import au.com.wp.corp.p6.scheduling.dto.UserAuthorizationDTO;
+import au.com.wp.corp.p6.scheduling.model.FunctionAccess;
+import au.com.wp.corp.p6.scheduling.model.PortalFunction;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
 /**
@@ -67,8 +68,12 @@ public class UserAuthorizationServiceTest {
 		functionAccess.setWriteFlg("Y");
 		List<FunctionAccess> accesses = new ArrayList<FunctionAccess>();
 		accesses.add(functionAccess);
-		Mockito.when(functionAccessDAO.getAccess("P6_TEM_LEDR_SCHDLR")).thenReturn(accesses);
-		List<UserAuthorizationDTO> returnVal = userAuthorizationService.getAccess("Add_Scheduling_To_Do");
+		List<String> roleNames = new ArrayList<String>();
+		roleNames.add("P6_TEM_LEDR_SCHDLR");
+		Mockito.when(functionAccessDAO.getAccess(roleNames)).thenReturn(accesses);
+		List<String> accessFunctions = new ArrayList<String>();
+		accessFunctions.add("Add_Scheduling_To_Do");
+		List<UserAuthorizationDTO> returnVal = userAuthorizationService.getAccess(accessFunctions);
 		
 		Assert.assertNotNull(returnVal);
 		for (UserAuthorizationDTO dto: returnVal) {
