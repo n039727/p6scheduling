@@ -94,10 +94,7 @@ public class ActivityServiceCall extends AbstractSOAPCall<List<Activity>> {
 		fields.add(ActivityFieldType.PRIMARY_RESOURCE_NAME);
 		fields.add(ActivityFieldType.PROJECT_OBJECT_ID);
 		fields.add(ActivityFieldType.PRIMARY_RESOURCE_ID);
-		//'2010-12-30T08:30:00'
-		//String filter = "PlannedStartDate BETWEEN TO_DATE('2010-12-30 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('2010-12-30 23:59:59', 'yyyy-mm-dd hh24:mi:ss') ";
-		//String filter = "PrimaryResourceId = 'MOST8' OR PrimaryResourceId = 'MOST3'";
-		
+				
 		List<Activity> activities;
 		try {
 			activities = servicePort.readActivities(fields, filter, null);
