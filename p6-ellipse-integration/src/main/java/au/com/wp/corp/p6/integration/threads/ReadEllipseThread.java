@@ -3,10 +3,8 @@
  */
 package au.com.wp.corp.p6.integration.threads;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +13,6 @@ import au.com.wp.corp.p6.integration.dao.P6EllipseDAO;
 import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
 import au.com.wp.corp.p6.integration.exception.P6DataAccessException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
-import au.com.wp.corp.p6.integration.util.EllipseReadParameter;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.integration.util.ProcessStatus;
 import au.com.wp.corp.p6.integration.util.ReadProcessStatus;
@@ -29,9 +26,11 @@ import au.com.wp.corp.p6.integration.util.ReadProcessStatus;
 public class ReadEllipseThread implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(ReadEllipseThread.class);
 	private P6EllipseDAO p6EllipseDAO;
+	private final List<String> workgroupList;
 
-	public ReadEllipseThread(final P6EllipseDAO p6EllipseDAO) {
+	public ReadEllipseThread(final P6EllipseDAO p6EllipseDAO, final List<String> workgroupList) {
 		this.p6EllipseDAO = p6EllipseDAO;
+		this.workgroupList = workgroupList;
 		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.STARTED);
 	}
 
@@ -44,12 +43,14 @@ public class ReadEllipseThread implements Runnable {
 		final long startTime = System.currentTimeMillis();
 		Map<String, EllipseActivityDTO> activities = CacheManager.getEllipseActivitiesMap();
 
-		final List<String> workgroupList = new ArrayList<>();
-
 		final String readingStrategy = P6ReloadablePropertiesReader.getProperty("ELLIPSE_READING_STRATEGY");
 
 		logger.debug("Ellipse reading strategy # {}", readingStrategy);
 
+		
+		readEllipse(startTime, activities, workgroupList);
+		
+		/**
 		if (readingStrategy.equals(EllipseReadParameter.ALL.name())) {
 			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
 			for (String key : keys) {
@@ -63,7 +64,7 @@ public class ReadEllipseThread implements Runnable {
 			}
 		} else {
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.FAILED);
-		}
+		} **/
 	}
 
 	/**
@@ -78,11 +79,6 @@ public class ReadEllipseThread implements Runnable {
 			}
 			logger.debug("Size of activities from Ellipse # {}", activities.size());
 			logger.debug("Time taken to read record from Ellipse # {} ", System.currentTimeMillis() - startTime);
-			/**
-			 * File file = new
-			 * File("C:\\test-config\\ReadActivityEllipseSet.csv");
-			 * CSVWriter.generateCSV(file, activities.values().toArray());
-			 **/
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS,
 					ReadProcessStatus.COMPLETED);
 		} catch (P6DataAccessException e) {

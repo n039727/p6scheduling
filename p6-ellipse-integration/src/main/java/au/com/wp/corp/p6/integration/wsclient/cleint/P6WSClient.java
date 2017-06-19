@@ -21,8 +21,6 @@ public interface P6WSClient {
 	public static final String AND = " AND ";
 	public static final String OR = " OR ";
 
-	public List<P6ActivityDTO> readActivities() throws P6ServiceException;
-
 	public void updateActivities(List<P6ActivityDTO> activities) throws P6ServiceException;
 
 	public boolean deleteActivities(List<P6ActivityDTO> activities) throws P6ServiceException;
@@ -34,5 +32,7 @@ public interface P6WSClient {
 	public Map<String, Integer> readResources() throws P6ServiceException;
 
 	public Map<String, Integer> readProjects() throws P6ServiceException;
+
+	public List<P6ActivityDTO> readActivities(List<String> workgroupList) throws P6ServiceException;
 	
 }

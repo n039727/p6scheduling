@@ -64,7 +64,7 @@ public class P6EllipseIntegrationControllerTest {
 	
 	@Test
 	public void testStartIntegartion_Error() throws Exception {
-		Mockito.when(p6EllipseService.startEllipseToP6Integration()).thenThrow(P6BusinessException.class);
+		Mockito.when(p6EllipseService.start()).thenThrow(P6BusinessException.class);
 		ResultActions actions = mockMvc.perform(get("/integration/p6-ellipse").contentType(MediaType.TEXT_PLAIN_VALUE))
 				.andExpect(status().isOk()).andExpect(content().string("NOTOK"));
 	}

@@ -46,7 +46,6 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	@Autowired
 	DateUtil dateUtil;
 
-
 	@Override
 	public Map<String, Integer> readProjects() throws P6ServiceException {
 		logger.info("Calling project service in P6 Webservice ...");
@@ -57,19 +56,17 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 		final Holder<List<Project>> projects = projectService.run();
 		logger.debug("list of projects from P6#{}", projects);
-		
+
 		Map<String, Integer> projectsMap = new HashMap<>();
-		if ( null == projects || projects.value == null)
-		{
+		if (null == projects || projects.value == null) {
 			throw new P6ServiceException("No projects available in P6");
 		}
-		for ( Project project: projects.value)
+		for (Project project : projects.value)
 			projectsMap.put(project.getName(), project.getObjectId());
 		return projectsMap;
 
 	}
-	
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -78,11 +75,31 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * corp.p6.model.ActivitySearchRequest)
 	 */
 	@Override
-	public List<P6ActivityDTO> readActivities() throws P6ServiceException {
+	public List<P6ActivityDTO> readActivities(final List<String> workgroupList) throws P6ServiceException {
 		CacheManager.getWsHeaders().remove("WS_COOKIE");
 		logger.info("Calling activity service in P6 Webservice ...");
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
+
+		final StringBuilder filter = new StringBuilder();
+
+		if (null != workgroupList) {
+			int i = 0;
+			if ( ! workgroupList.isEmpty()) {
+				filter.append("PrimaryResourceId IN ");
+				filter.append("(");
+				for (String crew : workgroupList) {
+					if (i == 0) {
+						filter.append("'" + crew + "'");
+					} else {
+						filter.append(",'" + crew + "'");
+					}
+					i++;
+				}
+				filter.append(")");
+			}
+
+		}
 
 		final ActivityServiceCall<List<Activity>> activityService = new ReadActivityServiceCall(trackingId, null);
 
@@ -247,7 +264,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @throws P6ServiceException
 	 */
 	private Boolean getAuthenticated(final RequestTrackingId trackingId) throws P6ServiceException {
-		if (CacheManager.getWsHeaders().isEmpty() || null == CacheManager.getWsHeaders().get(WS_COOKIE) ) {
+		if (CacheManager.getWsHeaders().isEmpty() || null == CacheManager.getWsHeaders().get(WS_COOKIE)) {
 			AuthenticationService authService = new AuthenticationService(trackingId);
 			Holder<Boolean> holder = authService.run();
 			logger.debug("Is authentication successfull ??  {} ", holder.value);
@@ -369,7 +386,8 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			if (null != p6ActivityDTO.getActivityStatus() && !p6ActivityDTO.getActivityStatus().trim().isEmpty())
 				activity.setStatus(p6ActivityDTO.getActivityStatus());
 
-			//logger.debug("plan start date for p6 ## {}", p6ActivityDTO.getPlannedStartDate());
+			// logger.debug("plan start date for p6 ## {}",
+			// p6ActivityDTO.getPlannedStartDate());
 			if (null != p6ActivityDTO.getPlannedStartDate() && !p6ActivityDTO.getPlannedStartDate().trim().isEmpty()) {
 				final XMLGregorianCalendar plannedStartDate = dateUtil
 						.convertStringToXMLGregorianClalander(p6ActivityDTO.getPlannedStartDate());
@@ -399,11 +417,13 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			}
 
 			activity.setProjectObjectId(p6ActivityDTO.getProjectObjectId());
-			//logger.debug("p6ActivityDTO.getActivityObjectId() #{} ", p6ActivityDTO.getActivityObjectId());
+			// logger.debug("p6ActivityDTO.getActivityObjectId() #{} ",
+			// p6ActivityDTO.getActivityObjectId());
 			if (p6ActivityDTO.getActivityObjectId() != null)
 				activity.setObjectId(p6ActivityDTO.getActivityObjectId());
 
-			//logger.debug("PrimaryResorceObjectId # {} ", p6ActivityDTO.getPrimaryResorceObjectId());
+			// logger.debug("PrimaryResorceObjectId # {} ",
+			// p6ActivityDTO.getPrimaryResorceObjectId());
 			if (p6ActivityDTO.getPrimaryResorceObjectId() != 0)
 				activity.setPrimaryResourceObjectId(
 						objectFactory.createActivityPrimaryResourceObjectId(p6ActivityDTO.getPrimaryResorceObjectId()));
@@ -417,8 +437,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 						objectFactory.createActivityRemainingDuration(p6ActivityDTO.getRemainingDuration()));
 			}
 
-			activity.setPlannedLaborUnits(p6ActivityDTO.getEstimatedLabourHours());
-			
+			if (p6ActivityDTO.getEstimatedLabourHours() != -1)
+				activity.setPlannedLaborUnits(p6ActivityDTO.getEstimatedLabourHours());
+
 			_activities.add(activity);
 
 			activityMap.put(p6ActivityDTO.getActivityId(), p6ActivityDTO);
