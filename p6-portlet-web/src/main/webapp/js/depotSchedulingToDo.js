@@ -134,11 +134,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
 			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== ctrl.emptyStr){
-				wo.successSavedMsg = "Depot To Do Saved Successfully";
-			}else{
-				wo.successSavedMsg = "Work order task has been saved successfully";
-			}
+			wo.successSavedMsg = "Depot To Do Saved Successfully";
 			wo.savedMsgVisible = true;
 			
 		}, null);
