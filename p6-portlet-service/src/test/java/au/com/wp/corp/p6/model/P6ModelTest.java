@@ -18,6 +18,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import au.com.wp.corp.p6.model.elipse.MaterialRequisition;
+import au.com.wp.corp.p6.model.elipse.MaterialRequisitionPK;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
 /**
@@ -307,6 +309,54 @@ public class P6ModelTest {
 		Assert.assertEquals("P6_TEM_LEDR_SCHDLR", functionAccess.getRoleNam());
 		Assert.assertEquals("Y", functionAccess.getWriteFlg());
 		Assert.assertEquals(portalFunction, functionAccess.getPortalFunction());
+	
+	}
+	
+	@Test
+	public void testMaterialRequisition(){
+		
+		MaterialRequisition matReq = new MaterialRequisition();
+		MaterialRequisitionPK matReqPk = new MaterialRequisitionPK();
+		
+		matReqPk.setAllocCount("01");
+		matReqPk.setDstrctCode("CORP");
+		matReqPk.setReq232Type("I");
+		matReqPk.setRequisitionNo("A36110  0000");
+		matReq.setAcctCodeType("1");
+		matReq.setAllocDstrct("CORP");
+		matReq.setAllocPc(new BigDecimal(100));
+		matReq.setAllocValInv(new BigDecimal(0));
+		matReq.setCostDstrctCde("CORP");
+		matReq.setEquipNo("000001060331");
+		matReq.setExpElement("358");
+		matReq.setFcastToGo(new BigDecimal(0));
+		matReq.setGlAccount("602424153000");
+		matReq.setId(matReqPk);
+		matReq.setProjectNo("projectNo");
+		matReq.setSubledgerAcct("subledgerAcct");
+		matReq.setSubledgerType("subledgerType");
+		matReq.setWorkOrder("00939128");
+		matReq.setAllocValRcv(new BigDecimal(0));
+
+		Assert.assertEquals("01", matReq.getId().getAllocCount());
+		Assert.assertEquals("CORP", matReq.getId().getDstrctCode());
+		Assert.assertEquals("I", matReq.getId().getReq232Type());
+		Assert.assertEquals("A36110  0000", matReq.getId().getRequisitionNo());
+		Assert.assertEquals("1",matReq.getAcctCodeType());
+		Assert.assertEquals("CORP",matReq.getAllocDstrct());
+		Assert.assertEquals(new BigDecimal(100),matReq.getAllocPc());
+		Assert.assertEquals(new BigDecimal(0),matReq.getAllocValInv());
+		Assert.assertEquals("CORP" ,matReq.getCostDstrctCde());
+		Assert.assertEquals("000001060331",matReq.getEquipNo());
+		Assert.assertEquals("358", matReq.getExpElement());
+		Assert.assertEquals(new BigDecimal(0), matReq.getFcastToGo());
+		Assert.assertEquals("602424153000", matReq.getGlAccount());
+		Assert.assertEquals("projectNo",matReq.getProjectNo());
+		Assert.assertEquals("subledgerAcct",matReq.getSubledgerAcct());
+		Assert.assertEquals("subledgerType", matReq.getSubledgerType());
+		Assert.assertEquals("00939128",matReq.getWorkOrder());
+		Assert.assertEquals(new BigDecimal(0),matReq.getAllocValRcv());
+
 	
 	}
 }
