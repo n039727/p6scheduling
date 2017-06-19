@@ -406,7 +406,6 @@ public class P6SchedulingBusinessServiceTest {
 		for (WorkOrder _workOrder : workOrders) {
 			Assert.assertEquals("W11", _workOrder.getWorkOrders().get(0));
 			Assert.assertEquals("CRW1", _workOrder.getCrewNames());
-			System.out.println("exec pakg "+_workOrder.getExctnPckgName());
 			Assert.assertEquals("09-05-2017_064556556", _workOrder.getExctnPckgName());
 		}
 

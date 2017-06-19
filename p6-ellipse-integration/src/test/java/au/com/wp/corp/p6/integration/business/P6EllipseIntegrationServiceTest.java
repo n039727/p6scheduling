@@ -935,7 +935,7 @@ public class P6EllipseIntegrationServiceTest {
 		method.setAccessible(true);
 		P6ActivityDTO p6AtivityDTO = (P6ActivityDTO) method.invoke(p6EllipseIntegrationService, p6Activity,
 				ellipseActivity, projectWorkGropMap);
-		System.out.println(ellipseActivity.getPlannedStartDate());
+		
 		Assert.assertEquals(ellipseActivity.getWorkOrderTaskId(), p6AtivityDTO.getActivityId());
 		Assert.assertNotEquals(ellipseActivity.getWorkGroup(), p6AtivityDTO.getWorkGroup());
 		Assert.assertEquals(ellipseActivity.getWorkOrderDescription(), p6AtivityDTO.getActivityName());
@@ -1617,7 +1617,7 @@ public class P6EllipseIntegrationServiceTest {
 		Mockito.when(p6WSClient.readActivities()).thenReturn(p6Activities);
 
 		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration();
-		System.out.println(CacheManager.getEllipseActivitiesMap());
+		
 		Assert.assertEquals(1, deleteActivites.size());
 
 		for (P6ActivityDTO p6AtivityDTO : deleteActivites) {
