@@ -309,4 +309,16 @@ public class P6ModelTest {
 		Assert.assertEquals(portalFunction, functionAccess.getPortalFunction());
 	
 	}
+	@Test
+	public void testGroupRoleMapping(){
+		
+		GroupRoleMapping groupRoleMapping = new GroupRoleMapping();
+		groupRoleMapping.setGrpNam("test group");
+		groupRoleMapping.setGrpRoleId(1);
+		groupRoleMapping.setRoleNam("P6_TEM_LEDR_SCHDLR");
+		Assert.assertEquals(1, groupRoleMapping.getGrpRoleId());
+		Assert.assertEquals("P6_TEM_LEDR_SCHDLR", groupRoleMapping.getRoleNam());
+		Assert.assertEquals("test group", groupRoleMapping.getGrpNam());
+	
+	}
 }
