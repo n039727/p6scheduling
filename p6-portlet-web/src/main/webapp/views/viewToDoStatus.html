@@ -74,7 +74,8 @@
 														<option>Completed</option>
 												</select></td>
 												<td style="position: relative;"><span
-													style="width: 100%; height: 100%; position: absolute; word-wrap: break-word; overflow-y: scroll;"
+													class="ng-binding form-control"
+													style="position: absolute; word-wrap: break-word; overflow-y: scroll;"
 													ng-click="$ctrl.showPopup(todo)"
 													ng-bind-html="todo.supportingDoc"></span></td>
 											</tr>
@@ -121,7 +122,8 @@
 														<option>Completed</option>
 												</select></td>
 												<td style="position: relative"><span
-													style="width: 100%; height: 100%; position: absolute; word-wrap: break-word; overflow-y: scroll;"
+													class="ng-binding form-control"
+													style="position: absolute; word-wrap: break-word; overflow-y: scroll;"
 													ng-click="$ctrl.showPopup(todo)"
 													ng-bind-html="todo.supportingDoc"></span></td>
 											</tr>
@@ -135,7 +137,8 @@
 								<div ng-show="wo.savedMsgVisible" class="col-md-offset-8 ">
 									<p class="success-message">{{wo.successSavedMsg}}</p>
 								</div>
-								<div class="col-md-offset-9 col-md-2" style="padding: 5px" ng-if="$ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'">
+								<div class="col-md-offset-9 col-md-2" style="padding: 5px"
+									ng-if="$ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'">
 									<button id="save-to-do-1" class="btn btn-warning btn-block"
 										ng-click="$ctrl.saveToDo(wo)">
 										<h4>

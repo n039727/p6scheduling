@@ -369,7 +369,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			if (null != p6ActivityDTO.getActivityStatus() && !p6ActivityDTO.getActivityStatus().trim().isEmpty())
 				activity.setStatus(p6ActivityDTO.getActivityStatus());
 
-			logger.debug("plan start date for p6 ## {}", p6ActivityDTO.getPlannedStartDate());
+			//logger.debug("plan start date for p6 ## {}", p6ActivityDTO.getPlannedStartDate());
 			if (null != p6ActivityDTO.getPlannedStartDate() && !p6ActivityDTO.getPlannedStartDate().trim().isEmpty()) {
 				final XMLGregorianCalendar plannedStartDate = dateUtil
 						.convertStringToXMLGregorianClalander(p6ActivityDTO.getPlannedStartDate());
@@ -399,11 +399,11 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			}
 
 			activity.setProjectObjectId(p6ActivityDTO.getProjectObjectId());
-			logger.debug("p6ActivityDTO.getActivityObjectId() #{} ", p6ActivityDTO.getActivityObjectId());
+			//logger.debug("p6ActivityDTO.getActivityObjectId() #{} ", p6ActivityDTO.getActivityObjectId());
 			if (p6ActivityDTO.getActivityObjectId() != null)
 				activity.setObjectId(p6ActivityDTO.getActivityObjectId());
 
-			logger.debug("PrimaryResorceObjectId # {} ", p6ActivityDTO.getPrimaryResorceObjectId());
+			//logger.debug("PrimaryResorceObjectId # {} ", p6ActivityDTO.getPrimaryResorceObjectId());
 			if (p6ActivityDTO.getPrimaryResorceObjectId() != 0)
 				activity.setPrimaryResourceObjectId(
 						objectFactory.createActivityPrimaryResourceObjectId(p6ActivityDTO.getPrimaryResorceObjectId()));

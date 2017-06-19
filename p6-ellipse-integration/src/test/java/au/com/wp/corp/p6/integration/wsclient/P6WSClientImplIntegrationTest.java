@@ -47,7 +47,7 @@ public class P6WSClientImplIntegrationTest {
 	
 	@Test
 	public void test_5_readResource() throws P6BusinessException {
-		System.out.println("read resource test in P6");
+		
 		p6serviceImpl.readUDFTypeMapping();
 		p6serviceImpl.readProjectWorkgroupMapping();
 		List<P6ActivityDTO> activities = new ArrayList<>();
@@ -78,23 +78,16 @@ public class P6WSClientImplIntegrationTest {
 		
 		Map<String, Integer> projWorkgroupDTOs = p6WsclientImpl.readResources();
 		
-		System.out.println("resource size from P6 == " +  projWorkgroupDTOs.size());
-		
-		System.out.println("resource id from P6 == " +  projWorkgroupDTOs.get("MONT1"));
-		
-		
+				
 		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
-		System.out.println("resourceMap ==  " + resourceMap.size());
 		
-		System.out.println("reasource id = " + resourceMap.get("MONT1").getPrimaryResourceObjectId());
-
 	}
 	
 	
 	
 	@Test
 	public void test_1_CreateActivitiesP6() throws P6BusinessException {
-		System.out.println("Create activity test in P6");
+		
 		p6serviceImpl.readUDFTypeMapping();
 		p6serviceImpl.readProjectWorkgroupMapping();
 		List<P6ActivityDTO> activities = new ArrayList<>();
@@ -125,16 +118,11 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setActualStartDate("2017-07-06T08:00:00");
 		activityDTO.setActualFinishDate("2017-07-08T08:00:00");
 		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
-		System.out.println("resourceMap ==  " + resourceMap.size());
-		
-		System.out.println("reasource id = " + resourceMap.get("MONT1").getPrimaryResourceObjectId());
 		
 		activityDTO.setPrimaryResorceObjectId(resourceMap.get("MONT1").getPrimaryResourceObjectId());
 
 		activities.add(activityDTO);
-		
-		
-		
+
 		p6WsclientImpl.createActivities(activities);
 
 	}
@@ -142,7 +130,6 @@ public class P6WSClientImplIntegrationTest {
 	@Test
 	public void test_2_UpdateActivitiesP6() throws P6BusinessException {
 		
-		System.out.println("Update activity test in P6");
 		p6serviceImpl.readUDFTypeMapping();
 		p6Activities = p6WsclientImpl.readActivities();
 		
@@ -178,7 +165,6 @@ public class P6WSClientImplIntegrationTest {
 		{
 			if ( activityDTO.getActivityId().equals(activityDTO2.getActivityId())) {
 			activityDTO.setActivityObjectId(activityDTO2.getActivityObjectId());
-			System.out.println("activity object id  == "+ activityDTO.getActivityObjectId());
 			break;
 			}
 		}
@@ -243,8 +229,6 @@ public class P6WSClientImplIntegrationTest {
 	public void test_6_ReadProjects() throws P6ServiceException{
 		Map<String, Integer> projects = p6WsclientImpl.readProjects();
 		for ( String key :  projects.keySet()){
-			System.out.println("project name=="+ key);
-			System.out.println("project id =="+projects.get(key));
 			Assert.assertNotNull(key);
 			Assert.assertNotNull(projects.get(key));
 		}

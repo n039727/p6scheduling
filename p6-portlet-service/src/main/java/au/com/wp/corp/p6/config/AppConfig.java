@@ -52,11 +52,6 @@ public class AppConfig {
 	public DataSource getElipsDataSource() {
 		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
 		return dataSourceLookup.getDataSource(environment.getProperty("elips.portal.jndi.datasource"));
-		/*DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setUrl("jdbc:oracle:thin:@oracle-dwdev:1521:dwdev");
-		dataSource.setUsername("NELLDAPI7");
-		dataSource.setPassword("Gfsdhy76657sdsd");
-		return dataSource;*/
 	}
 	
 	@Autowired
