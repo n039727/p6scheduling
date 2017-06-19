@@ -223,7 +223,6 @@ function dynamicToDoSetterController($scope) {
 
 				}else{
 					ctrl.isAddError = false;
-					return true;
 				}
 			}
 		}else{
