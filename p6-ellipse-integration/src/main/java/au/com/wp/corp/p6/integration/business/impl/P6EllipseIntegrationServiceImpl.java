@@ -564,7 +564,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * status in P6 will not be updated and it is left as it is else update
 		 * the user status from Ellipse
 		 */
-		logger.debug("Planned start date in ellipse # {}", ellipseActivity.getPlannedStartDate());
+		//logger.debug("Planned start date in ellipse # {}", ellipseActivity.getPlannedStartDate());
 		if ((!ellipseActivity.getTaskUserStatus().equals(P6EllipseWSConstants.RR)
 				&& !dateUtil.isCurrentDate(ellipseActivity.getPlannedStartDate()))
 				|| (ellipseActivity.getTaskUserStatus().equals(P6EllipseWSConstants.RR)
