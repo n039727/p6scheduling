@@ -24,8 +24,7 @@ public class AuthenticationTest {
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
 		
 		List<String> crews = new ArrayList<>();
-		//crews.add("MOST5");
-		//crews.add("MOST8");
+		
 		searchRequest.setCrewList(crews);
 		searchRequest.setPlannedStartDate("2017-05-25");
 		
@@ -40,7 +39,7 @@ public class AuthenticationTest {
 			sb.append("\n Work Order Id = "+workOrder.getWorkOrderId());
 			sb.append("\n Assigned Crew = "+ workOrder.getCrewNames());
 			sb.append("\n*******************************");
-			System.out.println(sb.toString());
+			
 		}
 		
 		
@@ -63,12 +62,10 @@ public class AuthenticationTest {
 			sb.append("\n Project Object Id = "+ activity.getProjectObjectId());
 			sb.append("\n Primary Resource Id = "+ activity.getPrimaryResourceId());			
 			sb.append("\n*******************************");
-			System.out.println(sb.toString());
+			
 		}
 		**/
-		//05269647002
-		//5402166
-		
+
 		
 	}
 
