@@ -32,7 +32,9 @@ public class P6EllipseIntegrationController {
 	@RequestMapping(value = "/p6-ellipse", produces = MediaType.TEXT_PLAIN_VALUE)
 	public String startIntegartion (){
 		try {
-			p6EllipseService.startEllipseToP6Integration();
+			boolean status = p6EllipseService.start();
+			if ( ! status )
+				return STATUS_FAILED;
 		} catch (P6BaseException e) {
 			logger.error("An error occurs during batch processing - ",e);
 			return STATUS_FAILED;
