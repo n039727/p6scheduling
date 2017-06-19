@@ -182,7 +182,6 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		List<ExecutionPackageDTO> execPkgdtos = new ArrayList<ExecutionPackageDTO>();
 		execPkgdtos.add(execPackgDTO);
 		executionPackageDTOFoP6List = execPkgdtos;
-		//updateP6ForExecutionPackage();
 		return execPackgDTO;
 
 	}
@@ -201,23 +200,12 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			List<WorkOrder> workOrders = executionPackageDTOForP6.getWorkOrders();
 			if (workOrders != null) {
 				for (WorkOrder workOrder : workOrders) {
-					/*
-					 * <v1:Text>18-05-2017_023711511</v1:Text> <!--Optional:-->
-					 * <v1:UDFTypeDataType>Text</v1:UDFTypeDataType>
-					 * <!--Optional:-->
-					 * <v1:UDFTypeObjectId>5920</v1:UDFTypeObjectId>
-					 * <!--Optional:-->
-					 * <v1:UDFTypeSubjectArea>Activity</v1:UDFTypeSubjectArea>
-					 * <!--Optional:--> <v1:UDFTypeTitle>Execution
-					 * Grouping</v1:UDFTypeTitle>
-					 */
-
+					
 					ExecutionPackageCreateRequest executionPackageCreateRequest = new ExecutionPackageCreateRequest();
 					Integer foreignObjId = p6wsClient.getWorkOrderIdMap().get(workOrder.getWorkOrderId());
 					executionPackageCreateRequest.setForeignObjectId(foreignObjId);
 					executionPackageCreateRequest.setText(executionPackageDTOForP6.getExctnPckgName());
 					executionPackageCreateRequest.setUdfTypeDataType(P6Constant.TEXT);
-					//executionPackageCreateRequest.setUdfTypeObjectId(5920);
 					executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.ACTIVITY);
 					executionPackageCreateRequest.setUdfTypeTitle(P6Constant.EXECUTION_GROUPING);
 					request.add(executionPackageCreateRequest);
@@ -277,7 +265,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	}
 
 	private String createExceutionPackageId() {
-		//final String execPckgId = dateUtils.getCurrentDateWithTimeStamp();
+		
 		final String execPckgId = dateUtils.getCurrentDateWithTimeStampNoSeparator();
 		logger.info("execution package id has been created # {} ", execPckgId);
 		return execPckgId;
