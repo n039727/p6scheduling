@@ -59,12 +59,12 @@ public class MaterialRequisitionServiceTest {
 		List<MaterialRequisition> resultList = new ArrayList<MaterialRequisition>();
 		resultList.add(prepareMetReq("EC000158", "12345678"));
 		resultList.add(prepareMetReq("EC000158", "12345679"));
-		resultList.add(prepareMetReq("EC000132", "1234567"));
+		resultList.add(prepareMetReq("EC000132", "1234567 0000"));
 		String[] workOrderIds = re.getWorkOrderList().toArray(new String[re.getWorkOrderList().size()]);
 		Mockito.when(dao.listMetReq(workOrderIds)).thenReturn(resultList);
 		MaterialRequisitionDTO result = service.retriveMetReq(re);
 		Assert.assertNotNull(result.getMaterialRequisitionMap());
-	}
+	} 
 	private MaterialRequisition prepareMetReq(String wo, String reqNo){
 		MaterialRequisition marteq1 = new MaterialRequisition();
 		MaterialRequisitionPK pk = new MaterialRequisitionPK();

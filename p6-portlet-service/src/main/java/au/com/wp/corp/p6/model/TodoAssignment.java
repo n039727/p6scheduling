@@ -21,12 +21,6 @@ import javax.persistence.TemporalType;
 @NamedQuery(name = "TodoAssignment.findAll", query = "SELECT t FROM TodoAssignment t")
 public class TodoAssignment implements Serializable {
 	private static final long serialVersionUID = 1L;
-	/**
-	 * @Id @SequenceGenerator(name="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR",
-	 *     sequenceName="ASIGNMT_ID" , allocationSize=1)
-	 * @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TODO_ASSIGNMENT_ASIGNMTID_GENERATOR") @Column(name="ASIGNMT_ID")
-	 *                                                   private long asignmtId;
-	 **/
 	@EmbeddedId
 	private TodoAssignmentPK todoAssignMentPK = new TodoAssignmentPK();
 
@@ -54,17 +48,6 @@ public class TodoAssignment implements Serializable {
 	@Column(name = "SUPRTNG_DOC_LNK")
 	private String suprtngDocLnk;
 
-	// bi-directional many-to-one association to ExecutionPackage
-	//@ManyToOne
-	//@JoinColumn(name = "EXCTN_PCKG_ID")
-	//private ExecutionPackage executionPackage;
-
-
-	// bi-directional many-to-one association to TodoTemplate
-	//@ManyToOne
-	//@JoinColumn(name = "TMPLT_ID", insertable = false, updatable = false)
-//	private TodoTemplate todoTemplate;
-
 	/**
 	 * @return the todoAssignMentPK
 	 */
@@ -79,6 +62,9 @@ public class TodoAssignment implements Serializable {
 		this.todoAssignMentPK = todoAssignMentPK;
 	}
 
+	/**
+	 * Empty constructor
+	 */
 	public TodoAssignment() {
 	}
 
@@ -146,7 +132,7 @@ public class TodoAssignment implements Serializable {
 		this.suprtngDocLnk = suprtngDocLnk;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -157,7 +143,7 @@ public class TodoAssignment implements Serializable {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

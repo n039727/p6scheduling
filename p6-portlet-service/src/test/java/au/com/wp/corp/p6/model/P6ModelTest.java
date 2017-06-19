@@ -265,6 +265,17 @@ public class P6ModelTest {
 		todoAssignment.setTodoAssignMentPK(todoAssignMentPK);
 		todoAssignment.setSuprtngDocLnk("Test docs");
 		
+		TodoAssignment todoAssignment1 = new TodoAssignment();
+		todoAssignment1.setCmts("Test comments");
+		todoAssignment1.setCrtdTs(new Timestamp(time));
+		todoAssignment1.setCrtdUsr("Test User");
+		todoAssignment1.setLstUpdtdTs(new Timestamp(time));
+		todoAssignment1.setLstUpdtdUsr("Test User1");
+		todoAssignment1.setReqdByDt(date);
+		todoAssignment1.setStat("Completed");
+		TodoAssignmentPK todoAssignMentPK1 = new TodoAssignmentPK();
+		todoAssignment1.setTodoAssignMentPK(todoAssignMentPK1);
+		todoAssignment1.setSuprtngDocLnk("Test docs");
 		
 		Assert.assertEquals("Test comments", todoAssignment.getCmts());
 		Assert.assertEquals(time, todoAssignment.getCrtdTs().getTime());
@@ -275,6 +286,7 @@ public class P6ModelTest {
 		Assert.assertEquals("Test docs", todoAssignment.getSuprtngDocLnk());
 		Assert.assertEquals(todoAssignMentPK, todoAssignment.getTodoAssignMentPK());
 		Assert.assertEquals("Test User1", todoAssignment.getLstUpdtdUsr());
+		Assert.assertTrue(todoAssignment.equals(todoAssignment1));
 	}
 	
 	@Test
