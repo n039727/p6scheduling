@@ -56,6 +56,7 @@ public class P6EllipseIntegrationControllerTest {
 
 	@Test
 	public void testStartIntegartion() throws Exception {
+		Mockito.when(p6EllipseService.start()).thenReturn(true);
 		ResultActions actions = mockMvc.perform(get("/integration/p6-ellipse").contentType(MediaType.TEXT_PLAIN_VALUE))
 				.andExpect(status().isOk()).andExpect(content().string("OK"));
 		

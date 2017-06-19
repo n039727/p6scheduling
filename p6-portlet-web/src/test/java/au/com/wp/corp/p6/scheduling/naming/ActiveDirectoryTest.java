@@ -22,7 +22,7 @@ public class ActiveDirectoryTest {
 	 */
 	public static void main(String[] args) throws NamingException {
 
-		ActiveDirectoryConnector connector = new ActiveDirectoryConnector("n039126","Welcome1","ads.westernpower.com.au");
+		ActiveDirectoryConnector connector = new ActiveDirectoryConnector("n039126","XXXXXXX","ads.westernpower.com.au");
 		NamingEnumeration<SearchResult> result = connector.searchUser("n039049", "username", null);
 		
 		if(result.hasMore()) {
