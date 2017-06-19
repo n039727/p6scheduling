@@ -8,20 +8,15 @@ import java.util.Map;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import au.com.wp.corp.p6.dataservice.ResourceDetailDAO;
-import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.model.ResourceDetail;
 
 @Repository
 public class ResourceDetailDAOImpl implements ResourceDetailDAO {
 
-	private static final Logger logger = LoggerFactory.getLogger(TodoDAO.class);
-	
 	private volatile Map<String, List<String>> depotCrewMap = null;
 	@Autowired 
 	SessionFactory sessionFactory;

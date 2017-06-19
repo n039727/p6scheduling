@@ -42,13 +42,13 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.dataservice.WorkOrderDAO#fetchWorkOrdersForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchInput)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public List<Task> fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) throws P6DataAccessException {
 		logger.debug("sessionfactory initialized ====={}",sessionFactory);
 		
-        @SuppressWarnings("unchecked")
-		List<Task> listTask = null;
+        List<Task> listTask = null;
 		try {
 			Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Task.class);
 			
@@ -68,12 +68,12 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
         return listTask;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public List<Task> fetchTasks(WorkOrderSearchRequest query, List<WorkOrder> listWOData) throws P6DataAccessException {
 		logger.debug("sessionfactory initialized ====={}", sessionFactory);
 
-		@SuppressWarnings("unchecked")
 		List<Task> listTask = null;
 		try {
 			Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Task.class);
@@ -121,10 +121,10 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 				for (TodoAssignment todo: task.getTodoAssignments()) {
 					if (todo.getCrtdTs() == null) {
 						todo.setCrtdTs(new Timestamp(currentTime));
-						todo.setCrtdUsr(task.getCrtdUsr()); //TODO update the user name here
+						todo.setCrtdUsr(task.getCrtdUsr()); // update the user name here
 					}
 					todo.setLstUpdtdTs(new Timestamp(currentTime));
-					todo.setLstUpdtdUsr(task.getLstUpdtdUsr()); //TODO update the user name here
+					todo.setLstUpdtdUsr(task.getLstUpdtdUsr()); // update the user name here
 				}
 			}
 			
