@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory;
 @Aspect
 public class P6PortalLoggingAspect {
 	private static final Logger logger = LoggerFactory.getLogger(P6PortalLoggingAspect.class);
-	/*   @Pointcut("within(au.com.wp.corp.p6..*) && !within(au.com.wp.corp.p6.config.AppConfig*) ")
-	    private void logAround(){}*/
-
+	
 	    // Use "logAround" pointcut declaration in the advice
 	   @Before("within(au.com.wp.corp.p6..*) && !within(au.com.wp.corp.p6.config..*) && !within(au.com.wp.corp.p6.utils.DateUtils*) "
 	   		+ "&& !within(au.com.wp.corp.p6.dto..*)")
