@@ -43,8 +43,6 @@ public class UserDetailsController {
 
 	@RequestMapping(value= "/user/name", method = RequestMethod.GET)
 	public UserDetails getUserName ( HttpServletRequest request ){
-		 /*Map<String, String>  userName = new HashMap<>();
-		 userName.put("userName", request.getRemoteUser());*/
 		Principal userPrincipal = request.getUserPrincipal();
 		List<String> roleNames = userRoleExtractor.extract(request);
 		List<UserAuthorizationDTO> userAccessList = authService.getAccess(roleNames);
