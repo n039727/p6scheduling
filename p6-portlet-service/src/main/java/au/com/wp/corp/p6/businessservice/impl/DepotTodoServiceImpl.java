@@ -147,7 +147,6 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				todoMap.put(todo, groupedTodoAssignment);
 			});
 		
-		//Map<String,ToDoAssignment> mapOfGroupedTodoRecord = getGroupedTodowithWorkOrders(mapOfToDoIdWorkOrders);
 		List<ToDoAssignment> listOfTodoAssignments = new ArrayList<ToDoAssignment>(todoMap.values());
 		viewToDoStatus.setTodoAssignments(listOfTodoAssignments);
 		return viewToDoStatus; 
@@ -320,9 +319,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			if(null != executionPackage){
 				executionPackage.setExecDeptCmt(workOrder.getDepotToDoComment());
 				dbTask.setExecutionPackage(executionPackage);
-			} /*else {
-				dbTask.setDeptCmt(workOrder.getDepotToDoComment());
-			}*/
+			} 
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		}
 		String  userName = "Test User";

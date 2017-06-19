@@ -88,7 +88,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	ResourceDetailDAO resourceDetailDAO;
 
 	Map<String, List<String>> depotCrewMap = new HashMap<String,List<String>>();
-	List<WorkOrder> listWOData = null;  //1
+	List<WorkOrder> listWOData = null;  
 	List<Task> tasksInDb = null;
 	@Autowired
     private IExecutionPackageService executionPackageService;
@@ -389,8 +389,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			} catch (P6ServiceException e) {
 				parseException(e);
 			}
-			//	workOrderIds.clear();
-			//workOrderIds = null;
 			
 		}
 		clearApplicationMemory();
@@ -484,7 +482,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					}else{*/
 						removExecutionPackageFromTask(dbTask);
 					//}
-					//deletetedExecPkagList.add(workOrder.getWorkOrderId());
 				}
 			}
 		}
@@ -537,17 +534,15 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					Date plannedStartDate = null;
 					Date workOrderSchedDate = null;
 					if(taskAttahced.getSchdDt() != null){
-						//plannedStartDate = dateUtils.toDateFromYYYY_MM_DD(taskAttahced.getSchdDt().toString());
 						plannedStartDate = taskAttahced.getSchdDt();
 					}
 
 					String crewAssignedToTask = taskAttahced.getCrewId();
 					logger.debug("crew assigned to this task{}", crewAssignedToTask);
 					String executionPackageName = executionPackage.getExctnPckgNam();
-					//if (strNames != null) {
 					Date dateOfExectnPkg = null;
 					if(executionPackage.getScheduledStartDate() != null){
-						//dateOfExectnPkg = dateUtils.toDateFromYYYY_MM_DD(executionPackage.getScheduledStartDate().toString());
+						
 						dateOfExectnPkg = executionPackage.getScheduledStartDate();
 					}
 					logger.debug("planned start date {} for task {} for execution package {}", plannedStartDate, taskAttahced.getTaskId(),executionPackageName);
@@ -609,11 +604,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		ResourceDTO resourceDTO = new ResourceDTO();
 		resourceDTO.setDepotCrewMap(depotCrewMap);
 
-		/*ResourceSearchRequest resourceSearchRequest = new ResourceSearchRequest();
-		resourceSearchRequest.setResourceType("Labor");
-		List<Crew> crews = retrieveCrews(resourceSearchRequest);*/
 		MetadataDTO metadataDTO = new MetadataDTO();
-		//metadataDTO.setCrews(crews);
 		metadataDTO.setToDoItems(toDos);
 		metadataDTO.setResourceDTO(resourceDTO);
 		return metadataDTO;
@@ -624,7 +615,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) throws P6BusinessException {
 
 		List<Task> tasks = null;
-		//Map<String, ViewToDoStatus> taskIdWOMap = new HashMap<String, ViewToDoStatus>();
+		
 		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> mapOfToDoIdWorkOrders = new HashMap<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>>();
 		ExecutionPackage executionPackage = null;
 		ViewToDoStatus returnedVal = new ViewToDoStatus();
@@ -684,8 +675,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 							workOrderId);
 					List<au.com.wp.corp.p6.dto.ToDoAssignment> assignments = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
 					assignments.add(assignmentDTO);
-					/*List<String> listOfWorkOrders = new ArrayList<String>();
-					listOfWorkOrders.add(workOrderId)*/;
+					
 					mapOfToDoIdWorkOrders.put(toDoName, assignments);
 				}
 				assignmentDTOs.add(assignmentDTO);
@@ -851,10 +841,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					deleteToDos.add(allDbToDo);
 				}
 				updatedTask.getTodoAssignments().removeAll(deleteToDos);
-				/*
-				 * for (TodoAssignment deleteDbToDo : deleteToDos){
-				 * updatedTask.getTodoAssignments().remove(deleteDbToDo); }
-				 */
+				
 			}
 		}
 
@@ -1043,7 +1030,6 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	private void mergeToDoAssignment(TodoAssignment assignment, ToDoAssignment assignmentDTO) throws ParseException {
 		if(!("".equalsIgnoreCase(assignmentDTO.getReqByDate()))){
 			logger.debug("updating req by date {}",assignmentDTO.getReqByDate());
-			//String reqByDate = dateUtils.convertDateDDMMYYYY(assignmentDTO.getReqByDate(),"/");
 			assignment.setReqdByDt(dateUtils.toDateFromDD_MM_YYYY(assignmentDTO.getReqByDate()));
 		}
 		assignment.setCmts(assignmentDTO.getComment());
