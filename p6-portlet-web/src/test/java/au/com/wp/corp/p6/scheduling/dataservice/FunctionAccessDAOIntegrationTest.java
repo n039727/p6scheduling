@@ -79,7 +79,7 @@ public class FunctionAccessDAOIntegrationTest {
 		List<FunctionAccess> accesses = functionAccessDAO.getAccess(Arrays.asList("P6_TEM_LEDR_SCHDLR"));
 		if(accesses != null){
 			//for(FunctionAccess access:accesses){
-			FunctionAccess access = accesses.get(1);
+			FunctionAccess access = accesses.get(0);
 				Assert.assertEquals("View_To_Do_Status", access.getPortalFunction().getFuncNam());
 				Assert.assertEquals("N",access.getWriteFlg());
 			//}
