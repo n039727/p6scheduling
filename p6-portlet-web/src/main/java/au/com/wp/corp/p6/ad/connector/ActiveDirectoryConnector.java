@@ -6,7 +6,6 @@ package au.com.wp.corp.p6.ad.connector;
 import java.util.Properties;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -33,15 +32,10 @@ public class ActiveDirectoryConnector {
 	private String[] returnAttributes = { "sAMAccountName", "givenName", "cn", "mail" };
 	private String domainBase;
 	private String baseFilter = "(&((&(objectCategory=Person)(objectClass=User)))";
-
-	public ActiveDirectoryConnector() {
-		try {
-			dirContext = (InitialDirContext) new InitialContext().lookup("java:/active-directory");
-			logger.debug("Active directory connector created: " + dirContext);
-		} catch (NamingException e) {
-			logger.error("an error occurs while creating initial context  ", e );
-		}
-	}
+	
+	public static final String SEARCH_BY_USER_NAME="username";
+	
+	public static final String SEARCH_BY_EMAIL="email";
 
 	/**
 	 * constructor with parameter for initializing a LDAP context
@@ -65,12 +59,12 @@ public class ActiveDirectoryConnector {
 
 		// initializing active directory LDAP connection
 		try {
-			dirContext = new InitialDirContext();
+			dirContext = new InitialDirContext(properties);
 		} catch (NamingException e) {
 			logger.error("an error occurs while getting initial context  ", e );
 		}
 		
-		logger.debug("Active directory connector created: " + dirContext);
+		logger.debug("Active directory connector created: {}", dirContext);
 
 		// default domain base for search
 		domainBase = getDomainBase(domainController);
@@ -100,14 +94,11 @@ public class ActiveDirectoryConnector {
 	public NamingEnumeration<SearchResult> searchUser(String searchValue, String searchBy, String searchBase)
 			throws NamingException {
 		String filter = getFilter(searchValue, searchBy);
-		String base = (null == searchBase) ? domainBase : getDomainBase(searchBase); // for
-																						// eg.:
-																						// "DC=myjeeva,DC=com";
+		String base = (null == searchBase) ? domainBase : getDomainBase(searchBase); 
 		NamingEnumeration<SearchResult> result = this.dirContext.search(base, filter, this.searchCtls);
 		
-		logger.debug("User searched: " + result);
+		logger.debug("User searched: {}" , result);
 		return result;
-		//return this.dirContext.search(base, filter, this.searchCtls);
 	}
 
 	/**
@@ -135,12 +126,12 @@ public class ActiveDirectoryConnector {
 	 */
 	private String getFilter(String searchValue, String searchBy) {
 		String filter = this.baseFilter;
-		if (searchBy.equals("email")) {
+		if (searchBy.equals(SEARCH_BY_EMAIL)) {
 			filter += "(mail=" + searchValue + "))";
-		} else if (searchBy.equals("username")) {
+		} else if (searchBy.equals(SEARCH_BY_USER_NAME)) {
 			filter += "(samaccountname=" + searchValue + "))";
 		}
-		logger.debug("Filter: " + filter);
+		logger.debug("Filter: {}", filter);
 		return filter;
 	}
 

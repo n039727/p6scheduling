@@ -36,6 +36,8 @@ public class CacheManager {
 	private static final Map<String, UDFTypeDTO> p6UDFTypes = new HashMap<>();
 	
 	private static  final Map<Integer, List<UDFValue>> udfValueMap = new HashMap<>();
+	
+	private static final Map<String, Integer> projectsMap = new HashMap<>();
 
 	
 	private CacheManager(){
@@ -43,6 +45,10 @@ public class CacheManager {
 	}
 	
 
+	public static final Map<String, Integer> getProjectsMap () {
+		return projectsMap;
+	}
+	
 	public static final Map<Integer, List<UDFValue>> getUDFValueMap () {
 		return udfValueMap;
 	}
@@ -81,4 +87,6 @@ public class CacheManager {
 	public static final Map<String, UDFTypeDTO> getP6UDFTypeMap() {
 		return p6UDFTypes;
 	}
+	
+	
 }

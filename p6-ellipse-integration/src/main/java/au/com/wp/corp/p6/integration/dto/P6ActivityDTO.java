@@ -11,9 +11,9 @@ import java.io.Serializable;
  * @author N039126
  * @version 1.0
  */
-public class P6ActivityDTO  implements Serializable{
+public class P6ActivityDTO implements Serializable {
 	/**
-	 * serial version id 
+	 * serial version id
 	 */
 	private static final long serialVersionUID = -2859048188743315099L;
 	/**
@@ -56,30 +56,32 @@ public class P6ActivityDTO  implements Serializable{
 	private String taskDescriptionUDF;
 
 	private String slippageCodeUDF;
-	
+
 	private String feederUDF;
-	
+
 	private String ellipseStandardJobUDF;
-	
+
 	private String upStreamSwitchUDF;
-	
-	private double estimatedLabourHours;
-	
+
+	/**
+	 * Default value -1 is required as the double variable default value is 0.0
+	 * but estimated labor hours can be 0.0
+	 */
+	private double estimatedLabourHours = -1;
+
 	private int estimatedLabourHoursObjectId;
-	
+
 	private String workGroup;
-	
+
 	private int projectObjectId;
-	
+
 	private int primaryResorceObjectId;
-	
+
 	private String executionPckgUDF;
-	
+
 	private String actualStartDate;
-	
+
 	private String actualFinishDate;
-	
-	
 
 	/**
 	 * @return the estimatedLabourHours
@@ -89,7 +91,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param estimatedLabourHours the estimatedLabourHours to set
+	 * @param estimatedLabourHours
+	 *            the estimatedLabourHours to set
 	 */
 	public void setEstimatedLabourHours(double estimatedLabourHours) {
 		this.estimatedLabourHours = estimatedLabourHours;
@@ -103,7 +106,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param estimatedLabourHoursObjectId the estimatedLabourHoursObjectId to set
+	 * @param estimatedLabourHoursObjectId
+	 *            the estimatedLabourHoursObjectId to set
 	 */
 	public void setEstimatedLabourHoursObjectId(int estimatedLabourHoursObjectId) {
 		this.estimatedLabourHoursObjectId = estimatedLabourHoursObjectId;
@@ -117,7 +121,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param primaryResorceObjectId the primaryResorceObjectId to set
+	 * @param primaryResorceObjectId
+	 *            the primaryResorceObjectId to set
 	 */
 	public void setPrimaryResorceObjectId(int primaryResorceObjectId) {
 		this.primaryResorceObjectId = primaryResorceObjectId;
@@ -131,7 +136,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param activityObjectId the activityObjectId to set
+	 * @param activityObjectId
+	 *            the activityObjectId to set
 	 */
 	public void setActivityObjectId(Integer activityObjectId) {
 		this.activityObjectId = activityObjectId;
@@ -181,7 +187,6 @@ public class P6ActivityDTO  implements Serializable{
 	public void setActivityStatus(String activityStatus) {
 		this.activityStatus = activityStatus;
 	}
-
 
 	/**
 	 * @return the activityJDCodeUDF
@@ -303,7 +308,6 @@ public class P6ActivityDTO  implements Serializable{
 		this.remainingDuration = remainingDuration;
 	}
 
-	
 	/**
 	 * @return the plannedStartDate
 	 */
@@ -312,7 +316,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param plannedStartDate the plannedStartDate to set
+	 * @param plannedStartDate
+	 *            the plannedStartDate to set
 	 */
 	public void setPlannedStartDate(String plannedStartDate) {
 		this.plannedStartDate = plannedStartDate;
@@ -326,13 +331,13 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param requiredByDateUDF the requiredByDateUDF to set
+	 * @param requiredByDateUDF
+	 *            the requiredByDateUDF to set
 	 */
 	public void setRequiredByDateUDF(String requiredByDateUDF) {
 		this.requiredByDateUDF = requiredByDateUDF;
 	}
 
-	
 	/**
 	 * @return the feederUDF
 	 */
@@ -341,7 +346,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param feederUDF the feederUDF to set
+	 * @param feederUDF
+	 *            the feederUDF to set
 	 */
 	public void setFeederUDF(String feederUDF) {
 		this.feederUDF = feederUDF;
@@ -355,7 +361,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param ellipseStandardJobUDF the ellipseStandardJobUDF to set
+	 * @param ellipseStandardJobUDF
+	 *            the ellipseStandardJobUDF to set
 	 */
 	public void setEllipseStandardJobUDF(String ellipseStandardJobUDF) {
 		this.ellipseStandardJobUDF = ellipseStandardJobUDF;
@@ -369,12 +376,12 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param upStreamSwitchUDF the upStreamSwitchUDF to set
+	 * @param upStreamSwitchUDF
+	 *            the upStreamSwitchUDF to set
 	 */
 	public void setUpStreamSwitchUDF(String upStreamSwitchUDF) {
 		this.upStreamSwitchUDF = upStreamSwitchUDF;
 	}
-
 
 	/**
 	 * @return the workGroup
@@ -384,12 +391,13 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param workGroup the workGroup to set
+	 * @param workGroup
+	 *            the workGroup to set
 	 */
 	public void setWorkGroup(String workGroup) {
 		this.workGroup = workGroup;
 	}
-	
+
 	/**
 	 * @return the addressUDF
 	 */
@@ -398,7 +406,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param addressUDF the addressUDF to set
+	 * @param addressUDF
+	 *            the addressUDF to set
 	 */
 	public void setAddressUDF(String addressUDF) {
 		this.addressUDF = addressUDF;
@@ -412,7 +421,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param locationInStreetUDF the locationInStreetUDF to set
+	 * @param locationInStreetUDF
+	 *            the locationInStreetUDF to set
 	 */
 	public void setLocationInStreetUDF(String locationInStreetUDF) {
 		this.locationInStreetUDF = locationInStreetUDF;
@@ -426,7 +436,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param taskDescriptionUDF the taskDescriptionUDF to set
+	 * @param taskDescriptionUDF
+	 *            the taskDescriptionUDF to set
 	 */
 	public void setTaskDescriptionUDF(String taskDescriptionUDF) {
 		this.taskDescriptionUDF = taskDescriptionUDF;
@@ -440,13 +451,13 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param slippageCodeUDF the slippageCodeUDF to set
+	 * @param slippageCodeUDF
+	 *            the slippageCodeUDF to set
 	 */
 	public void setSlippageCodeUDF(String slippageCodeUDF) {
 		this.slippageCodeUDF = slippageCodeUDF;
 	}
-	
-	
+
 	/**
 	 * @return the projectId
 	 */
@@ -455,7 +466,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param projectId the projectId to set
+	 * @param projectId
+	 *            the projectId to set
 	 */
 	public void setProjectObjectId(int projectObjectId) {
 		this.projectObjectId = projectObjectId;
@@ -469,13 +481,13 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param executionPckgUDF the executionPckgUDF to set
+	 * @param executionPckgUDF
+	 *            the executionPckgUDF to set
 	 */
 	public void setExecutionPckgUDF(String executionPckgUDF) {
 		this.executionPckgUDF = executionPckgUDF;
 	}
 
-	
 	/**
 	 * @return the actualStartDate
 	 */
@@ -484,7 +496,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param actualStartDate the actualStartDate to set
+	 * @param actualStartDate
+	 *            the actualStartDate to set
 	 */
 	public void setActualStartDate(String actualStartDate) {
 		this.actualStartDate = actualStartDate;
@@ -498,7 +511,8 @@ public class P6ActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param actualFinishDate the actualFinishDate to set
+	 * @param actualFinishDate
+	 *            the actualFinishDate to set
 	 */
 	public void setActualFinishDate(String actualFinishDate) {
 		this.actualFinishDate = actualFinishDate;

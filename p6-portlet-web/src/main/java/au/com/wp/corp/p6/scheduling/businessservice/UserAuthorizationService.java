@@ -8,4 +8,6 @@ public interface UserAuthorizationService {
 	
 	public List<UserAuthorizationDTO> getAccess(List<String> roleNames);
 
+	String getUserName(String nId);
+
 }

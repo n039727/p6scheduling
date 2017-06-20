@@ -3,6 +3,7 @@
  */
 package au.com.wp.corp.p6.integration.threads;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -21,10 +22,12 @@ import au.com.wp.corp.p6.integration.wsclient.cleint.P6WSClient;
  */
 public class ReadP6ActivityThread implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(ReadP6ActivityThread.class);
-	private P6WSClient p6WSClient;
+	private final P6WSClient p6WSClient;
+	private final List<String> workgroupList;
 	
-	public ReadP6ActivityThread(final P6WSClient p6WSClient) {
+	public ReadP6ActivityThread(final P6WSClient p6WSClient, final List<String> workgroupList) {
 		this.p6WSClient = p6WSClient;
+		this.workgroupList = workgroupList;
 		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.STARTED);
 	}
 	
@@ -38,15 +41,12 @@ public class ReadP6ActivityThread implements Runnable {
 		Map<String, P6ActivityDTO> activities = CacheManager.getP6ActivitiesMap();
 
 		try {
-			for (P6ActivityDTO activityDTO : p6WSClient.readActivities()) {
+			for (P6ActivityDTO activityDTO : p6WSClient.readActivities(workgroupList)) {
 				activities.put(activityDTO.getActivityId(), activityDTO);
 			}
-			//File file = new File("C:\\test-config\\ReadActivityP6Set.csv");
-			//CSVWriter.generateCSV(file, activities.values().toArray());
 		} catch (P6ServiceException e) {
 			logger.error("An error occurs while reading P6 activity : ", e);
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.FAILED);			
-			
 		}
 		logger.debug("Size of activities from P6 # {}", activities.size());
 		logger.debug("Time taken to read record from P6 # {} ", System.currentTimeMillis() - startTime);

@@ -14,12 +14,14 @@ import au.com.wp.corp.p6.integration.exception.P6BusinessException;
  */
 public interface P6EllipseIntegrationService {
 	
-	public List<P6ActivityDTO> startEllipseToP6Integration() throws P6BusinessException;
-
 	public void clearApplicationMemory();
 
 	public boolean readUDFTypeMapping() throws P6BusinessException;
 
-	boolean readProjectWorkgroupMapping() throws P6BusinessException;
+	public boolean readProjectWorkgroupMapping() throws P6BusinessException;
+
+	public boolean start() throws P6BusinessException;
+
+	public List<P6ActivityDTO> startEllipseToP6Integration(List<String> workgroupList) throws P6BusinessException;
 
 }
