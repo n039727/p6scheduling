@@ -54,9 +54,7 @@ public class ExecutionPcakageControllerTest {
 	@Mock
 	private IExecutionPackageService executionPckg;
 	
-	@Mock
-	Validator validator;
-
+	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
