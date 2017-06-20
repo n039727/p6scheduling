@@ -19,7 +19,7 @@ import au.com.wp.corp.p6.model.elipse.MaterialRequisition;
 import au.com.wp.corp.p6.test.config.AppConfig;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { AppConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class MaterialRequisitionDAOTest {
+public class MaterialRequisitionDAOIntegrationTest {
 	
 	@Autowired
 	MaterialRequisitionDAO dao;

@@ -217,7 +217,7 @@ function dynamicToDoSetterController($scope) {
 				var workOrders = ctrl.currentMap[todo];
 				if(todo===ctrl.newItem.todoName){
 
-					ctrl.addErrorMessage = "This TODO is a duplicate one try adding diuffrent one";
+					ctrl.addErrorMessage = "This To-Do is a duplicate one, Please try adding different one";
 					ctrl.isAddError = true;
 					return false;
 
