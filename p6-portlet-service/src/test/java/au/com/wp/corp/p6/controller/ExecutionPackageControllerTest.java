@@ -45,7 +45,7 @@ import au.com.wp.corp.p6.validation.Validator;
  */
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { AppConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ExecutionPcakageControllerTest {
+public class ExecutionPackageControllerTest {
 
 	private MockMvc mockMvc;
 
@@ -81,7 +81,7 @@ public class ExecutionPcakageControllerTest {
 		executionPackageDTO.setWorkOrders(workOrders);
 		Mockito.when(executionPckg.createOrUpdateExecutionPackage(executionPackageDTO))
 				.thenReturn(executionPackageDTO);
-
+		executionPckg.updateP6ForExecutionPackage();
 		ResultActions actions = mockMvc.perform(post("/executionpackage/createOrUpdate")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE)
 				.content(mapper.writeValueAsString(executionPackageDTO))).andExpect(status().is(HttpStatus.CREATED.value()));

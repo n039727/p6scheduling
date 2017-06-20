@@ -1,8 +1,9 @@
 /**
  * 
  */
-package au.com.wp.corp.p6.dataservice;
+package au.com.wp.corp.p6.scheduling.dataservice;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
@@ -17,7 +18,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import au.com.wp.corp.p6.model.FunctionAccess;
+import au.com.wp.corp.p6.scheduling.dao.FunctionAccessDAO;
+import au.com.wp.corp.p6.scheduling.model.FunctionAccess;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
 /**
@@ -54,7 +56,7 @@ public class FunctionAccessDAOIntegrationTest {
 	@Test
 	public void testGetAccess() {
 	
-		List<FunctionAccess> accesses = functionAccessDAO.getAccess("P6_TEM_LEDR_SCHDLR");
+		List<FunctionAccess> accesses = functionAccessDAO.getAccess(Arrays.asList("P6_TEM_LEDR_SCHDLR"));
 		if(accesses != null){
 			//for(FunctionAccess access:accesses){
 			FunctionAccess access = accesses.get(0);
@@ -74,7 +76,7 @@ public class FunctionAccessDAOIntegrationTest {
 	@Test
 	public void testGetAccess1() {
 	
-		List<FunctionAccess> accesses = functionAccessDAO.getAccess("P6_TEM_LEDR_SCHDLR");
+		List<FunctionAccess> accesses = functionAccessDAO.getAccess(Arrays.asList("P6_TEM_LEDR_SCHDLR"));
 		if(accesses != null){
 			//for(FunctionAccess access:accesses){
 			FunctionAccess access = accesses.get(1);

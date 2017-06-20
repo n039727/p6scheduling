@@ -13,7 +13,7 @@ import au.com.wp.corp.p6.integration.exception.P6DataAccessException;
  *
  */
 @FunctionalInterface
-public interface P6PortalDAO {
-
+public interface P6PortalDAO extends P6IntegrationDAOExceptionParser{
 	public List<P6ProjWorkgroupDTO> getProjectResourceMappingList() throws P6DataAccessException;
+	
 }
