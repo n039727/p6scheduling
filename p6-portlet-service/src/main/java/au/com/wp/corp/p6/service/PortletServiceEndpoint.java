@@ -25,10 +25,8 @@ public interface PortletServiceEndpoint {
 	
 	ViewToDoStatus fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchRequest> query) throws P6BusinessException;
 	ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) throws P6BusinessException;
-	
-	//List<ToDoItem> fetchToDoItems();
+
 	public MetadataDTO  fetchMetadata()throws P6BusinessException;
-	//ResponseEntity<ExecutionPackageDTO> saveExecutionPackages(RequestEntity<ExecutionPackageDTO> executionPackageDTO) throws P6BaseException;
 	ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus) throws P6BusinessException;
 	List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchRequest> query) throws P6BusinessException;
 	ResponseEntity<MaterialRequisitionDTO> fetchMetReqdata(RequestEntity<MaterialRequisitionRequest> request) throws P6BaseException;

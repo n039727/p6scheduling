@@ -31,6 +31,7 @@ import au.com.wp.corp.p6.integration.threads.UpdateEllipseActivityThread;
 import au.com.wp.corp.p6.integration.threads.UpdateP6ActivityThread;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.DateUtil;
+import au.com.wp.corp.p6.integration.util.EllipseReadParameter;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.integration.util.P6Utility;
 import au.com.wp.corp.p6.integration.util.ProcessStatus;
@@ -48,6 +49,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	private static final Logger logger = LoggerFactory.getLogger(P6EllipseIntegrationServiceImpl.class);
 
 	public static final String POLING_TIME_TO_CHECK_READ_STATUS_INMILI = "POLING_TIME_TO_CHECK_READ_STATUS_INMILI";
+	
+	public static final String INTEGRATION_RUN_STARTEGY = "INTEGRATION_RUN_STARTEGY";
 
 	public static final String USER_STATUS_AL = "AL";
 
@@ -196,11 +199,48 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 	}
 
+	
 	@Override
-	public List<P6ActivityDTO> startEllipseToP6Integration() throws P6BusinessException {
+	public boolean start() throws P6BusinessException {
+		boolean status;
 		clearApplicationMemory();
 		readUDFTypeMapping();
 		readProjectWorkgroupMapping();
+		
+		final String integrationRunStartegy = P6ReloadablePropertiesReader.getProperty(INTEGRATION_RUN_STARTEGY);
+		
+		if ( null == integrationRunStartegy || integrationRunStartegy.isEmpty() )
+		{
+			throw new P6BusinessException("INTEGRATION_RUN_STARTEGY can't be null");
+		}
+		
+		final List<String> workgroupList = new ArrayList<>();
+		
+		if (integrationRunStartegy.equals(EllipseReadParameter.ALL.name())) {
+			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
+			for (String key : keys) {
+				workgroupList.addAll(CacheManager.getProjectWorkgroupListMap().get(key));
+			}
+			startEllipseToP6Integration(workgroupList);
+			status = Boolean.TRUE;
+		} else if (integrationRunStartegy.equals(EllipseReadParameter.INDIVIDUAL.name())) {
+			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
+			for (String key : keys) {
+				workgroupList.addAll(CacheManager.getProjectWorkgroupListMap().get(key));
+				startEllipseToP6Integration(workgroupList);
+			}
+			status = Boolean.TRUE;
+			
+		} else 
+			status = Boolean.FALSE;
+		
+		return status;
+		
+	}
+	
+	@Override
+	public List<P6ActivityDTO> startEllipseToP6Integration(final List<String> workgroupList) throws P6BusinessException {
+		
 		logger.info("Starting all rading threads ....");
 		final String sleepTime = P6ReloadablePropertiesReader.getProperty(POLING_TIME_TO_CHECK_READ_STATUS_INMILI);
 		long sleepTimeLong;
@@ -210,8 +250,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			throw new P6BusinessException("Polling time to check read status should be a number ", e1);
 		}
 
-		final ReadEllipseThread readEllipse = new ReadEllipseThread(p6EllipseDAO);
-		final ReadP6ActivityThread readP6Activity = new ReadP6ActivityThread(p6WSClient);
+		final ReadEllipseThread readEllipse = new ReadEllipseThread(p6EllipseDAO, workgroupList);
+		final ReadP6ActivityThread readP6Activity = new ReadP6ActivityThread(p6WSClient, workgroupList);
 		final Thread readEllipseThread = new Thread(readEllipse);
 		final Thread readP6ActivityThread = new Thread(readP6Activity);
 		readEllipseThread.start();
@@ -268,14 +308,18 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 				createActivityP6Set.add(p6Activity);
 
 			} else if (p6Activites.containsKey(activityId)) {
-				//logger.debug("Ellipse activity id #{},  - ellipse workgroup # {},  - p6 workgroup # {}", activityId, ellipseActivity.getWorkGroup(), p6Activites.get(activityId).getWorkGroup());
 				/*
 				 * if the assigned resource got changed in ellipse, then create
 				 * it under the project where the assigned resource belongs to
 				 * and remove it from old project
 				 */
+				
+				final EllipseActivityDTO ellipseActivityDTO = syncP6EllipseActivity(p6Activites.get(activityId),
+						ellipseActivites.get(activityId), projectWorkGropMap);
+				if (null != ellipseActivityDTO)
+					updateActivityEllipseSet.add(ellipseActivityDTO);
 
-				if (null != ellipseActivity.getWorkGroup()
+				 if (null != ellipseActivity.getWorkGroup()
 						&& !ellipseActivity.getWorkGroup().equals(p6Activites.get(activityId).getWorkGroup())
 						&& null != projectWorkGropMap.get(ellipseActivity.getWorkGroup())
 						&& null != p6Activites.get(activityId).getWorkGroup()
@@ -287,20 +331,14 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 							p6Activites.get(activityId).getWorkGroup());
 					createActivityP6Set.add(p6Activity);
 					deleteActivityP6BforCreate.add(p6Activites.get(activityId));
-				} else {
-					//logger.debug("Ellipse and P6 activity id matched ... updating P6 and ellipse based on master information");
 
+				} else {
 					// Identifying the activities which will be created in P6
 					final P6ActivityDTO p6ActivityDTO = syncEllipseP6Activity(p6Activites.get(activityId),
 							ellipseActivites.get(activityId), projectWorkGropMap);
 					if (null != p6ActivityDTO)
 						updateActivityP6Set.add(p6ActivityDTO);
-
-					final EllipseActivityDTO ellipseActivityDTO = syncP6EllipseActivity(p6Activites.get(activityId),
-							ellipseActivites.get(activityId), projectWorkGropMap);
-					if (null != ellipseActivityDTO)
-						updateActivityEllipseSet.add(ellipseActivityDTO);
-
+					
 				}
 				p6Activites.remove(activityId, p6Activites.get(activityId));
 			}
@@ -365,13 +403,16 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 */
 	private EllipseActivityDTO syncP6EllipseActivity(P6ActivityDTO p6Activity, EllipseActivityDTO ellipseActivity,
 			Map<String, P6ProjWorkgroupDTO> projectWorkgroup) {
-		//logger.debug("Indentifying activities to update in ellipse....");
-		//logger.debug("Activity details in P6 - activity Id # {}, - workgroup # {}, - planned start date # {}",
-		//		p6Activity.getActivityId(), p6Activity.getWorkGroup(), p6Activity.getPlannedStartDate());
+		// logger.debug("Indentifying activities to update in ellipse....");
+		// logger.debug("Activity details in P6 - activity Id # {}, - workgroup
+		// # {}, - planned start date # {}",
+		// p6Activity.getActivityId(), p6Activity.getWorkGroup(),
+		// p6Activity.getPlannedStartDate());
 
-		//logger.debug("Activity details in Ellipse - activity Id # {}, - workgroup # {}, - planned start date # {}",
-		//		ellipseActivity.getWorkOrderTaskId(), ellipseActivity.getWorkGroup(),
-		//		ellipseActivity.getPlannedStartDate());
+		// logger.debug("Activity details in Ellipse - activity Id # {}, -
+		// workgroup # {}, - planned start date # {}",
+		// ellipseActivity.getWorkOrderTaskId(), ellipseActivity.getWorkGroup(),
+		// ellipseActivity.getPlannedStartDate());
 
 		final EllipseActivityDTO ellipseActivityUpd = new EllipseActivityDTO();
 		boolean isUpdateReq = false;
@@ -442,17 +483,6 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		final P6ActivityDTO p6ActivityUpd = new P6ActivityDTO();
 		boolean isUpdateReq = false;
 
-		p6ActivityUpd.setActivityObjectId(p6Activity.getActivityObjectId());
-		p6ActivityUpd.setActivityId(p6Activity.getActivityId());
-
-		/**
-		 * if (null != ellipseActivity.getWorkGroup() &&
-		 * !ellipseActivity.getWorkGroup().equals(p6Activity.getWorkGroup())) {
-		 * p6ActivityUpd.setWorkGroup(ellipseActivity.getWorkGroup());
-		 * p6ActivityUpd.setPrimaryResorceObjectId(
-		 * projectWorkgroup.get(ellipseActivity.getWorkGroup()).getPrimaryResourceObjectId());
-		 * isUpdateReq = true; }
-		 **/
 		if (!ellipseActivity.getWorkOrderDescription().equals(p6Activity.getActivityName())) {
 			p6ActivityUpd.setActivityName(ellipseActivity.getWorkOrderDescription());
 			isUpdateReq = true;
@@ -564,13 +594,14 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * status in P6 will not be updated and it is left as it is else update
 		 * the user status from Ellipse
 		 */
-		//logger.debug("Planned start date in ellipse # {}", ellipseActivity.getPlannedStartDate());
+		// logger.debug("Planned start date in ellipse # {}",
+		// ellipseActivity.getPlannedStartDate());
 		if ((!ellipseActivity.getTaskUserStatus().equals(P6EllipseWSConstants.RR)
 				&& !dateUtil.isCurrentDate(ellipseActivity.getPlannedStartDate()))
 				|| (ellipseActivity.getTaskUserStatus().equals(P6EllipseWSConstants.RR)
 						&& !dateUtil.isCurrentDate(ellipseActivity.getPlannedStartDate()))
-						|| (!ellipseActivity.getTaskUserStatus().equals(P6EllipseWSConstants.RR)
-								&& dateUtil.isCurrentDate(ellipseActivity.getPlannedStartDate()))) {
+				|| (!ellipseActivity.getTaskUserStatus().equals(P6EllipseWSConstants.RR)
+						&& dateUtil.isCurrentDate(ellipseActivity.getPlannedStartDate()))) {
 			p6ActivityUpd.setTaskUserStatusUDF(ellipseActivity.getTaskUserStatus());
 			isUpdateReq = true;
 		}
@@ -591,20 +622,20 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		/*
-		 * The activity is getting created in P6 when Planned start date is
-		 * blank in Ellipse then the Planned Start date in P6 will be updated to
-		 * 1st of the financial year (1-July) based on the required by date in
-		 * Ellipse
-		 */
-		/**
-		 * if ((null == ellipseActivity.getPlannedStartDate() ||
-		 * ellipseActivity.getPlannedStartDate().isEmpty()) && (null ==
-		 * ellipseActivity.getRequiredByDate() ||
-		 * !ellipseActivity.getRequiredByDate().isEmpty())) {
-		 * p6ActivityUpd.setPlannedStartDate(dateUtil.getStartDateOfFiscalYear(ellipseActivity.getRequiredByDate(),
-		 * DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)); isUpdateReq = true; }
-		 **/
+		if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()) {
+			p6ActivityUpd.setActualStartDate(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),
+					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+			isUpdateReq = true;
+		}
+
+		if (! dateUtil.isSameDate(ellipseActivity.getActualFinishDate(),
+						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, p6Activity.getActualFinishDate(),
+						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP)) {
+			p6ActivityUpd.setActualFinishDate(dateUtil.convertDateToString(ellipseActivity.getActualFinishDate(),
+					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+			isUpdateReq = true;
+
+		}
 
 		/*
 		 * the WO task is read from Ellipse when the corresponding activity
@@ -615,22 +646,13 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		final int projectObjectId = projectWorkgroup.get(ellipseActivity.getWorkGroup()) != null
 				? projectWorkgroup.get(ellipseActivity.getWorkGroup()).getProjectObjectId() : 0;
 
-		if (projectObjectId != 0) {
+		if (isUpdateReq && projectObjectId != 0) {
 			p6ActivityUpd.setProjectObjectId(projectObjectId);
-			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()) {
-			p6ActivityUpd.setActualStartDate(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),
-					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
-			isUpdateReq = true;
-		}
-
-		if (null != ellipseActivity.getActualFinishDate() && !ellipseActivity.getActualFinishDate().trim().isEmpty()) {
-			p6ActivityUpd.setActualFinishDate(dateUtil.convertDateToString(ellipseActivity.getActualFinishDate(),
-					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
-			isUpdateReq = true;
-
+		if (isUpdateReq) {
+			p6ActivityUpd.setActivityObjectId(p6Activity.getActivityObjectId());
+			p6ActivityUpd.setActivityId(p6Activity.getActivityId());
 		}
 
 		return isUpdateReq ? p6ActivityUpd : null;
@@ -649,6 +671,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			Map<String, P6ProjWorkgroupDTO> projectWorkgroup, final String woGroup) throws P6BusinessException {
 		logger.debug("Constructing new activity for p6...");
 		final String workGroup = null == woGroup ? ellipseActivity.getWorkGroup() : woGroup;
+		
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId(ellipseActivity.getWorkOrderTaskId());
 		p6Activity.setActivityJDCodeUDF(ellipseActivity.getJdCode());

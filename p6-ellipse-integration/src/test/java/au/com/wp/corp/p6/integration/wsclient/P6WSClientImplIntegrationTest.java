@@ -3,6 +3,7 @@ package au.com.wp.corp.p6.integration.wsclient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,6 +22,8 @@ import au.com.wp.corp.p6.integration.dto.P6ProjWorkgroupDTO;
 import au.com.wp.corp.p6.integration.exception.P6BusinessException;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
+import au.com.wp.corp.p6.integration.util.EllipseReadParameter;
+import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.integration.wsclient.cleint.impl.P6WSClientImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,12 +39,33 @@ public class P6WSClientImplIntegrationTest {
 	@Autowired
 	P6EllipseIntegrationService p6serviceImpl;
 
+	private  final List<String> workgroupList = new ArrayList<>();
+	
 	@Before
 	public void setup() throws P6BusinessException {
 		MockitoAnnotations.initMocks(this);
 		p6serviceImpl.readUDFTypeMapping();
 		p6serviceImpl.readProjectWorkgroupMapping();
 		
+		final String integrationRunStartegy = P6ReloadablePropertiesReader.getProperty("INTEGRATION_RUN_STARTEGY");
+		
+		if ( null == integrationRunStartegy || integrationRunStartegy.isEmpty() )
+		{
+			throw new P6BusinessException("INTEGRATION_RUN_STARTEGY can't be null");
+		}
+		
+		if (integrationRunStartegy.equals(EllipseReadParameter.ALL.name())) {
+			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
+			for (String key : keys) {
+				workgroupList.addAll(CacheManager.getProjectWorkgroupListMap().get(key));
+			}
+		} else if (integrationRunStartegy.equals(EllipseReadParameter.INDIVIDUAL.name())) {
+			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
+			for (String key : keys) {
+				workgroupList.addAll(CacheManager.getProjectWorkgroupListMap().get(key));
+			}
+			
+		}
 	}
 
 	
@@ -131,7 +155,7 @@ public class P6WSClientImplIntegrationTest {
 	public void test_2_UpdateActivitiesP6() throws P6BusinessException {
 		
 		p6serviceImpl.readUDFTypeMapping();
-		p6Activities = p6WsclientImpl.readActivities();
+		p6Activities = p6WsclientImpl.readActivities(workgroupList);
 		
 		List<P6ActivityDTO> activities = new ArrayList<>();
 
@@ -174,7 +198,7 @@ public class P6WSClientImplIntegrationTest {
 
 	@Test
 	public void test_3_ReadActivities() throws P6ServiceException {
-		p6Activities = p6WsclientImpl.readActivities();
+		p6Activities = p6WsclientImpl.readActivities(workgroupList);
 		Assert.assertNotNull(p6Activities);
 		
 		for ( P6ActivityDTO activityDTO : p6Activities)
@@ -185,7 +209,7 @@ public class P6WSClientImplIntegrationTest {
 
 	@Test
 	public void test_4_DeleteActivitiesP6() throws P6ServiceException {
-		p6Activities = p6WsclientImpl.readActivities();
+		p6Activities = p6WsclientImpl.readActivities(workgroupList);
 		List<P6ActivityDTO> activities = new ArrayList<>();
 
 		P6ActivityDTO activityDTO = new P6ActivityDTO();

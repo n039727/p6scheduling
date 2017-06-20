@@ -59,12 +59,10 @@ public class UserDetailsController {
 					accessMap.put(functionname, useraccess);
 				}
 			});
-			/*accessMap = userAccessList.stream().collect(Collectors.toMap(UserAuthorizationDTO::getFunctionName,
-                    Function.identity()));*/
 		}
 		
 		UserDetails userDetails = new UserDetails();
-		userDetails.setUserName(userPrincipal.getName());
+		userDetails.setUserName(authService.getUserName(userPrincipal.getName()));
 		userDetails.setAccessMap(accessMap);
 		userDetails.setRoles(roleNames);
 		

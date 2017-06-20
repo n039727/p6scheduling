@@ -18,6 +18,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import au.com.wp.corp.p6.model.elipse.MaterialRequisition;
+import au.com.wp.corp.p6.model.elipse.MaterialRequisitionPK;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
 /**
@@ -30,19 +32,19 @@ public class P6ModelTest {
 
 	@Test
 	public void testTodoAssignmentPK () {
-		
+
 		TodoAssignmentPK pk = new TodoAssignmentPK();
 		Task task = new Task();
 		pk.setTask(task);
 		pk.setTodoId(new BigDecimal("1"));
-		
+
 		Assert.assertEquals(task, pk.getTask());
 		Assert.assertEquals(1, pk.getTodoId().intValue());
 		Assert.assertTrue(pk.equals(pk));
 		Assert.assertNotNull(pk.hashCode());
 	}
 
-	
+
 	@Test
 	public void testTask () {
 		final long time = System.currentTimeMillis();
@@ -55,7 +57,7 @@ public class P6ModelTest {
 		task.setCrtdTs(new Timestamp(time));
 		task.setCrtdUsr("Test User");
 		task.setDepotId("DEP1");
-		
+
 		ExecutionPackage executionPackage = new ExecutionPackage();
 		executionPackage.setActioned("Y");
 		executionPackage.setCrtdTs(new Timestamp(time));
@@ -104,7 +106,7 @@ public class P6ModelTest {
 		Assert.assertEquals(todoAssignments, task.getTodoAssignments());
 		Assert.assertEquals("DEP1", task.getDepotId());
 		task.removeTodoAssignment(todoAssignment);
-		
+
 		Assert.assertEquals("Test comments", todoAssignment.getCmts());
 		Assert.assertEquals(time, todoAssignment.getCrtdTs().getTime());
 		Assert.assertEquals("Test User", todoAssignment.getCrtdUsr());
@@ -115,7 +117,7 @@ public class P6ModelTest {
 		Assert.assertEquals(todoAssignMentPK, todoAssignment.getTodoAssignMentPK());
 		Assert.assertEquals("Test User1", todoAssignment.getLstUpdtdUsr());
 	}
-	
+
 	@Test
 	public void testExecutionPackage () {
 		final long time = System.currentTimeMillis();
@@ -128,7 +130,7 @@ public class P6ModelTest {
 		task.setCrtdTs(new Timestamp(time));
 		task.setCrtdUsr("Test User");
 		task.setDepotId("DEP1");
-		
+
 		ExecutionPackage executionPackage = new ExecutionPackage();
 		executionPackage.setActioned("Y");
 		executionPackage.setCrtdTs(new Timestamp(time));
@@ -148,7 +150,7 @@ public class P6ModelTest {
 		task.setMatrlReqRef("M1234");
 		task.setSchdDt(date);
 		task.setTaskId("WO11");
-		
+
 		Assert.assertEquals(12345L, executionPackage.getExctnPckgId());
 		Assert.assertEquals("Y", executionPackage.getActioned());
 		Assert.assertEquals(time, executionPackage.getCrtdTs().getTime());
@@ -160,9 +162,9 @@ public class P6ModelTest {
 		Assert.assertEquals(date, executionPackage.getScheduledStartDate());
 		Assert.assertEquals(tasks, executionPackage.getTasks());
 		executionPackage.removeTask(task);
-		
+
 	}
-	
+
 	@Test
 	public void testTodoTemplate () {
 		final long time = System.currentTimeMillis();
@@ -177,7 +179,7 @@ public class P6ModelTest {
 		todoTemplate.setTmpltDesc("Scheduling Template");
 		todoTemplate.setTodoNam("Gas Permit");
 		todoTemplate.setTypId(new BigDecimal("1"));
-		
+
 		Assert.assertEquals("N039126", todoTemplate.getCrtdUsr());
 		Assert.assertEquals(time, todoTemplate.getCrtdTs().getTime());
 		Assert.assertEquals("N039126", todoTemplate.getLstUpdtdUsr());
@@ -185,9 +187,9 @@ public class P6ModelTest {
 		Assert.assertEquals("Scheduling Template", todoTemplate.getTmpltDesc());
 		Assert.assertEquals("Gas Permit", todoTemplate.getTodoNam());
 		Assert.assertEquals(new BigDecimal("1"), todoTemplate.getTypId());
-		
+
 	}
-	
+
 	@Test
 	public void testTodoType () {
 		final long time = System.currentTimeMillis();
@@ -198,16 +200,16 @@ public class P6ModelTest {
 		todoType.setLstUpdtdUsr("N039603");
 		todoType.setTypDesc("scheduling TODO type");
 		todoType.setTypId(1);
-		
+
 		Assert.assertEquals("N039603", todoType.getCrtdUsr());
 		Assert.assertEquals(time, todoType.getCrtdTs().getTime());
 		Assert.assertEquals("N039603", todoType.getLstUpdtdUsr());
 		Assert.assertEquals(time, todoType.getLstUpdtdTs().getTime());
 		Assert.assertEquals("scheduling TODO type", todoType.getTypDesc());
 		Assert.assertEquals(1, todoType.getTypId());
-		
+
 	}
-	
+
 	@Test
 	public void testResourceDetail () {
 		final long time = System.currentTimeMillis();
@@ -216,15 +218,15 @@ public class P6ModelTest {
 		resourceDetail.setGrpNam("DXCREW");
 		resourceDetail.setRsrcId(1);
 		resourceDetail.setRsrcNam("EMERT01");
-				
+
 		Assert.assertEquals("Merredin", resourceDetail.getDepotNam());
 		Assert.assertEquals("DXCREW", resourceDetail.getGrpNam());
 		Assert.assertEquals(1, resourceDetail.getRsrcId());
 		Assert.assertEquals("EMERT01", resourceDetail.getRsrcNam());
-		
-		
+
+
 	}
-	
+
 	@Test
 	public void testPortalFunction () {
 		final long time = System.currentTimeMillis();
@@ -232,7 +234,7 @@ public class P6ModelTest {
 		portalFunction.setFuncDesc("Screen for Scheduler to add or update TODOs");
 		portalFunction.setFuncId(1);
 		portalFunction.setFuncNam("Add_Scheduling_To_Do");
-		
+
 		FunctionAccess functionAccess = new FunctionAccess();
 		functionAccess.setFuncAccessId(1);
 		functionAccess.setPortalFunction(portalFunction);
@@ -241,13 +243,13 @@ public class P6ModelTest {
 		List<FunctionAccess> accesses = new ArrayList<FunctionAccess>();
 		accesses.add(functionAccess);
 		portalFunction.setFunctionAccesses(accesses);
-				
+
 		Assert.assertEquals("Screen for Scheduler to add or update TODOs",portalFunction.getFuncDesc());
 		Assert.assertEquals(1, portalFunction.getFuncId());
 		Assert.assertEquals("Add_Scheduling_To_Do", portalFunction.getFuncNam());
 		Assert.assertEquals(accesses, portalFunction.getFunctionAccesses());
-		
-		
+
+
 	}
 	@Test
 	public void testTodoAssignment(){
@@ -264,7 +266,7 @@ public class P6ModelTest {
 		TodoAssignmentPK todoAssignMentPK = new TodoAssignmentPK();
 		todoAssignment.setTodoAssignMentPK(todoAssignMentPK);
 		todoAssignment.setSuprtngDocLnk("Test docs");
-		
+
 		TodoAssignment todoAssignment1 = new TodoAssignment();
 		todoAssignment1.setCmts("Test comments");
 		todoAssignment1.setCrtdTs(new Timestamp(time));
@@ -276,7 +278,7 @@ public class P6ModelTest {
 		TodoAssignmentPK todoAssignMentPK1 = new TodoAssignmentPK();
 		todoAssignment1.setTodoAssignMentPK(todoAssignMentPK1);
 		todoAssignment1.setSuprtngDocLnk("Test docs");
-		
+
 		Assert.assertEquals("Test comments", todoAssignment.getCmts());
 		Assert.assertEquals(time, todoAssignment.getCrtdTs().getTime());
 		Assert.assertEquals("Test User", todoAssignment.getCrtdUsr());
@@ -288,30 +290,84 @@ public class P6ModelTest {
 		Assert.assertEquals("Test User1", todoAssignment.getLstUpdtdUsr());
 		Assert.assertTrue(todoAssignment.equals(todoAssignment1));
 	}
-	
+
 	@Test
 	public void testFunctionAccess(){
-		
+
 		FunctionAccess functionAccess = new FunctionAccess();
 		PortalFunction portalFunction = new PortalFunction();
 		portalFunction.setFuncDesc("Screen for Scheduler to add or update TODOs");
 		portalFunction.setFuncId(1);
 		portalFunction.setFuncNam("Add_Scheduling_To_Do");
-		
+
 		functionAccess.setFuncAccessId(1);
 		functionAccess.setPortalFunction(portalFunction);
 		functionAccess.setRoleNam("P6_TEM_LEDR_SCHDLR");
 		functionAccess.setWriteFlg("Y");
-		
+
 		Assert.assertEquals(1, functionAccess.getFuncAccessId());
 		Assert.assertEquals("P6_TEM_LEDR_SCHDLR", functionAccess.getRoleNam());
 		Assert.assertEquals("Y", functionAccess.getWriteFlg());
 		Assert.assertEquals(portalFunction, functionAccess.getPortalFunction());
-	
+
+	}
+	@Test
+	public void testMaterialRequisition(){
+
+		MaterialRequisition matReq = new MaterialRequisition();
+		MaterialRequisitionPK matReqPk = new MaterialRequisitionPK();
+
+		matReqPk.setAllocCount("01");
+		matReqPk.setDstrctCode("CORP");
+		matReqPk.setReq232Type("I");
+		matReqPk.setRequisitionNo("A36110  0000");
+		matReq.setAcctCodeType("1");
+		matReq.setAllocDstrct("CORP");
+		matReq.setAllocPc(new BigDecimal(100));
+		matReq.setAllocValInv(new BigDecimal(0));
+		matReq.setCostDstrctCde("CORP");
+		matReq.setEquipNo("000001060331");
+		matReq.setExpElement("358");
+		matReq.setFcastToGo(new BigDecimal(0));
+		matReq.setGlAccount("602424153000");
+		matReq.setId(matReqPk);
+		matReq.setProjectNo("projectNo");
+		matReq.setSubledgerAcct("subledgerAcct");
+		matReq.setSubledgerType("subledgerType");
+		matReq.setWorkOrder("00939128");
+		matReq.setAllocValRcv(new BigDecimal(0));
+		
+		MaterialRequisitionPK matReqPk2 = new MaterialRequisitionPK();
+
+		matReqPk2.setAllocCount("01");
+		matReqPk2.setDstrctCode("CORP");
+		matReqPk2.setReq232Type("I");
+		matReqPk2.setRequisitionNo("A36110  0000");
+
+		
+		Assert.assertEquals("01", matReq.getId().getAllocCount());
+		Assert.assertEquals("CORP", matReq.getId().getDstrctCode());
+		Assert.assertEquals("I", matReq.getId().getReq232Type());
+		Assert.assertEquals("A36110  0000", matReq.getId().getRequisitionNo());
+		Assert.assertEquals("1",matReq.getAcctCodeType());
+		Assert.assertEquals("CORP",matReq.getAllocDstrct());
+		Assert.assertEquals(new BigDecimal(100),matReq.getAllocPc());
+		Assert.assertEquals(new BigDecimal(0),matReq.getAllocValInv());
+		Assert.assertEquals("CORP" ,matReq.getCostDstrctCde());
+		Assert.assertEquals("000001060331",matReq.getEquipNo());
+		Assert.assertEquals("358", matReq.getExpElement());
+		Assert.assertEquals(new BigDecimal(0), matReq.getFcastToGo());
+		Assert.assertEquals("602424153000", matReq.getGlAccount());
+		Assert.assertEquals("projectNo",matReq.getProjectNo());
+		Assert.assertEquals("subledgerAcct",matReq.getSubledgerAcct());
+		Assert.assertEquals("subledgerType", matReq.getSubledgerType());
+		Assert.assertEquals("00939128",matReq.getWorkOrder());
+		Assert.assertEquals(new BigDecimal(0),matReq.getAllocValRcv());
+		Assert.assertTrue(matReqPk.equals(matReqPk2));
+		Assert.assertTrue(matReqPk2.hashCode()>0);
 	}
 	@Test
 	public void testGroupRoleMapping(){
-		
 		GroupRoleMapping groupRoleMapping = new GroupRoleMapping();
 		groupRoleMapping.setGrpNam("test group");
 		groupRoleMapping.setGrpRoleId(1);
@@ -319,6 +375,5 @@ public class P6ModelTest {
 		Assert.assertEquals(1, groupRoleMapping.getGrpRoleId());
 		Assert.assertEquals("P6_TEM_LEDR_SCHDLR", groupRoleMapping.getRoleNam());
 		Assert.assertEquals("test group", groupRoleMapping.getGrpNam());
-	
 	}
 }
