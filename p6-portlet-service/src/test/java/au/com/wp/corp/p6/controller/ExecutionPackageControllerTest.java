@@ -46,7 +46,7 @@ import au.com.wp.corp.p6.validation.Validator;
  */
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { AppConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ExecutionPcakageControllerTest {
+public class ExecutionPackageControllerTest {
 
 	private MockMvc mockMvc;
 

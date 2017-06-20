@@ -33,8 +33,9 @@ public class P6EllipseDAOImpl implements P6EllipseDAO{
 		try {
 			activities = ellipseDataMapper.readElipseWorkorderDetails(workgroupList);
 			logger.debug("Read data from ellipse with activities {}", activities);
-		} catch (Exception e) {
-			throw new P6DataAccessException(e);
+		}  
+		catch (Exception e) {
+			parseException(e);
 		}
 		
 		return activities;

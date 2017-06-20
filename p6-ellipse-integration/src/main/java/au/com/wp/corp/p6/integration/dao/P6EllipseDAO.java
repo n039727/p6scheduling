@@ -13,7 +13,8 @@ import au.com.wp.corp.p6.integration.exception.P6DataAccessException;
  *
  */
 @FunctionalInterface
-public interface P6EllipseDAO {
-
-	public List<EllipseActivityDTO> readElipseWorkorderDetails(List<String> workgroupList) throws P6DataAccessException; 
+public interface P6EllipseDAO extends P6IntegrationDAOExceptionParser{
+	public List<EllipseActivityDTO> readElipseWorkorderDetails(List<String> workgroupList) throws P6DataAccessException;
+	
+	
 }
