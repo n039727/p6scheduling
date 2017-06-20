@@ -27,8 +27,6 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			
 		}
 		ctrl.crewList = ctrl.allCrewList;
-//		console.log("Depot List: " + JSON.stringify(ctrl.depotList));
-//		console.log("Crew List: " + JSON.stringify(ctrl.crewList));
 	}
 	
 	ctrl.onDepotChange = function() {
@@ -51,7 +49,6 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	
 	// FORMAT THE DATE FOR THE DATEPICKER
 	$mdDateLocale.formatDate = function(date) {
-//   	 console.log('date in formatDate: ' + JSON.stringify(date));
     	if(angular.isDefined(date) && date !== null){
     		ctrl.isInvalidDateFormat = false;
     		return $filter('date')(date, "dd/MM/yyyy");
@@ -78,7 +75,6 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'){
 			this.scheduleToDate = "";
 		}	
-		//console.log('ctrl.selectedDepotList:' + JSON.stringify(ctrl.selectedDepotList));
 		for (var i = 0 ; i < ctrl.selectedDepotList.length; i++) {
 			ctrl.depots.push (ctrl.selectedDepotList[i].trim());
 		}
@@ -94,7 +90,6 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			toDate: ctrl.formatDate(this.scheduleToDate)
 		};
 		if(this.validateForm()){
-//			console.log('queryObject:' + JSON.stringify(queryObj));
 			this.search({query:queryObj});
 		}
 	};
@@ -129,20 +124,6 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 					ctrl.isValidationErr = true;
 					return false;
 				}
-				/*else if(ctrl.scheduleToDate !==""){
-					this.schFromDate = ctrl.formatDate(this.scheduleFromDate);
-					this.schToDate = ctrl.formatDate(this.scheduleToDate);
-					var isSamedate = moment(this.schFromDate).isSame(this.schToDate);
-					var isPastDate = moment(this.schFromDate).isBefore(this.schToDate); 
-					if(!isSamedate && !isPastDate){
-						ctrl.showErrorMsg = 'To Date must be future date of From Date';
-						ctrl.isValidationErr = true;
-						return false;
-					}else{
-						ctrl.isValidationErr = false;
-						return true;
-					}
-				}*/
 				else{
 					ctrl.isValidationErr = false;
 					return true;

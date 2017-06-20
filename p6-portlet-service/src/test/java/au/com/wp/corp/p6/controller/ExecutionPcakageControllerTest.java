@@ -14,6 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -54,7 +55,8 @@ public class ExecutionPcakageControllerTest {
 	@Mock
 	private IExecutionPackageService executionPckg;
 	
-	
+	@Mock(answer=Answers.CALLS_REAL_METHODS)
+	private Validator validator;
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -73,6 +75,7 @@ public class ExecutionPcakageControllerTest {
 
 		WorkOrder workOrder = new WorkOrder();
 		workOrder.setWorkOrderId("WO1234");
+		workOrder.setScheduleDate("2017-06-14");
 		List<WorkOrder> workOrders = new ArrayList<>();
 		workOrders.add(workOrder);
 		executionPackageDTO.setWorkOrders(workOrders);
@@ -92,6 +95,7 @@ public class ExecutionPcakageControllerTest {
 		
 		WorkOrder workOrder = new WorkOrder();
 		workOrder.setWorkOrderId("WO1234");
+		workOrder.setScheduleDate("2017-05-15");
 		List<WorkOrder> workOrders = new ArrayList<>();
 		workOrders.add(workOrder);
 		
@@ -113,6 +117,7 @@ public class ExecutionPcakageControllerTest {
 		
 		WorkOrder workOrder = new WorkOrder();
 		workOrder.setWorkOrderId("WO1234");
+		workOrder.setScheduleDate("2017-05-15");
 		List<WorkOrder> workOrders = new ArrayList<>();
 		workOrders.add(workOrder);
 		

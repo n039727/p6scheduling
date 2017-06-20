@@ -39,7 +39,6 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	private static final Logger logger = LoggerFactory.getLogger(WorkOrderDAOImpl.class);
 	@Autowired
 	SessionFactory sessionFactory; 
-	
 	@Autowired
 	DateUtils dateUtils;
 
@@ -86,6 +85,7 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			if (null != query.getFromDate()) {
 				if (null != query.getToDate()) {
 					logger.debug("Input End date>>>>{}", query.getToDate());
+
 					criteria.add(Restrictions.between("schdDt", dateUtils.toDateFromYYYY_MM_DD(query.getFromDate()), dateUtils.toDateFromYYYY_MM_DD(query.getToDate())));
 				} else {
 					criteria.add(Restrictions.between("schdDt", dateUtils.toDateFromYYYY_MM_DD(query.getFromDate()), dateUtils.toDateFromYYYY_MM_DD(query.getFromDate())));

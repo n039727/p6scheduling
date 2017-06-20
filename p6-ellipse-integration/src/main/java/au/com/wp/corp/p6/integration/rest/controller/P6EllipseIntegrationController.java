@@ -31,6 +31,7 @@ public class P6EllipseIntegrationController {
 	
 	@RequestMapping(value = "/p6-ellipse", produces = MediaType.TEXT_PLAIN_VALUE)
 	public String startIntegartion (){
+		final long startTime = System.currentTimeMillis();
 		try {
 			boolean status = p6EllipseService.start();
 			if ( ! status )
@@ -40,6 +41,7 @@ public class P6EllipseIntegrationController {
 			return STATUS_FAILED;
 		}
 		p6EllipseService.clearApplicationMemory();
+		logger.info("Time taken to complete the batch in milisecond - {} ms", System.currentTimeMillis()-startTime);
 		return STATUS_COMLETED;
 	}
 }

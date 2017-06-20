@@ -142,23 +142,6 @@ app.controller('executionPkgPopupController', [
 				 },
 				 data: JSON.stringify($scope.createExecPkgReq)
 			};
-			/*$http(req).then(function (response) {
-				console.log("Received data from server");
-				console.log("Data for execution package from server: " + JSON.stringify(response.data));
-				
-				close({
-					status: 'SUCCESS',
-					data: {
-						exctnPckgName: response.data.exctnPckgName, 
-						workOrders:$scope.wo, 
-						leadCrew:$scope.selectedLeadCrew, 
-						crewNames: response.data.crewNames,
-						scheduleDate: $scope.scheduleDate,
-						toDoItems:[]
-						}
-				}, 500); // close, but give 500ms for bootstrap to animate
-		  
-			});*/
 			restTemplate.callService(req, function (response) {
 				console.log("Received data from server");
 				console.log("Data for execution package from server: " + JSON.stringify(response.data));

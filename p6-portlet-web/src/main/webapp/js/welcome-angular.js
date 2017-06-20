@@ -10,7 +10,6 @@ Array.prototype.contains = function(v) {
 };
 
 Array.prototype.unique = function() {
-//	console.log("unique called");
 	var itemMap = {};
 	var arr = [];
 	for (var i = 0; i < this.length; i++) {
@@ -19,12 +18,10 @@ Array.prototype.unique = function() {
 	$.each(itemMap, function (key, value) {
 	   arr.push(key);
 	});
-//	console.log("Unique object: " + JSON.stringify(arr));
 	return arr;
 };
 
 Array.prototype.returnIfExists = function(value) {
-//	console.log("returnIfExists called");
 	if (angular.isUndefined(value) || value === null) {
 		return "";
 	}
@@ -58,7 +55,6 @@ app.service('userAccessService', function($http, userdata) {
 });
 
 app.service('restTemplate', function($http, userdata) {
-	//this.authToken = "";
 	var restTemplate = this;
 	this.callService = function(config, successCallback, errorCallback) {
 		if (!angular.isDefined(config)) {
@@ -77,7 +73,6 @@ app.service('restTemplate', function($http, userdata) {
 			if (response.headers('AUTH_TOKEN') == null) {
 				console.log('response auth token has not been set');
 			} else {
-				//restTemplate.authToken = response.headers('AUTH_TOKEN');
 				userdata.authToken = response.headers('AUTH_TOKEN');
 				console.log("Auth Token has been set as " + userdata.authToken);
 			}
@@ -190,7 +185,6 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 		ctrl.reload(query, function(data) {
 			ctrl.workOrders = data;
 			ctrl.resultVisible = data.length > 0;
-//			console.log('ctrl.resultVisible:' + JSON.stringify(ctrl.resultVisible));
 			if(ctrl.resultVisible){
 				ctrl.metadata.isErrdataAvail = false;
 			}else{
@@ -200,9 +194,6 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 		});
 	};
 
-//	ctrl.activeContext = 'ADD_SCHEDULING_TODO';
-
-	
 	ctrl.handleContext = function(context) {
 		console.log('handle context called with context: ' + context);
 		ctrl.activeContext = context;
@@ -246,10 +237,4 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 		}
 	}
 	
-	/*restTemplate.callService({
-		method : "GET",
-		url : '/p6-portal/web/user/name'
-	}, function(response) {
-		$scope.userName = response.data.userName;
-	}, null);*/
 });

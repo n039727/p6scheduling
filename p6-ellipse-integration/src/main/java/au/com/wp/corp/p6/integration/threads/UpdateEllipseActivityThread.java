@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.ProcessStatus;
-import au.com.wp.corp.p6.integration.util.ReadProcessStatus;
+import au.com.wp.corp.p6.integration.util.ReadWriteProcessStatus;
 import au.com.wp.corp.p6.integration.wsclient.ellipse.EllipseWSClient;
 
 /**
@@ -36,17 +36,13 @@ public class UpdateEllipseActivityThread implements Runnable {
 	@Override
 	public void run() {
 		logger.info("Initiates update Activities in Ellipse thread ....");
-//		File file = new File("C:\\test-config\\updateActivityEllipseSet.csv");
-//		CSVWriter.generateCSV(file, updateActivityEllipseSet.toArray());
-//		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS,ReadProcessStatus.COMPLETED );
-		
 		try {
 			if ( !updateActivityEllipseSet.isEmpty() )
 			ellipseWSClient.updateActivitiesEllipse(updateActivityEllipseSet);
-			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS,ReadProcessStatus.COMPLETED );
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS,ReadWriteProcessStatus.COMPLETED );
 		} catch (Exception e) {
 			logger.error("An error occurs while updating ellipse activity : ", e);
-			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS, ReadProcessStatus.FAILED);	
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS, ReadWriteProcessStatus.FAILED);	
 		}
 	}
 

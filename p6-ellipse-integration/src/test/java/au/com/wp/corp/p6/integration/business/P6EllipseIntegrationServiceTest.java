@@ -1863,7 +1863,6 @@ public class P6EllipseIntegrationServiceTest {
 	public void testStartEllipseToP6Integration_1() throws P6BusinessException, NoSuchMethodException,
 			SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		thrown.expect(P6BusinessException.class);
-		thrown.expectMessage("An error occurs while create /update/ delete  data");
 		EllipseActivityDTO ellipseActivity = new EllipseActivityDTO();
 		ellipseActivity.setWorkOrderTaskId("03940943001");
 		ellipseActivity.setWorkGroup("MOMT2");
@@ -1905,7 +1904,7 @@ public class P6EllipseIntegrationServiceTest {
 		Mockito.when(p6WSClient.deleteActivities(p6Activities)).thenThrow(P6ServiceException.class);
 
 		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList);
-		Assert.assertEquals(0, deleteActivites.size());
+		Assert.assertEquals(1, deleteActivites.size());
 	}
 
 	

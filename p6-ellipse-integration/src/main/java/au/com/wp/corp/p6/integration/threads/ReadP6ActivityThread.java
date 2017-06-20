@@ -13,7 +13,7 @@ import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.ProcessStatus;
-import au.com.wp.corp.p6.integration.util.ReadProcessStatus;
+import au.com.wp.corp.p6.integration.util.ReadWriteProcessStatus;
 import au.com.wp.corp.p6.integration.wsclient.cleint.P6WSClient;
 
 /**
@@ -28,7 +28,7 @@ public class ReadP6ActivityThread implements Runnable {
 	public ReadP6ActivityThread(final P6WSClient p6WSClient, final List<String> workgroupList) {
 		this.p6WSClient = p6WSClient;
 		this.workgroupList = workgroupList;
-		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.STARTED);
+		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadWriteProcessStatus.STARTED);
 	}
 	
 	/* (non-Javadoc)
@@ -46,11 +46,11 @@ public class ReadP6ActivityThread implements Runnable {
 			}
 		} catch (P6ServiceException e) {
 			logger.error("An error occurs while reading P6 activity : ", e);
-			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.FAILED);			
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadWriteProcessStatus.FAILED);			
 		}
 		logger.debug("Size of activities from P6 # {}", activities.size());
 		logger.debug("Time taken to read record from P6 # {} ", System.currentTimeMillis() - startTime);
-		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadProcessStatus.COMPLETED);
+		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadWriteProcessStatus.COMPLETED);
 		
 
 	}
