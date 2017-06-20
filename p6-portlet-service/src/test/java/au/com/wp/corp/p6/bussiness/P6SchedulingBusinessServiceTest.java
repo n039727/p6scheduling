@@ -43,6 +43,7 @@ import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ResourceDTO;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.UserTokenRequest;
+import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BusinessException;
@@ -666,6 +667,105 @@ public class P6SchedulingBusinessServiceTest {
 		
 		p6SchedulingBusinessService.fetchWorkOrdersForViewToDoStatus(request);
 		
+	}
+	
+	/**
+	 * retrieve work orders from P6
+	 * 
+	 * @throws P6BusinessException
+	 */
+
+	@Test
+	@Rollback(true)
+	public void testRetrieveWorkOrders() throws P6BusinessException {
+		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
+		request.setFromDate("2017-05-19'T'00:00:00.000Z");
+
+		List<WorkOrder> searchResult = new ArrayList<>();
+
+		WorkOrder workOrder = new WorkOrder();
+
+		List<String> workOrderIds = new ArrayList<>();
+		workOrderIds.add("W11");
+		workOrder.setWorkOrders(workOrderIds);
+		workOrder.setWorkOrderId("W11");
+		workOrder.setCrewNames("CRW1");
+		workOrder.setScheduleDate("19/05/2017");
+		searchResult.add(workOrder);
+
+		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+		searchRequest.setPlannedStartDate("2017-05-19");
+		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
+		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
+
+		Task task = new Task();
+		task.setTaskId("W11");
+		task.setActioned("Y");
+		task.setCrewId("CRW1");
+		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
+		task.setSchdDt(new Date());
+		Mockito.when(workOrderDAO.fetch(workOrder.getWorkOrderId())).thenReturn(task);
+		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
+		List<WorkOrder> workOrders = p6SchedulingBusinessService.retrieveWorkOrders(request);
+		Assert.assertNotNull(workOrders);
+		for (WorkOrder _workOrder : workOrders) {
+			Assert.assertEquals("W11", _workOrder.getWorkOrders().get(0));
+			Assert.assertEquals("CRW1", _workOrder.getCrewNames());
+			Assert.assertEquals(null, _workOrder.getExctnPckgName());
+		}
+
+	}
+	
+	@Test
+	@Rollback(true)
+	public void testSaveViewToDoStatus() throws P6BusinessException {
+		
+		ExecutionPackage excPckg = new ExecutionPackage();
+		excPckg.setExctnPckgId(123456L);
+		excPckg.setExctnPckgNam("28-04-2017_122345");
+		WorkOrder workOrder = new WorkOrder();
+
+		List<String> workOrderIds = new ArrayList<>();
+		workOrderIds.add("WO11");
+		workOrder.setWorkOrders(workOrderIds);
+		workOrder.setWorkOrderId("WO11");
+		workOrder.setCrewNames("CRW1");
+		workOrder.setScheduleDate("28/04/2017");
+		workOrder.setExctnPckgName("28-04-2017_122345");
+
+		List<ToDoItem> toDoItems = new ArrayList<>();
+		ToDoItem toDoItem = new ToDoItem();
+		toDoItem.setToDoName("ESA");
+		toDoItem.setWorkOrders(workOrderIds);
+		toDoItems.add(toDoItem);
+		workOrder.setToDoItems(toDoItems);
+
+		Task task = new Task();
+		task.setTaskId("WO11");
+		task.setActioned("Y");
+		task.setCrewId("CRW1");
+		task.setExecutionPackage(excPckg);
+		Set<Task> tasks = new HashSet();
+		tasks.add(task);
+		excPckg.setTasks(tasks);
+		TodoAssignment todoAssignment = new TodoAssignment();
+		todoAssignment.getTodoAssignMentPK().setTask(task);
+		todoAssignment.getTodoAssignMentPK().setTodoId(new BigDecimal(2));
+		Set<TodoAssignment> todos = new HashSet<>();
+		task.setTodoAssignments(todos);
+
+		Mockito.when(workOrderDAO.fetch(workOrder.getWorkOrderId())).thenReturn(task);
+		Mockito.when(todoDAO.getToDoId("ESA")).thenReturn(new BigDecimal(1));
+		Mockito.when(executionPackageDao.fetch(workOrder.getExctnPckgName())).thenReturn(excPckg);
+		
+		ViewToDoStatus viewToDoStatus = new ViewToDoStatus();
+		viewToDoStatus.setExctnPckgName("28-04-2017_122345");
+		viewToDoStatus.setWorkOrders(workOrderIds);
+		ViewToDoStatus output = p6SchedulingBusinessService.saveViewToDoStatus(viewToDoStatus);
+
+		Assert.assertNotNull(output);
+		
+
 	}
 
 }

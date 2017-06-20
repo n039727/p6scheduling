@@ -34,11 +34,9 @@ import au.com.wp.corp.p6.dataservice.ResourceDetailDAO;
 import au.com.wp.corp.p6.dataservice.TodoDAO;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
-import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ResourceDTO;
-import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.UserTokenRequest;
@@ -119,17 +117,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	}
 
-	@Override
-	public List<Crew> retrieveCrews(ResourceSearchRequest input) throws P6BusinessException{
-		logger.info("input ResourceType() # {} ", input.getResourceType());
-
-		List<Crew> crews = p6wsClient.searchCrew(input);
-
-		logger.info("list of crews orders from P6# {}", crews);
-		return crews;
-
-	}
-
+	
 	private List<WorkOrder> applyFilters(List<WorkOrder> listWOData,WorkOrderSearchRequest input){
 		List<WorkOrder> resultListWOData = new ArrayList<WorkOrder>();
 		List<String> listOfCrew = null;
@@ -397,17 +385,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		logger.debug("Total time taken to removeExecutionPackageinP6 {}",System.currentTimeMillis() - startTime );
 	}
 
-	private boolean isExecutionPackageTobeRetained(Task task) {
-		boolean retValue = false;
-		if ((!CollectionUtils.isEmpty(listWOData)) && (!CollectionUtils.isEmpty(tasksInDb))) {
-				ExecutionPackage executionPackage = task.getExecutionPackage();
-				if (executionPackage != null) {
-					Set<Task> associatedTasks = executionPackage.getTasks();
-					retValue = listWOData.containsAll(associatedTasks);
-				}
-		}
-		return retValue;
-	}
+	
 	public boolean convertStringToBoolean(String completed) {
 		return P6Constant.ACTIONED_Y.equals(completed);
 	}
@@ -518,66 +496,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 	}
 
-	/**
-	 * Updates to remove task from execution package.
-	 * @param executionPackage
-	 * @param tasksForUpdate 
-	 * @throws P6DataAccessException
-	 */
-	@SuppressWarnings("unchecked")
-	private void updateExecutionPackage(ExecutionPackage executionPackage, List<Task> tasksForUpdate) throws P6DataAccessException {
-		if (executionPackage != null) {
-			Set<Task> tasks = executionPackage.getTasks();
-			StringBuilder crewPresent = new StringBuilder();
-			boolean isStatusUpdated = false;
-			if (tasks != null) {
-				for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext();) {
-					Task taskAttahced = (Task) iterator.next();
-					Date plannedStartDate = null;
-					Date workOrderSchedDate = null;
-					if(taskAttahced.getSchdDt() != null){
-						plannedStartDate = taskAttahced.getSchdDt();
-					}
-
-					String crewAssignedToTask = taskAttahced.getCrewId();
-					logger.debug("crew assigned to this task{}", crewAssignedToTask);
-					String executionPackageName = executionPackage.getExctnPckgNam();
-					Date dateOfExectnPkg = null;
-					if(executionPackage.getScheduledStartDate() != null){
-						
-						dateOfExectnPkg = executionPackage.getScheduledStartDate();
-					}
-					logger.debug("planned start date {} for task {} for execution package {}", plannedStartDate, taskAttahced.getTaskId(),executionPackageName);
-					logger.debug("date {} for package  {}", dateOfExectnPkg, executionPackageName);
-					logger.debug("date {} for work order   {}", workOrderSchedDate, executionPackageName);
-					if(plannedStartDate != null && dateOfExectnPkg != null){
-						if (dateOfExectnPkg.compareTo(plannedStartDate) != 0) {
-							logger.debug("removing task {} from execution package", taskAttahced.getTaskId(),
-									executionPackageName);
-							taskAttahced.setExecutionPackage(null);
-							tasksForUpdate.add(taskAttahced);
-						} else {
-							crewPresent.append(crewAssignedToTask);
-						}
-					}
-
-				}
-				String executionPkgLeadCrew = executionPackage.getLeadCrewId() == null ? "" :executionPackage.getLeadCrewId();
-				if ((!executionPkgLeadCrew.equals("")) && (!StringUtils.contains(crewPresent, executionPkgLeadCrew))) {
-					executionPackage.setLeadCrewId("");
-					isStatusUpdated = true;
-				}
-				if(isStatusUpdated){
-					executionPackageDao.createOrUpdateExecPackage(executionPackage);
-				}
-			}
-		}
-
-
-	}
-
-
-
+	
 	@Override
 	@Transactional
 	public MetadataDTO fetchMetadata() throws P6BusinessException{

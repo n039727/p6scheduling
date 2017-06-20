@@ -31,6 +31,11 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.10</version>
+		</dependency>
+		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>
@@ -59,11 +64,11 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-lang3</artifactId>
-		    <version>3.5</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.5</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -154,8 +159,8 @@
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>2.0.1</version>
 		</dependency>
-		
-		<!--  hibernate dependencies -->
+
+		<!-- hibernate dependencies -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
@@ -185,7 +190,7 @@
 			<artifactId>persistence-api</artifactId>
 			<version>1.0.2</version>
 		</dependency>
-		
+
 		<!-- Aspect J -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -203,7 +208,7 @@
 			<version>1.8.9</version>
 		</dependency>
 		<!-- Aspect J -->
-		
+
 	</dependencies>
 	<build>
 		<finalName>p6-portlet-web</finalName>

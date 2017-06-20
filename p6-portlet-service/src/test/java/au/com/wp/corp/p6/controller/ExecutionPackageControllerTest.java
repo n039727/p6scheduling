@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -81,6 +82,7 @@ public class ExecutionPackageControllerTest {
 		executionPackageDTO.setWorkOrders(workOrders);
 		Mockito.when(executionPckg.createOrUpdateExecutionPackage(executionPackageDTO))
 				.thenReturn(executionPackageDTO);
+		executionPckg.setExecutionPackageDTDOFoP6(Arrays.asList(executionPackageDTO));
 		executionPckg.updateP6ForExecutionPackage();
 		ResultActions actions = mockMvc.perform(post("/executionpackage/createOrUpdate")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE)

@@ -38,7 +38,7 @@ public class DeleteUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
 			
 		} catch (au.com.wp.corp.p6.wsclient.udfvalue.IntegrationFault e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("IntegrationFault occured>>>{}", e);
 		}
 		return new Holder<>(returnVal);
 	}

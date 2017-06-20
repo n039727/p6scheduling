@@ -24,7 +24,7 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 	
 	private BindingProvider bp;
 	private AuthenticationServicePortType servicePort;
-	private static List<String> cookieHeaders = null;
+	private List<String> cookieHeaders = null;
 	private final String endPoint;
 	
 	private final String userPrincipal;

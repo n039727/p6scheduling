@@ -1,9 +1,10 @@
 package au.com.wp.corp.p6.dataservice;
 
-import static org.junit.Assert.assertEquals;
-
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -20,10 +21,11 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
 import au.com.wp.corp.p6.dataservice.impl.ExecutionPackageDaoImpl;
-import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
+import au.com.wp.corp.p6.model.TodoAssignment;
+import au.com.wp.corp.p6.model.TodoAssignmentPK;
 import au.com.wp.corp.p6.test.config.AppConfig;
 
 /**
@@ -108,6 +110,55 @@ public class ExecutionPackageDaoIntegrationTest {
 	}
 
 
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFetch() throws P6DataAccessException {
+		ExecutionPackage executionPackage = executionPackageDao.fetch("08062017032033633");
+		Assert.assertNotNull(executionPackage);
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testCreateOrUpdateTasks() throws P6DataAccessException {
+		Task dbTask = new Task();
+		dbTask = prepareTaskBean(dbTask);
+		Set<Task> tasks = new HashSet<>();
+		tasks.add(dbTask);
+		boolean status = executionPackageDao.createOrUpdateTasks(tasks);
+		Assert.assertEquals(status, Boolean.TRUE);
+	}
+	
+	private Task prepareTaskBean(Task dbTask) {
 
+		dbTask.setTaskId("JunitTest101");
+		dbTask.setCmts("Test cmt");
+		dbTask.setCrewId("TestCrew");
+		dbTask.setLeadCrewId("TestLeadCrew");
+		java.util.Date scheduleDate = new java.util.Date();
+		dbTask.setSchdDt(scheduleDate);
+		dbTask.setDepotId("TestDeport");
+		dbTask.setMatrlReqRef("TestMatrReqRef");
+		long currentTime = System.currentTimeMillis();
+		dbTask.setCrtdUsr("Test");
+		dbTask.setCrtdTs(new Timestamp(currentTime));
+		dbTask.setLstUpdtdTs(new Timestamp(currentTime));
+		dbTask.setLstUpdtdUsr("Test");
+		dbTask.setExecutionPackage(executionPackageDao.fetch("08-05-2017_092351551"));
+		dbTask.setActioned("Y");
+		
+		return dbTask;
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testDeleteExecPackage() throws P6DataAccessException {
+		ExecutionPackage executionPackage = new ExecutionPackage();
+		executionPackage.setExctnPckgNam("08062017032033633");
+		boolean status = executionPackageDao.deleteExecPackage(executionPackage);
+		Assert.assertEquals(status, Boolean.TRUE);
+	}
 
 }
