@@ -101,7 +101,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 		}
 
-		final ActivityServiceCall<List<Activity>> activityService = new ReadActivityServiceCall(trackingId, null);
+		final ActivityServiceCall<List<Activity>> activityService = new ReadActivityServiceCall(trackingId, filter.toString());
 
 		final Holder<List<Activity>> activities = activityService.run();
 		logger.debug("list of activities from P6#{}", activities);
