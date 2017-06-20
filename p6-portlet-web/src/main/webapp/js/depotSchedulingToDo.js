@@ -9,7 +9,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 		}
 	}
 	
-//	ctrl.successSavedMsg = "";
 	ctrl.emptyStr = "";
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	ctrl.toggleExpansion  = function($event, wo) {
@@ -19,14 +18,11 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			$('#'+button.id).removeClass("glyphicon-plus");
 			$('#'+button.id).addClass("glyphicon-minus");
 			ctrl.fetchToDoAgainstWO(wo);
-			//wo.expanded = true;
 		} else if ($('#'+button.id).hasClass("glyphicon-minus")) {
 			$('#'+button.id).removeClass("glyphicon-minus");
 			$('#'+button.id).addClass("glyphicon-plus");
-			//wo.expanded = false;
 		}
 		wo.savedMsgVisible = false;
-		//$scope.$digest();
 	};
 	
 	
@@ -37,7 +33,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 	
 	if(ctrl.metadata.todoList){
 		for (i=0; i<ctrl.metadata.todoList.length;i++) {
-//			console.log("Type Id: " + ctrl.metadata.todoList[i].typeId);
 			if (ctrl.metadata.todoList[i].typeId == 1) {
 				ctrl.schedulingToDoList.push(ctrl.metadata.todoList[i].toDoName);
 			} else {

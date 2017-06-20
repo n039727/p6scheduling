@@ -11,9 +11,6 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 		}
 	}
 	
-	
-	//ctrl.successSavedMsg = "";
-	//ctrl.savedMsgVisible = false;
 	console.log('data received: ' + JSON.stringify(ctrl.data));
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
@@ -30,19 +27,6 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 		
 	};
 	
-	
-	/*ctrl.todoGrp1 = [];
-	ctrl.todoGrp2 = [];
-	if(ctrl.metadata.todoList){
-		for(i=0; i<ctrl.metadata.todoList.length;i++) {  
-		
-			if (i < ctrl.metadata.todoList.length/2) 
-				ctrl.todoGrp1.push(ctrl.metadata.todoList[i].toDoName);
-			else
-				ctrl.todoGrp2.push(ctrl.metadata.todoList[i].toDoName);
-		}
-	}*/
-	
 	ctrl.todoGrp1 = [];
 	ctrl.todoGrp2 = [];
 	ctrl.schedulingToDoList = [];
@@ -50,7 +34,6 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 	
 	if(ctrl.metadata.todoList){
 		for (i=0; i<ctrl.metadata.todoList.length;i++) {
-//			console.log("Type Id: " + ctrl.metadata.todoList[i].typeId);
 			if (ctrl.metadata.todoList[i].typeId == 1) {
 				ctrl.schedulingToDoList.push(ctrl.metadata.todoList[i].toDoName);
 			} else {
@@ -127,11 +110,6 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 				}
 			}
 		}
-/*		if(wo && wo.toDoItems.length == 0){
-			wo.actioned = 'N';
-		}else if(wo && wo.toDoItems.length > 0){
-			wo.actioned = 'Y';
-		}*/
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		var req = {
 			 method: 'POST',
@@ -142,18 +120,6 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 			 data: JSON.stringify(wo)
 			 
 		};
-		/*$http(req).then(function (response) {
-			console.log("Received data from server");
-			$scope.fetchedData = response.data;
-			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
-			if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== null){
-				ctrl.successSavedMsg = "Package has been saved successfully";
-			}else{
-				ctrl.successSavedMsg = "Work order task has been saved successfully";
-			}
-			ctrl.savedMsgVisible = true;
-			
-		});*/
 		restTemplate.callService(req, function (response) {
 			console.log("Received data from server");
 			$scope.fetchedData = response.data;
@@ -192,19 +158,6 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 				data: JSON.stringify(query)
 
 			};
-		/*$http(req).then(function (response) {
-			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
-			wo.toDoItems = [];
-			wo.schedulingToDoComment = "";
-			if (response.data[0] && response.data[0].toDoItems) {
-				wo.toDoItems = response.data[0].toDoItems;
-				wo.schedulingToDoComment = response.data[0].schedulingToDoComment;
-			}
-			ctrl.populateToDoBindings(wo, wo.toDoItems);
-			ctrl.populateWorkOrderDisplayList(wo);
-			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
-		});*/
-		
 		restTemplate.callService(req, function (response) {
 			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			wo.toDoItems = [];
@@ -243,8 +196,6 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 			}
 		}
 	}
-	
-//	ctrl.toDoBindingVar = {};
 	
 	ctrl.populateToDoBindings = function(workOrder) {
 		workOrder.toDoBindingVar = {};

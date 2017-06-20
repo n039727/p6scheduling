@@ -29,6 +29,8 @@ public class EllipseActivityDTO  implements Serializable{
 	private String taskStatus;
 
 	private String plannedStartDate;
+	
+	private String plannedFinishDate;
 
 	private String jdCode;
 
@@ -406,5 +408,19 @@ public class EllipseActivityDTO  implements Serializable{
 		this.actualFinishDate = actualFinishDate;
 	}
 
+	/**
+	 * @return the plannedFinishDate
+	 */
+	public String getPlannedFinishDate() {
+		return plannedFinishDate;
+	}
+
+	/**
+	 * @param plannedFinishDate the plannedFinishDate to set
+	 */
+	public void setPlannedFinishDate(String plannedFinishDate) {
+		this.plannedFinishDate = plannedFinishDate;
+	}
+	
 	
 }

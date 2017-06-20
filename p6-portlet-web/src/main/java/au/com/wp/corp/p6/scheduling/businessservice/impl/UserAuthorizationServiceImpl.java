@@ -91,7 +91,7 @@ public class UserAuthorizationServiceImpl implements UserAuthorizationService {
 				userName = temp.substring(temp.indexOf(":") + 1);
 			}
 		} catch (NamingException e) {
-
+			logger.error("naming exception occured >>{}", e);
 		} finally {
 
 			// Closing LDAP Connection

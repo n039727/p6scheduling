@@ -53,7 +53,7 @@ public class CreateUDFValueServiceCall extends UDFValueServiceCall<List<ObjectId
 			objectIds = servicePort.createUDFValues(createUDFValues);
 		} catch (au.com.wp.corp.p6.wsclient.udfvalue.IntegrationFault e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("IntegrationFault occured>>>{}", e);
 		}
 		return new Holder<List<ObjectId>>(objectIds);
 	}

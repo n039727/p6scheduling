@@ -7,9 +7,7 @@ function sidePanelController($scope, userAccessService) {
 	}
 	
 	ctrl.isDisabled = function(functionId) {
-		//console.log("is disabled called for " + functionId);
 		if (userAccessService.isAuthEnabled()) {
-			//console.log("Has access: " + userAccessService.hasAccess(functionId));
 			return !userAccessService.hasAccess(functionId);
 		}
 		

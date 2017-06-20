@@ -9,8 +9,6 @@ function materialRequisitionResultController($scope, restTemplate, userAccessSer
 		}
 	}	
 	console.log('data received in material req.: ' + JSON.stringify(ctrl.data));
-	//ctrl.woMatReqMap = {};
-	//ctrl.woReqs = [];
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
 		

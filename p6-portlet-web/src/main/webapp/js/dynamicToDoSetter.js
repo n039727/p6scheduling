@@ -1,6 +1,4 @@
 function dynamicToDoSetterController($scope) {
-
-
 	console.log("[DEBUG] Dynamic to do setter called"); 
 	var ctrl = this;
 
@@ -62,7 +60,6 @@ function dynamicToDoSetterController($scope) {
 			console.log("[DEBUG] todoList is empty or todo is undefined");
 			return;
 		}
-//		console.log("[DEBUG] removing" + todo + " from " + JSON.stringify(todoList));
 		var index = todoList.indexOf(todo);
 		if (index >= 0) {
 			todoList.splice(index, 1);
@@ -72,8 +69,6 @@ function dynamicToDoSetterController($scope) {
 	ctrl.init();
 
 	ctrl.onChange = function(workOrders) {
-		//ctrl.handleDataChange({map: ctrl.currentMap});
-		//ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}})
 		console.log("[DEBUG] ctrl.columnGroup in onChange: " + JSON.stringify(ctrl.columnGroup));
 		console.log("[DEBUG] workOrders in onChange: " + JSON.stringify(workOrders));
 		console.log("[DEBUG] ctrl.currentMap in onChange: " + JSON.stringify(ctrl.currentMap));
@@ -195,7 +190,6 @@ function dynamicToDoSetterController($scope) {
 			  }
 		  
 		  ctrl.currentMap[ctrl.newItem.todoName] = (ctrl.newItem.workOrders.indexOf('ALL') >= 0) ? ctrl.workOrders: ctrl.newItem.workOrders;
-//		  ctrl.handleDataChange({map: ctrl.currentMap});
 		  ctrl.newItem = {isNewItem:true};
 	  }	  
 	  console.log("[DEBUG] Done Adding");

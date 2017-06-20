@@ -27,7 +27,7 @@ public class CacheManager {
 	
 	private static final Map<String, P6ActivityDTO> p6Activities = new HashMap<>();
 	
-	private static final Map<String, ReadProcessStatus> systemReadWriteStatus = new HashMap<>();
+	private static final Map<String, ReadWriteProcessStatus> systemReadWriteStatus = new HashMap<>();
 
 	private static final Map<String, P6ProjWorkgroupDTO > p6ProjectWorkgroupMapping = new HashMap<>();
 	
@@ -69,7 +69,7 @@ public class CacheManager {
 	}
 	
 	
-	public static final Map<String, ReadProcessStatus> getSystemReadWriteStatusMap() {
+	public static final Map<String, ReadWriteProcessStatus> getSystemReadWriteStatusMap() {
 		return systemReadWriteStatus;
 	}
 	

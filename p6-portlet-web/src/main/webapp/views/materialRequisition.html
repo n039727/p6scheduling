@@ -1,53 +1,61 @@
 <div class="auth-enabled-container">
-<table class="table table-condensed table-bordered table-striped" style="border-collapse:collapse;">
-	<thead class="query-result-header">
-		<tr>
-			<th>&nbsp;</th>
-			<th>WO #</th>
-			<th>Planned Start Date</th>
-			<th>Crew Assigned</th>
-			<th>Lead Crew</th>
-			<th>Execution Package</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr ng-repeat-start="wo in $ctrl.data" class="accordion-toggle">
-			<td>
-				<button id="{{wo.workOrders[0] + '-expand'}}" class="btn btn-default btn-sm glyphicon glyphicon-plus row-expander" ng-click="$ctrl.toggleExpansion($event, wo)" data-toggle="collapse" data-target="{{'#demo-' + $index}}">
-				</button>
-			</td>
-			<td>{{wo.workOrders.join(',')}}</td>
-			<td>{{wo.scheduleDate}}</td>
-			<td>{{wo.crewAssigned.unique().join(',')}}</td>
-			<td>{{wo.crewAssigned.returnIfExists(wo.leadCrew)}}</td>
-			<td>{{wo.exctnPckgName}}</td>
-		</tr>
-		<tr ng-repeat-end>
-			<td colspan="12" class="hiddenRow">
-				<div class="accordian-body collapse auth-enabled-container" id="{{'demo-' + $index}}">
-					<div ng-show="$ctrl.isReadOnly" class="read-only-cover"></div>
-					<div class="panel panel-default panel-standard-to-do">
-						<div class="panel-heading panel-standard-to-do-heading"><b>Material Requisition</b></div>
-						<div class="panel-body">
-							<div class="col-md-10">
-								<table class="table table-condensed table-bordered table-striped-metreq">
-									<thead>
-										<th class="standard-to-do-header">WO#</th>
-										<th class="standard-to-do-header">Requisition No #</th>
-									</thead>
-									<tbody>
-										<tr ng-repeat="matReq in wo.woReqs">
-											<td>{{matReq.woNum}}</td>
-											<td>{{matReq.reqList.join(', ')}}</td>
-										</tr>
-									</tbody>
-								</table>
+	<table class="table table-condensed table-bordered table-striped"
+		style="border-collapse:collapse;table-layout:fixed;width:204%;max-width:204%;">
+		<thead class="query-result-header">
+			<tr>
+				<th style="overflow: hidden; max-width: 20px; width: 30px;">&nbsp;</th>
+				<th style="width: 300px; max-width: 300px;">WO #</th>
+				<th>Planned Start Date</th>
+				<th>Crew Assigned</th>
+				<th>Lead Crew</th>
+				<th>Execution Package</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat-start="wo in $ctrl.data" class="accordion-toggle">
+				<td>
+					<button id="{{wo.workOrders[0] + '-expand'}}"
+						class="btn btn-default btn-sm glyphicon glyphicon-plus row-expander"
+						ng-click="$ctrl.toggleExpansion($event, wo)"
+						data-toggle="collapse" data-target="{{'#demo-' + $index}}">
+					</button>
+				</td>
+				<td style="overflow: hidden; width: 300px; max-width: 300px; word-wrap: break-word;">{{wo.workOrders.join(', ')}}</td>
+				<td>{{wo.scheduleDate}}</td>
+				<td style="overflow: hidden; width: 200px; max-width: 200px; word-wrap: break-word;">{{wo.crewAssigned.unique().join(', ')}}</td>
+				<td>{{wo.crewAssigned.returnIfExists(wo.leadCrew)}}</td>
+				<td>{{wo.exctnPckgName}}</td>
+			</tr>
+			<tr ng-repeat-end>
+				<td colspan="12" class="hiddenRow">
+					<div class="accordian-body collapse auth-enabled-container"
+						id="{{'demo-' + $index}}">
+						<div ng-show="$ctrl.isReadOnly" class="read-only-cover"></div>
+						<div class="panel panel-default panel-standard-to-do" style="width:1210px">
+							<div class="panel-heading panel-standard-to-do-heading">
+								<b>Material Requisition</b>
+							</div>
+							<div class="panel-body">
+								<div class="col-md-10">
+									<table
+										class="table table-condensed table-bordered table-striped-metreq">
+										<thead>
+											<th class="standard-to-do-header">WO#</th>
+											<th class="standard-to-do-header">Requisition No #</th>
+										</thead>
+										<tbody>
+											<tr ng-repeat="matReq in wo.woReqs">
+												<td>{{matReq.woNum}}</td>
+												<td>{{matReq.reqList.join(', ')}}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			</td>
-		</tr>
-	</tbody>
-</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </div>

@@ -45,4 +45,21 @@ public class EllipseIntegrationTest {
 
 	}
 
+	
+	@Test
+	public void testEllipseWorkOrdertaskUpdate_1() throws P6ServiceException {
+		
+		List<EllipseActivityDTO> activities = new ArrayList<>();
+
+		EllipseActivityDTO activity = new EllipseActivityDTO();
+		activity.setWorkOrderTaskId("05236401002");
+		activity.setWorkGroup("MOST10");
+		activity.setPlannedStartDate(null);
+		activity.setPlannedFinishDate(null);
+		activity.setTaskUserStatus("AL");
+		activities.add(activity);
+		ellipseWSClient.updateActivitiesEllipse(activities);
+
+	}
+	
 }
