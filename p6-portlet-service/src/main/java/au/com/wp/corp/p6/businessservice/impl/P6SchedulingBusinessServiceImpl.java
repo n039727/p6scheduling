@@ -171,12 +171,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		try {
 			listWOData = retrieveWorkOrders(input);  //1 clear and nullify after remove
 			tasksInDb = fetchListOfTasksBySearchedDate(input,listWOData); //clear and nullify after remove
-			for (Task task : tasksInDb) {
+			tasksInDb.forEach(task ->{
 				Optional<WorkOrder> wo = findWOByTaskId(listWOData, task.getTaskId());
 				if (!wo.isPresent() && null != task.getExecutionPackage()) {
 					removExecutionPackageFromTask(task);
 				}
-			}
+			});
 			listWOData = applyFilters(listWOData, input);
 			for (WorkOrder workOrder : listWOData) {
 				if (workOrder.getWorkOrders() != null) {

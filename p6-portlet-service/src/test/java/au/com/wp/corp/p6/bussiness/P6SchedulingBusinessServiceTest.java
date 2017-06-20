@@ -410,6 +410,70 @@ public class P6SchedulingBusinessServiceTest {
 		}
 
 	}
+	@Test
+	@Rollback(true)
+	public void testSearch_WithoutCrew() throws P6BusinessException {
+		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
+		request.setFromDate("2017-06-14T00:00:00.000Z");
+		List<WorkOrder> searchResult = new ArrayList<>();
+
+		WorkOrder workOrder = new WorkOrder();
+
+		List<String> workOrderIds = new ArrayList<>();
+		workOrderIds.add("W11");
+		workOrder.setWorkOrders(workOrderIds);
+		workOrder.setWorkOrderId("W11");
+		workOrder.setCrewNames("CRW1");
+		workOrder.setScheduleDate("09/05/2017");
+		searchResult.add(workOrder);
+
+		workOrder = new WorkOrder();
+
+		workOrderIds = new ArrayList<>();
+		workOrderIds.add("W11");
+		workOrder.setWorkOrders(workOrderIds);
+		workOrder.setWorkOrderId("W11");
+		workOrder.setCrewNames("CRW1");
+		workOrder.setScheduleDate("09/05/2017");
+		searchResult.add(workOrder);
+
+		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+		searchRequest.setPlannedStartDate("2017-06-14");
+		Mockito.when(dateUtils.convertDate(Mockito.any())).thenReturn("2017-05-09");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+		try {
+			Mockito.when(dateUtils.toDateFromDD_MM_YYYY(Mockito.any())).thenReturn(dateFormat.parse("2017-05-09"));
+			Mockito.when(dateUtils.toDateFromYYYY_MM_DD(Mockito.any())).thenReturn(dateFormat.parse("2017-05-09"));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
+
+		Task task = new Task();
+		task.setTaskId("W11");
+		task.setActioned("Y");
+		task.setCrewId("CRW1");
+		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(Mockito.any())).thenReturn(new Date());
+		ExecutionPackage excPckg = new ExecutionPackage();
+		excPckg.setExctnPckgId(123456L);
+		excPckg.setExctnPckgNam("09-05-2017_064556556");
+		task.setExecutionPackage(excPckg);
+		Set<Task> tasks = new HashSet<Task>();
+		tasks.add(task);
+		excPckg.setTasks(tasks);
+		Mockito.when(workOrderDAO.fetch(workOrder.getWorkOrderId())).thenReturn(task);
+		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
+		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
+		Assert.assertNotNull(workOrders);
+		for (WorkOrder _workOrder : workOrders) {
+			Assert.assertEquals("W11", _workOrder.getWorkOrders().get(0));
+			Assert.assertEquals("CRW1", _workOrder.getCrewNames());
+			Assert.assertEquals("09-05-2017_064556556", _workOrder.getExctnPckgName());
+		}
+
+	}
 
 	/**
 	 * If the work order exist in p6 and it is available in portal database but
