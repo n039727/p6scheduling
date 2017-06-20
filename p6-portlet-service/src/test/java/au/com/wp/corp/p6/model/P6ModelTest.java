@@ -336,7 +336,15 @@ public class P6ModelTest {
 		matReq.setSubledgerType("subledgerType");
 		matReq.setWorkOrder("00939128");
 		matReq.setAllocValRcv(new BigDecimal(0));
+		
+		MaterialRequisitionPK matReqPk2 = new MaterialRequisitionPK();
 
+		matReqPk2.setAllocCount("01");
+		matReqPk2.setDstrctCode("CORP");
+		matReqPk2.setReq232Type("I");
+		matReqPk2.setRequisitionNo("A36110  0000");
+
+		
 		Assert.assertEquals("01", matReq.getId().getAllocCount());
 		Assert.assertEquals("CORP", matReq.getId().getDstrctCode());
 		Assert.assertEquals("I", matReq.getId().getReq232Type());
@@ -355,6 +363,8 @@ public class P6ModelTest {
 		Assert.assertEquals("subledgerType", matReq.getSubledgerType());
 		Assert.assertEquals("00939128",matReq.getWorkOrder());
 		Assert.assertEquals(new BigDecimal(0),matReq.getAllocValRcv());
+		Assert.assertTrue(matReqPk.equals(matReqPk2));
+		Assert.assertTrue(matReqPk2.hashCode()>0);
 	}
 	@Test
 	public void testGroupRoleMapping(){

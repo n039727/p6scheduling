@@ -350,6 +350,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				}
 			}
 		} catch (P6DataAccessException e) {
+			logger.error("Entire Exception : ", e);
 			logger.error("Error occurred in DB persist {}",e.getCause().getMessage());
 		}
 		try {
@@ -361,6 +362,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				}
 			}
 		} catch (P6DataAccessException e) {
+			logger.error("Entire Exception : ", e);
 			logger.error("Error occurred in DB persist {}",e.getCause().getMessage());
 		}
 		logger.debug("Total time taken to updateTasksInDB {}",System.currentTimeMillis() - startTime );

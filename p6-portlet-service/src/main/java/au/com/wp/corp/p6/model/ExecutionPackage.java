@@ -63,14 +63,9 @@ public class ExecutionPackage implements Serializable {
 	
 	@Column(name="EXEC_DEPT_CMT")
 	private String execDeptCmt = "";
-
-	//bi-directional many-to-one association to Task
+	
 	@OneToMany(mappedBy="executionPackage",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Task> tasks;
-
-	//bi-directional many-to-one association to TodoAssignment
-	//@OneToMany(mappedBy="executionPackage",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	//private Set<TodoAssignment> todoAssignments;
 
 	public ExecutionPackage() {
 	}
@@ -170,30 +165,6 @@ public class ExecutionPackage implements Serializable {
 
 		return task;
 	}
-/**
-	public Set<TodoAssignment> getTodoAssignments() {
-		return this.todoAssignments;
-	}
-
-	public void setTodoAssignments(Set<TodoAssignment> todoAssignments) {
-		this.todoAssignments = todoAssignments;
-	}
-
-	public TodoAssignment addTodoAssignment(TodoAssignment todoAssignment) {
-		getTodoAssignments().add(todoAssignment);
-		todoAssignment.setExecutionPackage(this);
-
-		return todoAssignment;
-	}
-
-	public TodoAssignment removeTodoAssignment(TodoAssignment todoAssignment) {
-		getTodoAssignments().remove(todoAssignment);
-		todoAssignment.setExecutionPackage(null);
-
-		return todoAssignment;
-	}
-	
-	**/
 
 	/**
 	 * @return the actioned
