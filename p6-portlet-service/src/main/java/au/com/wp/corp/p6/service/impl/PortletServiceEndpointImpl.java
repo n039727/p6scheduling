@@ -111,6 +111,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 			logger.debug("Checking data from Cachemanager getDeletetedexecpkaglist {}",CacheManager.getDeletetedexecpkaglist());
 			p6BusinessService.updateTasksAndExecutionPackageInP6AndDB(); //async call
 		} catch (P6BaseException e) {
+			logger.error(" P6BaseException catched>> {}", e);
 			p6BusinessService.clearApplicationMemory();
 			return new ResponseEntity<List<WorkOrder>>(workOrders, HttpStatus.NO_CONTENT);
 		}
