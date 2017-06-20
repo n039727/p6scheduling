@@ -15,7 +15,7 @@ import au.com.wp.corp.p6.integration.exception.P6DataAccessException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.integration.util.ProcessStatus;
-import au.com.wp.corp.p6.integration.util.ReadProcessStatus;
+import au.com.wp.corp.p6.integration.util.ReadWriteProcessStatus;
 
 /**
  * Thread to initiates job to read the activity (work order task ) in Ellipse
@@ -31,7 +31,7 @@ public class ReadEllipseThread implements Runnable {
 	public ReadEllipseThread(final P6EllipseDAO p6EllipseDAO, final List<String> workgroupList) {
 		this.p6EllipseDAO = p6EllipseDAO;
 		this.workgroupList = workgroupList;
-		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.STARTED);
+		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadWriteProcessStatus.STARTED);
 	}
 
 	/**
@@ -80,10 +80,10 @@ public class ReadEllipseThread implements Runnable {
 			logger.debug("Size of activities from Ellipse # {}", activities.size());
 			logger.debug("Time taken to read record from Ellipse # {} ", System.currentTimeMillis() - startTime);
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS,
-					ReadProcessStatus.COMPLETED);
+					ReadWriteProcessStatus.COMPLETED);
 		} catch (P6DataAccessException e) {
 			logger.error("An error occurs while reading record from Ellipse : ", e);
-			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.FAILED);
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadWriteProcessStatus.FAILED);
 		}
 	}
 
