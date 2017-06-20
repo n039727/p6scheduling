@@ -86,16 +86,6 @@ public class TodoDAOImpl implements TodoDAO {
 		return null;
 	}
 	
-	@Override
-	public Long getMaxToDoId() { 
-		Criteria criteria = getSession()
-			    .createCriteria(TodoTemplate.class)
-			    .setProjection(Projections.max("id.todoId"));
-		Long maxPk = (Long)criteria.uniqueResult();
-		logger.debug("Returning Max Pk: " + maxPk);
-		return maxPk;
-	}
-	
 		
 	@Transactional
 	@Override
