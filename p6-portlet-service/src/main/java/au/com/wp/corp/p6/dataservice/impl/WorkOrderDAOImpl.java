@@ -41,6 +41,7 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	SessionFactory sessionFactory; 
 	@Autowired
 	DateUtils dateUtils;
+
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.dataservice.WorkOrderDAO#fetchWorkOrdersForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchInput)
 	 */
@@ -84,9 +85,10 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			if (null != query.getFromDate()) {
 				if (null != query.getToDate()) {
 					logger.debug("Input End date>>>>{}", query.getToDate());
-					criteria.add(Restrictions.between("schdDt", dateUtils.toDateFromDD_MM_YYYY(query.getFromDate()), dateUtils.toDateFromDD_MM_YYYY(query.getToDate())));
+
+					criteria.add(Restrictions.between("schdDt", dateUtils.toDateFromYYYY_MM_DD(query.getFromDate()), dateUtils.toDateFromYYYY_MM_DD(query.getToDate())));
 				} else {
-					criteria.add(Restrictions.between("schdDt", query.getFromDate(), query.getFromDate()));
+					criteria.add(Restrictions.between("schdDt", dateUtils.toDateFromYYYY_MM_DD(query.getFromDate()), dateUtils.toDateFromYYYY_MM_DD(query.getFromDate())));
 				}
 
 			}

@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,12 +27,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
+import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
 import au.com.wp.corp.p6.model.TodoAssignmentPK;
 import au.com.wp.corp.p6.test.config.AppConfig;
+import au.com.wp.corp.p6.utils.DateUtils;
 
 /**
  * Performs unit test cases for WorkOrderDAO
@@ -48,6 +52,9 @@ public class WorkOrderDAOIntegrationTest {
 
 	@Autowired
 	ExecutionPackageDao executionPackageDao;
+	
+	@Autowired
+	DateUtils dateUtils;
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -144,4 +151,72 @@ public class WorkOrderDAOIntegrationTest {
 		Assert.assertNull(task);
 	}
 
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFetchTasks() throws P6DataAccessException{
+		WorkOrderSearchRequest query = new WorkOrderSearchRequest();
+		List<WorkOrder> listWOData = new ArrayList<WorkOrder>();
+		List<String> depotList = new ArrayList<String>();
+		List<String> crewList = new ArrayList<String>();
+		depotList.add("DXCREW");
+		crewList.add("MONT5");
+		query.setFromDate("2017-06-08T00:00:00.000Z");
+		query.setToDate("2017-06-09T00:00:00.000Z");
+		query.setDepotList(depotList);
+		query.setCrewList(crewList);
+		WorkOrder wo = new WorkOrder();
+		wo.setWorkOrderId("05214402002");
+		listWOData.add(wo);
+		List<Task> tasks = workOrderDAO.fetchTasks(query, listWOData);
+		tasks.forEach(task ->{
+			Assert.assertNotNull(task);});
+	}
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFetchTasks2() throws P6DataAccessException{
+		List<String> listWOData = new ArrayList<String>();
+		listWOData.add("05214402002");
+		listWOData.add("05214531002");
+		listWOData.add("05214530002");
+		listWOData.add("05214419002");
+		List<Task> tasks = workOrderDAO.fetchTasks(listWOData);
+		tasks.forEach(task ->{
+			Assert.assertNotNull(task);});
+	}
+
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFetchTasksByOnlyDate() throws P6DataAccessException{
+		String from = "2017-06-08T00:00:00.000Z";
+		String to = "2017-06-09T00:00:00.000Z";
+		List<Date> dateRange = new ArrayList<Date>();
+		dateRange.add(from != null ? dateUtils.toDateFromYYYY_MM_DD(from): null);
+		dateRange.add(to != null ? dateUtils.toDateFromYYYY_MM_DD(to) : null);
+
+		List<Task> tasks = workOrderDAO.fetchTasksByOnlyDate(dateRange);
+		tasks.forEach(task ->{
+			Assert.assertNotNull(task);});
+	}
+	
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testFetchTasksByDateAndWo() throws P6DataAccessException{
+		String from = "2017-06-08T00:00:00.000Z";
+		String to = "2017-06-08T00:00:00.000Z";
+		List<Date> dateRange = new ArrayList<Date>();
+		dateRange.add(from != null ? dateUtils.toDateFromYYYY_MM_DD(from): null);
+		dateRange.add(to != null ? dateUtils.toDateFromYYYY_MM_DD(to) : null);
+		List<String> listWOData = new ArrayList<String>();
+		listWOData.add("05214402002");
+		listWOData.add("05214531002");
+		listWOData.add("05214530002");
+		listWOData.add("05214419002");
+		List<Task> tasks = workOrderDAO.fetchTasksByDateAndWo(dateRange, listWOData);
+		tasks.forEach(task ->{
+			Assert.assertNotNull(task);});
+	}
 }
