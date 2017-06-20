@@ -27,6 +27,7 @@ import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6DataAccessException;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.model.TodoAssignment;
+import au.com.wp.corp.p6.utils.DateUtils;
 
 /**
  * @author N039603
@@ -38,7 +39,8 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 	private static final Logger logger = LoggerFactory.getLogger(WorkOrderDAOImpl.class);
 	@Autowired
 	SessionFactory sessionFactory; 
-
+	@Autowired
+	DateUtils dateUtils;
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.dataservice.WorkOrderDAO#fetchWorkOrdersForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchInput)
 	 */
@@ -82,7 +84,7 @@ public class WorkOrderDAOImpl implements WorkOrderDAO {
 			if (null != query.getFromDate()) {
 				if (null != query.getToDate()) {
 					logger.debug("Input End date>>>>{}", query.getToDate());
-					criteria.add(Restrictions.between("schdDt", query.getFromDate(), query.getToDate()));
+					criteria.add(Restrictions.between("schdDt", dateUtils.toDateFromDD_MM_YYYY(query.getFromDate()), dateUtils.toDateFromDD_MM_YYYY(query.getToDate())));
 				} else {
 					criteria.add(Restrictions.between("schdDt", query.getFromDate(), query.getFromDate()));
 				}

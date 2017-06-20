@@ -23,8 +23,10 @@ public class Validator implements P6ExceptionMapper{
 			logger.debug("work orders size {}", workOrders.size());
 			String scheduleDate = workOrders.get(0).getScheduleDate();
 			for (WorkOrder workOrder : workOrders) {
-				if(! workOrder.getScheduleDate().equals(scheduleDate)){
-					throw new P6BusinessException(CREATE_EXEC_PCKG_VALIDATION_ERROR_2001);
+				if (workOrder.getScheduleDate() != null) {
+					if (!workOrder.getScheduleDate().equals(scheduleDate)) {
+						throw new P6BusinessException(CREATE_EXEC_PCKG_VALIDATION_ERROR_2001);
+					}
 				}
 			}
 			
