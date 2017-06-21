@@ -9,7 +9,7 @@
 
 	<modules>
 		<module>p6-wsmodel</module>
-		<module>p6-ellipse-integration</module>	
+		<module>p6-ellipse-integration</module>
 		<module>p6-portlet-service</module>
 		<module>p6-portlet-web</module>
 		<module>p6-portlet-app</module>
@@ -43,7 +43,11 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<dependencies>
-
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.10</version>
+		</dependency>
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
@@ -73,11 +77,11 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-lang3</artifactId>
-		    <version>3.5</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.5</version>
 		</dependency>
-	<!-- https://mvnrepository.com/artifact/commons-configuration/commons-configuration -->
+		<!-- https://mvnrepository.com/artifact/commons-configuration/commons-configuration -->
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
@@ -244,49 +248,43 @@
 					</configuration>
 					<version>2.6</version>
 				</plugin>
-			    <plugin>
-			      <groupId>org.jacoco</groupId>
-			      <artifactId>jacoco-maven-plugin</artifactId>
-			      <version>${jacoco.plugin.version}</version>
-					   <executions>
-				        <!--
-				            Prepares the property pointing to the JaCoCo runtime agent which
-				            is passed as VM argument when Maven the Surefire plugin is executed.
-				        -->
-				        <execution>
-				            <id>pre-unit-test</id>
-				            <goals>
-				                <goal>prepare-agent</goal>
-				            </goals>
-				            <configuration>
-				                <!-- Sets the path to the file which contains the execution data. -->
-				                <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
-				                <!--
-				                    Sets the name of the property containing the settings
-				                    for JaCoCo runtime agent.
-				                -->
-				                <propertyName>surefireArgLine</propertyName>
-				            </configuration>
-				        </execution>
-				        <!--
-				            Ensures that the code coverage report for unit tests is created after
-				            unit tests have been run.
-				        -->
-				        <execution>
-				            <id>post-unit-test</id>
-				            <phase>test</phase>
-				            <goals>
-				                <goal>report</goal>
-				            </goals>
-				            <configuration>
-				                <!-- Sets the path to the file which contains the execution data. -->
-				                <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
-				                <!-- Sets the output directory for the code coverage report. -->
-				                <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
-				            </configuration>
-				        </execution>
-				    </executions>
-			    </plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.plugin.version}</version>
+					<executions>
+						<!-- Prepares the property pointing to the JaCoCo runtime agent which 
+							is passed as VM argument when Maven the Surefire plugin is executed. -->
+						<execution>
+							<id>pre-unit-test</id>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+							<configuration>
+								<!-- Sets the path to the file which contains the execution data. -->
+								<destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+								<!-- Sets the name of the property containing the settings for JaCoCo 
+									runtime agent. -->
+								<propertyName>surefireArgLine</propertyName>
+							</configuration>
+						</execution>
+						<!-- Ensures that the code coverage report for unit tests is created 
+							after unit tests have been run. -->
+						<execution>
+							<id>post-unit-test</id>
+							<phase>test</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+							<configuration>
+								<!-- Sets the path to the file which contains the execution data. -->
+								<dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+								<!-- Sets the output directory for the code coverage report. -->
+								<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 
 		</pluginManagement>
