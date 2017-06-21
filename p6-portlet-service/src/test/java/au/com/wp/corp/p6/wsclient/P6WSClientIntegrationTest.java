@@ -5,7 +5,12 @@ package au.com.wp.corp.p6.wsclient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,10 +19,12 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import au.com.wp.corp.p6.dataservice.ResourceDetailDAO;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
@@ -39,6 +46,11 @@ public class P6WSClientIntegrationTest {
 	
 	@Autowired
 	P6WSClient p6WSClient;
+	@Autowired
+	ResourceDetailDAO resourceDetailDAO;
+	
+	Map<String, List<String>> depotCrewMap = new HashMap<String,List<String>>();
+	
 	private Logger logger = LoggerFactory.getLogger(P6WSClientIntegrationTest.class);;
 	
 	@Before
@@ -46,9 +58,16 @@ public class P6WSClientIntegrationTest {
 	}
 	
 	@Test
+	@Transactional
+	@Rollback
 	public void testSearchWorkOrder () throws P6ServiceException {
 		ActivitySearchRequest request = new ActivitySearchRequest();
-		request.setPlannedStartDate("2017-07-26");
+		depotCrewMap = resourceDetailDAO.fetchAllResourceDetail();
+		List<String> crewListAll = new ArrayList<String>();
+		crewListAll = depotCrewMap.values().stream().flatMap(List::stream)
+				.collect(Collectors.toList());
+		request.setPlannedStartDate("2017-06-14");
+		request.setCrewList(crewListAll);
 		List<WorkOrder> workOrders =  p6WSClient.searchWorkOrder(request);
 		Assert.assertNotNull(workOrders);
 		for ( WorkOrder workOrder : workOrders)
