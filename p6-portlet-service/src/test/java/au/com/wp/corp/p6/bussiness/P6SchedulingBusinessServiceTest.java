@@ -614,6 +614,7 @@ public class P6SchedulingBusinessServiceTest {
 		Mockito.when(workOrderDAO.fetchTasksByDateAndWo(dateRange,worOrders)).thenReturn(taskList);
 		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
 		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
+		p6SchedulingBusinessService.updateTasksAndExecutionPackageInP6AndDB();
 		Assert.assertNotNull(workOrders);
 	}
 	@Test
