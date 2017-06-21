@@ -598,7 +598,7 @@ public class P6SchedulingBusinessServiceTest {
 		task3.setTaskId("14");
 		task3.setActioned("Y");
 		task3.setCrewId("CRW1");
-		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY("19/05/2017"));
+		task3.setSchdDt(dateUtils.toDateFromDD_MM_YYYY("18/05/2017"));
 		tasks.add(task);
 		taskList.add(task);
 		tasks.add(task1);
