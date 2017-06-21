@@ -71,7 +71,8 @@ public class P6EllipseIntegrationServiceTest {
 	public ExpectedException thrown = ExpectedException.none();
 
 	List<String> workgroupList = null;
-
+	Map<String, Integer> projWorkgroupDTOs = new HashMap<>();
+	
 	@Before
 	public void setup() throws P6BusinessException {
 		MockitoAnnotations.initMocks(this);
@@ -106,8 +107,6 @@ public class P6EllipseIntegrationServiceTest {
 		projWorkgroups.add(projWorkgroupDTO);
 
 		Mockito.when(p6PortalDAO.getProjectResourceMappingList()).thenReturn(projWorkgroups);
-
-		Map<String, Integer> projWorkgroupDTOs = new HashMap<>();
 
 		projWorkgroupDTOs.put("MONT1", 12345);
 		projWorkgroupDTOs.put("MOMT2", 12346);
@@ -1529,9 +1528,9 @@ public class P6EllipseIntegrationServiceTest {
 
 		List<P6ActivityDTO> p6Activities = new ArrayList<>();
 		p6Activities.add(p6Activity);
-		Mockito.when(p6WSClient.readActivities(workgroupList)).thenReturn(p6Activities);
+		Mockito.when(p6WSClient.readActivities(projWorkgroupDTOs.get("MOMT2"))).thenReturn(p6Activities);
 
-		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList);
+		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList, projWorkgroupDTOs.get("MOMT2"));
 		Assert.assertEquals(0, deleteActivites.size());
 
 		for (P6ActivityDTO p6AtivityDTO : deleteActivites) {
@@ -1614,9 +1613,9 @@ public class P6EllipseIntegrationServiceTest {
 
 		List<P6ActivityDTO> p6Activities = new ArrayList<>();
 		p6Activities.add(p6Activity);
-		Mockito.when(p6WSClient.readActivities(workgroupList)).thenReturn(p6Activities);
+		Mockito.when(p6WSClient.readActivities(projWorkgroupDTOs.get("MOMT2"))).thenReturn(p6Activities);
 
-		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList);
+		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList, projWorkgroupDTOs.get("MOMT2"));
 		Assert.assertEquals(1, deleteActivites.size());
 
 		for (P6ActivityDTO p6AtivityDTO : deleteActivites) {
@@ -1700,9 +1699,9 @@ public class P6EllipseIntegrationServiceTest {
 
 		List<P6ActivityDTO> p6Activities = new ArrayList<>();
 		p6Activities.add(p6Activity);
-		Mockito.when(p6WSClient.readActivities(workgroupList)).thenReturn(p6Activities);
+		Mockito.when(p6WSClient.readActivities(projWorkgroupDTOs.get("NGERSCH"))).thenReturn(p6Activities);
 
-		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList);
+		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList, projWorkgroupDTOs.get("NGERSCH"));
 		Assert.assertEquals(0, deleteActivites.size());
 
 		for (P6ActivityDTO p6AtivityDTO : deleteActivites) {
@@ -1785,9 +1784,9 @@ public class P6EllipseIntegrationServiceTest {
 		
 		List<P6ActivityDTO> p6Activities = new ArrayList<>();
 		p6Activities.add(p6Activity);
-		Mockito.when(p6WSClient.readActivities(workgroupList)).thenReturn(p6Activities);
+		Mockito.when(p6WSClient.readActivities(projWorkgroupDTOs.get("MOMT1"))).thenReturn(p6Activities);
 
-		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList);
+		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList, projWorkgroupDTOs.get("MOMT1"));
 		Assert.assertEquals(0, deleteActivites.size());
 	}
 
@@ -1843,9 +1842,9 @@ public class P6EllipseIntegrationServiceTest {
 		
 		List<P6ActivityDTO> p6Activities = new ArrayList<>();
 		p6Activities.add(p6Activity);
-		Mockito.when(p6WSClient.readActivities(workgroupList)).thenReturn(p6Activities);
+		Mockito.when(p6WSClient.readActivities(projWorkgroupDTOs.get("MOMT3"))).thenReturn(p6Activities);
 
-		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList);
+		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList, projWorkgroupDTOs.get("MOMT3"));
 		Assert.assertEquals(0, deleteActivites.size());
 	}
 	
@@ -1900,10 +1899,10 @@ public class P6EllipseIntegrationServiceTest {
 		
 		List<P6ActivityDTO> p6Activities = new ArrayList<>();
 		p6Activities.add(p6Activity);
-		Mockito.when(p6WSClient.readActivities(workgroupList)).thenReturn(p6Activities);
+		Mockito.when(p6WSClient.readActivities(projWorkgroupDTOs.get("MOMT1"))).thenReturn(p6Activities);
 		Mockito.when(p6WSClient.deleteActivities(p6Activities)).thenThrow(P6ServiceException.class);
 
-		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList);
+		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList, projWorkgroupDTOs.get("MOMT1"));
 		Assert.assertEquals(1, deleteActivites.size());
 	}
 
@@ -1958,7 +1957,7 @@ public class P6EllipseIntegrationServiceTest {
 		
 		List<P6ActivityDTO> p6Activities = new ArrayList<>();
 		p6Activities.add(p6Activity);
-		Mockito.when(p6WSClient.readActivities(workgroupList)).thenReturn(p6Activities);
+		Mockito.when(p6WSClient.readActivities(projWorkgroupDTOs.get("MOMT1"))).thenReturn(p6Activities);
 
 		boolean status = p6EllipseIntegrationService.start();
 		Assert.assertTrue(status);;

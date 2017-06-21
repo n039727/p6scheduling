@@ -22,6 +22,6 @@ public interface P6EllipseIntegrationService {
 
 	public boolean start() throws P6BusinessException;
 
-	public List<P6ActivityDTO> startEllipseToP6Integration(List<String> workgroupList) throws P6BusinessException;
+	public List<P6ActivityDTO> startEllipseToP6Integration(List<String> workgroupList, final Integer projectObjectId) throws P6BusinessException;
 
 }

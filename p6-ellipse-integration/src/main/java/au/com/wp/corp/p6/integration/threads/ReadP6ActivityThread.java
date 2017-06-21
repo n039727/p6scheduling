@@ -23,11 +23,11 @@ import au.com.wp.corp.p6.integration.wsclient.cleint.P6WSClient;
 public class ReadP6ActivityThread implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(ReadP6ActivityThread.class);
 	private final P6WSClient p6WSClient;
-	private final List<String> workgroupList;
+	private final Integer projectId;
 	
-	public ReadP6ActivityThread(final P6WSClient p6WSClient, final List<String> workgroupList) {
+	public ReadP6ActivityThread(final P6WSClient p6WSClient, final Integer projectId) {
 		this.p6WSClient = p6WSClient;
-		this.workgroupList = workgroupList;
+		this.projectId = projectId;
 		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadWriteProcessStatus.STARTED);
 	}
 	
@@ -41,7 +41,7 @@ public class ReadP6ActivityThread implements Runnable {
 		Map<String, P6ActivityDTO> activities = CacheManager.getP6ActivitiesMap();
 
 		try {
-			for (P6ActivityDTO activityDTO : p6WSClient.readActivities(workgroupList)) {
+			for (P6ActivityDTO activityDTO : p6WSClient.readActivities(projectId)) {
 				activities.put(activityDTO.getActivityId(), activityDTO);
 			}
 		} catch (P6ServiceException e) {

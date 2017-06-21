@@ -33,6 +33,6 @@ public interface P6WSClient {
 
 	public Map<String, Integer> readProjects() throws P6ServiceException;
 
-	public List<P6ActivityDTO> readActivities(List<String> workgroupList) throws P6ServiceException;
+	public List<P6ActivityDTO> readActivities(final Integer projectId) throws P6ServiceException;
 	
 }

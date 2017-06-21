@@ -33,6 +33,11 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>com.wp.snow</groupId>
+			<artifactId>SNowConnector</artifactId>
+			<version>7.0</version>
+		</dependency>
+		<dependency>
 			<groupId>net.sf.supercsv</groupId>
 			<artifactId>super-csv</artifactId>
 			<version>2.1.0</version>
@@ -43,15 +48,15 @@
 			<version>0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-            <groupId>au.com.wp.corp.integration</groupId>
-            <artifactId>ellipse-ws-util</artifactId>
-            <version>1.13</version>
-        </dependency>
-        <dependency>
-            <groupId>au.com.wp.corp.integration</groupId>
-            <artifactId>ellipse-ws-transaction</artifactId>
-            <version>1.13</version>
-        </dependency>
+			<groupId>au.com.wp.corp.integration</groupId>
+			<artifactId>ellipse-ws-util</artifactId>
+			<version>1.13</version>
+		</dependency>
+		<dependency>
+			<groupId>au.com.wp.corp.integration</groupId>
+			<artifactId>ellipse-ws-transaction</artifactId>
+			<version>1.13</version>
+		</dependency>
 		<dependency>
 			<groupId>au.com.wp.corp.integration</groupId>
 			<artifactId>ellipse-ws-work-order-task</artifactId>
