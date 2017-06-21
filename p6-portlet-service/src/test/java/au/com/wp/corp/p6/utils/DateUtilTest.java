@@ -55,14 +55,34 @@ public class DateUtilTest {
 	}
 	
 	@Test
-	public void testtoStringYYYY_MM_DD() {
+	public void testToStringYYYY_MM_DD() {
 		Assert.assertNotNull(dateUtil.toStringYYYY_MM_DD(new Date()));
 	}
 	
 	@Test
-	public void toStringDD_MM_YYYY() {
+	public void testToStringDD_MM_YYYY() {
 		Assert.assertNotNull(dateUtil.toStringDD_MM_YYYY(new Date()));
 	}
-
 	
+	@Test
+	public void testToDateFromYYYY_MM_DD() {
+		Assert.assertNotNull(dateUtil.toDateFromYYYY_MM_DD("2017-04-19"));
+	}
+	
+	@Test
+	public void testGetCurrentDateWithTimeStamp() {
+		Assert.assertNotNull(dateUtil.getCurrentDateWithTimeStamp());
+	}
+	
+	@Test
+	public void testGetCurrentDateWithTimeStampNoSeparator() {
+		Assert.assertNotNull(dateUtil.getCurrentDateWithTimeStampNoSeparator());
+	}
+	
+	@Test
+	public void testToDateFromDD_MM_YYYY() {
+		Assert.assertNotNull(dateUtil.toDateFromDD_MM_YYYY("19/04/2017"));
+	}
+
+		
 }
