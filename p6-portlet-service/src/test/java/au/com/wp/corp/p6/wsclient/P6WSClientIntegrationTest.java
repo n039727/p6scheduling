@@ -82,7 +82,7 @@ public class P6WSClientIntegrationTest {
 	@Test
 	public void testSearchWorkOrder_withCrew () throws P6ServiceException {
 		ActivitySearchRequest request = new ActivitySearchRequest();
-		request.setPlannedStartDate("2017-07-26");
+		request.setPlannedStartDate("2017-06-14");
 		request.setCrewList(Arrays.asList("MONT1,MONT2"));
 		List<WorkOrder> workOrders =  p6WSClient.searchWorkOrder(request);
 		Assert.assertNotNull(workOrders);
@@ -149,6 +149,16 @@ public class P6WSClientIntegrationTest {
 	public void testRemoveExecutionPackage() throws P6ServiceException {
 		List<Integer> foreignIds = new ArrayList<Integer>();
 		foreignIds.add(5401390);
+		Boolean  success = p6WSClient.removeExecutionPackage(foreignIds);
+		logger.info("success {}",success);
+		Assert.assertNotNull(success);
+
+	}
+	@Test
+	public void testRemoveExecutionPackage_withNullForeignIds() throws P6ServiceException {
+		List<Integer> foreignIds = new ArrayList<Integer>();
+		foreignIds.add(null);
+		p6WSClient.getWorkOrderIdMap().put("05236356002", 0);
 		Boolean  success = p6WSClient.removeExecutionPackage(foreignIds);
 		logger.info("success {}",success);
 		Assert.assertNotNull(success);
