@@ -541,6 +541,8 @@ public class P6SchedulingBusinessServiceTest {
 		workOrder.setWorkOrderId("W11");
 		workOrder.setCrewNames("CRW1");
 		workOrder.setScheduleDate("19/05/2017");
+		workOrder.setExctnPckgName("1234567890");
+		workOrder.setLeadCrew("CRW1");
 		WorkOrder workOrder2 = new WorkOrder();
 
 		List<String> workOrderIds2 = new ArrayList<>();
@@ -550,6 +552,7 @@ public class P6SchedulingBusinessServiceTest {
 		workOrder2.setCrewNames("CRW1");
 		workOrder2.setScheduleDate("19/05/2017");
 		searchResult.add(workOrder2);
+		searchResult.add(workOrder);
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
 		searchRequest.setPlannedStartDate("2017-05-19");
 		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
@@ -567,15 +570,13 @@ public class P6SchedulingBusinessServiceTest {
 		task.setTaskId("W11");
 		task.setActioned("Y");
 		task.setCrewId("CRW1");
-		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
-		task.setSchdDt(new Date());
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
 		task.setExecutionPackage(executionPackage);
 		Task task1 = new Task();
 		task1.setTaskId("W12");
 		task1.setActioned("Y");
 		task1.setCrewId("CRW2");
-		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
-		task1.setSchdDt(new Date());
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
 		task1.setExecutionPackage(executionPackage);
 		Task task2 = new Task();
 		task2.setTaskId("W13");
@@ -585,11 +586,10 @@ public class P6SchedulingBusinessServiceTest {
 		task2.setSchdDt(new Date());
 		task2.setExecutionPackage(executionPackage);
 		Task task3 = new Task();
-		task3.setTaskId("W13");
+		task3.setTaskId("W14");
 		task3.setActioned("Y");
 		task3.setCrewId("CRW1");
-		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
-		task3.setSchdDt(new Date());
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder2.getScheduleDate()));
 		tasks.add(task);
 		taskList.add(task);
 		tasks.add(task1);
