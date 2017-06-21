@@ -538,7 +538,7 @@ public class P6SchedulingBusinessServiceTest {
 		List<String> workOrderIds = new ArrayList<>();
 		workOrderIds.add("11");
 		workOrder.setWorkOrders(workOrderIds);
-		workOrder.setWorkOrderId("W11");
+		workOrder.setWorkOrderId("11");
 		workOrder.setCrewNames("CRW1");
 		workOrder.setScheduleDate("19/05/2017");
 		workOrder.setExctnPckgName("1234567890");
@@ -548,7 +548,7 @@ public class P6SchedulingBusinessServiceTest {
 		List<String> workOrderIds2 = new ArrayList<>();
 		workOrderIds2.add("14");
 		workOrder2.setWorkOrders(workOrderIds2);
-		workOrder2.setWorkOrderId("W14");
+		workOrder2.setWorkOrderId("14");
 		workOrder2.setCrewNames("CRW1");
 		workOrder2.setScheduleDate("19/05/2017");
 		searchResult.add(workOrder2);
