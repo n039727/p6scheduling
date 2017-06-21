@@ -186,6 +186,65 @@ public class DepotTodoServiceTest {
 		
 	}
 	
+	@Test
+	@Rollback(true)
+	public void testUpdateDepotToDo1() throws P6BusinessException{
+
+		ViewToDoStatus viewToDoStatus = new ViewToDoStatus();
+		
+		ExecutionPackage excPckg = new ExecutionPackage();
+		viewToDoStatus.setExctnPckgName("09062017021146646");
+		
+		WorkOrder workOrder = new WorkOrder();
+		List<String> workOrderIds = new ArrayList<>();
+		workOrderIds.add("05162583002");
+		workOrderIds.add("05162583003");
+		workOrder.setWorkOrders(workOrderIds);
+		workOrder.setWorkOrderId("05162583002");
+		workOrder.setCrewNames("MOMT4");
+		workOrder.setExctnPckgName("09062017021146646");
+		
+		Set<Task> tasks = new HashSet<>();
+		Task task = new Task();
+		task.setTaskId("05162583002");
+		task.setCrewId("MOMT4");
+		task.setSchdDt(new Date());
+		task.setExecutionPackage(excPckg);
+		tasks.add(task);
+		Task task1 = new Task();
+		task1.setTaskId("05162583003");
+		task1.setCrewId("MOMT4");
+		task1.setSchdDt(new Date());
+		task1.setExecutionPackage(excPckg);
+		tasks.add(task1);
+		excPckg.setTasks(tasks);
+		
+		Set<TodoAssignment> todoAssignments = new HashSet<>();
+		TodoAssignment todo = new TodoAssignment();
+		
+		todoAssignments.add(todo);
+		task.setTodoAssignments(todoAssignments);
+		task1.setTodoAssignments(todoAssignments);
+		au.com.wp.corp.p6.dto.ToDoAssignment assignmentDto = new au.com.wp.corp.p6.dto.ToDoAssignment();
+		assignmentDto.setToDoName("ESA");
+		au.com.wp.corp.p6.dto.ToDoAssignment assignmentDto1 = new au.com.wp.corp.p6.dto.ToDoAssignment();
+		assignmentDto.setToDoName("Traffic");
+		
+		List<au.com.wp.corp.p6.dto.ToDoAssignment> assignments = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
+		assignments.add(assignmentDto);
+		assignments.add(assignmentDto1);
+		viewToDoStatus.setTodoAssignments(assignments);
+		
+		Mockito.when(executionPackageDao.fetch(viewToDoStatus.getExctnPckgName())).thenReturn(excPckg);
+		Mockito.when(workOrderDao.fetch(workOrder.getWorkOrderId())).thenReturn(task);
+		Mockito.when(todoDAO.getToDoId("ESA")).thenReturn(new BigDecimal(1));
+		ViewToDoStatus outPutToDoStatus = depotTodoService.UpdateDepotToDo(viewToDoStatus);
+
+		Assert.assertNotNull(outPutToDoStatus);
+		
+		
+	}
+	
 	/**
 	 * Add todos Saving newly created work order with todos
 	 * 
