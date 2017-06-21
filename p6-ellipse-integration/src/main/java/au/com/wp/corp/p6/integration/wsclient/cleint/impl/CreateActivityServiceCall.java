@@ -3,6 +3,7 @@
  */
 package au.com.wp.corp.p6.integration.wsclient.cleint.impl;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.xml.ws.Holder;
@@ -36,7 +37,7 @@ public class CreateActivityServiceCall extends ActivityServiceCall<List<Integer>
 		try {
 			activitieIds = servicePort.createActivities(activities);
 		} catch (IntegrationFault e) {
-			throw new P6ServiceException(e);
+			throw new P6ServiceException(e.getMessage(), e);
 		}
 
 		return new Holder<>(activitieIds);

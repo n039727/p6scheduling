@@ -75,33 +75,23 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * corp.p6.model.ActivitySearchRequest)
 	 */
 	@Override
-	public List<P6ActivityDTO> readActivities(final List<String> workgroupList) throws P6ServiceException {
+	public List<P6ActivityDTO> readActivities(final Integer projectId) throws P6ServiceException {
 		CacheManager.getWsHeaders().remove("WS_COOKIE");
 		logger.info("Calling activity service in P6 Webservice ...");
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
 
 		final StringBuilder filter = new StringBuilder();
-
-		if (null != workgroupList) {
-			int i = 0;
-			if ( ! workgroupList.isEmpty()) {
-				filter.append("PrimaryResourceId IN ");
-				filter.append("(");
-				for (String crew : workgroupList) {
-					if (i == 0) {
-						filter.append("'" + crew + "'");
-					} else {
-						filter.append(",'" + crew + "'");
-					}
-					i++;
-				}
-				filter.append(")");
-			}
+		if (projectId != null) {
+			filter.append("ProjectObjectId IN ");
+			filter.append("(");
+			filter.append(projectId.intValue());
+			filter.append(")");
 
 		}
 
-		final ActivityServiceCall<List<Activity>> activityService = new ReadActivityServiceCall(trackingId, filter.toString());
+		final ActivityServiceCall<List<Activity>> activityService = new ReadActivityServiceCall(trackingId,
+				filter.toString().isEmpty() ? null : filter.toString());
 
 		final Holder<List<Activity>> activities = activityService.run();
 		logger.debug("list of activities from P6#{}", activities);
