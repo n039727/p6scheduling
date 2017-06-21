@@ -37,9 +37,8 @@ public class FunctionAccessDAOImpl implements FunctionAccessDAO {
 		logger.debug("Input execution package name ====={}", roleNames);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(FunctionAccess.class);
 		//criteria.add(Restrictions.eq("roleNam", roleName));
-		criteria.add(Restrictions.in("roleNam", roleNames));
-		List<FunctionAccess> accesses = (List<FunctionAccess>) criteria
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+		criteria.add(Restrictions.in("roleNam", roleNames.toArray(new String[roleNames.size()])));
+		List<FunctionAccess> accesses = (List<FunctionAccess>) criteria.list();
 		
 		return accesses;
 	}
