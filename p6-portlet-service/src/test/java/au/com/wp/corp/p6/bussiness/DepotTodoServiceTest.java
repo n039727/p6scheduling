@@ -239,7 +239,7 @@ public class DepotTodoServiceTest {
 		Mockito.when(workOrderDao.fetch(workOrder.getWorkOrderId())).thenReturn(task);
 		Mockito.when(todoDAO.getToDoId("ESA")).thenReturn(new BigDecimal(1));
 		ViewToDoStatus outPutToDoStatus = depotTodoService.UpdateDepotToDo(viewToDoStatus);
-
+		
 		Assert.assertNotNull(outPutToDoStatus);
 		
 		
