@@ -536,20 +536,23 @@ public class P6SchedulingBusinessServiceTest {
 		WorkOrder workOrder = new WorkOrder();
 
 		List<String> workOrderIds = new ArrayList<>();
-		workOrderIds.add("W11");
+		workOrderIds.add("11");
 		workOrder.setWorkOrders(workOrderIds);
 		workOrder.setWorkOrderId("W11");
 		workOrder.setCrewNames("CRW1");
 		workOrder.setScheduleDate("19/05/2017");
+		workOrder.setExctnPckgName("1234567890");
+		workOrder.setLeadCrew("CRW1");
 		WorkOrder workOrder2 = new WorkOrder();
 
 		List<String> workOrderIds2 = new ArrayList<>();
-		workOrderIds2.add("W14");
+		workOrderIds2.add("14");
 		workOrder2.setWorkOrders(workOrderIds2);
 		workOrder2.setWorkOrderId("W14");
 		workOrder2.setCrewNames("CRW1");
 		workOrder2.setScheduleDate("19/05/2017");
 		searchResult.add(workOrder2);
+		searchResult.add(workOrder);
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
 		searchRequest.setPlannedStartDate("2017-05-19");
 		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
@@ -564,32 +567,29 @@ public class P6SchedulingBusinessServiceTest {
 		executionPackage.setTasks(tasks);
 		List<Task> taskList = new ArrayList<Task>();
 		Task task = new Task();
-		task.setTaskId("W11");
+		task.setTaskId("11");
 		task.setActioned("Y");
 		task.setCrewId("CRW1");
-		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
-		task.setSchdDt(new Date());
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
 		task.setExecutionPackage(executionPackage);
 		Task task1 = new Task();
-		task1.setTaskId("W12");
+		task1.setTaskId("12");
 		task1.setActioned("Y");
 		task1.setCrewId("CRW2");
-		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
-		task1.setSchdDt(new Date());
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
 		task1.setExecutionPackage(executionPackage);
 		Task task2 = new Task();
-		task2.setTaskId("W13");
+		task2.setTaskId("13");
 		task2.setActioned("Y");
 		task2.setCrewId("CRW1");
 		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
 		task2.setSchdDt(new Date());
 		task2.setExecutionPackage(executionPackage);
 		Task task3 = new Task();
-		task3.setTaskId("W13");
+		task3.setTaskId("14");
 		task3.setActioned("Y");
 		task3.setCrewId("CRW1");
-		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
-		task3.setSchdDt(new Date());
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder2.getScheduleDate()));
 		tasks.add(task);
 		taskList.add(task);
 		tasks.add(task1);
@@ -613,7 +613,10 @@ public class P6SchedulingBusinessServiceTest {
 		}
 		Mockito.when(workOrderDAO.fetchTasksByDateAndWo(dateRange,worOrders)).thenReturn(taskList);
 		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
+		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList())).thenReturn(true);
+		Mockito.when(workOrderDAO.saveTask(Mockito.any())).thenReturn(task);
 		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
+		p6SchedulingBusinessService.updateTasksAndExecutionPackageInP6AndDB();
 		Assert.assertNotNull(workOrders);
 	}
 	@Test
