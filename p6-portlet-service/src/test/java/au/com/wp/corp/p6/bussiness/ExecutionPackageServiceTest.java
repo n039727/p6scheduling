@@ -124,7 +124,8 @@ public class ExecutionPackageServiceTest {
 		Mockito.when(dateUtils.getCurrentDateWithTimeStamp()).thenReturn("12345678");
 		Mockito.when(executionPckgDao.createOrUpdateExecPackage(execPackage)).thenReturn(true);
 		execPckg = execPckgService.createOrUpdateExecutionPackage(execPckg);
-
+		//execPckgService.setExecutionPackageDTDOFoP6(Arrays.asList(execPckg));
+		execPckgService.updateP6ForExecutionPackage();
 		Assert.assertNotNull(execPckg);
 
 	}
@@ -164,7 +165,8 @@ public class ExecutionPackageServiceTest {
 		Mockito.when(dateUtils.getCurrentDateWithTimeStamp()).thenReturn("12345678");
 		Mockito.when(executionPckgDao.createOrUpdateExecPackage(execPackage)).thenReturn(true);
 		execPckg = execPckgService.createOrUpdateExecutionPackage(execPckg);
-
+		//execPckgService.setExecutionPackageDTDOFoP6(Arrays.asList(execPckg));
+		execPckgService.updateP6ForExecutionPackage();
 		Assert.assertNotNull(execPckg);
 
 	}

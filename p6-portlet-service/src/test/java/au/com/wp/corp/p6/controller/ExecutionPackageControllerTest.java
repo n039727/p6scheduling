@@ -82,8 +82,8 @@ public class ExecutionPackageControllerTest {
 		executionPackageDTO.setWorkOrders(workOrders);
 		Mockito.when(executionPckg.createOrUpdateExecutionPackage(executionPackageDTO))
 				.thenReturn(executionPackageDTO);
-		Mockito.doNothing().when(executionPckg).setExecutionPackageDTDOFoP6(Arrays.asList(executionPackageDTO));
-		Mockito.doNothing().when(executionPckg).updateP6ForExecutionPackage();
+	//	Mockito.doNothing().when(executionPckg).setExecutionPackageDTDOFoP6(Arrays.asList(executionPackageDTO));
+	//	Mockito.doNothing().when(executionPckg).updateP6ForExecutionPackage();
 		ResultActions actions = mockMvc.perform(post("/executionpackage/createOrUpdate")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE)
 				.content(mapper.writeValueAsString(executionPackageDTO))).andExpect(status().is(HttpStatus.CREATED.value()));
@@ -102,7 +102,7 @@ public class ExecutionPackageControllerTest {
 		workOrders.add(workOrder);
 		
 		Mockito.when(executionPckg.searchByExecutionPackage(request))
-		.thenReturn(workOrders);
+				.thenReturn(workOrders);
 		
 		ResultActions actions = mockMvc.perform(post("/executionpackage/searchByExecutionPackage")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE)
