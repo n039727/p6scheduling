@@ -325,8 +325,74 @@ public class P6SchedulingBusinessServiceTest {
 		searchRequest.setPlannedStartDate("2017-05-19");
 		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
 		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
-		List<WorkOrder> woList = p6SchedulingBusinessService.retrieveWorkOrders(request);
-		Assert.assertNotNull(woList);
+		Set<Task> tasks = new HashSet<Task>();
+		ExecutionPackage executionPackage = new ExecutionPackage();
+		executionPackage.setActioned("Y");
+		executionPackage.setExctnPckgId(1234);
+		executionPackage.setExctnPckgNam("1234567890");
+		executionPackage.setLeadCrewId("CRW1");
+		executionPackage.setTasks(tasks);
+		List<Task> taskList = new ArrayList<Task>();
+		Task task = new Task();
+		task.setTaskId("11");
+		task.setActioned("Y");
+		task.setCrewId("CRW1");
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
+		task.setExecutionPackage(executionPackage);
+		Set<TodoAssignment> todoAssignments = new HashSet<TodoAssignment>();
+		TodoAssignmentPK todoAssignMentPK = new TodoAssignmentPK();
+		todoAssignMentPK.setTask(task);
+		todoAssignMentPK.setTodoId(new BigDecimal("123456789"));
+		TodoAssignment todo = new TodoAssignment();
+		todo.setTodoAssignMentPK(todoAssignMentPK);
+		todo.setStat("Completed");
+		task.setTodoAssignments(todoAssignments);
+		Task task1 = new Task();
+		task1.setTaskId("12");
+		task1.setActioned("Y");
+		task1.setCrewId("CRW2");
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
+		task1.setExecutionPackage(executionPackage);
+		Task task2 = new Task();
+		task2.setTaskId("13");
+		task2.setActioned("Y");
+		task2.setCrewId("CRW1");
+		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
+		task2.setSchdDt(new Date());
+		task2.setExecutionPackage(executionPackage);
+		Task task3 = new Task();
+		task3.setTaskId("14");
+		task3.setActioned("Y");
+		task3.setCrewId("CRW1");
+		task3.setSchdDt(dateUtils.toDateFromDD_MM_YYYY("18/05/2017"));
+		tasks.add(task);
+		taskList.add(task);
+		tasks.add(task1);
+		taskList.add(task1);
+		tasks.add(task2);
+		taskList.add(task2);
+		tasks.add(task3);
+		taskList.add(task3);
+		List<Date> dateRange = new ArrayList<Date>();
+		if (request != null) {
+			dateRange.add(request.getFromDate() != null ? dateUtils.toDateFromYYYY_MM_DD(request.getFromDate()): null);
+			dateRange.add(request.getToDate() != null ? dateUtils.toDateFromYYYY_MM_DD(request.getToDate()) : null);
+
+		}
+		List<String> worOrders = new ArrayList<String>();
+		if (searchResult != null) {
+			searchResult.forEach(wo->{
+				worOrders.add(wo.getWorkOrderId());
+			});
+
+		}
+		Mockito.when(workOrderDAO.fetchTasksByDateAndWo(dateRange,worOrders)).thenReturn(taskList);
+		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
+		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList())).thenReturn(true);
+		Mockito.when(workOrderDAO.saveTask(Mockito.any())).thenReturn(task);
+		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
+		p6SchedulingBusinessService.updateTasksAndExecutionPackageInP6AndDB();
+		Assert.assertNotNull(workOrders);
 	}
 
 	@Test
@@ -371,8 +437,74 @@ public class P6SchedulingBusinessServiceTest {
 		Field f = p6SchedulingBusinessService.getClass().getDeclaredField("depotCrewMap"); //NoSuchFieldException
 		f.setAccessible(true);
 		f.set(p6SchedulingBusinessService, depotCrewMap);
-		List<WorkOrder> woList = p6SchedulingBusinessService.retrieveWorkOrders(request);
-		Assert.assertNotNull(woList);
+		Set<Task> tasks = new HashSet<Task>();
+		ExecutionPackage executionPackage = new ExecutionPackage();
+		executionPackage.setActioned("Y");
+		executionPackage.setExctnPckgId(1234);
+		executionPackage.setExctnPckgNam("1234567890");
+		executionPackage.setLeadCrewId("CRW1");
+		executionPackage.setTasks(tasks);
+		List<Task> taskList = new ArrayList<Task>();
+		Task task = new Task();
+		task.setTaskId("11");
+		task.setActioned("Y");
+		task.setCrewId("CRW1");
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
+		task.setExecutionPackage(executionPackage);
+		Set<TodoAssignment> todoAssignments = new HashSet<TodoAssignment>();
+		TodoAssignmentPK todoAssignMentPK = new TodoAssignmentPK();
+		todoAssignMentPK.setTask(task);
+		todoAssignMentPK.setTodoId(new BigDecimal("123456789"));
+		TodoAssignment todo = new TodoAssignment();
+		todo.setTodoAssignMentPK(todoAssignMentPK);
+		todo.setStat("Completed");
+		task.setTodoAssignments(todoAssignments);
+		Task task1 = new Task();
+		task1.setTaskId("12");
+		task1.setActioned("Y");
+		task1.setCrewId("CRW2");
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
+		task1.setExecutionPackage(executionPackage);
+		Task task2 = new Task();
+		task2.setTaskId("13");
+		task2.setActioned("Y");
+		task2.setCrewId("CRW1");
+		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
+		task2.setSchdDt(new Date());
+		task2.setExecutionPackage(executionPackage);
+		Task task3 = new Task();
+		task3.setTaskId("14");
+		task3.setActioned("Y");
+		task3.setCrewId("CRW1");
+		task3.setSchdDt(dateUtils.toDateFromDD_MM_YYYY("18/05/2017"));
+		tasks.add(task);
+		taskList.add(task);
+		tasks.add(task1);
+		taskList.add(task1);
+		tasks.add(task2);
+		taskList.add(task2);
+		tasks.add(task3);
+		taskList.add(task3);
+		List<Date> dateRange = new ArrayList<Date>();
+		if (request != null) {
+			dateRange.add(request.getFromDate() != null ? dateUtils.toDateFromYYYY_MM_DD(request.getFromDate()): null);
+			dateRange.add(request.getToDate() != null ? dateUtils.toDateFromYYYY_MM_DD(request.getToDate()) : null);
+
+		}
+		List<String> worOrders = new ArrayList<String>();
+		if (searchResult != null) {
+			searchResult.forEach(wo->{
+				worOrders.add(wo.getWorkOrderId());
+			});
+
+		}
+		Mockito.when(workOrderDAO.fetchTasksByDateAndWo(dateRange,worOrders)).thenReturn(taskList);
+		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
+		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList())).thenReturn(true);
+		Mockito.when(workOrderDAO.saveTask(Mockito.any())).thenReturn(task);
+		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
+		p6SchedulingBusinessService.updateTasksAndExecutionPackageInP6AndDB();
+		Assert.assertNotNull(workOrders);
 	}
 
 	/**
