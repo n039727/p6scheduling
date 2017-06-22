@@ -140,7 +140,7 @@ public class P6WSClientIntegrationTest {
 		ExecutionPackageDTO dto = p6WSClient.createExecutionPackage(request);
 		if (dto != null) {
 				Assert.assertEquals("18-05-2017_023711511",dto.getExctnPckgName());
-				Assert.assertEquals("05214507002", dto.getWorkOrders().get(0).getWorkOrderId());
+				Assert.assertEquals("05257561002", dto.getWorkOrders().get(0).getWorkOrderId());
 			
 		}
 
