@@ -70,6 +70,9 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	@Autowired
 	UserTokenRequest userTokenRequest;
 	
+	private static String ACTIONED_Y = "Y";
+	private static String ACTIONED_N = "N";
+	
 	/* (non-Javadoc)
 	 * @see au.com.wp.corp.p6.businessservice.DepotTodoService#fetchDepotTaskForViewToDoStatus(au.com.wp.corp.p6.dto.WorkOrderSearchRequest)
 	 */
@@ -371,6 +374,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					updatedTask.setTodoAssignments(newToDos);
 				}
 			}
+			updatedTask.setActioned(ACTIONED_Y);
 		} else {
 			dBToDos = updatedTask.getTodoAssignments();
 			if (null != dBToDos) {
@@ -383,6 +387,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					updatedTask.getTodoAssignments().remove(deleteDbToDo);
 				}
 			}
+			updatedTask.setActioned(ACTIONED_N);
 		}
 
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
