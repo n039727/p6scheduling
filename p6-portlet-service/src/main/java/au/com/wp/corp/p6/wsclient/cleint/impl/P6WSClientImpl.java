@@ -72,7 +72,11 @@ public class P6WSClientImpl implements P6WSClient {
 	@Value("${P6_UDF_SERVICE_WSDL}")
 	private String udfServiceWSDL;
 	
+	@Value("${P6_EXECUTION_PCKG_TITLE}")
+	private String executionPckgeTitle;
 	
+	@Value("${P6_SUBJECT_AREA}")
+	private String subjectArea;
 	
 	@Autowired
 	DateUtils dateUtils;
@@ -176,7 +180,7 @@ public class P6WSClientImpl implements P6WSClient {
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
 		StringBuilder filter = new StringBuilder();
-		filter.append("SubjectArea='Activity' and Title = 'Execution Grouping'");
+		filter.append("SubjectArea='"+ subjectArea +"' and Title = '"+ executionPckgeTitle +"'");
 
 		UDFTypeServiceCall udfTypeServiceCall = new UDFTypeServiceCall(trackingId, filter.toString());
 		Holder<List<UDFType>> udfTypes = udfTypeServiceCall.run();
