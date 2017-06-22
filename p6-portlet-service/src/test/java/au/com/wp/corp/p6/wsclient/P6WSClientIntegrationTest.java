@@ -128,14 +128,15 @@ public class P6WSClientIntegrationTest {
 		List<ExecutionPackageCreateRequest> request = new ArrayList<>();
 
 		ExecutionPackageCreateRequest executionPackageCreateRequest = new ExecutionPackageCreateRequest();
-		executionPackageCreateRequest.setForeignObjectId(5412576);
+		
+		executionPackageCreateRequest.setForeignObjectId(5405787);
 		executionPackageCreateRequest.setText("18-05-2017_023711511");
 		executionPackageCreateRequest.setUdfTypeDataType(P6Constant.TEXT);
 		executionPackageCreateRequest.setUdfTypeObjectId(5920);
 		executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.ACTIVITY);
 		executionPackageCreateRequest.setUdfTypeTitle(P6Constant.EXECUTION_GROUPING);
 		request.add(executionPackageCreateRequest);
-		p6WSClient.getWorkOrderIdMap().put("05214507002", 5412576);
+		p6WSClient.getWorkOrderIdMap().put("05257561002", 5405787);
 		ExecutionPackageDTO dto = p6WSClient.createExecutionPackage(request);
 		if (dto != null) {
 				Assert.assertEquals("18-05-2017_023711511",dto.getExctnPckgName());
