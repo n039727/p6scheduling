@@ -56,8 +56,22 @@ public class HomeControllerTest {
 
 	@Test
 	@Ignore
-	public void testStartIntegartion_Error() throws Exception {
+	public void testStartIntegartion_Home() throws Exception {
 		ResultActions actions = mockMvc.perform(get("/home").contentType(MediaType.TEXT_PLAIN_VALUE))
+				.andExpect(status().isOk());
+	}
+	
+	@Test
+	@Ignore
+	public void testStartIntegartion_Error() throws Exception {
+		ResultActions actions = mockMvc.perform(get("/auth/error").contentType(MediaType.TEXT_PLAIN_VALUE))
+				.andExpect(status().isOk());
+	}
+	
+	@Test
+	@Ignore
+	public void testStartIntegartion_Logout() throws Exception {
+		ResultActions actions = mockMvc.perform(get("/logout").contentType(MediaType.TEXT_PLAIN_VALUE))
 				.andExpect(status().isOk());
 	}
 
