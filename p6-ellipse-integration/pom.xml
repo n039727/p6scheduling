@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.wp.snow</groupId>
 			<artifactId>SNowConnector</artifactId>
-			<version>7.0</version>
+			<version>1.10</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.supercsv</groupId>
