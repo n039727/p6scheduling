@@ -1028,16 +1028,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		CacheManager.getTasksforupdate().clear();
 		CacheManager.getExecpkglistforupdate().clear();
 		CacheManager.getDeletetedexecpkaglist().clear();
-		if (null != listWOData) {
-			listWOData.clear();
-			listWOData = null;
-		}
+		listWOData = null;
+		tasksInDb = null;
 
-		if (null != tasksInDb) {
-			tasksInDb.clear();
-			tasksInDb = null;
-
-		}
 	}
 
 }
