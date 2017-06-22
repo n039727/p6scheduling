@@ -397,7 +397,7 @@ public class P6SchedulingBusinessServiceTest {
 
 	@Test
 	@Rollback(true)
-	public void testRetrieveWorkOrderDepot() throws P6BusinessException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException{
+	public void testPrepareWorkOrder() throws P6BusinessException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException{
 		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
 		List<String> depotList = new ArrayList<String>();
 		depotList.add("DEPOT1");
@@ -427,6 +427,7 @@ public class P6SchedulingBusinessServiceTest {
 		workOrder2.setWorkOrderId("14");
 		workOrder2.setCrewNames("MOST1");
 		workOrder2.setDepotId("DEPOT1");
+		workOrder2.setExctnPckgName("1234567890");
 		workOrder2.setScheduleDate("19/05/2017");
 		searchResult.add(workOrder2);
 		searchResult.add(workOrder);
@@ -476,7 +477,9 @@ public class P6SchedulingBusinessServiceTest {
 		task3.setTaskId("14");
 		task3.setActioned("Y");
 		task3.setCrewId("CRW1");
-		task3.setSchdDt(dateUtils.toDateFromDD_MM_YYYY("18/05/2017"));
+		Date date = new Date("19/05/2017");
+		task3.setSchdDt(date);
+		task3.setExecutionPackage(executionPackage);
 		tasks.add(task);
 		taskList.add(task);
 		tasks.add(task1);
@@ -506,7 +509,119 @@ public class P6SchedulingBusinessServiceTest {
 		p6SchedulingBusinessService.updateTasksAndExecutionPackageInP6AndDB();
 		Assert.assertNotNull(workOrders);
 	}
+	@Test
+	@Rollback(true)
+	public void testRetrieveWorkOrderDepot() throws P6BusinessException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException{
+		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
+		List<String> depotList = new ArrayList<String>();
+		depotList.add("DEPOT1");
+		request.setDepotList(depotList);
+		request.setFromDate("");
+		List<WorkOrder> searchResult = new ArrayList<>();
 
+		WorkOrder workOrder = new WorkOrder();
+		Map<String, List<String>> depotCrewMap = new HashMap<String, List<String>>();
+		List<String> crewList = new ArrayList<>();
+		crewList.add("MOST1");
+		depotCrewMap.put("DEPOT1", crewList);
+		List<String> workOrderIds = new ArrayList<>();
+		workOrderIds.add("11");
+		workOrder.setWorkOrders(workOrderIds);
+		workOrder.setWorkOrderId("11");
+		workOrder.setCrewNames("MOST1");
+		workOrder.setDepotId("DEPOT1");
+		workOrder.setScheduleDate("19/05/2017");
+		workOrder.setExctnPckgName("1234567890");
+		workOrder.setLeadCrew("MOST1");
+		WorkOrder workOrder2 = new WorkOrder();
+
+		List<String> workOrderIds2 = new ArrayList<>();
+		workOrderIds2.add("14");
+		workOrder2.setWorkOrders(workOrderIds2);
+		workOrder2.setWorkOrderId("14");
+		workOrder2.setCrewNames("MOST1");
+		workOrder2.setDepotId("DEPOT1");
+		workOrder2.setScheduleDate("19/05/2017");
+		workOrder2.setExctnPckgName("1234567890");
+		searchResult.add(workOrder2);
+		searchResult.add(workOrder);
+		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+		searchRequest.setPlannedStartDate("2017-05-19");
+		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
+		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
+		Field f = p6SchedulingBusinessService.getClass().getDeclaredField("depotCrewMap"); //NoSuchFieldException
+		f.setAccessible(true);
+		f.set(p6SchedulingBusinessService, depotCrewMap);
+		Set<Task> tasks = new HashSet<Task>();
+		ExecutionPackage executionPackage = new ExecutionPackage();
+		executionPackage.setActioned("Y");
+		executionPackage.setExctnPckgId(1234);
+		executionPackage.setExctnPckgNam("1234567890");
+		executionPackage.setLeadCrewId("CRW1");
+		executionPackage.setTasks(tasks);
+		List<Task> taskList = new ArrayList<Task>();
+		Task task = new Task();
+		task.setTaskId("11");
+		task.setActioned("Y");
+		task.setCrewId("CRW1");
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
+		task.setExecutionPackage(executionPackage);
+		Set<TodoAssignment> todoAssignments = new HashSet<TodoAssignment>();
+		TodoAssignmentPK todoAssignMentPK = new TodoAssignmentPK();
+		todoAssignMentPK.setTask(task);
+		todoAssignMentPK.setTodoId(new BigDecimal("123456789"));
+		TodoAssignment todo = new TodoAssignment();
+		todo.setTodoAssignMentPK(todoAssignMentPK);
+		todo.setStat("Completed");
+		task.setTodoAssignments(todoAssignments);
+		Task task1 = new Task();
+		task1.setTaskId("12");
+		task1.setActioned("Y");
+		task1.setCrewId("CRW2");
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate()));
+		task1.setExecutionPackage(executionPackage);
+		Task task2 = new Task();
+		task2.setTaskId("13");
+		task2.setActioned("Y");
+		task2.setCrewId("CRW1");
+		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(workOrder.getScheduleDate())).thenReturn(new Date());
+		task2.setSchdDt(new Date());
+		task2.setExecutionPackage(executionPackage);
+		Task task3 = new Task();
+		task3.setTaskId("14");
+		task3.setActioned("Y");
+		task3.setCrewId("MOST1");
+		task3.setSchdDt(dateUtils.toDateFromDD_MM_YYYY("18/05/2017"));
+		task3.setExecutionPackage(executionPackage);
+		tasks.add(task);
+		taskList.add(task);
+		tasks.add(task1);
+		taskList.add(task1);
+		tasks.add(task2);
+		taskList.add(task2);
+		tasks.add(task3);
+		taskList.add(task3);
+		List<Date> dateRange = new ArrayList<Date>();
+		if (request != null) {
+			dateRange.add(request.getFromDate() != null ? dateUtils.toDateFromYYYY_MM_DD(request.getFromDate()): null);
+			dateRange.add(request.getToDate() != null ? dateUtils.toDateFromYYYY_MM_DD(request.getToDate()) : null);
+
+		}
+		List<String> worOrders = new ArrayList<String>();
+		if (searchResult != null) {
+			searchResult.forEach(wo->{
+				worOrders.add(wo.getWorkOrderId());
+			});
+
+		}
+		Mockito.when(workOrderDAO.fetchTasksByDateAndWo(dateRange,worOrders)).thenReturn(taskList);
+		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
+		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList())).thenReturn(true);
+		Mockito.when(workOrderDAO.saveTask(Mockito.any())).thenReturn(task);
+		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
+		p6SchedulingBusinessService.updateTasksAndExecutionPackageInP6AndDB();
+		Assert.assertNotNull(workOrders);
+	}
 	/**
 	 * Saving newly created work order with todos and execution package
 	 * 
