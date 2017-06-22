@@ -3,7 +3,6 @@
  */
 package au.com.wp.corp.p6.integration.wsclient.cleint.impl;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.xml.ws.Holder;

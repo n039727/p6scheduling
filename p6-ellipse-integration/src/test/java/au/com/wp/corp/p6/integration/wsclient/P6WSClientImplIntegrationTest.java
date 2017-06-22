@@ -1,7 +1,5 @@
 package au.com.wp.corp.p6.integration.wsclient;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +104,7 @@ public class P6WSClientImplIntegrationTest {
 
 	}
 
-	// @Test
+	@Test
 	public void test_1_CreateActivitiesP6() throws P6BusinessException {
 
 		p6serviceImpl.readUDFTypeMapping();
@@ -138,19 +136,14 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setEstimatedLabourHours(8.0);
 		activityDTO.setActualStartDate("2017-07-06T08:00:00");
 		activityDTO.setActualFinishDate("2017-07-08T08:00:00");
+		activityDTO.setExecutionPckgUDF("T123344465");
 		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
 
 		activityDTO.setPrimaryResorceObjectId(resourceMap.get("MONT1").getPrimaryResourceObjectId());
 
 		activities.add(activityDTO);
 
-		try {
-			p6WsclientImpl.createActivities(activities);
-		} catch (Exception e) {
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			System.out.println("stact trace -- " + sw.toString());
-		}
+		p6WsclientImpl.createActivities(activities);
 
 	}
 
@@ -181,13 +174,13 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setUpStreamSwitchUDF("DOF 41876061");
 		activityDTO.setTaskDescriptionUDF("Test task desc1");
 		activityDTO.setTaskUserStatusUDF("MR1");
-		activityDTO.setExecutionPckgUDF("");
 		activityDTO.setPickIdUDF("MH-PNJ 812");
 		activityDTO.setFeederUDF("E 316.0 SOUTH ST1");
 		activityDTO.setAddressUDF("Perth WA");
 		activityDTO.setProjectObjectId(263779);
 		activityDTO.setActualStartDate("2017-07-06T08:00:00");
 		activityDTO.setActualFinishDate("2017-07-08T08:00:00");
+		activityDTO.setExecutionPckgUDF("");
 		for (P6ActivityDTO activityDTO2 : p6Activities) {
 			if (activityDTO.getActivityId().equals(activityDTO2.getActivityId())) {
 				activityDTO.setActivityObjectId(activityDTO2.getActivityObjectId());
@@ -195,13 +188,7 @@ public class P6WSClientImplIntegrationTest {
 			}
 		}
 		activities.add(activityDTO);
-		try {
-			p6WsclientImpl.updateActivities(activities);
-		} catch (Exception e) {
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			System.out.println("stact trace -- " + sw.toString());
-		}
+		p6WsclientImpl.updateActivities(activities);
 
 	}
 
@@ -215,7 +202,7 @@ public class P6WSClientImplIntegrationTest {
 		}
 	}
 
-	// @Test
+	@Test
 	public void test_4_DeleteActivitiesP6() throws P6ServiceException {
 		p6Activities = p6WsclientImpl.readActivities(null);
 		List<P6ActivityDTO> activities = new ArrayList<>();

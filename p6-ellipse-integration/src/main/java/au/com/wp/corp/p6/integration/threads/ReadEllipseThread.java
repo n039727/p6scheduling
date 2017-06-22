@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import au.com.wp.corp.p6.integration.dao.P6EllipseDAO;
 import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
 import au.com.wp.corp.p6.integration.exception.P6DataAccessException;
+import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
+import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.integration.util.ProcessStatus;
@@ -47,24 +49,7 @@ public class ReadEllipseThread implements Runnable {
 
 		logger.debug("Ellipse reading strategy # {}", readingStrategy);
 
-		
 		readEllipse(startTime, activities, workgroupList);
-		
-		/**
-		if (readingStrategy.equals(EllipseReadParameter.ALL.name())) {
-			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
-			for (String key : keys) {
-				workgroupList.addAll(CacheManager.getProjectWorkgroupListMap().get(key));
-			}
-			readEllipse(startTime, activities, workgroupList);
-		} else if (readingStrategy.equals(EllipseReadParameter.INDIVIDUAL.name())) {
-			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
-			for (String key : keys) {
-				readEllipse(startTime, activities, CacheManager.getProjectWorkgroupListMap().get(key));
-			}
-		} else {
-			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadProcessStatus.FAILED);
-		} **/
 	}
 
 	/**
@@ -72,7 +57,7 @@ public class ReadEllipseThread implements Runnable {
 	 * @param activities
 	 */
 	private void readEllipse(final long startTime, Map<String, EllipseActivityDTO> activities,
-			final List<String> workgroupList) {
+			final List<String> workgroupList){
 		try {
 			for (EllipseActivityDTO activityDTO : p6EllipseDAO.readElipseWorkorderDetails(workgroupList)) {
 				activities.put(activityDTO.getWorkOrderTaskId(), activityDTO);
@@ -84,6 +69,7 @@ public class ReadEllipseThread implements Runnable {
 		} catch (P6DataAccessException e) {
 			logger.error("An error occurs while reading record from Ellipse : ", e);
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadWriteProcessStatus.FAILED);
+			P6IntegrationExceptionHandler.handleException(new P6DataAccessException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause()));
 		}
 	}
 
