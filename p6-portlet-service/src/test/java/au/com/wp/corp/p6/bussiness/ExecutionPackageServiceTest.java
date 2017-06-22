@@ -223,7 +223,7 @@ public class ExecutionPackageServiceTest {
 		workOrder.setWorkOrders(wos);
 		List<WorkOrder> _workOrders = new ArrayList<>();
 		_workOrders.add(workOrder);
-		Mockito.when(p6SchedulingService.retrieveWorkOrders(request)).thenReturn(_workOrders);
+		Mockito.when(p6SchedulingService.retrieveWorkOrdersForExecutionPackage(request)).thenReturn(_workOrders);
 		Task task = new Task();
 		ExecutionPackage excPckg = new ExecutionPackage();
 		excPckg.setExctnPckgId(12734L);
