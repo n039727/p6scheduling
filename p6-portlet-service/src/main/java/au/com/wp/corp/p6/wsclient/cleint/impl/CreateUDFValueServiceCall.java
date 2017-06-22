@@ -35,13 +35,13 @@ public class CreateUDFValueServiceCall extends UDFValueServiceCall<List<ObjectId
 	protected Holder<List<ObjectId>> command() throws P6ServiceException {
 
 		List<UDFValue> createUDFValues = new ArrayList<UDFValue>();
-
+		int typeObjectId = readUDFTypeForExecutionPackage();
 		for (ExecutionPackageCreateRequest request : executionPackageCreateRequest) {
 			UDFValue udfValue = new UDFValue();
 			udfValue.setForeignObjectId(request.getForeignObjectId());
 			udfValue.setText(request.getText());
 			udfValue.setUDFTypeDataType(request.getUdfTypeDataType());
-			udfValue.setUDFTypeObjectId(readUDFTypeForExecutionPackage());
+			udfValue.setUDFTypeObjectId(typeObjectId);
 			udfValue.setUDFTypeSubjectArea(request.getUdfTypeSubjectArea());
 			udfValue.setUDFTypeTitle(request.getUdfTypeTitle());
 			createUDFValues.add(udfValue);
