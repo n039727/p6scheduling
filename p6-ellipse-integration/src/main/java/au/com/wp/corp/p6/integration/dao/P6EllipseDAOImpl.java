@@ -35,7 +35,8 @@ public class P6EllipseDAOImpl implements P6EllipseDAO{
 			logger.debug("Read data from ellipse with activities {}", activities);
 		}  
 		catch (Exception e) {
-			parseException(e);
+			logger.error("An error occurs while reading data from ellipse with activities : ", e);
+			throw new P6DataAccessException (e);
 		}
 		
 		return activities;

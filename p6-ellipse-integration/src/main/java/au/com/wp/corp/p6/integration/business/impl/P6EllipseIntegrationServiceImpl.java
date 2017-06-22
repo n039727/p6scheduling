@@ -195,7 +195,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 */
 	public void createActivityInP6(final List<P6ActivityDTO> createActivityP6Set,
 			final List<P6ActivityDTO> deleteActivityP6BforCreate) {
-		logger.debug("create activites in p6 - number of activities # {} and delete activites in p6 - {} ", createActivityP6Set.size(), deleteActivityP6BforCreate.size());
+		logger.debug("create activites in p6 - number of activities # {} and delete activites in p6 - {} ",
+				createActivityP6Set.size(), deleteActivityP6BforCreate.size());
 		CreateP6ActivityThread thread = new CreateP6ActivityThread(createActivityP6Set, deleteActivityP6BforCreate,
 				p6WSClient);
 		new Thread(thread).start();
@@ -423,13 +424,12 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 		final EllipseActivityDTO ellipseActivityUpd = new EllipseActivityDTO();
 		boolean isUpdateReq = false;
-		ellipseActivityUpd.setWorkOrderTaskId(ellipseActivity.getWorkOrderTaskId());
-
 		/*
 		 * in P6 activity Work group is changed when comparing the data between
 		 * Ellipse and P6 then update the Crew from P6 to Work Group in Ellipse.
 		 */
-		if (null != p6Activity.getWorkGroup() && !p6Activity.getWorkGroup().equals(ellipseActivity.getWorkGroup())) {
+		if (null != p6Activity.getWorkGroup()
+				&& !p6Activity.getWorkGroup().equals(ellipseActivity.getWorkGroup().trim())) {
 			ellipseActivityUpd.setWorkGroup(p6Activity.getWorkGroup());
 			isUpdateReq = true;
 		}
@@ -441,7 +441,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 */
 		if (null != projectWorkgroup.get(p6Activity.getWorkGroup())
 				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox()
-				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y)) {
+				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y)
+				&& null != ellipseActivity.getPlannedStartDate()) {
 			ellipseActivityUpd.setPlannedStartDate(null);
 			ellipseActivityUpd.setPlannedFinishDate(null);
 			isUpdateReq = true;
@@ -468,9 +469,14 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		if ((null != p6Activity.getWorkGroup() && !p6Activity.getWorkGroup().equals(ellipseActivity.getWorkGroup()))
 				|| (null != p6Activity.getPlannedStartDate() && !dateUtil.isSameDate(p6Activity.getPlannedStartDate(),
 						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, ellipseActivity.getPlannedStartDate(),
-						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))) {
-			ellipseActivityUpd.setTaskUserStatus("AL");
+						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
+						&& !ellipseActivity.getTaskUserStatus().equals(USER_STATUS_AL)) {
+			ellipseActivityUpd.setTaskUserStatus(USER_STATUS_AL);
 			isUpdateReq = true;
+		}
+
+		if (isUpdateReq) {
+			ellipseActivityUpd.setWorkOrderTaskId(ellipseActivity.getWorkOrderTaskId());
 		}
 
 		return isUpdateReq ? ellipseActivityUpd : null;
@@ -622,13 +628,15 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * to the Scheduler Inbox when comparing the data between P6 and Ellipse
 		 * then the Execution Package field in P6 should be updated to blank. 
 		 */
-
+		
 		if (null != projectWorkgroup.get(ellipseActivity.getWorkGroup())
-				&& null != projectWorkgroup.get(ellipseActivity.getWorkGroup()).getSchedulerinbox() && projectWorkgroup
-						.get(ellipseActivity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y)) {
+				&& null != projectWorkgroup.get(ellipseActivity.getWorkGroup()).getSchedulerinbox()
+				&& projectWorkgroup.get(ellipseActivity.getWorkGroup()).getSchedulerinbox().toUpperCase()
+						.equals(P6EllipseWSConstants.Y)
+				&& (null != p6Activity.getExecutionPckgUDF() && !p6Activity.getExecutionPckgUDF().trim().isEmpty() )) {
 			p6ActivityUpd.setExecutionPckgUDF("");
 			isUpdateReq = true;
-		} 
+		}
 
 		if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()) {
 			p6ActivityUpd.setActualStartDate(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),

@@ -9,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
+import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
+import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
+import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.ProcessStatus;
 import au.com.wp.corp.p6.integration.util.ReadWriteProcessStatus;
@@ -50,11 +53,18 @@ public class CreateP6ActivityThread implements Runnable {
 				p6WSClient.createActivities(createActivityP6Set);
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_CREATE_STATUS,
 					ReadWriteProcessStatus.COMPLETED);
-		} catch (Exception e) {
+		} catch (P6ServiceException e) {
 			logger.error("An error occur while creating activities in P6 ", e);
+			if (P6ExceptionType.SYSTEM_ERROR.name().equals(e.getMessage())){
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_CREATE_STATUS,
 					ReadWriteProcessStatus.FAILED);
+			} else {
+				CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_CREATE_STATUS,
+						ReadWriteProcessStatus.COMPLETED);
+			}
+			P6IntegrationExceptionHandler.handleDataExeception(e);
 		}
+		
 	}
 
 }

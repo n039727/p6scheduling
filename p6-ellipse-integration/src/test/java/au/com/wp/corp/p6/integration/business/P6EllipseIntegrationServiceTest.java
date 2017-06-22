@@ -34,6 +34,7 @@ import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
 import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.integration.dto.P6ProjWorkgroupDTO;
 import au.com.wp.corp.p6.integration.exception.P6BusinessException;
+import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.DateUtil;
@@ -1022,6 +1023,7 @@ public class P6EllipseIntegrationServiceTest {
 		p6Activity.setRequiredByDateUDF("2012-07-10 08:00:00");
 		p6Activity.setTaskDescriptionUDF("");
 		p6Activity.setUpStreamSwitchUDF("");
+		p6Activity.setExecutionPckgUDF("TEST123");
 		p6Activity.setProjectObjectId(263780);
 
 		Map<String, P6ProjWorkgroupDTO> projectWorkGropMap = CacheManager.getP6ProjectWorkgroupMap();
@@ -1167,7 +1169,7 @@ public class P6EllipseIntegrationServiceTest {
 		P6ProjWorkgroupDTO projWG = CacheManager.getP6ProjectWorkgroupMap().get(ellipseActivity.getWorkGroup());
 		Assert.assertEquals(projWG.getProjectObjectId(), p6AtivityDTO.getProjectObjectId());
 
-		Assert.assertEquals("", p6AtivityDTO.getExecutionPckgUDF());
+		Assert.assertNull(p6AtivityDTO.getExecutionPckgUDF());
 
 	}
 
@@ -1861,7 +1863,6 @@ public class P6EllipseIntegrationServiceTest {
 	@Test
 	public void testStartEllipseToP6Integration_1() throws P6BusinessException, NoSuchMethodException,
 			SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		thrown.expect(P6BusinessException.class);
 		EllipseActivityDTO ellipseActivity = new EllipseActivityDTO();
 		ellipseActivity.setWorkOrderTaskId("03940943001");
 		ellipseActivity.setWorkGroup("MOMT2");
@@ -1900,7 +1901,8 @@ public class P6EllipseIntegrationServiceTest {
 		List<P6ActivityDTO> p6Activities = new ArrayList<>();
 		p6Activities.add(p6Activity);
 		Mockito.when(p6WSClient.readActivities(projWorkgroupDTOs.get("MOMT1"))).thenReturn(p6Activities);
-		Mockito.when(p6WSClient.deleteActivities(p6Activities)).thenThrow(P6ServiceException.class);
+		P6ServiceException p6ServiceException = new P6ServiceException(P6ExceptionType.DATA_ERROR.name());
+		Mockito.when(p6WSClient.deleteActivities(p6Activities)).thenThrow(p6ServiceException);
 
 		List<P6ActivityDTO> deleteActivites = p6EllipseIntegrationService.startEllipseToP6Integration(workgroupList, projWorkgroupDTOs.get("MOMT1"));
 		Assert.assertEquals(1, deleteActivites.size());

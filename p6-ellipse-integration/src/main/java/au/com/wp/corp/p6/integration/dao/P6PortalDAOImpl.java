@@ -42,7 +42,6 @@ public class P6PortalDAOImpl implements P6PortalDAO {
 			projectWorkgroupMapping = p6PortalDataMapper.getProjectResourceMappingList();
 			logger.debug("Read project resource mapping details from p6 portal {}", projectWorkgroupMapping);
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error("An error occurs while reading project resource mapping details from p6 portal : ", e);
 			throw new P6DataAccessException (e);
 		}
