@@ -54,6 +54,7 @@ import au.com.wp.corp.p6.utils.CacheManager;
 import au.com.wp.corp.p6.utils.DateUtils;
 import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.utils.WorkOrderComparator;
+import au.com.wp.corp.p6.utils.WorkOrderComparatorOnActioned;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 
 @Service
@@ -89,12 +90,12 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	List<WorkOrder> listWOData = null;  
 	List<Task> tasksInDb = null;
 	@Autowired
-    private IExecutionPackageService executionPackageService;
- 
-    @PostConstruct
-    public void init() {
-    	executionPackageService.setP6BusinessService(this);
-    }
+	private IExecutionPackageService executionPackageService;
+
+	@PostConstruct
+	public void init() {
+		executionPackageService.setP6BusinessService(this);
+	}
 	@Override
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException {
 		logger.info("input date # {} ", input.getFromDate());
@@ -102,7 +103,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		List<String> crewListAll = new ArrayList<String>();
 		crewListAll = depotCrewMap.values().stream().flatMap(List::stream)
 				.collect(Collectors.toList());
-		
+
 		searchRequest.setCrewList(crewListAll);
 		searchRequest.setPlannedStartDate(input.getFromDate() != null ? dateUtils.convertDate(input.getFromDate()): null);
 		searchRequest.setPlannedEndDate(input.getToDate() != null ? dateUtils.convertDate(input.getToDate()) : null);
@@ -116,8 +117,42 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return workOrders;
 
 	}
+	@Override
+	public List<WorkOrder> retrieveWorkOrdersForExecutionPackage(WorkOrderSearchRequest input) throws P6BusinessException {
+		logger.info("input date # {} ", input.getFromDate());
+		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+		// if crew list is null then append all crew in the criteria
+		if(input.getCrewList() == null || input.getCrewList().size() == 0){
+			List<String> crewListAll = new ArrayList<String>();
+			crewListAll = depotCrewMap.values().stream().flatMap(List::stream)
+									.collect(Collectors.toList());
+			input.setCrewList(crewListAll);
+		}
+		//if depot is there select all crew for that depot
+		if(input.getDepotList() != null && input.getDepotList().size() >0){
+			List<String> crewListAll = new ArrayList<String>();
+			input.getDepotList().forEach(depot ->{
+				crewListAll.addAll(depotCrewMap.get(depot));
+			});
+			input.setCrewList(crewListAll);
+		}
+		searchRequest.setCrewList(input.getCrewList());
+		searchRequest.setPlannedStartDate(input.getFromDate() != null ? dateUtils.convertDate(input.getFromDate()): null);
+		searchRequest.setPlannedEndDate(input.getToDate() != null ? dateUtils.convertDate(input.getToDate()) : null);
+		searchRequest.setWorkOrder(input.getWorkOrderId());
+		searchRequest.setDepotList(input.getDepotList());
+		List<WorkOrder> workOrdersEp = null;
+		try {
+			workOrdersEp = p6wsClient.searchWorkOrder(searchRequest);
+			logger.info("list of work orders from P6# {}", workOrdersEp);
+		} catch (P6ServiceException e) {
+			parseException(e);
+		}
+		return workOrdersEp;
 
-	
+	}
+
+
 	private List<WorkOrder> applyFilters(List<WorkOrder> listWOData,WorkOrderSearchRequest input){
 		List<WorkOrder> resultListWOData = new ArrayList<WorkOrder>();
 		List<String> listOfCrew = null;
@@ -189,7 +224,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 								taskForExePak.remove(dbTask);
 								regroupEPForOtherWO(listWOData,mapOfExecutionPkgWO, taskForExePak, dbWOExecPkgName);
 							}
-						
+
 						}else{
 							//create separate work order list
 							ungroupedWorkorders.add(workOrderNew);
@@ -202,10 +237,11 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		} catch (Exception e) {
 			parseException(e);
 		}
-		
+
 		logger.debug("final grouped work orders size {}",mapOfExecutionPkgWO.values().size());
 		logger.debug("final grouped work orders = {}",mapOfExecutionPkgWO.values());
 		List<WorkOrder> workorders = new ArrayList<> (ungroupedWorkorders);
+		Collections.sort(workorders, new WorkOrderComparatorOnActioned());
 		workorders.addAll(mapOfExecutionPkgWO.values());
 		Collections.sort(workorders,new WorkOrderComparator());
 		logger.debug("Total time taken to execute and return search results == {}",System.currentTimeMillis() - startTime);
@@ -241,7 +277,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		Set<ExecutionPackage> execPkgListForUpdate = CacheManager.getExecpkglistforupdate();
 		/*********Using Cachemanager for temp data store************/
 		ExecutionPackage executionpackage = task.getExecutionPackage();
-		
+
 		/*
 		 * Before removing check of other tasks on the execution package if
 		 * for all other tasks the dates are same then don't remove the
@@ -359,7 +395,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	private void removeExecutionPackageinP6() throws P6BusinessException {
 		long startTime = System.currentTimeMillis();
 		Set<String> workOrderIds = CacheManager.getDeletetedexecpkaglist();
-		
+
 		if(!CollectionUtils.isEmpty(workOrderIds)){
 			try {
 				logger.debug("removeExecutionPackageinP6 called with tasks # {}",workOrderIds.size());
@@ -379,13 +415,13 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			} catch (P6ServiceException e) {
 				parseException(e);
 			}
-			
+
 		}
 		clearApplicationMemory();
 		logger.debug("Total time taken to removeExecutionPackageinP6 {}",System.currentTimeMillis() - startTime );
 	}
 
-	
+
 	public boolean convertStringToBoolean(String completed) {
 		return P6Constant.ACTIONED_Y.equals(completed);
 	}
@@ -440,7 +476,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		dbTask.setLstUpdtdUsr(userTokenRequest.getUserPrincipal());
 		Set<Task> tasksForUpdate = CacheManager.getTasksforupdate();
 		Set<ExecutionPackage> executionPackageUpdateList = CacheManager.getExecpkglistforupdate();
-		
+
 		ExecutionPackage executionPackage = dbTask.getExecutionPackage();
 		if (scheduledDateForWorkOrder != null && scheduledDateInTask != null) {
 			logger.debug("in prepare workorder scheduledDateForWorkOrder {}", scheduledDateForWorkOrder);
@@ -458,9 +494,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					 */
 					/*if(isExecutionPackageTobeRetained(dbTask)){
 						//update execution package in 
-						
+
 					}else{*/
-						removExecutionPackageFromTask(dbTask);
+					removExecutionPackageFromTask(dbTask);
 					//}
 				}
 			}
@@ -485,18 +521,18 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				updateExecutionPackageLeadCrew(executionPackage, dbTask,true);
 				executionPackageUpdateList.add(executionPackage);
 			}
-			
+
 			if(!StringUtils.isEmpty(dbTask.getTaskId())){
 				tasksForUpdate.add(dbTask);
 			}
 		}
-		
+
 
 		return workOrderNew;
 
 	}
 
-	
+
 	@Override
 	@Transactional
 	public MetadataDTO fetchMetadata() throws P6BusinessException{
@@ -536,7 +572,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) throws P6BusinessException {
 
 		List<Task> tasks = null;
-		
+
 		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> mapOfToDoIdWorkOrders = new HashMap<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>>();
 		ExecutionPackage executionPackage = null;
 		ViewToDoStatus returnedVal = new ViewToDoStatus();
@@ -596,7 +632,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 							workOrderId);
 					List<au.com.wp.corp.p6.dto.ToDoAssignment> assignments = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
 					assignments.add(assignmentDTO);
-					
+
 					mapOfToDoIdWorkOrders.put(toDoName, assignments);
 				}
 				assignmentDTOs.add(assignmentDTO);
@@ -703,7 +739,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				workOrderList.add(wo);
 			}
 			workOrderDAO.saveTask(task);
-			
+
 		}
 		if(executionPackageDTO != null){
 			executionPackageDTO.setWorkOrders(workOrderList);
@@ -762,7 +798,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					deleteToDos.add(allDbToDo);
 				}
 				updatedTask.getTodoAssignments().removeAll(deleteToDos);
-				
+
 			}
 		}
 

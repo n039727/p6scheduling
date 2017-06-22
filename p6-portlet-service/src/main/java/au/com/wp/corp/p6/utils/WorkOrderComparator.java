@@ -21,8 +21,9 @@ public class WorkOrderComparator implements Comparator<WorkOrder> {
 		if ((!StringUtils.isEmpty(o1.getExctnPckgName())) && 
 				(!StringUtils.isEmpty(o2.getExctnPckgName()))) {
 			compareBuilder.append(o1.getWorkOrderId(), o2.getWorkOrderId());
+		}else{
+			compareBuilder.append(o1.getActioned(),o2.getActioned());
 		}
-
 		compareBuilder.append(scheduledDate1, scheduledDate2);
 
 		return compareBuilder.toComparison();

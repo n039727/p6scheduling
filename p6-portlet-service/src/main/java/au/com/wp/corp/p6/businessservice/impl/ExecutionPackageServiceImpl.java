@@ -35,6 +35,7 @@ import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.utils.DateUtils;
 import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.utils.WorkOrderComparator;
+import au.com.wp.corp.p6.utils.WorkOrderComparatorOnActioned;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 
 /**
@@ -273,7 +274,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	@Override
 	@Transactional
 	public List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6BaseException {
-		List<WorkOrder> listWOData = p6SchedulingService.retrieveWorkOrders(input);
+		List<WorkOrder> listWOData = p6SchedulingService.retrieveWorkOrdersForExecutionPackage(input);
 		List<WorkOrder> listWODataWithEp = new ArrayList<WorkOrder>();
 		List<WorkOrder> listWODataWithOutEp = new ArrayList<WorkOrder>();
 		List<Task> tasksInDb = fetchListOfTasksForWorkOrders(listWOData);
@@ -300,6 +301,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			}
 		}
 		List<WorkOrder> workorders = new ArrayList<> (listWODataWithOutEp);
+		Collections.sort(workorders, new WorkOrderComparatorOnActioned());
 		workorders.addAll(listWODataWithEp);
 		Collections.sort(workorders,new WorkOrderComparator());
 		logger.debug("final grouped work orders size {}",workorders.size());
