@@ -8,8 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,7 @@ import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dataservice.ExecutionPackageDao;
 import au.com.wp.corp.p6.dataservice.WorkOrderDAO;
+import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.UserTokenRequest;
@@ -274,7 +278,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	@Override
 	@Transactional
 	public List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6BaseException {
-		List<WorkOrder> listWOData = p6SchedulingService.retrieveWorkOrdersForExecutionPackage(input);
+		List<WorkOrder> listWOData = retrieveWorkOrdersForExecutionPackage(input);
 		List<WorkOrder> listWODataWithEp = new ArrayList<WorkOrder>();
 		List<WorkOrder> listWODataWithOutEp = new ArrayList<WorkOrder>();
 		List<Task> tasksInDb = fetchListOfTasksForWorkOrders(listWOData);
@@ -323,10 +327,47 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		logger.debug("Total time taken to updateTasksInDB {}",System.currentTimeMillis() - startTime );
 		return workOrderDao.fetchTasks(worOrders);
 	}
+	
+
+	@Override
+	public List<WorkOrder> retrieveWorkOrdersForExecutionPackage(WorkOrderSearchRequest input) throws P6BusinessException {
+		logger.info("input date # {} ", input.getFromDate());
+		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+		Map<String, List<String>> depoCrewMap = p6SchedulingService.getDepotCrewMap();
+		// if crew list is null then append all crew in the criteria
+		if(input.getCrewList() == null || input.getCrewList().size() == 0){
+			List<String> crewListAll = new ArrayList<String>();
+			crewListAll = depoCrewMap.values().stream().flatMap(List::stream)
+					.collect(Collectors.toList());
+			input.setCrewList(crewListAll);
+		}
+		//if depot is there select all crew for that depot
+		if(input.getDepotList() != null && input.getDepotList().size() >0){
+			List<String> crewListAll = new ArrayList<String>();
+			input.getDepotList().forEach(depot ->{
+				crewListAll.addAll(depoCrewMap.get(depot));
+			});
+			input.setCrewList(crewListAll);
+		}
+		searchRequest.setCrewList(input.getCrewList());
+		searchRequest.setPlannedStartDate(input.getFromDate() != null ? dateUtils.convertDate(input.getFromDate()): null);
+		searchRequest.setPlannedEndDate(input.getToDate() != null ? dateUtils.convertDate(input.getToDate()) : null);
+		searchRequest.setWorkOrder(input.getWorkOrderId());
+		searchRequest.setDepotList(input.getDepotList());
+		List<WorkOrder> workOrdersEp = null;
+		try {
+			workOrdersEp = p6wsClient.searchWorkOrder(searchRequest);
+			logger.info("list of work orders from P6# {}", workOrdersEp);
+		} catch (P6ServiceException e) {
+			parseException(e);
+		}
+		return workOrdersEp;
+
+	}
+	
 	@Override
 	public void setP6BusinessService(P6SchedulingBusinessServiceImpl p6SchedulingBusinessServiceImpl) {
 		this.p6SchedulingService = p6SchedulingBusinessServiceImpl;
 		
 	}
-
 }

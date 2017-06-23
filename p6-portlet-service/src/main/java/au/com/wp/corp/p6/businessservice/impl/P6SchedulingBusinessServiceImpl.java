@@ -85,7 +85,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	ResourceDetailDAO resourceDetailDAO;
 
-	Map<String, List<String>> depotCrewMap = new HashMap<String, List<String>>();
+	private Map<String, List<String>> depotCrewMap = new HashMap<String, List<String>>();
 	List<WorkOrder> listWOData = null;
 	List<Task> tasksInDb = null;
 	@Autowired
@@ -116,40 +116,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		return workOrders;
 
 	}
-	@Override
-	public List<WorkOrder> retrieveWorkOrdersForExecutionPackage(WorkOrderSearchRequest input) throws P6BusinessException {
-		logger.info("input date # {} ", input.getFromDate());
-		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
-		// if crew list is null then append all crew in the criteria
-		if(input.getCrewList() == null || input.getCrewList().size() == 0){
-			List<String> crewListAll = new ArrayList<String>();
-			crewListAll = depotCrewMap.values().stream().flatMap(List::stream)
-					.collect(Collectors.toList());
-			input.setCrewList(crewListAll);
-		}
-		//if depot is there select all crew for that depot
-		if(input.getDepotList() != null && input.getDepotList().size() >0){
-			List<String> crewListAll = new ArrayList<String>();
-			input.getDepotList().forEach(depot ->{
-				crewListAll.addAll(depotCrewMap.get(depot));
-			});
-			input.setCrewList(crewListAll);
-		}
-		searchRequest.setCrewList(input.getCrewList());
-		searchRequest.setPlannedStartDate(input.getFromDate() != null ? dateUtils.convertDate(input.getFromDate()): null);
-		searchRequest.setPlannedEndDate(input.getToDate() != null ? dateUtils.convertDate(input.getToDate()) : null);
-		searchRequest.setWorkOrder(input.getWorkOrderId());
-		searchRequest.setDepotList(input.getDepotList());
-		List<WorkOrder> workOrdersEp = null;
-		try {
-			workOrdersEp = p6wsClient.searchWorkOrder(searchRequest);
-			logger.info("list of work orders from P6# {}", workOrdersEp);
-		} catch (P6ServiceException e) {
-			parseException(e);
-		}
-		return workOrdersEp;
-
-	}
+	
 
 	private List<WorkOrder> applyFilters(List<WorkOrder> listWOData, WorkOrderSearchRequest input) {
 		List<WorkOrder> resultListWOData = new ArrayList<WorkOrder>();
@@ -1030,6 +997,10 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		listWOData = null;
 		tasksInDb = null;
 
+	}
+	@Override
+	public Map<String, List<String>> getDepotCrewMap() {
+		return depotCrewMap;
 	}
 
 }

@@ -4,8 +4,11 @@
 package au.com.wp.corp.p6.bussiness;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.After;
@@ -19,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -27,6 +31,7 @@ import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.businessservice.impl.ExecutionPackageServiceImpl;
 import au.com.wp.corp.p6.dataservice.impl.ExecutionPackageDaoImpl;
 import au.com.wp.corp.p6.dataservice.impl.WorkOrderDAOImpl;
+import au.com.wp.corp.p6.dto.ActivitySearchRequest;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -61,6 +66,8 @@ public class ExecutionPackageServiceTest {
 	
 	@Mock
 	P6SchedulingBusinessService p6SchedulingService;
+	
+	
 	@Mock
 	P6WSClient p6wsClient;
 	@Rule
@@ -223,13 +230,14 @@ public class ExecutionPackageServiceTest {
 		workOrder.setWorkOrders(wos);
 		List<WorkOrder> _workOrders = new ArrayList<>();
 		_workOrders.add(workOrder);
-		Mockito.when(p6SchedulingService.retrieveWorkOrdersForExecutionPackage(request)).thenReturn(_workOrders);
+		//Mockito.when(execPckgService.retrieveWorkOrdersForExecutionPackage(request)).thenReturn(_workOrders);
 		Task task = new Task();
 		ExecutionPackage excPckg = new ExecutionPackage();
 		excPckg.setExctnPckgId(12734L);
 		excPckg.setExctnPckgNam("06-05-2017_128383131");
 		task.setExecutionPackage(excPckg);
 		Mockito.when(workOrderDao.fetch("WO11")).thenReturn(task);
+		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-06");
 		List<WorkOrder> workOrders = execPckgService.searchByExecutionPackage(request);
 		
 		Assert.assertNotNull(workOrders);
@@ -237,5 +245,120 @@ public class ExecutionPackageServiceTest {
 			Assert.assertEquals("WO11", wo.getWorkOrders().get(0));
 			//Assert.assertEquals("MOST1", wo.getCrewNames());
 		}
+	}
+	
+	@Test
+	@Rollback(true)
+	public void testRetrieveWorkOrderForExePack() throws P6BusinessException{
+		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
+		List<String> crewList = new ArrayList<>();
+		crewList.add("MOST1");
+		request.setCrewList(crewList);
+		request.setFromDate("");
+		List<WorkOrder> searchResult = new ArrayList<>();
+
+		WorkOrder workOrder = new WorkOrder();
+
+		List<String> workOrderIds = new ArrayList<>();
+		workOrderIds.add("11");
+		workOrder.setWorkOrders(workOrderIds);
+		workOrder.setWorkOrderId("11");
+		workOrder.setCrewNames("MOST1");
+		workOrder.setScheduleDate("19/05/2017");
+		workOrder.setExctnPckgName("1234567890");
+		workOrder.setLeadCrew("CRW1");
+		WorkOrder workOrder2 = new WorkOrder();
+
+		List<String> workOrderIds2 = new ArrayList<>();
+		workOrderIds2.add("14");
+		workOrder2.setWorkOrders(workOrderIds2);
+		workOrder2.setWorkOrderId("14");
+		workOrder2.setCrewNames("MOST1");
+		workOrder2.setScheduleDate("19/05/2017");
+		searchResult.add(workOrder2);
+		searchResult.add(workOrder);
+		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+		searchRequest.setPlannedStartDate("2017-05-19");
+		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
+		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
+		List<WorkOrder> woList = execPckgService.retrieveWorkOrdersForExecutionPackage(request);
+		Assert.assertNotNull(woList);
+	}
+	@Test
+	@Rollback(true)
+	public void testRetrieveWorkOrderForExePackWoId() throws P6BaseException{
+		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
+		request.setWorkOrderId("11");
+		request.setFromDate("");
+		List<WorkOrder> searchResult = new ArrayList<>();
+
+		WorkOrder workOrder = new WorkOrder();
+
+		List<String> workOrderIds = new ArrayList<>();
+		workOrderIds.add("11");
+		workOrder.setWorkOrders(workOrderIds);
+		workOrder.setWorkOrderId("11");
+		workOrder.setCrewNames("MOST1");
+		workOrder.setScheduleDate("19/05/2017");
+		workOrder.setExctnPckgName("1234567890");
+		workOrder.setLeadCrew("CRW1");
+		WorkOrder workOrder2 = new WorkOrder();
+
+		searchResult.add(workOrder);
+		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+		searchRequest.setPlannedStartDate("2017-05-19");
+		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
+		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
+		List<WorkOrder> woList = execPckgService.retrieveWorkOrdersForExecutionPackage(request);
+		Assert.assertNotNull(woList);
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	@Rollback(true)
+	public void testRetrieveWorkOrderForExePackDepot() throws P6BaseException{
+		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
+		List<String> depotList = new ArrayList<String>();
+		depotList.add("DEPOT1");
+		request.setDepotList(depotList);
+		request.setFromDate("");
+		List<WorkOrder> searchResult = new ArrayList<>();
+
+		WorkOrder workOrder = new WorkOrder();
+		Map<String, List<String>> depotCrewMap = new HashMap<String, List<String>>();
+		List<String> crewList = new ArrayList<>();
+		crewList.add("MOST1");
+		depotCrewMap.put("DEPOT1", crewList);
+		List<String> workOrderIds = new ArrayList<>();
+		workOrderIds.add("11");
+		workOrder.setWorkOrders(workOrderIds);
+		workOrder.setWorkOrderId("11");
+		workOrder.setCrewNames("MOST1");
+		workOrder.setDepotId("DEPOT1");
+		workOrder.setScheduleDate("19/05/2017");
+		workOrder.setExctnPckgName("1234567890");
+		workOrder.setLeadCrew("MOST1");
+		WorkOrder workOrder2 = new WorkOrder();
+
+		List<String> workOrderIds2 = new ArrayList<>();
+		workOrderIds2.add("14");
+		workOrder2.setWorkOrders(workOrderIds2);
+		workOrder2.setWorkOrderId("14");
+		workOrder2.setCrewNames("MOST1");
+		workOrder2.setDepotId("DEPOT1");
+		workOrder2.setScheduleDate("19/05/2017");
+		searchResult.add(workOrder2);
+		searchResult.add(workOrder);
+		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+		searchRequest.setPlannedStartDate("2017-05-19");
+		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
+		Mockito.when(dateUtils.toDateFromDD_MM_YYYY(request.getFromDate())).thenReturn(new Date("19/05/2017"));
+		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
+		/*Field f = p6SchedulingBusinessService.getClass().getDeclaredField("depotCrewMap"); //NoSuchFieldException
+		f.setAccessible(true);
+		f.set(p6SchedulingBusinessService, depotCrewMap);*/
+		Mockito.when(p6SchedulingService.getDepotCrewMap()).thenReturn(depotCrewMap);
+		List<WorkOrder> woList = execPckgService.retrieveWorkOrdersForExecutionPackage(request);
+		Assert.assertNotNull(woList);
 	}
 }

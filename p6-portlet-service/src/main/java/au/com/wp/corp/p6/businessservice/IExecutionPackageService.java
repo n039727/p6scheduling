@@ -47,4 +47,6 @@ public interface IExecutionPackageService extends P6BusinessExceptionParser{
 
 	public void setP6BusinessService(P6SchedulingBusinessServiceImpl p6SchedulingBusinessServiceImpl);
 
+	List<WorkOrder> retrieveWorkOrdersForExecutionPackage(WorkOrderSearchRequest input) throws P6BusinessException;
+
 }

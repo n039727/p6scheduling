@@ -1,6 +1,7 @@
 package au.com.wp.corp.p6.businessservice;
 
 import java.util.List;
+import java.util.Map;
 
 import au.com.wp.corp.p6.dto.MetadataDTO;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
@@ -21,5 +22,5 @@ public interface P6SchedulingBusinessService extends P6BusinessExceptionParser{
 	List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException;
 	void updateTasksAndExecutionPackageInP6AndDB() throws P6BusinessException;
 	void clearApplicationMemory();
-	List<WorkOrder> retrieveWorkOrdersForExecutionPackage(WorkOrderSearchRequest input) throws P6BusinessException;
+	public Map<String, List<String>> getDepotCrewMap();
 }

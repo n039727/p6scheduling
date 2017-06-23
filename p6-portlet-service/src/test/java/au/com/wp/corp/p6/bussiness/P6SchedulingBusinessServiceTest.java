@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -189,117 +188,7 @@ public class P6SchedulingBusinessServiceTest {
 		}
 
 	}
-	@Test
-	@Rollback(true)
-	public void testRetrieveWorkOrderForExePack() throws P6BusinessException{
-		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
-		List<String> crewList = new ArrayList<>();
-		crewList.add("MOST1");
-		request.setCrewList(crewList);
-		request.setFromDate("");
-		List<WorkOrder> searchResult = new ArrayList<>();
-
-		WorkOrder workOrder = new WorkOrder();
-
-		List<String> workOrderIds = new ArrayList<>();
-		workOrderIds.add("11");
-		workOrder.setWorkOrders(workOrderIds);
-		workOrder.setWorkOrderId("11");
-		workOrder.setCrewNames("MOST1");
-		workOrder.setScheduleDate("19/05/2017");
-		workOrder.setExctnPckgName("1234567890");
-		workOrder.setLeadCrew("CRW1");
-		WorkOrder workOrder2 = new WorkOrder();
-
-		List<String> workOrderIds2 = new ArrayList<>();
-		workOrderIds2.add("14");
-		workOrder2.setWorkOrders(workOrderIds2);
-		workOrder2.setWorkOrderId("14");
-		workOrder2.setCrewNames("MOST1");
-		workOrder2.setScheduleDate("19/05/2017");
-		searchResult.add(workOrder2);
-		searchResult.add(workOrder);
-		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
-		searchRequest.setPlannedStartDate("2017-05-19");
-		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
-		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
-		List<WorkOrder> woList = p6SchedulingBusinessService.retrieveWorkOrdersForExecutionPackage(request);
-		Assert.assertNotNull(woList);
-	}
-	@Test
-	@Rollback(true)
-	public void testRetrieveWorkOrderForExePackWoId() throws P6BusinessException{
-		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
-		request.setWorkOrderId("11");
-		request.setFromDate("");
-		List<WorkOrder> searchResult = new ArrayList<>();
-
-		WorkOrder workOrder = new WorkOrder();
-
-		List<String> workOrderIds = new ArrayList<>();
-		workOrderIds.add("11");
-		workOrder.setWorkOrders(workOrderIds);
-		workOrder.setWorkOrderId("11");
-		workOrder.setCrewNames("MOST1");
-		workOrder.setScheduleDate("19/05/2017");
-		workOrder.setExctnPckgName("1234567890");
-		workOrder.setLeadCrew("CRW1");
-		WorkOrder workOrder2 = new WorkOrder();
-
-		searchResult.add(workOrder);
-		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
-		searchRequest.setPlannedStartDate("2017-05-19");
-		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
-		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
-		List<WorkOrder> woList = p6SchedulingBusinessService.retrieveWorkOrdersForExecutionPackage(request);
-		Assert.assertNotNull(woList);
-	}
-
-	@Test
-	@Rollback(true)
-	public void testRetrieveWorkOrderForExePackDepot() throws P6BusinessException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException{
-		WorkOrderSearchRequest request = new WorkOrderSearchRequest();
-		List<String> depotList = new ArrayList<String>();
-		depotList.add("DEPOT1");
-		request.setDepotList(depotList);
-		request.setFromDate("");
-		List<WorkOrder> searchResult = new ArrayList<>();
-
-		WorkOrder workOrder = new WorkOrder();
-		Map<String, List<String>> depotCrewMap = new HashMap<String, List<String>>();
-		List<String> crewList = new ArrayList<>();
-		crewList.add("MOST1");
-		depotCrewMap.put("DEPOT1", crewList);
-		List<String> workOrderIds = new ArrayList<>();
-		workOrderIds.add("11");
-		workOrder.setWorkOrders(workOrderIds);
-		workOrder.setWorkOrderId("11");
-		workOrder.setCrewNames("MOST1");
-		workOrder.setDepotId("DEPOT1");
-		workOrder.setScheduleDate("19/05/2017");
-		workOrder.setExctnPckgName("1234567890");
-		workOrder.setLeadCrew("MOST1");
-		WorkOrder workOrder2 = new WorkOrder();
-
-		List<String> workOrderIds2 = new ArrayList<>();
-		workOrderIds2.add("14");
-		workOrder2.setWorkOrders(workOrderIds2);
-		workOrder2.setWorkOrderId("14");
-		workOrder2.setCrewNames("MOST1");
-		workOrder2.setDepotId("DEPOT1");
-		workOrder2.setScheduleDate("19/05/2017");
-		searchResult.add(workOrder2);
-		searchResult.add(workOrder);
-		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
-		searchRequest.setPlannedStartDate("2017-05-19");
-		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-19");
-		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(searchResult);
-		Field f = p6SchedulingBusinessService.getClass().getDeclaredField("depotCrewMap"); //NoSuchFieldException
-		f.setAccessible(true);
-		f.set(p6SchedulingBusinessService, depotCrewMap);
-		List<WorkOrder> woList = p6SchedulingBusinessService.retrieveWorkOrdersForExecutionPackage(request);
-		Assert.assertNotNull(woList);
-	}
+	
 	@Test
 	@Rollback(true)
 	public void testRetrieveWorkOrderWoId() throws P6BusinessException{
