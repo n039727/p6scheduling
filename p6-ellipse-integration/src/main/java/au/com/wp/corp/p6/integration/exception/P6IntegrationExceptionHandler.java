@@ -42,10 +42,8 @@ public class P6IntegrationExceptionHandler {
 		final String appName= "P6-Ellipse Integration"; 
 		final String sDescPattern = P6ReloadablePropertiesReader.getProperty(EXCEPTION_SHORT_DESC);
 		final String sDesc = formatMessage(sDescPattern, e.getCause().getMessage());
-		StringWriter sw = new StringWriter();
-		e.printStackTrace(new PrintWriter(sw));
 		final String descPattern = P6ReloadablePropertiesReader.getProperty(EXCEPTION_DETAIL_DESC_TEMPLATE);
-		final String desc = formatMessage(descPattern, sw.toString());	
+		final String desc = formatMessage(descPattern, e.getCause().getMessage());	
 		String aGroup = P6ReloadablePropertiesReader.getProperty(APP_SUPPORT_GROUP);
 		int priority = Integer.parseInt(P6ReloadablePropertiesReader.getProperty(SERVICE_TICKET_PRIORITY));
 		SnowConnector snow = new SnowConnector();
