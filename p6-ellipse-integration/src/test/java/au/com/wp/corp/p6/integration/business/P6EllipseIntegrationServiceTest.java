@@ -476,6 +476,7 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setActualFinishDate("12/06/2012 08:00:00");
 		ellipseActivity.setTaskDescription("Test Desc");
 		ellipseActivity.setUpStreamSwitch("DOF 8473");
+		ellipseActivity.setAddress("WA");
 
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId("03940943001");
@@ -592,6 +593,7 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setRequiredByDate("27/07/2012 08:00:00");
 		ellipseActivity.setTaskDescription("Test Desc");
 		ellipseActivity.setUpStreamSwitch("DOF 8473");
+		ellipseActivity.setAddress("WA");
 
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId("03940943001");
@@ -694,7 +696,8 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setRequiredByDate("27/07/2012 08:00:00");
 		ellipseActivity.setTaskDescription("Test Desc");
 		ellipseActivity.setUpStreamSwitch("DOF 8473");
-
+		ellipseActivity.setAddress("WA");
+		
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId("03940943001");
 		p6Activity.setWorkGroup("NGERT01");
@@ -798,6 +801,7 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setRequiredByDate("27/07/2012 08:00:00");
 		ellipseActivity.setTaskDescription("Test Desc");
 		ellipseActivity.setUpStreamSwitch("DOF 8473");
+		ellipseActivity.setAddress("WA");
 
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId("03940943001");
@@ -901,6 +905,7 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setRequiredByDate("27/07/2012 08:00:00");
 		ellipseActivity.setTaskDescription("Test Desc");
 		ellipseActivity.setUpStreamSwitch("DOF 8473");
+		ellipseActivity.setAddress("WA");
 
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId("03940943001");
@@ -1001,6 +1006,7 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setRequiredByDate("27/07/2012 08:00:00");
 		ellipseActivity.setTaskDescription("Test Desc");
 		ellipseActivity.setUpStreamSwitch("DOF 8473");
+		ellipseActivity.setAddress("WA");
 
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId("03940943001");
@@ -1104,6 +1110,7 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setRequiredByDate("27/07/2012 08:00:00");
 		ellipseActivity.setTaskDescription("Test Desc");
 		ellipseActivity.setUpStreamSwitch("DOF 8473");
+		ellipseActivity.setAddress("WA");
 
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId("03940943001");

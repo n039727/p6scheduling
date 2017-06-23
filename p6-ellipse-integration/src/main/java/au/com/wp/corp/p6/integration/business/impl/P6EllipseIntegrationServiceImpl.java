@@ -206,6 +206,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	@Override
 	public boolean start() throws P6BusinessException {
 		boolean status = Boolean.FALSE;
+		logger.debug("Snow user name -{}, password - {}", P6ReloadablePropertiesReader.getProperty("usename"), P6ReloadablePropertiesReader.getProperty("password"));
 		clearApplicationMemory();
 		try {
 			readUDFTypeMapping();
@@ -218,16 +219,14 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			}
 			logger.info("Batch run strategy # {}", integrationRunStartegy);
 			final List<String> workgroupList = new ArrayList<>();
-
+			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
 			if (integrationRunStartegy.equals(EllipseReadParameter.ALL.name())) {
-				final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
 				for (String key : keys) {
 					workgroupList.addAll(CacheManager.getProjectWorkgroupListMap().get(key));
 				}
 				startEllipseToP6Integration(workgroupList, null);
 				status = Boolean.TRUE;
 			} else if (integrationRunStartegy.equals(EllipseReadParameter.INDIVIDUAL.name())) {
-				final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
 				for (String key : keys) {
 					workgroupList.clear();
 					CacheManager.getEllipseActivitiesMap().clear();
@@ -442,7 +441,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		if (null != projectWorkgroup.get(p6Activity.getWorkGroup())
 				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox()
 				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y)
-				&& null != ellipseActivity.getPlannedStartDate()) {
+				&& !ellipseActivity.getPlannedStartDate().isEmpty()) {
 			ellipseActivityUpd.setPlannedStartDate(null);
 			ellipseActivityUpd.setPlannedFinishDate(null);
 			isUpdateReq = true;
@@ -510,32 +509,32 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * update in P6 as Completed
 		 */
 
-		if (null != ellipseActivity.getJdCode()
+		if (!ellipseActivity.getJdCode().isEmpty()
 				&& !ellipseActivity.getJdCode().equals(p6Activity.getActivityJDCodeUDF())) {
 			p6ActivityUpd.setActivityJDCodeUDF(ellipseActivity.getJdCode());
 			isUpdateReq = true;
 
 		}
 
-		if (null != ellipseActivity.getEquipmentNo()
+		if (!ellipseActivity.getEquipmentNo().isEmpty()
 				&& !ellipseActivity.getEquipmentNo().equals(p6Activity.getEquipmentNoUDF())) {
 			p6ActivityUpd.setEquipmentNoUDF(ellipseActivity.getEquipmentNo());
 			isUpdateReq = true;
 
 		}
 
-		if (null != ellipseActivity.getPlantNoOrPickId()
+		if (!ellipseActivity.getPlantNoOrPickId().isEmpty()
 				&& !ellipseActivity.getPlantNoOrPickId().equals(p6Activity.getPickIdUDF())) {
 			p6ActivityUpd.setPickIdUDF(ellipseActivity.getPlantNoOrPickId());
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getEGI() && !ellipseActivity.getEGI().equals(p6Activity.geteGIUDF())) {
+		if (!ellipseActivity.getEGI().isEmpty() && !ellipseActivity.getEGI().equals(p6Activity.geteGIUDF())) {
 			p6ActivityUpd.seteGIUDF(ellipseActivity.getEGI());
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getEquipmentCode()
+		if (! ellipseActivity.getEquipmentCode().isEmpty()
 				&& !ellipseActivity.getEquipmentCode().equals(p6Activity.getEquipmentCodeUDF())) {
 			p6ActivityUpd.setEquipmentCodeUDF(ellipseActivity.getEquipmentCode());
 			isUpdateReq = true;
@@ -552,30 +551,30 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getRequiredByDate()
+		if (!ellipseActivity.getRequiredByDate().isEmpty()
 				&& !ellipseActivity.getRequiredByDate().equals(p6Activity.getRequiredByDateUDF())) {
 			p6ActivityUpd.setRequiredByDateUDF(ellipseActivity.getRequiredByDate());
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getEllipseStandardJob()
+		if (!ellipseActivity.getEllipseStandardJob().isEmpty()
 				&& !ellipseActivity.getEllipseStandardJob().equals(p6Activity.getEllipseStandardJobUDF())) {
 			p6ActivityUpd.setEllipseStandardJobUDF(ellipseActivity.getEllipseStandardJob());
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getFeeder() && !ellipseActivity.getFeeder().equals(p6Activity.getFeederUDF())) {
+		if (!ellipseActivity.getFeeder().isEmpty() && !ellipseActivity.getFeeder().equals(p6Activity.getFeederUDF())) {
 			p6ActivityUpd.setFeederUDF(ellipseActivity.getFeeder());
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getUpStreamSwitch()
+		if (!ellipseActivity.getUpStreamSwitch().isEmpty()
 				&& !ellipseActivity.getUpStreamSwitch().equals(p6Activity.getUpStreamSwitchUDF())) {
 			p6ActivityUpd.setUpStreamSwitchUDF(ellipseActivity.getUpStreamSwitch());
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getEstimatedLabourHours()
+		if (!ellipseActivity.getEstimatedLabourHours().isEmpty()
 				&& !P6Utility.isEqual(P6Utility.covertStringToDouble(ellipseActivity.getEstimatedLabourHours()),
 						p6Activity.getEstimatedLabourHours())) {
 			p6ActivityUpd
@@ -583,24 +582,24 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getAddress() && !ellipseActivity.getAddress().equals(p6Activity.getAddressUDF())) {
+		if (!ellipseActivity.getAddress().isEmpty() && !ellipseActivity.getAddress().equals(p6Activity.getAddressUDF())) {
 			p6ActivityUpd.setAddressUDF(ellipseActivity.getAddress());
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getLocationInStreet()
+		if (!ellipseActivity.getLocationInStreet().isEmpty()
 				&& !ellipseActivity.getLocationInStreet().equals(p6Activity.getLocationInStreetUDF())) {
 			p6ActivityUpd.setLocationInStreetUDF(ellipseActivity.getLocationInStreet());
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getTaskDescription()
+		if (!ellipseActivity.getTaskDescription().isEmpty()
 				&& !ellipseActivity.getTaskDescription().equals(p6Activity.getTaskDescriptionUDF())) {
 			p6ActivityUpd.setTaskDescriptionUDF(ellipseActivity.getTaskDescription());
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getTaskStatus()
+		if (!ellipseActivity.getTaskStatus().isEmpty()
 				&& !ellipseActivity.getTaskStatus().equals(p6Activity.getActivityStatus())) {
 			p6ActivityUpd.setActivityStatus(ellipseActivity.getTaskStatus());
 			isUpdateReq = true;
