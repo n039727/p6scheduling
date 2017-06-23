@@ -22,6 +22,8 @@ import au.com.wp.corp.p6.integration.dto.P6ProjWorkgroupDTO;
 import au.com.wp.corp.p6.integration.dto.UDFTypeDTO;
 import au.com.wp.corp.p6.integration.exception.P6BusinessException;
 import au.com.wp.corp.p6.integration.exception.P6DataAccessException;
+import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
+import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.threads.CreateP6ActivityThread;
 import au.com.wp.corp.p6.integration.threads.DeleteP6ActivityThread;
@@ -90,7 +92,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			logger.debug("Size of udf type list from P6 # {}", udfTypeMap.size());
 		} catch (P6ServiceException e) {
 			logger.error("An error occurs while readeing Project Resource/workgroup mapping from P6 Portal:", e);
-			throw e;
+			throw new P6BusinessException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause());
 		}
 
 		return status;
@@ -108,20 +110,29 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		final long startTime = System.currentTimeMillis();
 		boolean status = false;
 
-		Map<String, Integer> projWorkgroupDTOs = p6WSClient.readResources();
+		Map<String, Integer> projWorkgroupDTOs = null;
+		Map<String, Integer> projectsMap = null;
+		List<P6ProjWorkgroupDTO> p6ProjWorkgroupDTOs = null;
+		try {
+			projWorkgroupDTOs = p6WSClient.readResources();
+			projectsMap = p6WSClient.readProjects();
+			p6ProjWorkgroupDTOs = p6PortalDAO.getProjectResourceMappingList();
+		}  catch (P6DataAccessException e) {
+			logger.error("An error occurs while readeing Project Resource/workgroup mapping from P6 Portal:", e);
+			throw new P6BusinessException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause());
 
+		}
+		
 		logger.debug("List of resource from P6# {}", projWorkgroupDTOs.keySet());
-
-		Map<String, Integer> projectsMap = p6WSClient.readProjects();
+		
 		CacheManager.getProjectsMap().putAll(projectsMap);
 
 		Map<String, P6ProjWorkgroupDTO> projectWorkgroupMap = CacheManager.getP6ProjectWorkgroupMap();
 
 		Map<String, List<String>> projectWorkgroupListMap = CacheManager.getProjectWorkgroupListMap();
 
-		try {
 			List<String> primaryResIds;
-			for (P6ProjWorkgroupDTO projectWG : p6PortalDAO.getProjectResourceMappingList()) {
+			for (P6ProjWorkgroupDTO projectWG : p6ProjWorkgroupDTOs) {
 
 				if (null == projectWorkgroupListMap.get(projectWG.getProjectName())) {
 					primaryResIds = new ArrayList<>();
@@ -146,11 +157,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					projectWorkgroupListMap.size());
 
 			logger.debug("Time taken to read record from P6 Portal # {} ", System.currentTimeMillis() - startTime);
-		} catch (P6DataAccessException e) {
-			logger.error("An error occurs while readeing Project Resource/workgroup mapping from P6 Portal:", e);
-			throw e;
-
-		}
+		
 
 		return status;
 
@@ -206,12 +213,17 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	@Override
 	public boolean start() throws P6BusinessException {
 		boolean status = Boolean.FALSE;
-		logger.debug("Snow user name -{}, password - {}", P6ReloadablePropertiesReader.getProperty("usename"), P6ReloadablePropertiesReader.getProperty("password"));
 		clearApplicationMemory();
+		
 		try {
 			readUDFTypeMapping();
 			readProjectWorkgroupMapping();
-
+		} catch (P6BusinessException e) {
+			P6IntegrationExceptionHandler.handleException(e);
+			throw e;
+		}
+		
+		try {
 			final String integrationRunStartegy = P6ReloadablePropertiesReader.getProperty(INTEGRATION_RUN_STARTEGY);
 
 			if (null == integrationRunStartegy || integrationRunStartegy.isEmpty()) {
@@ -288,7 +300,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					.get(ProcessStatus.ELLIPSE_READ_STATUS) == ReadWriteProcessStatus.FAILED
 					|| CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_READ_STATUS) == ReadWriteProcessStatus.FAILED) {
-				throw new P6BusinessException("An error occurs while reading data");
+				throw new P6BusinessException(P6ExceptionType.SYSTEM_ERROR.name());
 			}
 
 			try {
@@ -396,7 +408,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 							|| CacheManager.getSystemReadWriteStatusMap().get(
 									ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadWriteProcessStatus.COMPLETED)) {
 
-				throw new P6BusinessException("An error occurs while create /update/ delete  data");
+				throw new P6BusinessException(P6ExceptionType.SYSTEM_ERROR.name());
 			}
 
 			try {

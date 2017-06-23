@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import au.com.wp.corp.p6.integration.business.P6EllipseIntegrationService;
 import au.com.wp.corp.p6.integration.exception.P6BusinessException;
+import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
 import au.com.wp.corp.p6.integration.rest.controller.P6EllipseIntegrationController;
 
 /**
@@ -65,7 +66,8 @@ public class P6EllipseIntegrationControllerTest {
 	
 	@Test
 	public void testStartIntegartion_Error() throws Exception {
-		Mockito.when(p6EllipseService.start()).thenThrow(P6BusinessException.class);
+		P6BusinessException pbe = new P6BusinessException(P6ExceptionType.SYSTEM_ERROR.name());
+		Mockito.when(p6EllipseService.start()).thenThrow(pbe);
 		ResultActions actions = mockMvc.perform(get("/integration/p6-ellipse").contentType(MediaType.TEXT_PLAIN_VALUE))
 				.andExpect(status().isOk()).andExpect(content().string("NOTOK"));
 	}

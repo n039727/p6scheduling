@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import au.com.wp.corp.p6.integration.business.P6EllipseIntegrationService;
 import au.com.wp.corp.p6.integration.exception.P6BaseException;
+import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
 
 /**
  * @author N039126
@@ -33,11 +34,11 @@ public class P6EllipseIntegrationController {
 	public String startIntegartion (){
 		final long startTime = System.currentTimeMillis();
 		try {
-			boolean status = p6EllipseService.start();
-			if ( ! status )
-				return STATUS_FAILED;
+			p6EllipseService.start();
 		} catch (P6BaseException e) {
 			logger.error("An error occurs during batch processing - ",e);
+			logger.error("error occurs during batch processing - error message# - {}",e.getMessage());
+			if ( e.getMessage().equals(P6ExceptionType.SYSTEM_ERROR.name()))
 			return STATUS_FAILED;
 		}
 		p6EllipseService.clearApplicationMemory();

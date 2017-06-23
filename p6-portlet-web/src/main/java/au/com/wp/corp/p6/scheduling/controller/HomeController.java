@@ -3,7 +3,6 @@
  */
 package au.com.wp.corp.p6.scheduling.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;

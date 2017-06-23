@@ -22,6 +22,7 @@ import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.DateUtil;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
+import au.com.wp.corp.p6.integration.util.P6Utility;
 import au.com.wp.corp.p6.integration.wsclient.cleint.P6WSClient;
 import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
@@ -427,7 +428,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 						objectFactory.createActivityRemainingDuration(p6ActivityDTO.getRemainingDuration()));
 			}
 
-			if (p6ActivityDTO.getEstimatedLabourHours() != -1)
+			if ( !P6Utility.isEqual(p6ActivityDTO.getEstimatedLabourHours(), -1))
 				activity.setPlannedLaborUnits(p6ActivityDTO.getEstimatedLabourHours());
 
 			_activities.add(activity);

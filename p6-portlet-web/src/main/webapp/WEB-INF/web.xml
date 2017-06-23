@@ -113,11 +113,9 @@
 		<web-resource-collection>
 			<web-resource-name>CSS_AND_JS</web-resource-name>
 			<url-pattern>/css/*</url-pattern>
-			<url-pattern>/js/bootstrap.js</url-pattern>
-			<url-pattern>/js/jquery.js</url-pattern>
+			<url-pattern>/js/*</url-pattern>
 			<url-pattern>/web/css/*</url-pattern>
-			<url-pattern>/web/js/bootstrap.js</url-pattern>
-			<url-pattern>/web/js/jquery.js</url-pattern>
+			<url-pattern>/web/js/*</url-pattern>
 			<url-pattern>/web/images/*</url-pattern>
 		</web-resource-collection>
 		<user-data-constraint>
