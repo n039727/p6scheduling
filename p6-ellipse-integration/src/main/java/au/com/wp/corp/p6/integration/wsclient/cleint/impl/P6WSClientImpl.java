@@ -266,18 +266,20 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	}
 
 	@Override
-	public void logoutFromP6 () {
+	public boolean logoutFromP6 () {
 		final RequestTrackingId trackingId = new RequestTrackingId();
+		boolean status = false;
 		if ( null != CacheManager.getWsHeaders().get(WS_COOKIE)) {
 			LogoutServiceCall authService = new LogoutServiceCall(trackingId);
-			Holder<LogoutResponse> holder = null;
 			try {
-				holder = authService.run();
+				status = authService.run().value.isReturn();
 			} catch (P6ServiceException e) {
 				logger.error("Error occurs during logout - ", e);
 			}
-			logger.debug("Is logout successfull ??  {} ", holder.value.isReturn());
+			logger.debug("Is logout successfull ??  {} ", status);
 		}
+		
+		return status;
 
 	}
 	

@@ -35,6 +35,6 @@ public interface P6WSClient {
 
 	public List<P6ActivityDTO> readActivities(final Integer projectId) throws P6ServiceException;
 
-	public void logoutFromP6();
+	public boolean logoutFromP6();
 	
 }
