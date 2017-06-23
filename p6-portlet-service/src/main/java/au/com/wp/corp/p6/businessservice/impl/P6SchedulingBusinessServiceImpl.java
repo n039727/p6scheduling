@@ -453,7 +453,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	}
 
 	private boolean getCompletedStatus(Set<TodoAssignment> toDos) {
-		if (null == toDos) {
+		if (null == toDos || toDos.isEmpty()) {
 			return Boolean.FALSE;
 		}
 		for (TodoAssignment todo : toDos) {
