@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -48,6 +49,7 @@ public class P6WSClientIntegrationTest {
 	P6WSClient p6WSClient;
 	@Autowired
 	ResourceDetailDAO resourceDetailDAO;
+	List<WorkOrder> baseWorders = null;
 	
 	Map<String, List<String>> depotCrewMap = new HashMap<String,List<String>>();
 	
@@ -55,6 +57,14 @@ public class P6WSClientIntegrationTest {
 	
 	@Before
 	public void setup() {
+		ActivitySearchRequest activitySearchRequest = new ActivitySearchRequest();
+		activitySearchRequest.setPlannedStartDate("2017-05-18");
+		try {
+			baseWorders = p6WSClient.searchWorkOrder(activitySearchRequest);
+		} catch (P6ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
@@ -128,19 +138,20 @@ public class P6WSClientIntegrationTest {
 		List<ExecutionPackageCreateRequest> request = new ArrayList<>();
 
 		ExecutionPackageCreateRequest executionPackageCreateRequest = new ExecutionPackageCreateRequest();
-		
-		executionPackageCreateRequest.setForeignObjectId(5405787);
+		Entry<String, Integer> entryInMap = p6WSClient.getWorkOrderIdMap().entrySet().iterator().next();
+		Integer foreignObjectId = entryInMap.getValue();
+		String workOrderId = entryInMap.getKey();
+		executionPackageCreateRequest.setForeignObjectId(foreignObjectId);
 		executionPackageCreateRequest.setText("18-05-2017_023711511");
 		executionPackageCreateRequest.setUdfTypeDataType(P6Constant.TEXT);
 		executionPackageCreateRequest.setUdfTypeObjectId(5920);
 		executionPackageCreateRequest.setUdfTypeSubjectArea(P6Constant.ACTIVITY);
 		executionPackageCreateRequest.setUdfTypeTitle(P6Constant.EXECUTION_GROUPING);
 		request.add(executionPackageCreateRequest);
-		p6WSClient.getWorkOrderIdMap().put("05257561002", 5405787);
 		ExecutionPackageDTO dto = p6WSClient.createExecutionPackage(request);
 		if (dto != null) {
 				Assert.assertEquals("18-05-2017_023711511",dto.getExctnPckgName());
-				Assert.assertEquals("05257561002", dto.getWorkOrders().get(0).getWorkOrderId());
+				Assert.assertEquals(workOrderId, dto.getWorkOrders().get(0).getWorkOrderId());
 			
 		}
 
@@ -149,7 +160,9 @@ public class P6WSClientIntegrationTest {
 	@Test
 	public void testRemoveExecutionPackage() throws P6ServiceException {
 		List<Integer> foreignIds = new ArrayList<Integer>();
-		foreignIds.add(5401390);
+		Entry<String, Integer> entryInMap = p6WSClient.getWorkOrderIdMap().entrySet().iterator().next();
+		Integer foreignObjectId = entryInMap.getValue();
+		foreignIds.add(foreignObjectId);
 		Boolean  success = p6WSClient.removeExecutionPackage(foreignIds);
 		logger.info("success {}",success);
 		Assert.assertNotNull(success);
