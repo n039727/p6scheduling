@@ -237,7 +237,10 @@ public class ExecutionPackageServiceTest {
 		excPckg.setExctnPckgNam("06-05-2017_128383131");
 		task.setExecutionPackage(excPckg);
 		Mockito.when(workOrderDao.fetch("WO11")).thenReturn(task);
+		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
+		searchRequest.setPlannedStartDate("2017-05-06");
 		Mockito.when(dateUtils.convertDate(request.getFromDate())).thenReturn("2017-05-06");
+		Mockito.when(p6wsClient.searchWorkOrder(searchRequest)).thenReturn(_workOrders);
 		List<WorkOrder> workOrders = execPckgService.searchByExecutionPackage(request);
 		
 		Assert.assertNotNull(workOrders);
