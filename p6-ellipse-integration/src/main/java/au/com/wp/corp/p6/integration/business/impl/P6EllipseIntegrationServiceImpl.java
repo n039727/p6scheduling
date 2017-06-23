@@ -248,13 +248,13 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					startEllipseToP6Integration(workgroupList, CacheManager.getProjectsMap().get(key));
 				}
 				status = Boolean.TRUE;
-
 			}
 		} catch (P6BusinessException e) {
 			status = Boolean.FALSE;
 			logger.debug("error- ", e);
 			throw e;
 		} finally {
+			p6WSClient.logoutFromP6();
 			clearApplicationMemory();
 		}
 		logger.info("Ellipse,P6 integration is completed with status # {} ", status);

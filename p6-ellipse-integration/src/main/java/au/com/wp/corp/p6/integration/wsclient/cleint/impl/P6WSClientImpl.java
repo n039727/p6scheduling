@@ -28,6 +28,7 @@ import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.activity.ObjectFactory;
+import au.com.wp.corp.p6.wsclient.auth.LogoutResponse;
 import au.com.wp.corp.p6.wsclient.project.Project;
 import au.com.wp.corp.p6.wsclient.resource.Resource;
 import au.com.wp.corp.p6.wsclient.resourceassignment.ResourceAssignment;
@@ -77,7 +78,6 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 */
 	@Override
 	public List<P6ActivityDTO> readActivities(final Integer projectId) throws P6ServiceException {
-		CacheManager.getWsHeaders().remove("WS_COOKIE");
 		logger.info("Calling activity service in P6 Webservice ...");
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
@@ -255,7 +255,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @throws P6ServiceException
 	 */
 	private Boolean getAuthenticated(final RequestTrackingId trackingId) throws P6ServiceException {
-		if (CacheManager.getWsHeaders().isEmpty() || null == CacheManager.getWsHeaders().get(WS_COOKIE)) {
+		if (null == CacheManager.getWsHeaders().get(WS_COOKIE)) {
 			AuthenticationService authService = new AuthenticationService(trackingId);
 			Holder<Boolean> holder = authService.run();
 			logger.debug("Is authentication successfull ??  {} ", holder.value);
@@ -265,6 +265,24 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		return false;
 	}
 
+	@Override
+	public void logoutFromP6 () {
+		final RequestTrackingId trackingId = new RequestTrackingId();
+		if ( null != CacheManager.getWsHeaders().get(WS_COOKIE)) {
+			LogoutServiceCall authService = new LogoutServiceCall(trackingId);
+			Holder<LogoutResponse> holder = null;
+			try {
+				holder = authService.run();
+			} catch (P6ServiceException e) {
+				logger.error("Error occurs during logout - ", e);
+			}
+			logger.debug("Is logout successfull ??  {} ", holder.value.isReturn());
+		}
+
+	}
+	
+	
+	
 	@Override
 	public void createActivities(final List<P6ActivityDTO> activities) throws P6ServiceException {
 		createOrUpdateActivities(activities, true);
