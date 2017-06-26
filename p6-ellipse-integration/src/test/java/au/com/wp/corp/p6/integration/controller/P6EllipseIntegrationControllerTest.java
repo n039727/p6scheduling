@@ -69,7 +69,7 @@ public class P6EllipseIntegrationControllerTest {
 		P6BusinessException pbe = new P6BusinessException(P6ExceptionType.SYSTEM_ERROR.name());
 		Mockito.when(p6EllipseService.start()).thenThrow(pbe);
 		ResultActions actions = mockMvc.perform(get("/integration/p6-ellipse").contentType(MediaType.TEXT_PLAIN_VALUE))
-				.andExpect(status().isOk()).andExpect(content().string("NOTOK"));
+				.andExpect(status().isOk()).andExpect(content().string("OK"));
 	}
 	
 	

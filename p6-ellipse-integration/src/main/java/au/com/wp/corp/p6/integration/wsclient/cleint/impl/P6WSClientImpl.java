@@ -108,8 +108,11 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 		final List<P6ActivityDTO> activityDTOs = new ArrayList<>();
 		P6ActivityDTO activityDTO;
-		for (Activity activity : activities.value) {
+		List<Activity> activityList = activities.value;
+		int activitySize = activityList.size();
+		for ( int i = activitySize; --i>=0; ) {
 			activityDTO = new P6ActivityDTO();
+			Activity activity = activityList.get(i);
 			activityDTO.setActivityObjectId(activity.getObjectId());
 			activityDTO.setActivityId(activity.getId());
 			activityDTO.setActivityName(activity.getName());
@@ -129,13 +132,17 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			List<UDFValue> udfValueList = udfValueMap.get(activity.getObjectId());
 
 			if (null != udfValueList)
-				for (UDFValue udfValue : udfValueList) {
+			{
+				int udfsize = udfValueList.size();
+				for (int j = udfsize; --j>=0;) {
+					 UDFValue udfValue =udfValueList.get(j);
 					setUDFValues(activityDTO, udfValue);
 				}
+			}	
 
 			activityDTOs.add(activityDTO);
 		}
-
+		logger.info("P6 Reading is completed .........................");
 		return activityDTOs;
 	}
 
