@@ -120,7 +120,7 @@ public interface P6EllipseWSConstants {
 
 	public static final String P6_USER_PRINCIPAL="P6_USER_PRINCIPAL";
 
-	public static final String P6_USER_CREDENTIAL="P6_USER_CREDENTIAL";
+	public static final String P6_USER_CREDENTIAL="P6_USER_CREDENTIAL_INT";
 
 	public static final String P6_DB_INSTANCE="P6_DB_INSTANCE";
 

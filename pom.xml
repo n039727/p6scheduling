@@ -55,13 +55,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Apache sanselan image library -->
-		<dependency>
-			<groupId>org.apache.sanselan</groupId>
-			<artifactId>sanselan</artifactId>
-			<version>0.97-incubator</version>
-		</dependency>
-
 		<!-- Apache Commons FileUpload -->
 		<dependency>
 			<groupId>commons-fileupload</groupId>
@@ -85,8 +78,15 @@
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
-			<version>1.6</version>
+			<version>1.10</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-collections/commons-collections -->
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>

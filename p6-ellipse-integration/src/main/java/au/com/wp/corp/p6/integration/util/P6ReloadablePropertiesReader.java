@@ -7,7 +7,6 @@ import java.io.File;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,26 +19,29 @@ import org.slf4j.LoggerFactory;
 public class P6ReloadablePropertiesReader {
 	private static final Logger logger = LoggerFactory.getLogger(P6ReloadablePropertiesReader.class);
 
-	private static PropertiesConfiguration configuration = null;
+	private static PropertiesConfiguration configuration;
 	
 	private P6ReloadablePropertiesReader(){
 		
 	}
 
-	static {
+	/**
+	 * 
+	 */
+	private static void init() {
 		try {
 			final String propFilePath = System.getProperty("properties.dir");
 			configuration = new PropertiesConfiguration(propFilePath + File.separator + "p6portal.properties");
+			configuration.setDelimiterParsingDisabled(true);
 		} catch (ConfigurationException e) {
 			logger.debug("An error ocurrs while reading properties file : ", e);
 		}
-		configuration.setReloadingStrategy(new FileChangedReloadingStrategy());
+		//configuration.setReloadingStrategy(new FileChangedReloadingStrategy());
 	}
 
 	public static synchronized String getProperty(final String key) {
-		final String value = (String) configuration.getProperty(key);
-		
-		return value;
+		init();
+		return (String) configuration.getString(key);
 	}
 
 }

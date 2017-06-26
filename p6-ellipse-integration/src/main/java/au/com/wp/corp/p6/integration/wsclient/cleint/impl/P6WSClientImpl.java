@@ -28,7 +28,6 @@ import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.activity.ObjectFactory;
-import au.com.wp.corp.p6.wsclient.auth.LogoutResponse;
 import au.com.wp.corp.p6.wsclient.project.Project;
 import au.com.wp.corp.p6.wsclient.resource.Resource;
 import au.com.wp.corp.p6.wsclient.resourceassignment.ResourceAssignment;
@@ -181,21 +180,23 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	private StringBuilder createFilters(final Holder<List<Activity>> activities, String filterParam) {
 		int i = 0;
 		final StringBuilder filter = new StringBuilder();
-		filter.append(filterParam + " IN (");
-		for (Activity activity : activities.value) {
-			if (i > 0)
-				filter.append(",");
-			filter.append(activity.getObjectId());
-			i++;
-			if (i == 999) {
-				filter.append(")");
-				filter.append(OR);
-				filter.append(filterParam + " IN (");
-				logger.debug("Filter criteria length for Read Value services # {} ", i);
-				i = 0;
+		if (!activities.value.isEmpty()) {
+			filter.append(filterParam + " IN (");
+			for (Activity activity : activities.value) {
+				if (i > 0)
+					filter.append(",");
+				filter.append(activity.getObjectId());
+				i++;
+				if (i == 999) {
+					filter.append(")");
+					filter.append(OR);
+					filter.append(filterParam + " IN (");
+					logger.debug("Filter criteria length for Read Value services # {} ", i);
+					i = 0;
+				}
 			}
+			filter.append(")");
 		}
-		filter.append(")");
 		return filter;
 	}
 
@@ -266,10 +267,10 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	}
 
 	@Override
-	public boolean logoutFromP6 () {
+	public boolean logoutFromP6() {
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		boolean status = false;
-		if ( null != CacheManager.getWsHeaders().get(WS_COOKIE)) {
+		if (null != CacheManager.getWsHeaders().get(WS_COOKIE)) {
 			LogoutServiceCall authService = new LogoutServiceCall(trackingId);
 			try {
 				status = authService.run().value.isReturn();
@@ -278,13 +279,11 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			}
 			logger.debug("Is logout successfull ??  {} ", status);
 		}
-		
+
 		return status;
 
 	}
-	
-	
-	
+
 	@Override
 	public void createActivities(final List<P6ActivityDTO> activities) throws P6ServiceException {
 		createOrUpdateActivities(activities, true);
@@ -448,7 +447,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 						objectFactory.createActivityRemainingDuration(p6ActivityDTO.getRemainingDuration()));
 			}
 
-			if ( !P6Utility.isEqual(p6ActivityDTO.getEstimatedLabourHours(), -1))
+			if (!P6Utility.isEqual(p6ActivityDTO.getEstimatedLabourHours(), -1))
 				activity.setPlannedLaborUnits(p6ActivityDTO.getEstimatedLabourHours());
 
 			_activities.add(activity);
