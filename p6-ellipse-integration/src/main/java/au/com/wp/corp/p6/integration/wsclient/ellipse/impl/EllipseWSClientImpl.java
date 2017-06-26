@@ -162,12 +162,13 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				
 				final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
 						DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
-				
-				if (null != plantStrDate && !plantStrDate.trim().isEmpty())
+				if (null != plantStrDate && !plantStrDate.trim().isEmpty()){
 					woTaskModifyDTO.setPlanStrDate(plantStrDate);
-				else if ( null == activity.getPlannedStartDate() && null == activity.getPlannedFinishDate() ){
+				}
+				else if ( activity.getPlannedStartDate().isEmpty() && null == activity.getPlannedFinishDate() ){
 					woTaskModifyDTO.setPlanStrDate("");
 					woTaskModifyDTO.setPlanFinDate("");
+					
 				}
 				if (null != activity.getTaskUserStatus() && !activity.getTaskUserStatus().trim().isEmpty())
 					woTaskModifyDTO.setTaskStatusU(activity.getTaskUserStatus());

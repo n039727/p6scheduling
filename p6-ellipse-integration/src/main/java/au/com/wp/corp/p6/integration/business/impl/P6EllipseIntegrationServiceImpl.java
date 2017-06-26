@@ -117,47 +117,46 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			projWorkgroupDTOs = p6WSClient.readResources();
 			projectsMap = p6WSClient.readProjects();
 			p6ProjWorkgroupDTOs = p6PortalDAO.getProjectResourceMappingList();
-		}  catch (P6DataAccessException e) {
+		} catch (P6DataAccessException e) {
 			logger.error("An error occurs while readeing Project Resource/workgroup mapping from P6 Portal:", e);
 			throw new P6BusinessException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause());
 
 		}
-		
+
 		logger.debug("List of resource from P6# {}", projWorkgroupDTOs.keySet());
-		
+
 		CacheManager.getProjectsMap().putAll(projectsMap);
 
 		Map<String, P6ProjWorkgroupDTO> projectWorkgroupMap = CacheManager.getP6ProjectWorkgroupMap();
 
 		Map<String, List<String>> projectWorkgroupListMap = CacheManager.getProjectWorkgroupListMap();
 
-			List<String> primaryResIds;
-			for (P6ProjWorkgroupDTO projectWG : p6ProjWorkgroupDTOs) {
+		List<String> primaryResIds;
+		for (P6ProjWorkgroupDTO projectWG : p6ProjWorkgroupDTOs) {
 
-				if (null == projectWorkgroupListMap.get(projectWG.getProjectName())) {
-					primaryResIds = new ArrayList<>();
-					projectWorkgroupListMap.put(projectWG.getProjectName(), primaryResIds);
-				} else {
-					primaryResIds = projectWorkgroupListMap.get(projectWG.getProjectName());
-				}
-
-				logger.debug("primary resource - resource id # {}", projectWG.getPrimaryResourceId());
-				if (null != projectWG.getPrimaryResourceId()
-						&& null != projWorkgroupDTOs.get(projectWG.getPrimaryResourceId())) {
-					projectWG.setPrimaryResourceObjectId(projWorkgroupDTOs.get(projectWG.getPrimaryResourceId()));
-					projectWG.setProjectObjectId(projectsMap.get(projectWG.getProjectName().trim()));
-					primaryResIds.add(projectWG.getPrimaryResourceId());
-					projectWorkgroupMap.put(projectWG.getPrimaryResourceId(), projectWG);
-				}
-
+			if (null == projectWorkgroupListMap.get(projectWG.getProjectName())) {
+				primaryResIds = new ArrayList<>();
+				projectWorkgroupListMap.put(projectWG.getProjectName(), primaryResIds);
+			} else {
+				primaryResIds = projectWorkgroupListMap.get(projectWG.getProjectName());
 			}
-			status = true;
-			logger.debug("Size of project resource/workgroup mapping from P6 Portal# {}", projectWorkgroupMap.size());
-			logger.debug("Size of project resource/workgroup mapping List from P6 Portal# {}",
-					projectWorkgroupListMap.size());
 
-			logger.debug("Time taken to read record from P6 Portal # {} ", System.currentTimeMillis() - startTime);
-		
+			logger.debug("primary resource - resource id # {}", projectWG.getPrimaryResourceId());
+			if (null != projectWG.getPrimaryResourceId()
+					&& null != projWorkgroupDTOs.get(projectWG.getPrimaryResourceId())) {
+				projectWG.setPrimaryResourceObjectId(projWorkgroupDTOs.get(projectWG.getPrimaryResourceId()));
+				projectWG.setProjectObjectId(projectsMap.get(projectWG.getProjectName().trim()));
+				primaryResIds.add(projectWG.getPrimaryResourceId());
+				projectWorkgroupMap.put(projectWG.getPrimaryResourceId(), projectWG);
+			}
+
+		}
+		status = true;
+		logger.debug("Size of project resource/workgroup mapping from P6 Portal# {}", projectWorkgroupMap.size());
+		logger.debug("Size of project resource/workgroup mapping List from P6 Portal# {}",
+				projectWorkgroupListMap.size());
+
+		logger.debug("Time taken to read record from P6 Portal # {} ", System.currentTimeMillis() - startTime);
 
 		return status;
 
@@ -214,7 +213,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	public boolean start() throws P6BusinessException {
 		boolean status = Boolean.FALSE;
 		clearApplicationMemory();
-		
+
 		try {
 			readUDFTypeMapping();
 			readProjectWorkgroupMapping();
@@ -222,7 +221,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			P6IntegrationExceptionHandler.handleException(e);
 			throw e;
 		}
-		
+
 		try {
 			final String integrationRunStartegy = P6ReloadablePropertiesReader.getProperty(INTEGRATION_RUN_STARTEGY);
 
@@ -458,10 +457,12 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			ellipseActivityUpd.setPlannedFinishDate(null);
 			isUpdateReq = true;
 
-		} else if (null == ellipseActivity.getPlannedStartDate() || ellipseActivity.getPlannedStartDate().isEmpty()
-				|| (null != p6Activity.getPlannedStartDate() && !dateUtil.isSameDate(p6Activity.getPlannedStartDate(),
-						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, ellipseActivity.getPlannedStartDate(),
-						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))) {
+		} else if ((null != projectWorkgroup.get(p6Activity.getWorkGroup())
+				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox()
+				&& !projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y))
+				&& null != p6Activity.getPlannedStartDate()
+				&& !dateUtil.isSameDate(p6Activity.getPlannedStartDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
+						ellipseActivity.getPlannedStartDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)) {
 			/*
 			 * in P6 activity is in Crew Work group when while comparing the
 			 * Planned Start Date between Ellipse and P6 is different then
@@ -546,7 +547,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (! ellipseActivity.getEquipmentCode().isEmpty()
+		if (!ellipseActivity.getEquipmentCode().isEmpty()
 				&& !ellipseActivity.getEquipmentCode().equals(p6Activity.getEquipmentCodeUDF())) {
 			p6ActivityUpd.setEquipmentCodeUDF(ellipseActivity.getEquipmentCode());
 			isUpdateReq = true;
@@ -594,7 +595,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (!ellipseActivity.getAddress().isEmpty() && !ellipseActivity.getAddress().equals(p6Activity.getAddressUDF())) {
+		if (!ellipseActivity.getAddress().isEmpty()
+				&& !ellipseActivity.getAddress().equals(p6Activity.getAddressUDF())) {
 			p6ActivityUpd.setAddressUDF(ellipseActivity.getAddress());
 			isUpdateReq = true;
 		}
@@ -639,12 +641,12 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * to the Scheduler Inbox when comparing the data between P6 and Ellipse
 		 * then the Execution Package field in P6 should be updated to blank. 
 		 */
-		
+
 		if (null != projectWorkgroup.get(ellipseActivity.getWorkGroup())
 				&& null != projectWorkgroup.get(ellipseActivity.getWorkGroup()).getSchedulerinbox()
 				&& projectWorkgroup.get(ellipseActivity.getWorkGroup()).getSchedulerinbox().toUpperCase()
 						.equals(P6EllipseWSConstants.Y)
-				&& (null != p6Activity.getExecutionPckgUDF() && !p6Activity.getExecutionPckgUDF().trim().isEmpty() )) {
+				&& (null != p6Activity.getExecutionPckgUDF() && !p6Activity.getExecutionPckgUDF().trim().isEmpty())) {
 			p6ActivityUpd.setExecutionPckgUDF("");
 			isUpdateReq = true;
 		}
