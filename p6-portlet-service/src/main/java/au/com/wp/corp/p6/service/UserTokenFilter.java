@@ -40,9 +40,10 @@ public class UserTokenFilter implements Filter {
 		String authToken = httpServletRequest.getHeader(AUTH_TOKEN_HEADER);
 		logger.debug("User logged in (From token) as {}", authToken);
 		
-		userTokenRequest.setUserPrincipal(authToken);
+			userTokenRequest.setUserPrincipal(authToken);
+			
+			chain.doFilter(request, response);
 		
-		chain.doFilter(request, response);
 	}
 	
 

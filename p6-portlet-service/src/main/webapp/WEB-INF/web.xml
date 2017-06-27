@@ -4,7 +4,10 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
 	<display-name>Archetype Created Web Application</display-name>
-	
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>active-directory</realm-name>
+	</login-config>
 	<security-role>
 		<role-name>${P6.TEM.LEDR.SCHDLR}</role-name>
 	</security-role>
@@ -35,10 +38,11 @@
 	<security-role>
 		<role-name>${P6.CNSTRCTN.MGR}</role-name>
 	</security-role>
+	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>All Secured</web-resource-name>
-			<url-pattern>/p6-portal-service/*</url-pattern>
+			<url-pattern>/*</url-pattern>
 			<http-method>POST</http-method>
 			<http-method>GET</http-method>
 		</web-resource-collection>
@@ -58,25 +62,7 @@
 			<transport-guarantee>NONE</transport-guarantee>
 		</user-data-constraint>
 	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>No direct Access</web-resource-name>
-			<url-pattern>/p6-portal-service/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint />
-		<user-data-constraint>
-			<transport-guarantee>NONE</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Service</web-resource-name>
-			<url-pattern>/p6-portal-service/*</url-pattern>
-		</web-resource-collection>
-		<user-data-constraint>
-			<transport-guarantee>NONE</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
+	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
