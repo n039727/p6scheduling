@@ -12,10 +12,10 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	ctrl.crewList = [];
 	ctrl.allCrewList = [];
 	if (angular.isDefined(ctrl.metadata) && angular.isDefined(ctrl.metadata.depotCrewMap)) {
-		console.log("Populating depot and crew");
+//		console.log("Populating depot and crew");
 		ctrl.depotCrewMap = ctrl.metadata.depotCrewMap;
 		for (depot in ctrl.depotCrewMap) {
-			console.log("Populating depot" + depot);
+//			console.log("Populating depot" + depot);
 			ctrl.depotList.push(depot);
 			var crews = ctrl.depotCrewMap[depot];
 			if (crews != null) {
@@ -30,7 +30,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	}
 	
 	ctrl.onDepotChange = function() {
-		console.log("On Depot Change Called with depot names" + JSON.stringify(ctrl.selectedDepotList));
+//		console.log("On Depot Change Called with depot names" + JSON.stringify(ctrl.selectedDepotList));
 		ctrl.crewList = [];
 		if (angular.isDefined(ctrl.selectedDepotList) && ctrl.selectedDepotList.length > 0) {
 			for (var i =0; i < ctrl.selectedDepotList.length; i++) {
@@ -58,6 +58,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
     };
     $mdDateLocale.parseDate = function(dateString) {
     	 var m = moment(dateString, ctrl.dateFormat, true);
+// 		console.log('m in parseDate:' + m);
        	 if(!m.isValid()){
        		ctrl.isInvalidDateFormat = true;
        	 }else{
@@ -69,7 +70,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	
 	this.prepareSearch = function() {
 		
-		console.log('search called');
+		console.log('prepareSearch called');
 		ctrl.depots = [];
 		if(ctrl.activeContext == 'ADD_SCHEDULING_TODO' || ctrl.activeContext == 'VIEW_TODO_STATUS' 
 			|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'){
@@ -104,7 +105,6 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	};
 	
 	this.validateForm = function(){
-		console.log('ctrl.activeContext in search :' + JSON.stringify(ctrl.activeContext));
 		if(ctrl.isInvalidDateFormat){
 			ctrl.showErrorMsg = 'Date format is invalid,format should be ' + ctrl.dateFormat;
 			ctrl.isValidationErr = true;
@@ -138,7 +138,7 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 					ctrl.showErrorMsg = 'Planned Start From Date  is required';
 					ctrl.isValidationErr = true;
 					return false;
-				}else if(ctrl.scheduleToDate !==""){
+				}else if(ctrl.scheduleToDate !=="" && ctrl.scheduleToDate !== null){
 					this.schFromDate = ctrl.formatDate(this.scheduleFromDate);
 					this.schToDate = ctrl.formatDate(this.scheduleToDate);
 					var isSamedate = moment(this.schFromDate).isSame(this.schToDate);
@@ -167,7 +167,8 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	};
 	
 	ctrl.formatDate = function(date) {
-		if(angular.isDefined(date) && date !== ""){
+		
+		if(angular.isDefined(date) && date !== "" && date !== null){
 			var d = new Date(date),
 				month = '' + (d.getMonth() + 1),
 				day = '' + d.getDate(),
