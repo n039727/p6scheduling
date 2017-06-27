@@ -10,28 +10,12 @@ Suggested location for  your test-override.properties files is the folder `C:/te
 
 *Command Line*
       
-To expose the web service we started from the existing WSDL and it has been used the JAXB2 maven plugin to generate the java classes. 
-The plugin re-generates by default all the necessary classes,  the maven goal xjc:xjc runs by default.
-
 To compile you can run the command 
-
-``
-compile
-``
-
-that executes the command:
-
 ``
 mvn clean install -Dproperties.dir=C:/test-configs
 ``
 
 If you want to run Integration tests:
-
-``
-compile i
-``
-
-that executes:
 
 ``
 mvn clean install -Pintegration_tests -Dproperties.dir=C:/test-configs
