@@ -4,7 +4,7 @@ Western Power Asset Operations / Schedulers, Field Supervisors and Field Crews c
 
 #Compile#
 
-As we can't store on Git passwords and sensitive data, Unit and Integration tests need to load passwords from external properties files. To do so, the Spring PropertyPlaceholderConfigurer in the test application contexts loads properites files from a location declared as `file:${properties.dir}/*.properties`. This will load all the files with extension *.properties* in the folder declared by the system property `${properties.dir}`. When we run our tests, we just need to inform spring where is this folder.
+As we can't store on Git passwords and sensitive data, Unit and Integration tests need to load passwords from external properties files. To do so, the Spring PropertyPlaceholderConfigurer in the test application contexts loads properites files from a location declared as `file:${properties.dir}/p6*.properties`. This will load all the files with extension *.properties* in the folder declared by the system property `${properties.dir}`. When we run our tests, we just need to inform spring where is this folder.
 
 Suggested location for  your test-override.properties files is the folder `C:/test-configs`
 
