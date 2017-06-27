@@ -1,7 +1,6 @@
-#FMS Integration#
+#P6 Tactical Scheduling#
 
-Application that provides integartion between Yambay - "mDrover" and Ellipse 
-
+Western Power Asset Operations / Schedulers, Field Supervisors and Field Crews currently use WSMS as primary scheduling tool for job scheduling. However, business identified few limitations with WSMS tool. P6 – Scheduling Work Orders address those limitations by enabling scheduler, depots to have capacity v/s demand view, managing To-Do’s associated with work packages and track work progress. This would not only help improve resource utilization but also ensuring effective job planning and scheduling
 
 #Compile#
 
@@ -37,22 +36,3 @@ that executes:
 ``
 mvn clean install -Pintegration_tests -Dproperties.dir=C:/test-configs
 ``
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
