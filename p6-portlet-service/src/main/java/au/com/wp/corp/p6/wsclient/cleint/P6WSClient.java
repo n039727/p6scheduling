@@ -13,6 +13,7 @@ import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
+import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 
 /**
  * @author n039126
@@ -26,8 +27,8 @@ public interface P6WSClient {
 	public static final String OR = " OR ";
 	
 	public List<WorkOrder> searchWorkOrder (ActivitySearchRequest searchRequest) throws P6ServiceException;
-	public List<Crew> searchCrew (ResourceSearchRequest searchRequest) throws P6ServiceException;
 	ExecutionPackageDTO createExecutionPackage(List<ExecutionPackageCreateRequest> request) throws P6ServiceException;
 	public Map<String, Integer> getWorkOrderIdMap();
 	Boolean removeExecutionPackage(List<Integer> foreignObjIds) throws P6ServiceException;
+	boolean logoutFromP6(RequestTrackingId trackingId);
 }

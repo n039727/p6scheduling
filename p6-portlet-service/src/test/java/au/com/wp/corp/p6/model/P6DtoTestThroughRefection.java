@@ -55,7 +55,7 @@ import au.com.wp.corp.p6.test.config.AppConfig;
 
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { AppConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
-public class P6DtoTest {
+public class P6DtoTestThroughRefection {
 
 	@Test
 	public void testDTOs() {
@@ -92,10 +92,6 @@ public class P6DtoTest {
 					ReflectionUtils.withPrefix("get")));
 			getterMethods.addAll(ReflectionUtils.getAllMethods(type, ReflectionUtils.withModifier(Modifier.PUBLIC),
 					ReflectionUtils.withPrefix("is")));
-
-			Set<Field> fields = ReflectionUtils.getAllFields(type, ReflectionUtils.withModifier(Modifier.PRIVATE));
-			Field[] fieldArray = new Field[fields.size()];
-			fields.toArray(fieldArray);
 
 			for (Method method : setterMethods) {
 				if (method.getParameterTypes()[0].getName().equals("long")

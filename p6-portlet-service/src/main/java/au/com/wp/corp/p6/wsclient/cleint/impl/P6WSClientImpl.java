@@ -31,6 +31,7 @@ import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.utils.CacheManager;
 import au.com.wp.corp.p6.utils.DateUtils;
+import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
@@ -45,7 +46,7 @@ import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
  */
 @Service
 @PropertySource("file:/${properties.dir}/p6portal.properties")
-public class P6WSClientImpl implements P6WSClient {
+public class P6WSClientImpl implements P6WSClient, P6Constant {
 	private static final Logger logger = LoggerFactory.getLogger(P6WSClientImpl.class);
 
 	@Value("${P6_ACTIVITY_SERVICE_WSDL}")
@@ -171,6 +172,7 @@ public class P6WSClientImpl implements P6WSClient {
 				
 			}
 		logger.debug("Total time taken to execute method search work order via ActivityService {}",System.currentTimeMillis() - starttime);
+		logoutFromP6(trackingId);
 		return workOrders;
 	}
 	
@@ -184,63 +186,16 @@ public class P6WSClientImpl implements P6WSClient {
 
 		UDFTypeServiceCall udfTypeServiceCall = new UDFTypeServiceCall(trackingId, filter.toString());
 		Holder<List<UDFType>> udfTypes = udfTypeServiceCall.run();
+		logoutFromP6(trackingId);
 		return udfTypes.value.get(0).getObjectId();
 	}
 	
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * au.com.wp.corp.p6.wsclient.cleint.P6WSClient#searchCrew(au.com.wp.corp.p6
-	 * .dto.ResourceSearchRequest)
-	 */
-	@Override
-	public List<Crew> searchCrew(ResourceSearchRequest searchRequest) throws P6ServiceException {
-		logger.info("Calling resource service in P6 Webservice ...");
-		final RequestTrackingId trackingId = new RequestTrackingId();
-		getAuthenticated(trackingId);
-
-		if (null == searchRequest) {
-			throw new P6ServiceException("NO_SEARCH_CRITERIA_FOUND");
-		}
-
-		final StringBuilder filter = new StringBuilder();
-		if (null != searchRequest.getResourceType()) {
-
-			filter.append("ResourceType = ");
-			filter.append("'" + searchRequest.getResourceType() + "'");
-
-		}
-
-		logger.debug("filter criteria for crew search # {} ", filter.toString());
-
-		final ResourceService resourceService = new ResourceService(trackingId, resourceServiceWSDL,
-				filter.length() > 0 ? filter.toString() : null, null);
-
-		final Holder<List<Resource>> resources = resourceService.run();
-		final List<Crew> crews = new ArrayList<Crew>();
-		
-			for (Resource resource : resources.value) {
-				Crew crew = new Crew();
-				crew.setCrewId(resource.getId());
-				crew.setCrewName(resource.getName());
-				crews.add(crew);
-			}
-
-
-		return crews;
-	}
-
 	/**
 	 * @param trackingId
 	 * @throws P6ServiceException
 	 */
 	private Boolean getAuthenticated(final RequestTrackingId trackingId) throws P6ServiceException {
-		long wsAuthCallTimestamp = CacheManager.getWSLoginTimestamp().get(WS_AUTH_SERVICE_CALL_TIME) != null
-				? (Long) CacheManager.getWSLoginTimestamp().get(WS_AUTH_SERVICE_CALL_TIME) : 0;
-		if (CacheManager.getWsHeaders().isEmpty()
-				|| System.currentTimeMillis() - wsAuthCallTimestamp > 2 * 60 * 60 * 1000) {
 			AuthenticationService authService = new AuthenticationService(trackingId, authServiceWSDL, userPrincipal,
 					userCredential, p6DBInstance);
 			Holder<Boolean> holder = authService.run();
@@ -248,9 +203,6 @@ public class P6WSClientImpl implements P6WSClient {
 			if (holder.value)
 				CacheManager.getWSLoginTimestamp().put(WS_AUTH_SERVICE_CALL_TIME, System.currentTimeMillis());
 			return holder.value;
-		}
-
-		return false;
 	}
 
 	@Override
@@ -296,7 +248,7 @@ public class P6WSClientImpl implements P6WSClient {
 			}
 			dto.setWorkOrders(workOrders);
 		}
-		
+		logoutFromP6(trackingId);
 		return dto;
 	}
 
@@ -366,7 +318,23 @@ public class P6WSClientImpl implements P6WSClient {
 		logger.debug("request {}",objectIds);
 		final UDFValueServiceCall<Boolean> deleteUdfservice = new DeleteUDFValueServiceCall(trackingId, udfServiceWSDL, objectIds);
 		final Holder<Boolean> isDeleted = deleteUdfservice.run();
-		
+		logoutFromP6(trackingId);
 		return isDeleted.value;
+	}
+	@Override
+	public boolean logoutFromP6(RequestTrackingId trackingId) {
+		boolean status = false;
+		if (null != CacheManager.getWsHeaders().get(WS_COOKIE)) {
+			LogoutServiceCall authService = new LogoutServiceCall(trackingId);
+			try {
+				status = authService.run().value.isReturn();
+			} catch (P6ServiceException e) {
+				logger.error("Error occurs during logout - ", e);
+			}
+			logger.debug("Is logout successfull ??  {} ", status);
+		}
+
+		return status;
+
 	}
 }
