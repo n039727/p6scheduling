@@ -10,6 +10,7 @@
 	<modules>
 		<module>p6-wsmodel</module>
 		<module>p6-ellipse-integration</module>
+		<module>p6-portal-integration</module>
 		<module>p6-portlet-service</module>
 		<module>p6-portlet-web</module>
 		<module>p6-portlet-app</module>

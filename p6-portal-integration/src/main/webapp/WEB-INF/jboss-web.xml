@@ -10,12 +10,5 @@
 		<jndi-name>java:/ConnectionFactory</jndi-name>
 	</resource-ref>  -->
 	
-	<resource-ref id="ResourceRef_Queue">
-		<description></description>
-		<res-ref-name>jms/queue/p6Queue</res-ref-name>
-		<res-type>javax.jms.Queue</res-type>
-		<res-auth>Container</res-auth>
-		<res-sharing-scope>Shareable</res-sharing-scope>
-		<jndi-name>jms/queue/p6Queue</jndi-name>
-	</resource-ref>
+	
 </jboss-web>
