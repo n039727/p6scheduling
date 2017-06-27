@@ -74,6 +74,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			begin.setContext(beginOperationContext);
 			beginResponse = transactionWsClient.begin(begin);
 		} catch (Exception e) {
+			logger.error("An error occurs while authenticating : {}", e);
 			throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause());
 		}
 		return beginResponse.getTransactionId();
@@ -86,7 +87,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 		rollbackOperationContext.setRunAs(new RunAs());
 		rollbackOperationContext.setTransaction(transactionId);
 		rollback.setContext(rollbackOperationContext);
-		RollbackResponse rollbackResponse = transactionWsClient.rollback(rollback);
+		transactionWsClient.rollback(rollback);
 	}
 
 	public void commitTransaction(String transactionId) throws P6ServiceException {
@@ -97,8 +98,9 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			commitOperationContext.setRunAs(new RunAs());
 			commitOperationContext.setTransaction(transactionId);
 			commit.setContext(commitOperationContext);
-			CommitResponse commitResponse = transactionWsClient.commit(commit);
+			transactionWsClient.commit(commit);
 		} catch (Exception e) {
+			logger.error("An error occurs while authenticating : {}", e);
 			throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause());
 		}
 	}
