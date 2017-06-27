@@ -93,9 +93,7 @@ public class P6DtoTest {
 			getterMethods.addAll(ReflectionUtils.getAllMethods(type, ReflectionUtils.withModifier(Modifier.PUBLIC),
 					ReflectionUtils.withPrefix("is")));
 
-			Set<Field> fields = ReflectionUtils.getAllFields(type, ReflectionUtils.withModifier(Modifier.PRIVATE));
-			Field[] fieldArray = new Field[fields.size()];
-			fields.toArray(fieldArray);
+			
 
 			for (Method method : setterMethods) {
 				if (method.getParameterTypes()[0].getName().equals("long")
@@ -179,9 +177,7 @@ public class P6DtoTest {
 		try {
 			Set<Method> setterMethods = ReflectionUtils.getAllMethods(type,
 					ReflectionUtils.withModifier(Modifier.PUBLIC), ReflectionUtils.withPrefix(""));
-			Set<Field> fields = ReflectionUtils.getAllFields(type, ReflectionUtils.withModifier(Modifier.PRIVATE));
-			Field[] fieldArray = new Field[fields.size()];
-			fields.toArray(fieldArray);
+		
 
 			for (Method method : setterMethods) {
 				method.invoke(obj);
