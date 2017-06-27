@@ -31,6 +31,7 @@ import com.mincom.ews.service.transaction.RollbackResponse;
 import au.com.wp.corp.integration.ellipsews.transaction.TransactionWsClient;
 import au.com.wp.corp.integration.ellipsews.workordertask.WorkOrderTaskWsClient;
 import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
+import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.DateUtil;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
@@ -63,13 +64,19 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 	@Autowired
 	TransactionWsClient transactionWsClient;
 
-	public String startTransaction() {
-		Begin begin = new Begin();
-		OperationContext beginOperationContext = new OperationContext();
-		beginOperationContext.setDistrict("CORP");
-		beginOperationContext.setRunAs(new RunAs());
-		begin.setContext(beginOperationContext);
-		BeginResponse beginResponse = transactionWsClient.begin(begin);
+	public String startTransaction() throws P6ServiceException {
+		BeginResponse beginResponse;
+		try {
+			Begin begin = new Begin();
+			OperationContext beginOperationContext = new OperationContext();
+			beginOperationContext.setDistrict("CORP");
+			beginOperationContext.setRunAs(new RunAs());
+			begin.setContext(beginOperationContext);
+			beginResponse = transactionWsClient.begin(begin);
+		} catch (Exception e) {
+			logger.error("An error occurs while authenticating : {}", e);
+			throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause());
+		}
 		return beginResponse.getTransactionId();
 	}
 
@@ -80,17 +87,22 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 		rollbackOperationContext.setRunAs(new RunAs());
 		rollbackOperationContext.setTransaction(transactionId);
 		rollback.setContext(rollbackOperationContext);
-		RollbackResponse rollbackResponse = transactionWsClient.rollback(rollback);
+		transactionWsClient.rollback(rollback);
 	}
 
-	public void commitTransaction(String transactionId) {
-		Commit commit = new Commit();
-		OperationContext commitOperationContext = new OperationContext();
-		commitOperationContext.setDistrict("CORP");
-		commitOperationContext.setRunAs(new RunAs());
-		commitOperationContext.setTransaction(transactionId);
-		commit.setContext(commitOperationContext);
-		CommitResponse commitResponse = transactionWsClient.commit(commit);
+	public void commitTransaction(String transactionId) throws P6ServiceException {
+		try {
+			Commit commit = new Commit();
+			OperationContext commitOperationContext = new OperationContext();
+			commitOperationContext.setDistrict("CORP");
+			commitOperationContext.setRunAs(new RunAs());
+			commitOperationContext.setTransaction(transactionId);
+			commit.setContext(commitOperationContext);
+			transactionWsClient.commit(commit);
+		} catch (Exception e) {
+			logger.error("An error occurs while authenticating : {}", e);
+			throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause());
+		}
 	}
 	
 	/*
@@ -152,12 +164,13 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				
 				final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
 						DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
-				
-				if (null != plantStrDate && !plantStrDate.trim().isEmpty())
+				if (null != plantStrDate && !plantStrDate.trim().isEmpty()){
 					woTaskModifyDTO.setPlanStrDate(plantStrDate);
-				else if ( null == activity.getPlannedStartDate() && null == activity.getPlannedFinishDate() ){
+				}
+				else if ( activity.getPlannedStartDate().isEmpty() && null == activity.getPlannedFinishDate() ){
 					woTaskModifyDTO.setPlanStrDate("");
 					woTaskModifyDTO.setPlanFinDate("");
+					
 				}
 				if (null != activity.getTaskUserStatus() && !activity.getTaskUserStatus().trim().isEmpty())
 					woTaskModifyDTO.setTaskStatusU(activity.getTaskUserStatus());

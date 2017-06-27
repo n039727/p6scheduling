@@ -77,7 +77,6 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 */
 	@Override
 	public List<P6ActivityDTO> readActivities(final Integer projectId) throws P6ServiceException {
-		CacheManager.getWsHeaders().remove("WS_COOKIE");
 		logger.info("Calling activity service in P6 Webservice ...");
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
@@ -109,8 +108,11 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 		final List<P6ActivityDTO> activityDTOs = new ArrayList<>();
 		P6ActivityDTO activityDTO;
-		for (Activity activity : activities.value) {
+		List<Activity> activityList = activities.value;
+		int activitySize = activityList.size();
+		for ( int i = activitySize; --i>=0; ) {
 			activityDTO = new P6ActivityDTO();
+			Activity activity = activityList.get(i);
 			activityDTO.setActivityObjectId(activity.getObjectId());
 			activityDTO.setActivityId(activity.getId());
 			activityDTO.setActivityName(activity.getName());
@@ -130,13 +132,17 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			List<UDFValue> udfValueList = udfValueMap.get(activity.getObjectId());
 
 			if (null != udfValueList)
-				for (UDFValue udfValue : udfValueList) {
+			{
+				int udfsize = udfValueList.size();
+				for (int j = udfsize; --j>=0;) {
+					 UDFValue udfValue =udfValueList.get(j);
 					setUDFValues(activityDTO, udfValue);
 				}
+			}	
 
 			activityDTOs.add(activityDTO);
 		}
-
+		logger.info("P6 Reading is completed .........................");
 		return activityDTOs;
 	}
 
@@ -181,21 +187,23 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	private StringBuilder createFilters(final Holder<List<Activity>> activities, String filterParam) {
 		int i = 0;
 		final StringBuilder filter = new StringBuilder();
-		filter.append(filterParam + " IN (");
-		for (Activity activity : activities.value) {
-			if (i > 0)
-				filter.append(",");
-			filter.append(activity.getObjectId());
-			i++;
-			if (i == 999) {
-				filter.append(")");
-				filter.append(OR);
-				filter.append(filterParam + " IN (");
-				logger.debug("Filter criteria length for Read Value services # {} ", i);
-				i = 0;
+		if (!activities.value.isEmpty()) {
+			filter.append(filterParam + " IN (");
+			for (Activity activity : activities.value) {
+				if (i > 0)
+					filter.append(",");
+				filter.append(activity.getObjectId());
+				i++;
+				if (i == 999) {
+					filter.append(")");
+					filter.append(OR);
+					filter.append(filterParam + " IN (");
+					logger.debug("Filter criteria length for Read Value services # {} ", i);
+					i = 0;
+				}
 			}
+			filter.append(")");
 		}
-		filter.append(")");
 		return filter;
 	}
 
@@ -255,7 +263,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @throws P6ServiceException
 	 */
 	private Boolean getAuthenticated(final RequestTrackingId trackingId) throws P6ServiceException {
-		if (CacheManager.getWsHeaders().isEmpty() || null == CacheManager.getWsHeaders().get(WS_COOKIE)) {
+		if (null == CacheManager.getWsHeaders().get(WS_COOKIE)) {
 			AuthenticationService authService = new AuthenticationService(trackingId);
 			Holder<Boolean> holder = authService.run();
 			logger.debug("Is authentication successfull ??  {} ", holder.value);
@@ -263,6 +271,24 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean logoutFromP6() {
+		final RequestTrackingId trackingId = new RequestTrackingId();
+		boolean status = false;
+		if (null != CacheManager.getWsHeaders().get(WS_COOKIE)) {
+			LogoutServiceCall authService = new LogoutServiceCall(trackingId);
+			try {
+				status = authService.run().value.isReturn();
+			} catch (P6ServiceException e) {
+				logger.error("Error occurs during logout - ", e);
+			}
+			logger.debug("Is logout successfull ??  {} ", status);
+		}
+
+		return status;
+
 	}
 
 	@Override
@@ -428,7 +454,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 						objectFactory.createActivityRemainingDuration(p6ActivityDTO.getRemainingDuration()));
 			}
 
-			if ( !P6Utility.isEqual(p6ActivityDTO.getEstimatedLabourHours(), -1))
+			if (!P6Utility.isEqual(p6ActivityDTO.getEstimatedLabourHours(), -1))
 				activity.setPlannedLaborUnits(p6ActivityDTO.getEstimatedLabourHours());
 
 			_activities.add(activity);

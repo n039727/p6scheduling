@@ -20,16 +20,20 @@ import org.slf4j.LoggerFactory;
 public class P6ReloadablePropertiesReader {
 	private static final Logger logger = LoggerFactory.getLogger(P6ReloadablePropertiesReader.class);
 
-	private static PropertiesConfiguration configuration = null;
+	private static PropertiesConfiguration configuration;
 	
 	private P6ReloadablePropertiesReader(){
 		
 	}
 
-	static {
+	/**
+	 * 
+	 */
+	static{
 		try {
 			final String propFilePath = System.getProperty("properties.dir");
 			configuration = new PropertiesConfiguration(propFilePath + File.separator + "p6portal.properties");
+			configuration.setDelimiterParsingDisabled(true);
 		} catch (ConfigurationException e) {
 			logger.debug("An error ocurrs while reading properties file : ", e);
 		}
@@ -37,9 +41,7 @@ public class P6ReloadablePropertiesReader {
 	}
 
 	public static synchronized String getProperty(final String key) {
-		final String value = (String) configuration.getProperty(key);
-		
-		return value;
+		return (String) configuration.getString(key);
 	}
 
 }

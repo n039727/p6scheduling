@@ -1,6 +1,3 @@
-/**
- * 
- */
 package au.com.wp.corp.p6.integration.wsclient.cleint.impl;
 
 import java.net.MalformedURLException;
@@ -10,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Holder;
 import javax.xml.ws.handler.Handler;
 
 import org.slf4j.Logger;
@@ -22,39 +20,38 @@ import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.integration.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.integration.wsclient.soap.SOAPLoggingHandler;
-import au.com.wp.corp.p6.wsclient.resourceassignment.ResourceAssignmentPortType;
-import au.com.wp.corp.p6.wsclient.resourceassignment.ResourceAssignmentService;
+import au.com.wp.corp.p6.wsclient.auth.AuthenticationServicePortType;
+import au.com.wp.corp.p6.wsclient.auth.AuthenticationService;
+import au.com.wp.corp.p6.wsclient.auth.LogoutResponse;
 
-/**
- * @author n039126
- *
- */
-public abstract class ResourceAssignmentServiceCall<T> extends AbstractSOAPCall<T> {
-	private static final Logger logger1 = LoggerFactory.getLogger(ResourceAssignmentServiceCall.class);
+public class LogoutServiceCall extends AbstractSOAPCall<LogoutResponse> {
+	private static final Logger logger1 = LoggerFactory.getLogger(ActivityServiceCall.class);
 
-	protected ResourceAssignmentPortType servicePort;
+	private BindingProvider bp;
+	private AuthenticationServicePortType servicePort;
 	private final String endPoint;
 
-	public ResourceAssignmentServiceCall(final RequestTrackingId trackingId) {
+	public LogoutServiceCall(final RequestTrackingId trackingId) {
 		super(trackingId);
-		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_RESOURCE_ASSIGNMENT_SERVICE_WSDL);
+		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_AUTH_SERVICE_WSDL);
 	}
 
 	@Override
 	protected void doBefore() throws P6ServiceException {
+
 		if (null == endPoint) {
-			throw new P6ServiceException("Resource Assignment Service end point is null ");
+			throw new P6ServiceException("Authentication Service end point is null ");
 		}
+
 		URL wsdlURL = null;
 		try {
 			wsdlURL = new URL(endPoint);
 		} catch (MalformedURLException e) {
 			throw new P6ServiceException(e);
 		}
-
-		ResourceAssignmentService service = new ResourceAssignmentService(wsdlURL);
-		servicePort = service.getResourceAssignmentPort();
-		BindingProvider bp = (BindingProvider) servicePort;
+		AuthenticationService authService = new AuthenticationService(wsdlURL);
+		servicePort = authService.getAuthenticationServiceSOAP12PortHttp();
+		bp = (BindingProvider) servicePort;
 
 		Map<String, List<String>> headers = (Map<String, List<String>>) bp.getRequestContext()
 				.get("javax.xml.ws.http.request.headers");
@@ -63,18 +60,26 @@ public abstract class ResourceAssignmentServiceCall<T> extends AbstractSOAPCall<
 			bp.getRequestContext().put("javax.xml.ws.http.request.headers", headers);
 
 		}
-		logger1.debug("WS_COOKIE == {}", CacheManager.getWsHeaders().get("WS_COOKIE"));
-
+		logger1.debug("Logout with WS_COOKIE == {}", CacheManager.getWsHeaders().get("WS_COOKIE"));
 		headers.put("cookie", CacheManager.getWsHeaders().get("WS_COOKIE"));
-
 		final List<Handler> handlerChain = bp.getBinding().getHandlerChain();
 		handlerChain.add(new SOAPLoggingHandler(trackingId));
 		bp.getBinding().setHandlerChain(handlerChain);
 	}
 
 	@Override
-	protected void doAfter() {
+	protected Holder<LogoutResponse> command() throws P6ServiceException {
+		LogoutResponse status;
+		try {
+			status = servicePort.logout(null);
+		} catch (Exception e) {
+			throw new P6ServiceException(e);
+		}
+		return new Holder<>(status);
+	}
 
+	@Override
+	protected void doAfter() {
 	}
 
 }

@@ -55,7 +55,7 @@
 													id="{{'enable-' + $ctrl.getWorkOrderToDoKeyForCheckBox(wo,todo)}}"
 													ng-checked="$ctrl.calculateEnable(wo, todo)"
 													ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
-												<td><oi-select
+												<td style="width:210px"><oi-select
 														oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 														ng-model="wo.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
 														data-ng-change="$ctrl.updateBindingVarOnSelect(wo, todo)"
@@ -79,7 +79,7 @@
 													id="{{'enable-' + $ctrl.getWorkOrderToDoKeyForCheckBox(wo,todo)}}"
 													ng-checked="$ctrl.calculateEnable(wo, todo)"
 													ng-click="$ctrl.addRemoveTodo($event, wo, todo)"></td>
-												<td><oi-select
+												<td style="width:210px"><oi-select
 														oi-options="workOrderId for workOrderId in wo.workOrderIdDisplayArray"
 														ng-model="wo.toDoBindingVar[$ctrl.getWorkOrderToDoKey(wo, todo)]"
 														ng-disabled="!$ctrl.disbledDropdown(wo, todo)"

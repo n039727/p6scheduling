@@ -63,7 +63,7 @@ public abstract class ActivityServiceCall<T> extends AbstractSOAPCall<T> {
 			bp.getRequestContext().put("javax.xml.ws.http.request.headers", headers);
 
 		}
-		log.debug("WS_COOKIE == " + CacheManager.getWsHeaders().get("WS_COOKIE"));
+		log.debug("WS_COOKIE == {}", CacheManager.getWsHeaders().get("WS_COOKIE"));
 
 		headers.put("cookie", CacheManager.getWsHeaders().get("WS_COOKIE"));
 

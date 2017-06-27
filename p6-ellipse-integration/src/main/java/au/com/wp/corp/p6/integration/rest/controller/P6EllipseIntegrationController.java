@@ -25,8 +25,6 @@ public class P6EllipseIntegrationController {
 	
 	private static final String STATUS_COMLETED = "OK";
 	
-	private static final String STATUS_FAILED = "NOTOK";
-	
 	@Autowired 
 	P6EllipseIntegrationService p6EllipseService;
 	
@@ -38,8 +36,6 @@ public class P6EllipseIntegrationController {
 		} catch (P6BaseException e) {
 			logger.error("An error occurs during batch processing - ",e);
 			logger.error("error occurs during batch processing - error message# - {}",e.getMessage());
-			if ( e.getMessage().equals(P6ExceptionType.SYSTEM_ERROR.name()))
-			return STATUS_FAILED;
 		}
 		p6EllipseService.clearApplicationMemory();
 		logger.info("Time taken to complete the batch in milisecond - {} ms", System.currentTimeMillis()-startTime);

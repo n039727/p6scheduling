@@ -251,4 +251,11 @@ public class P6WSClientImplIntegrationTest {
 		}
 
 	}
+	
+	@Test
+	public void test_7_LogoutFromP6 (){
+		boolean status = p6WsclientImpl.logoutFromP6();
+		Assert.assertTrue(status);
+	}
+	
 }
