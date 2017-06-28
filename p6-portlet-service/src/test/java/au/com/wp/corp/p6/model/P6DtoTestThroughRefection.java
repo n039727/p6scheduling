@@ -151,7 +151,6 @@ public class P6DtoTestThroughRefection {
 			for (Method method : getterMethods) {
 				method.invoke(obj);
 			}
-			String toStringTest = obj.toString();
 
 		} catch (Exception e) {
 			return false;
@@ -175,9 +174,7 @@ public class P6DtoTestThroughRefection {
 		try {
 			Set<Method> setterMethods = ReflectionUtils.getAllMethods(type,
 					ReflectionUtils.withModifier(Modifier.PUBLIC), ReflectionUtils.withPrefix(""));
-			Set<Field> fields = ReflectionUtils.getAllFields(type, ReflectionUtils.withModifier(Modifier.PRIVATE));
-			Field[] fieldArray = new Field[fields.size()];
-			fields.toArray(fieldArray);
+		
 
 			for (Method method : setterMethods) {
 				method.invoke(obj);
