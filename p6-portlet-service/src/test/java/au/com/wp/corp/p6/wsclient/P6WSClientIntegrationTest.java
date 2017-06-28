@@ -36,6 +36,7 @@ import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.test.config.AppConfig;
 import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
+import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 
 /**
  * @author N039126
@@ -119,21 +120,6 @@ public class P6WSClientIntegrationTest {
 	}
 	
 	@Test
-	public void testsearchCrew () throws P6ServiceException {
-		ResourceSearchRequest request = new ResourceSearchRequest();
-		request.setResourceType("Labor");
-		List<Crew> crews =  p6WSClient.searchCrew(request);
-		Assert.assertNotNull(crews);
-		for ( Crew crew : crews)
-		{
-			Assert.assertNotNull(crew.getCrewId());
-			Assert.assertNotNull(crew.getCrewName());
-			
-		}
-		
-	}
-	
-	@Test
 	public void testCreateExecutionPackage() throws P6ServiceException {
 		List<ExecutionPackageCreateRequest> request = new ArrayList<>();
 
@@ -157,6 +143,13 @@ public class P6WSClientIntegrationTest {
 
 	}
 
+	@Test
+	public void test_7_LogoutFromP6 (){
+		RequestTrackingId trackingId = new RequestTrackingId();
+		boolean status = p6WSClient.logoutFromP6(trackingId);
+		Assert.assertTrue(status);
+	}
+	
 	@Test
 	public void testRemoveExecutionPackage() throws P6ServiceException {
 		List<Integer> foreignIds = new ArrayList<Integer>();
