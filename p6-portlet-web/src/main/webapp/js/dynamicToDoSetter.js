@@ -88,7 +88,7 @@ function dynamicToDoSetterController($scope) {
 							tempTodoName = tempColumnGroup[i].todoName;
 							//console.log("[DEBUG] tempTodoName1 in onChange: " + JSON.stringify(tempTodoName));
 							isTempNewItem = tempColumnGroup[i].isNewItem;
-							if(!isTempNewItem && workOrders.length > 1){
+							if(workOrders.length > 1){
 								workOrders.splice(allIndex, 1);
 							}
 							tempColumnGroup[i].workOrders = workOrders;
