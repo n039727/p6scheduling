@@ -112,7 +112,7 @@ function fetchUserData(app) {
 					userData.authToken = response.headers('AUTH_TOKEN');
 					console.log("Auth Token has been set as " + userData.authToken);
 				}
-				console.log("Received data from server for fetch to dos: "
+				console.log("Received data from server for fetch the user name: "
 						+ JSON.stringify(response.data));
 				userData.name = response.data.userName;
 				userData.accessMap = response.data.accessMap;
@@ -129,7 +129,7 @@ function fetchMetaData(app) {
 	var $http = initInjector.get("$http");
 	return $http.get("/p6-portal/web/scheduler/fetchMetadata").then(
 			function(response) {
-				console.log("Received data from server for fetch to dos: "
+				console.log("Received data from server while fetching meta data: "
 						+ JSON.stringify(response.data));
 				metadata = {};
 				metadata.crewList = response.data.crews;
@@ -146,7 +146,7 @@ function fetchMetaData(app) {
 app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, userdata,$interval) {
 
 	var ctrl = this;
-	console.log('metadata: ' + JSON.stringify(metadata));
+	//console.log('metadata: ' + JSON.stringify(metadata));
 	ctrl.metadata = metadata;
 	ctrl.workOrders = [];
 	ctrl.savedMsgVisible = false;
@@ -186,7 +186,7 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 		restTemplate.callService(config, function(response) {
 					console.log("Received data from server");
 					ctrl.fetchedData = response.data;
-					console.log("Data from server: "
+					console.log("Data from server for search: "
 							+ JSON.stringify(ctrl.fetchedData));
 				    if(response.data.length > 0){
 				    	ctrl.metadata.activated = false;
