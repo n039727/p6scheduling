@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
@@ -23,7 +22,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("au.com.wp.corp.p6.scheduling")
+@ComponentScan("au.com.wp.corp.p6")
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @PropertySource("file:/${properties.dir}/p6portal.properties")
 @EnableTransactionManagement
@@ -43,7 +42,7 @@ public class AppConfig {
 	@Bean(name = "sessionFactory")
 	public SessionFactory getSessionFactory(DataSource dataSource) {
 	    LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(dataSource);
-	    sessionBuilder.scanPackages("au.com.wp.corp.p6.scheduling.model");
+	    sessionBuilder.scanPackages("au.com.wp.corp.p6.model","au.com.wp.corp.p6.scheduling.model");
 	    sessionBuilder.setProperty("hibernate.show_sql", "true");
 	    sessionBuilder.addProperties(getHibernateProperties());
 	    return sessionBuilder.buildSessionFactory();
@@ -64,6 +63,27 @@ public class AppConfig {
 	    HibernateTransactionManager transactionManager = new HibernateTransactionManager(
 	            sessionFactory);
 	    return transactionManager;
+	}
+	
+	@Bean(name = "elipseDataSource")
+	public DataSource getElipsDataSource() {
+		JndiDataSourceLookup dataSourceLookup = new JndiDataSourceLookup();
+		return dataSourceLookup.getDataSource(environment.getProperty("elips.portal.jndi.datasource"));
+	}
+	
+	
+	@Autowired
+	@Bean(name = "elipsSessionFactory")
+	public SessionFactory getElipsSessionFactory(DataSource elipseDataSource) {
+	    LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(elipseDataSource);
+	    sessionBuilder.scanPackages("au.com.wp.corp.p6.model.elipse");
+	    sessionBuilder.setProperty("hibernate.show_sql", "true");
+	    Properties properties = new Properties();
+	    properties.put("hibernate.show_sql", "true");
+	    properties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
+	    properties.put("hibernate.default_schema" ,"NELL");
+	    sessionBuilder.addProperties(properties);
+	    return sessionBuilder.buildSessionFactory();
 	}
 	
 }

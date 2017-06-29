@@ -60,9 +60,9 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 		}
 
 		if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
-			serviceUrl = "/p6-portal-service/scheduler/saveWorkOrderForViewToDoStatus";
+			serviceUrl = "/p6-portal/web/scheduler/saveWorkOrderForViewToDoStatus";
 		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){
-			serviceUrl = "/p6-portal-service/depot/updateTodo";
+			serviceUrl = "/p6-portal/web/depot/updateTodo";
 
 		}
 		console.log('serviceUrl in Save To Do called with WO: ' + JSON.stringify(serviceUrl));
@@ -103,9 +103,9 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 
 	ctrl.fetchToDoAgainstWO = function(wo) {
 		if(ctrl.activeContext == 'VIEW_TODO_STATUS'){
-			serviceUrl = "/p6-portal-service/scheduler/fetchWOForTODOStatus";
+			serviceUrl = "/p6-portal/web/scheduler/fetchWOForTODOStatus";
 		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){
-			serviceUrl = "/p6-portal-service/depot/viewTodo";
+			serviceUrl = "/p6-portal/web/depot/viewTodo";
 		}
 		console.log('fetching To-Dos for work order: ' + wo.workOrders[0]);
 		console.log('serviceUrl: ' + serviceUrl);

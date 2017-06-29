@@ -31,6 +31,12 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>au.com.wp.corp.p6.scheduling</groupId>
+			<artifactId>p6-portlet-service</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>

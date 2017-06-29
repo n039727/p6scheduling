@@ -113,7 +113,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		var req = {
 			 method: 'POST',
-			 url: '/p6-portal-service/scheduler/saveWorkOrder',
+			 url: '/p6-portal/web/scheduler/saveWorkOrder',
 			 headers: {
 			   'Content-Type': 'application/json'
 			 },
@@ -139,7 +139,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 	
 	
 	ctrl.fetchToDoAgainstWO = function(wo) {
-		serviceUrl = "/p6-portal-service/scheduler/fetchWOForAddUpdateToDo";
+		serviceUrl = "/p6-portal/web/scheduler/fetchWOForAddUpdateToDo";
 		var query = {};
 		if (wo.exctnPckgName) {
 			query.execPckgName = wo.exctnPckgName;

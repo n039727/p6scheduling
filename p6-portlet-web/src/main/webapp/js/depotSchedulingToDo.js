@@ -118,7 +118,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		var req = {
 			 method: 'POST',
-			 url: '/p6-portal-service/depot/addTodo',
+			 url: '/p6-portal/web/depot/addTodo',
 			 headers: {
 			   'Content-Type': 'application/json'
 			 },
@@ -139,7 +139,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 	
 	
 	ctrl.fetchToDoAgainstWO = function(wo) {
-		serviceUrl = "/p6-portal-service/depot/fetchTaskForUpdateTodo";
+		serviceUrl = "/p6-portal/web/depot/fetchTaskForUpdateTodo";
 		var query = {};
 		if (wo.exctnPckgName) {
 			query.execPckgName = wo.exctnPckgName;

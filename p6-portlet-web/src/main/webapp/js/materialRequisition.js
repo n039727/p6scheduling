@@ -22,7 +22,7 @@ function materialRequisitionResultController($scope, restTemplate, userAccessSer
 		}
 	};
 	ctrl.fetchMaterialReqAgainstWO = function(wo) {
-		serviceUrl = "/p6-portal-service/scheduler/fetchMetReqData";
+		serviceUrl = "/p6-portal/web/scheduler/fetchMetReqData";
 		var query = {};
 		var workOrderArr = [];
 		if(wo && wo.workOrders){

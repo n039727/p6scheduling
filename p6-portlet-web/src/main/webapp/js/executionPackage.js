@@ -136,7 +136,7 @@ app.controller('executionPkgPopupController', [
 			console.log('Save execution package called with createExecPkgReq: ' + JSON.stringify($scope.createExecPkgReq));
 			var req = {
 				 method: 'POST',
-				 url: '/p6-portal-service/executionpackage/createOrUpdate',
+				 url: '/p6-portal/web/executionpackage/createOrUpdate',
 				 headers: {
 				   'Content-Type': 'application/json'
 				 },

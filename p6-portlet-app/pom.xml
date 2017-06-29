@@ -42,12 +42,6 @@
 						</webModule>
 						<webModule>
 							<groupId>au.com.wp.corp.p6.scheduling</groupId>
-							<artifactId>p6-portlet-service</artifactId>
-							<bundleFileName>p6-portlet-service.war</bundleFileName>
-							<contextRoot>/p6-portal-service</contextRoot>
-						</webModule>
-						<webModule>
-							<groupId>au.com.wp.corp.p6.scheduling</groupId>
 							<artifactId>p6-ellipse-integration</artifactId>
 							<bundleFileName>p6-ellipse-integration.war</bundleFileName>
 							<contextRoot>/p6-ellipse-integration</contextRoot>
@@ -65,26 +59,6 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			<plugin>
-					<groupId>org.wildfly.plugins</groupId>
-					<artifactId>wildfly-maven-plugin</artifactId>
-					<version>${version.wildfly.maven.plugin}</version>
-					<configuration>
-						<domain>
-							<server-groups>
-								<server-group>server-group-int-02</server-group>
-							</server-groups>
-						</domain>
-						<force>true</force>
-						<port>9990</port>
-						<hostname>localhost</hostname>
-						<username>n039727</username>
-						<password>Xyz20031979</password>
-						<fileNames>
-							<fileName>target/{finalName}.ear</fileName>
-						</fileNames>
-					</configuration>
-				</plugin>
 		</plugins>
 	</build>
 
@@ -93,12 +67,6 @@
 		<dependency>
 			<groupId>au.com.wp.corp.p6.scheduling</groupId>
 			<artifactId>p6-portlet-web</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>au.com.wp.corp.p6.scheduling</groupId>
-			<artifactId>p6-portlet-service</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>

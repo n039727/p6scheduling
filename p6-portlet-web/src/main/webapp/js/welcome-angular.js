@@ -127,7 +127,7 @@ function fetchUserData(app) {
 function fetchMetaData(app) {
 	var initInjector = angular.injector([ "ng" ]);
 	var $http = initInjector.get("$http");
-	return $http.get("/p6-portal-service/scheduler/fetchMetadata").then(
+	return $http.get("/p6-portal/web/scheduler/fetchMetadata").then(
 			function(response) {
 				console.log("Received data from server for fetch to dos: "
 						+ JSON.stringify(response.data));
@@ -157,9 +157,9 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 		console.log('data == ' + JSON.stringify(query))
 		var serviceUrl = "";
 		if (ctrl.activeContext === 'CREATE_EXECUTION_PACKAGE') {
-			serviceUrl = "/p6-portal-service/executionpackage/searchByExecutionPackage";
+			serviceUrl = "/p6-portal/web/executionpackage/searchByExecutionPackage";
 		} else {
-			serviceUrl = "/p6-portal-service/scheduler/search";
+			serviceUrl = "/p6-portal/web/scheduler/search";
 		}
 		var config = {
 			method : 'POST',
@@ -227,7 +227,7 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 		} else if (event && event.eventId === 'DEPOT_TODO_SAVED') {
 			var config = {
 				method : 'GET',
-				url : "/p6-portal-service/scheduler/fetchMetadata"
+				url : "/p6-portal/web/scheduler/fetchMetadata"
 			};
 			restTemplate.callService(config, function(response) {
 					console.log("Received data from server: " + JSON.stringify(response.data));
