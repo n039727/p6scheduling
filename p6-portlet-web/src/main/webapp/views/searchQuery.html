@@ -46,7 +46,11 @@
 					<div class="col-md-offset-5 col-md-2" style="padding:4px">
 						<button type="submit" class="btn btn-warning btn-block" ng-click="$ctrl.prepareSearch()"><h4>Search</h4></button>
 					</div>
+					
 				</div>
+    			<div layout="row" layout-sm="column" layout-align="space-around">
+      				<md-progress-circular class="md-warn" ng-disabled="!$ctrl.metadata.activated" md-mode="determinate" value="{{$ctrl.metadata.determinateValue}}"></md-progress-circular>
+    			</div>
 			</form>
 		</div>
 	</div>

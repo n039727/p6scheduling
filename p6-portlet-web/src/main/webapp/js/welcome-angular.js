@@ -137,11 +137,13 @@ function fetchMetaData(app) {
 				metadata.depotCrewMap = response.data.resourceDTO.depotCrewMap;
 				metadata.isErrdataAvail = false;
 				metadata.setToDateDisable = true;
+				metadata.determinateValue = 0;
+				metadata.activated = true;
 				app.constant('metadata', metadata);
 			});
 }
 
-app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, userdata) {
+app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, userdata,$interval) {
 
 	var ctrl = this;
 	console.log('metadata: ' + JSON.stringify(metadata));
@@ -156,6 +158,18 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 	ctrl.reload = function(query, success) {
 		console.log('data == ' + JSON.stringify(query))
 		var serviceUrl = "";
+		var stop;
+	    // Iterate every 100ms, non-stop and increment
+	    // the Determinate loader.
+		stop = $interval(function() {
+
+	    	ctrl.metadata.determinateValue += 1;
+	      if (ctrl.metadata.determinateValue > 100) {
+	  		  console.log('ctrl.metadata.determinateValue == ' + JSON.stringify(ctrl.metadata.determinateValue))
+	    	  ctrl.metadata.determinateValue = 30;
+	      }
+	    }, 100);
+		
 		if (ctrl.activeContext === 'CREATE_EXECUTION_PACKAGE') {
 			serviceUrl = "/p6-portal/web/executionpackage/searchByExecutionPackage";
 		} else {
@@ -174,6 +188,14 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 					ctrl.fetchedData = response.data;
 					console.log("Data from server: "
 							+ JSON.stringify(ctrl.fetchedData));
+				    if(response.data.length > 0){
+				    	ctrl.metadata.activated = false;
+				    	if (angular.isDefined(stop)) {
+				            $interval.cancel(stop);
+				            stop = undefined;
+				        }
+				    }
+
 					success(response.data);
 
 				}, null);
@@ -181,6 +203,9 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 
 	ctrl.search = function(query) {
 		console.log('Query:' + JSON.stringify(query));
+		ctrl.metadata.activated = true;		
+  	  	ctrl.metadata.determinateValue = 30;
+		
 		var serviceUrl = "";
 		ctrl.reload(query, function(data) {
 			ctrl.workOrders = data;
