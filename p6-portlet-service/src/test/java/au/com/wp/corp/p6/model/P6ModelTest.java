@@ -227,30 +227,7 @@ public class P6ModelTest {
 
 	}
 
-	@Test
-	public void testPortalFunction () {
-		final long time = System.currentTimeMillis();
-		PortalFunction portalFunction = new PortalFunction();
-		portalFunction.setFuncDesc("Screen for Scheduler to add or update TODOs");
-		portalFunction.setFuncId(1);
-		portalFunction.setFuncNam("Add_Scheduling_To_Do");
-
-		FunctionAccess functionAccess = new FunctionAccess();
-		functionAccess.setFuncAccessId(1);
-		functionAccess.setPortalFunction(portalFunction);
-		functionAccess.setRoleNam("P6_TEM_LEDR_SCHDLR");
-		functionAccess.setWriteFlg("Y");
-		List<FunctionAccess> accesses = new ArrayList<FunctionAccess>();
-		accesses.add(functionAccess);
-		portalFunction.setFunctionAccesses(accesses);
-
-		Assert.assertEquals("Screen for Scheduler to add or update TODOs",portalFunction.getFuncDesc());
-		Assert.assertEquals(1, portalFunction.getFuncId());
-		Assert.assertEquals("Add_Scheduling_To_Do", portalFunction.getFuncNam());
-		Assert.assertEquals(accesses, portalFunction.getFunctionAccesses());
-
-
-	}
+	
 	@Test
 	public void testTodoAssignment(){
 		final long time = System.currentTimeMillis();
@@ -291,26 +268,7 @@ public class P6ModelTest {
 		Assert.assertTrue(todoAssignment.equals(todoAssignment1));
 	}
 
-	@Test
-	public void testFunctionAccess(){
-
-		FunctionAccess functionAccess = new FunctionAccess();
-		PortalFunction portalFunction = new PortalFunction();
-		portalFunction.setFuncDesc("Screen for Scheduler to add or update TODOs");
-		portalFunction.setFuncId(1);
-		portalFunction.setFuncNam("Add_Scheduling_To_Do");
-
-		functionAccess.setFuncAccessId(1);
-		functionAccess.setPortalFunction(portalFunction);
-		functionAccess.setRoleNam("P6_TEM_LEDR_SCHDLR");
-		functionAccess.setWriteFlg("Y");
-
-		Assert.assertEquals(1, functionAccess.getFuncAccessId());
-		Assert.assertEquals("P6_TEM_LEDR_SCHDLR", functionAccess.getRoleNam());
-		Assert.assertEquals("Y", functionAccess.getWriteFlg());
-		Assert.assertEquals(portalFunction, functionAccess.getPortalFunction());
-
-	}
+	
 	@Test
 	public void testMaterialRequisition(){
 
@@ -366,14 +324,5 @@ public class P6ModelTest {
 		Assert.assertTrue(matReqPk.equals(matReqPk2));
 		Assert.assertTrue(matReqPk2.hashCode()>0);
 	}
-	@Test
-	public void testGroupRoleMapping(){
-		GroupRoleMapping groupRoleMapping = new GroupRoleMapping();
-		groupRoleMapping.setGrpNam("test group");
-		groupRoleMapping.setGrpRoleId(1);
-		groupRoleMapping.setRoleNam("P6_TEM_LEDR_SCHDLR");
-		Assert.assertEquals(1, groupRoleMapping.getGrpRoleId());
-		Assert.assertEquals("P6_TEM_LEDR_SCHDLR", groupRoleMapping.getRoleNam());
-		Assert.assertEquals("test group", groupRoleMapping.getGrpNam());
-	}
+	
 }
