@@ -10,7 +10,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 	}
 	
 	ctrl.emptyStr = "";
-	console.log('data received: ' + JSON.stringify(ctrl.data));
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
 		
@@ -39,8 +38,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 				ctrl.depotToDoList.push(ctrl.metadata.todoList[i].toDoName);
 			}
 		}
-		console.log("Scheduling To Do List: " + JSON.stringify(ctrl.schedulingToDoList));
-		
 		for(i=0; i<ctrl.schedulingToDoList.length;i++) {  
 			if (i < ctrl.schedulingToDoList.length/2) 
 				ctrl.todoGrp1.push(ctrl.schedulingToDoList[i]);
@@ -58,7 +55,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 						wo.toDoItems = [];
 						
 					wo.toDoItems.push({toDoName:todo, typeId: 1, workOrders:[wo.workOrders[0]]});
-					console.log('WO after adding To Do: ' + JSON.stringify(wo));
 				}
 				if (angular.isDefined(wo.workOrderIdDisplayArray) 
 						&& wo.workOrderIdDisplayArray.length > 0) {
@@ -68,7 +64,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 				var index = findToDo(wo.toDoItems, todo);
 				if (index > -1) {
 					wo.toDoItems.splice(index, 1);
-					console.log('WO after removing To Do: ' + JSON.stringify(wo));
 				}
 				ctrl.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, todo)] = [];
 			}
@@ -115,7 +110,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 		}else if(angular.isDefined(wo) && angular.isDefined(wo.toDoItems) && wo.toDoItems.length > 0){
 			wo.actioned = 'Y';
 		}
-		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 		var req = {
 			 method: 'POST',
 			 url: '/p6-portal/web/depot/addTodo',
@@ -126,9 +120,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			 
 		};
 		restTemplate.callService(req, function (response) {
-			console.log("Received data from server");
 			$scope.fetchedData = response.data;
-			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
 			wo.successSavedMsg = "Depot To Do Saved Successfully";
 			wo.savedMsgVisible = true;
 			
@@ -146,9 +138,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 		} else {
 			query.workOrderId = wo.workOrders[0];
 		}
-		
-		console.log('fetching To-Dos for depots : ' + JSON.stringify(query));
-		
 		var req = {
 				method: 'POST',
 				url: serviceUrl,
@@ -160,7 +149,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			};
 		
 		restTemplate.callService(req, function (response) {
-			console.log("Received data from server for fetchWOForTODOStatus in depots: " + JSON.stringify(response.data));
 			wo.toDoItems = [];
 			wo.schedulingToDoComment = "";
 			if (response.data[0]) {
@@ -174,7 +162,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			ctrl.populateToDoBindings(wo, wo.toDoItems);
 			ctrl.populateWorkOrderDisplayList(wo);
 			ctrl.createToDoMap(wo);
-			console.log("Work Order after fetch todo in deptos: " + JSON.stringify(wo));
 		}, null);
 	}
 	
@@ -195,7 +182,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 					}
 				}
 			}
-			console.log("toDoBindingVar: " + JSON.stringify(ctrl.toDoBindingVar));
 	}
 	
 	ctrl.getWorkOrderToDoKey = function(workOrder, todoName) {
@@ -213,8 +199,6 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 				wo.workOrderIdDisplayArray.push(wo.workOrders[i]);
 			}
 		} 
-		
-		console.log('Work Order Id List: ' + wo.workOrderIdDisplayArray);
 	}
 	
 	ctrl.createToDoMap = function(workOrder) {
@@ -268,21 +252,18 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 
 		switch(eventId) {
 			case "DATA_CHANGE":
-				console.log("Data change called");
 				if (angular.isDefined(data) && data != null) {
 					ctrl.populateDepotToDo(data.map, wo);
 				}
 				break;
 			case "ADD_TO_DO_IN_PROGRESS":
-				console.log("Add to do in progress called");
 				ctrl.disableSaving = true;
 				break;
 			case "ADD_TO_DO_COMPLETED":
-				console.log("Add to do completed");
 				ctrl.disableSaving = false;
 				break;
 			default:
-				console.log("No handler found for event: " + eventId);
+//				console.log("No handler found for event: " + eventId);
 		} 
 	}
 	
