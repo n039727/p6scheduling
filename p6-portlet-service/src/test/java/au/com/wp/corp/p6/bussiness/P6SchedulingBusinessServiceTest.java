@@ -277,7 +277,7 @@ public class P6SchedulingBusinessServiceTest {
 		}
 		Mockito.when(workOrderDAO.fetchTasksByDateAndWo(dateRange,worOrders)).thenReturn(taskList);
 		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
-		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList())).thenReturn(true);
+		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList(),Mockito.anyBoolean())).thenReturn(true);
 		Mockito.when(workOrderDAO.saveTask(Mockito.any())).thenReturn(task);
 		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
 		p6SchedulingBusinessService.updateTasksAndExecutionPackageInP6AndDB();
@@ -392,7 +392,7 @@ public class P6SchedulingBusinessServiceTest {
 		}
 		Mockito.when(workOrderDAO.fetchTasksByDateAndWo(dateRange,worOrders)).thenReturn(taskList);
 		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
-		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList())).thenReturn(true);
+		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList(),Mockito.anyBoolean())).thenReturn(true);
 		Mockito.when(workOrderDAO.saveTask(Mockito.any())).thenReturn(task);
 		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
 		p6SchedulingBusinessService.updateTasksAndExecutionPackageInP6AndDB();
@@ -505,7 +505,7 @@ public class P6SchedulingBusinessServiceTest {
 		}
 		Mockito.when(workOrderDAO.fetchTasksByDateAndWo(dateRange,worOrders)).thenReturn(taskList);
 		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
-		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList())).thenReturn(true);
+		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList(),Mockito.anyBoolean())).thenReturn(true);
 		Mockito.when(workOrderDAO.saveTask(Mockito.any())).thenReturn(task);
 		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
 		p6SchedulingBusinessService.updateTasksAndExecutionPackageInP6AndDB();
@@ -945,7 +945,7 @@ public class P6SchedulingBusinessServiceTest {
 		}
 		Mockito.when(workOrderDAO.fetchTasksByDateAndWo(dateRange,worOrders)).thenReturn(taskList);
 		Mockito.when(userTokenRequest.getUserPrincipal()).thenReturn("test user");
-		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList())).thenReturn(true);
+		Mockito.when(p6wsClient.removeExecutionPackage(Mockito.anyList(),Mockito.anyBoolean())).thenReturn(true);
 		Mockito.when(workOrderDAO.saveTask(Mockito.any())).thenReturn(task);
 		List<WorkOrder> workOrders = p6SchedulingBusinessService.search(request);
 		p6SchedulingBusinessService.updateTasksAndExecutionPackageInP6AndDB();

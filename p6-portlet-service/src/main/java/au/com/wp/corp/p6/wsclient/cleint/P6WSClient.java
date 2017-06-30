@@ -29,6 +29,6 @@ public interface P6WSClient {
 	public List<WorkOrder> searchWorkOrder (ActivitySearchRequest searchRequest) throws P6ServiceException;
 	ExecutionPackageDTO createExecutionPackage(List<ExecutionPackageCreateRequest> request) throws P6ServiceException;
 	public Map<String, Integer> getWorkOrderIdMap();
-	Boolean removeExecutionPackage(List<Integer> foreignObjIds) throws P6ServiceException;
-	boolean logoutFromP6(RequestTrackingId trackingId);
+	Boolean removeExecutionPackage(List<Integer> foreignObjIds, boolean doLogout) throws P6ServiceException;
+	boolean logoutFromP6(RequestTrackingId trackingId, boolean doLogout);
 }

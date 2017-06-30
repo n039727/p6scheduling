@@ -23,10 +23,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
-import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
-import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.utils.CacheManager;
@@ -35,7 +33,6 @@ import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
-import au.com.wp.corp.p6.wsclient.resource.Resource;
 import au.com.wp.corp.p6.wsclient.udftype.UDFType;
 import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
 
@@ -172,7 +169,7 @@ public class P6WSClientImpl implements P6WSClient, P6Constant {
 				
 			}
 		logger.debug("Total time taken to execute method search work order via ActivityService {}",System.currentTimeMillis() - starttime);
-		logoutFromP6(trackingId);
+		logoutFromP6(trackingId, true);
 		return workOrders;
 	}
 	
@@ -186,7 +183,7 @@ public class P6WSClientImpl implements P6WSClient, P6Constant {
 
 		UDFTypeServiceCall udfTypeServiceCall = new UDFTypeServiceCall(trackingId, filter.toString());
 		Holder<List<UDFType>> udfTypes = udfTypeServiceCall.run();
-		logoutFromP6(trackingId);
+		logoutFromP6(trackingId, false);
 		return udfTypes.value.get(0).getObjectId();
 	}
 	
@@ -196,6 +193,10 @@ public class P6WSClientImpl implements P6WSClient, P6Constant {
 	 * @throws P6ServiceException
 	 */
 	private Boolean getAuthenticated(final RequestTrackingId trackingId) throws P6ServiceException {
+		long wsAuthCallTimestamp = CacheManager.getWSLoginTimestamp().get(WS_AUTH_SERVICE_CALL_TIME) != null
+				? (Long) CacheManager.getWSLoginTimestamp().get(WS_AUTH_SERVICE_CALL_TIME) : 0;
+		if (CacheManager.getWsHeaders().isEmpty()
+				|| System.currentTimeMillis() - wsAuthCallTimestamp > 2 * 60 * 60 * 1000) {
 			AuthenticationService authService = new AuthenticationService(trackingId, authServiceWSDL, userPrincipal,
 					userCredential, p6DBInstance);
 			Holder<Boolean> holder = authService.run();
@@ -203,6 +204,9 @@ public class P6WSClientImpl implements P6WSClient, P6Constant {
 			if (holder.value)
 				CacheManager.getWSLoginTimestamp().put(WS_AUTH_SERVICE_CALL_TIME, System.currentTimeMillis());
 			return holder.value;
+		}else{
+			return false;
+		}
 	}
 
 	@Override
@@ -221,7 +225,7 @@ public class P6WSClientImpl implements P6WSClient, P6Constant {
 			foreignIds.add(foregnObjId);
 		}
 		
-		 removeExecutionPackage(foreignIds);
+		 removeExecutionPackage(foreignIds, false);
 		logger.debug("deleted for request package name {} ", request.get(0).getText());
 		final UDFValueServiceCall<List<ObjectId>> createUdfservice = new CreateUDFValueServiceCall(trackingId,
 				udfServiceWSDL, request);
@@ -248,14 +252,14 @@ public class P6WSClientImpl implements P6WSClient, P6Constant {
 			}
 			dto.setWorkOrders(workOrders);
 		}
-		logoutFromP6(trackingId);
+		logoutFromP6(trackingId, true);
 		return dto;
 	}
 
 
 
 	@Override
-	public Boolean removeExecutionPackage(List<Integer> foreignObjIds)
+	public Boolean removeExecutionPackage(List<Integer> foreignObjIds, boolean doLogout)
 			throws P6ServiceException {
 		logger.info("Calling udfvalue service in P6 Webservice to de link execution package...");
 		final RequestTrackingId trackingId = new RequestTrackingId();
@@ -318,13 +322,15 @@ public class P6WSClientImpl implements P6WSClient, P6Constant {
 		logger.debug("request {}",objectIds);
 		final UDFValueServiceCall<Boolean> deleteUdfservice = new DeleteUDFValueServiceCall(trackingId, udfServiceWSDL, objectIds);
 		final Holder<Boolean> isDeleted = deleteUdfservice.run();
-		logoutFromP6(trackingId);
+		logoutFromP6(trackingId,doLogout);
 		return isDeleted.value;
 	}
+
+
 	@Override
-	public boolean logoutFromP6(RequestTrackingId trackingId) {
+	public boolean logoutFromP6(RequestTrackingId trackingId, boolean doLogout) {
 		boolean status = false;
-		if (null != CacheManager.getWsHeaders().get(WS_COOKIE)) {
+		if (null != CacheManager.getWsHeaders().get(WS_COOKIE)&& doLogout) {
 			LogoutServiceCall authService = new LogoutServiceCall(trackingId);
 			try {
 				status = authService.run().value.isReturn();
@@ -335,6 +341,6 @@ public class P6WSClientImpl implements P6WSClient, P6Constant {
 		}
 
 		return status;
-
 	}
+	
 }

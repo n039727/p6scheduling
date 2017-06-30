@@ -400,7 +400,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					}
 					listOfObjectId.add(workOrderIdMap.get(workOrderId));
 				});
-				boolean isSuccess = p6wsClient.removeExecutionPackage(listOfObjectId);
+				boolean isSuccess = p6wsClient.removeExecutionPackage(listOfObjectId,true);
 				logger.debug("Removal suceeeded {}", isSuccess);
 			} catch (P6ServiceException e) {
 				parseException(e);
