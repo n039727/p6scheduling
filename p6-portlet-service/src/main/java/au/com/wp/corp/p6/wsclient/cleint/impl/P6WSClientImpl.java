@@ -23,10 +23,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
-import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
-import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.utils.CacheManager;
@@ -35,7 +33,6 @@ import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
-import au.com.wp.corp.p6.wsclient.resource.Resource;
 import au.com.wp.corp.p6.wsclient.udftype.UDFType;
 import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
 
