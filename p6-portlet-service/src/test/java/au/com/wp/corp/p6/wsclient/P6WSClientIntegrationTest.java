@@ -3,12 +3,16 @@
  */
 package au.com.wp.corp.p6.wsclient;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -17,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +32,14 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import au.com.wp.corp.p6.dataservice.ResourceDetailDAO;
 import au.com.wp.corp.p6.dto.ActivitySearchRequest;
-import au.com.wp.corp.p6.dto.Crew;
 import au.com.wp.corp.p6.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
-import au.com.wp.corp.p6.dto.ResourceSearchRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.test.config.AppConfig;
 import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
+import au.com.wp.corp.p6.wsclient.cleint.impl.P6WSClientImpl;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
 
 /**
@@ -144,8 +148,15 @@ public class P6WSClientIntegrationTest {
 	}
 
 	@Test
-	public void test_7_LogoutFromP6 (){
+	public void test_7_LogoutFromP6 () throws IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		RequestTrackingId trackingId = new RequestTrackingId();
+		Set<Method> privateMethods = ReflectionUtils.getAllMethods(P6WSClientImpl.class, ReflectionUtils.withModifier(Modifier.PRIVATE));
+		for(Method m: privateMethods){
+			if(m.getName().equalsIgnoreCase("getAuthenticated")){
+				m.setAccessible(true);
+				m.invoke(p6WSClient, trackingId);
+			}
+		}
 		boolean status = p6WSClient.logoutFromP6(trackingId, true);
 		Assert.assertTrue(status);
 	}
