@@ -11,7 +11,6 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 	}
 	
 	ctrl.selectedExecPckg = [];
-	console.log('data received in execution package: ' + JSON.stringify(ctrl.data));
 	ctrl.errorMsgVisiable = false;
 	ctrl.addRemoveWOOnSelectAll = function($event, wo){
 		for(var i=0;i<wo.length; i++){
@@ -27,7 +26,6 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 					ctrl.selectedExecPckg = [];
 					
 				ctrl.selectedExecPckg.push({leadCrew:wo.crewNames,crewNames:wo.crewNames, workOrders:[wo.workOrders[0]],scheduleDate:wo.scheduleDate,executionPckgName:wo.exctnPckgName});
-				console.log('WO after adding execution pckg: ' + JSON.stringify(ctrl.selectedExecPckg));
 			}
 			
 				
@@ -35,7 +33,6 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 			var index = findCheckedWO(ctrl.selectedExecPckg, wo.workOrders[0]);
 			if (index > -1) {
 				ctrl.selectedExecPckg.splice(index, 1);
-				console.log('WO after removing checked: ' + JSON.stringify(ctrl.selectedExecPckg));
 			}
 			ctrl.selectedAll = false;
 		}
@@ -83,7 +80,6 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 	        }).then(function(modal) {
 	            modal.element.modal();
 	            modal.close.then(function(result) {
-					console.log('Result returned from modal:' + JSON.stringify(result));
 					if (result.status === 'SUCCESS') {
 						ctrl.handleDataChange({event:{eventId:'EXECUTION_PKG_CREATED', eventData:result.data}});
 					}
@@ -97,8 +93,6 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 app.controller('executionPkgPopupController', [
 	  '$scope', '$element', 'wo', 'close','restTemplate', 
 	  function($scope, $element, wo, close, restTemplate) {
-			console.log('Create Exc called with WO in popup: ' + JSON.stringify(wo));
-			
 			$scope.createExecPkgWOs = [];
 			$scope.woList =[];
 			$scope.leadCrewList =[];
@@ -113,10 +107,6 @@ app.controller('executionPkgPopupController', [
 					$scope.scheduleDate = wo[i].scheduleDate;
 				}
 			}
-
-			console.log('$scope.woList in popup: ' + JSON.stringify($scope.woList));
-			console.log('$scope.leadCrewList in popup: ' + JSON.stringify($scope.leadCrewList));
-			console.log('$scope.createExecPkgWOs in popup: ' + JSON.stringify($scope.createExecPkgWOs));
 			
 			$scope.wo = $scope.woList;
 			$scope.leadCrews = $scope.leadCrewList;
@@ -124,16 +114,13 @@ app.controller('executionPkgPopupController', [
 	  //  This close function doesn't need to use jQuery or bootstrap, because
 	  //  the button has the 'data-dismiss' attribute.
 	  $scope.cancel = function() {
-			console.log('$scope.wo in close: ' + JSON.stringify($scope.wo));
 			close({
 					status: 'CANCELLED'
 				  }, 500); // close, but give 500ms for bootstrap to animate
 		  
 	  };
 	  $scope.saveExecutionPackage = function() {
-			console.log('$scope.createExecPkgWOs in saveExecutionPackage: ' + JSON.stringify($scope.createExecPkgWOs));
 		  $scope.createExecPkgReq = {workOrders:$scope.createExecPkgWOs,leadCrew:$scope.selectedLeadCrew};
-			console.log('Save execution package called with createExecPkgReq: ' + JSON.stringify($scope.createExecPkgReq));
 			var req = {
 				 method: 'POST',
 				 url: '/p6-portal/web/executionpackage/createOrUpdate',
@@ -143,9 +130,6 @@ app.controller('executionPkgPopupController', [
 				 data: JSON.stringify($scope.createExecPkgReq)
 			};
 			restTemplate.callService(req, function (response) {
-				console.log("Received data from server");
-				console.log("Data for execution package from server: " + JSON.stringify(response.data));
-				
 				close({
 					status: 'SUCCESS',
 					data: {

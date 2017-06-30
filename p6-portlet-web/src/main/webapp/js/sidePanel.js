@@ -2,7 +2,6 @@ function sidePanelController($scope, userAccessService) {
 	var ctrl = this;
 	
 	ctrl.setContext = function(viewContext) {
-		console.log('viewContext: ' + viewContext);
 		ctrl.onChangeContext({context:viewContext});
 	}
 	

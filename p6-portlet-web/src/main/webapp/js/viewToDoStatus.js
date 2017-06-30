@@ -5,14 +5,11 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 	ctrl.isReadOnly = false;
 	if (userAccessService.isAuthEnabled()) {
 		if (!userAccessService.hasUpdateableAccess(ctrl.functionId)) {
-			console.log('has updateable in view to do status : false');
 			//	ctrl.isReadOnly = true;
 		}
 	}
 
 	ctrl.isAllCompletedStatus = false;
-	console.log('$ctrl.activeContext in view: ' + JSON.stringify(ctrl.activeContext));
-	console.log('data received: ' + JSON.stringify(ctrl.data));
 
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
@@ -65,8 +62,6 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 			serviceUrl = "/p6-portal/web/depot/updateTodo";
 
 		}
-		console.log('serviceUrl in Save To Do called with WO: ' + JSON.stringify(serviceUrl));
-		console.log('Save To Do called with WO: ' + JSON.stringify(wo));
 
 		var req = {
 				method: 'POST',
@@ -77,11 +72,8 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 				data: JSON.stringify(wo)
 		};
 		restTemplate.callService(req, function (response) {
-			console.log("Received data from server");
 			$scope.fetchedData = response.data;
-			console.log("Data from server: " + JSON.stringify($scope.fetchedData));
 			if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){			
-				console.log("ctrl.isAllCompletedStatus: " + JSON.stringify(ctrl.isAllCompletedStatus));
 				if(wo && ctrl.isAllCompletedStatus){
 					wo.completed = 'Y';
 				}else if(wo && !ctrl.isAllCompletedStatus){
@@ -107,8 +99,8 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS'){
 			serviceUrl = "/p6-portal/web/depot/viewTodo";
 		}
-		console.log('fetching To-Dos for work order: ' + wo.workOrders[0]);
-		console.log('serviceUrl: ' + serviceUrl);
+//		console.log('fetching To-Dos for work order: ' + wo.workOrders[0]);
+//		console.log('serviceUrl: ' + serviceUrl);
 		var query = {};
 		if(angular.isDefined(wo.exctnPckgName) && wo.exctnPckgName !== ""){
 			query = {execPckgName:wo.exctnPckgName};
@@ -116,7 +108,6 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 			query = {workOrderId:wo.workOrders[0]};
 
 		}
-		console.log('request fetching To-Dos for work order: ' + JSON.stringify(query));
 		var req = {
 				method: 'POST',
 				url: serviceUrl,
@@ -126,7 +117,7 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 				data: JSON.stringify(query)
 		};
 		restTemplate.callService(req, function (response) {
-			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
+//			console.log("Received data from server for fetchWOForTODOStatus: " + JSON.stringify(response.data));
 			wo.todoAssignments = [];
 			wo.todoAssignments = response.data.todoAssignments;
 			wo.todoAssignments = ctrl.formathyperLinks(wo.todoAssignments);
@@ -137,7 +128,6 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 					}else{
 						wo.todoAssignments[i].displayWorkOrders = wo.todoAssignments[i].workOrders;
 					}
-					console.log("req by date for fetchWOForTODOStatus: " + JSON.stringify(wo.todoAssignments[i].reqByDate));
 					if(angular.isDefined(wo.todoAssignments[i].reqByDate) && wo.todoAssignments[i].reqByDate !== null && wo.todoAssignments[i].reqByDate !== ""){					
 						wo.todoAssignments[i].reqByDt = new Date(ctrl.formatYYYYMMDate(wo.todoAssignments[i].reqByDate));
 					}
@@ -145,7 +135,7 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 			}
 			wo.schedulingComment = response.data.schedulingComment;
 			wo.deportComment = response.data.deportComment;
-			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
+//			console.log("Work Order after fetch todo: " + JSON.stringify(wo));
 		}, null);
 
 
@@ -179,7 +169,6 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 	}
 	ctrl.formathyperLinks = function(todoAssignments) {
 		for (var i = 0; i< todoAssignments.length; i++){
-			console.log("Inside formathyperLinks URl");
 			todoAssignments[i].displaySupportingDoc = ctrl.formateUrl(todoAssignments[i].supportingDoc);
 			if(todoAssignments[i].displaySupportingDoc!==null && todoAssignments[i].displaySupportingDoc!==""){
 				todoAssignments[i].sdEditMode=false;
@@ -189,12 +178,10 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 	};
 	ctrl.formateUrl = function(urlvalu){
 		if(urlvalu !== null && urlvalu!=="") {
-			console.log("Inside formate URl"+urlvalu);
 			var urlRegex = /(\b(http?|https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
 			urlvalu = urlvalu.replace(urlRegex, function (url) {
 				return '<a href="' + url + '" target="_blank">' + url + '</a>';
 			});
-			console.log("formated  URl"+urlvalu);
 		}
 		return urlvalu;
 	}
@@ -227,7 +214,6 @@ function viewToDoStatusController($scope, ModalService, restTemplate, userAccess
 app.controller('supportingDocPopupController', [
 	'$scope', '$element', 'todo', 'close', 
 	function($scope, $element, todo, close) {
-		console.log('Create Exc called with TODO in popup: ' + JSON.stringify(todo));
 
 		$scope.todo = todo;
 		$scope.leadCrews = $scope.leadCrewList;
@@ -237,11 +223,9 @@ app.controller('supportingDocPopupController', [
 			$scope.todo.sdEditMode = false;
 		}
 		$scope.toggleEditMode = function(todo){
-			console.log("Inside edit URl");
 			$scope.todo.sdEditMode = true;
 		}
 		$scope.toggleNonEditMode = function(todo){
-			console.log("Inside non edit URl");
 			if($scope.todo.supportingDoc==null || $scope.todo.supportingDoc==""){
 				$scope.todo.sdEditMode = true;
 			}else{todo.sdEditMode = false;
@@ -250,12 +234,10 @@ app.controller('supportingDocPopupController', [
 		}
 		$scope.formateUrl = function(urlvalu){
 			if(urlvalu !== null && urlvalu!=="") {
-				console.log("Inside formate URl"+urlvalu);
 				var urlRegex = /(\b(http?|https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
 				urlvalu = urlvalu.replace(urlRegex, function (url) {
 					return '<a href="' + url + '" target="_blank">' + url + '</a>';
 				});
-				console.log("formated  URl"+urlvalu);
 			}
 			return urlvalu;
 		}
@@ -271,7 +253,6 @@ app.controller('supportingDocPopupController', [
 		//  This close function doesn't need to use jQuery or bootstrap, because
 		//  the button has the 'data-dismiss' attribute.
 		$scope.cancel = function() {
-			console.log('$scope.todo in close: ' + JSON.stringify($scope.todo));
 			close({
 				status: 'CANCELLED'
 			}, 500); // close, but give 500ms for bootstrap to animate

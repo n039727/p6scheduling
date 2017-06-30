@@ -80,13 +80,13 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	@Override
 	public ViewToDoStatus fetchDepotTaskForViewToDoStatus(WorkOrderSearchRequest query) throws P6DataAccessException{
 		
-		List<Task> tasks = null;
-		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> toDoAssignments = new HashMap<String, List<ToDoAssignment>>();
-		ExecutionPackage executionPackage = null;
+		List<Task> tasks;
+		Map<String,List<au.com.wp.corp.p6.dto.ToDoAssignment>> toDoAssignments = new HashMap();
+		ExecutionPackage executionPackage;
 		ViewToDoStatus viewToDoStatus = new ViewToDoStatus();
 		if (null != query && (null != query.getExecPckgName() && (!"".equals(query.getExecPckgName())))) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
-			tasks = new ArrayList<Task>(executionPackage.getTasks()); 
+			tasks = new ArrayList(executionPackage.getTasks()); 
 		} else { 
 			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query); 
 		}
@@ -131,7 +131,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					} else {
 						logger.debug("adding  todoname =={} and AssignmentDto {}", toDoName,
 								workOrderId);
-						List<au.com.wp.corp.p6.dto.ToDoAssignment> assignments = new ArrayList<ToDoAssignment>();
+						List<au.com.wp.corp.p6.dto.ToDoAssignment> assignments = new ArrayList();
 						assignments.add(assignmentDTO);
 						toDoAssignments.put(toDoName, assignments);
 					}
@@ -139,7 +139,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			}
 			
 		}
-		Map<String, ToDoAssignment> todoMap = new HashMap<String, ToDoAssignment>();
+		Map<String, ToDoAssignment> todoMap = new HashMap();
 		toDoAssignments.forEach((todoName, assignments) -> {
 			   logger.debug("Merging for ToDo name {}, total assignments records count {}", todoName,
 					   assignments.size());
@@ -150,7 +150,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				todoMap.put(todo, groupedTodoAssignment);
 			});
 		
-		List<ToDoAssignment> listOfTodoAssignments = new ArrayList<ToDoAssignment>(todoMap.values());
+		List<ToDoAssignment> listOfTodoAssignments = new ArrayList(todoMap.values());
 		viewToDoStatus.setTodoAssignments(listOfTodoAssignments);
 		return viewToDoStatus; 
 	}
@@ -165,9 +165,9 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		ToDoAssignment singleMergedTodo = new ToDoAssignment();
 		Set<String> workOrders = new HashSet<>();
 		Set<String> requiredByDate = new HashSet<>();
-		Set<String> status = new HashSet<String>();
-		Set<String> comments = new HashSet<String>();
-		Set<String> supDocLinks = new HashSet<String>();
+		Set<String> status = new HashSet();
+		Set<String> comments = new HashSet();
+		Set<String> supDocLinks = new HashSet();
 		logger.debug("before starting loop for assignments size = {}",assignments);
 		for (Iterator<ToDoAssignment> iterator = assignments.iterator(); iterator.hasNext();) {
 			ToDoAssignment toDoAssignment = (ToDoAssignment) iterator.next();
@@ -217,7 +217,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	public ViewToDoStatus UpdateDepotToDo(ViewToDoStatus workOrder) throws P6BusinessException{
 		if (workOrder != null) {
 
-			List<Task> taskList = new ArrayList<Task>();
+			List<Task> taskList = new ArrayList();
 			if (!StringUtils.isEmpty(workOrder.getExctnPckgName())) {
 				ExecutionPackage pkg = executionPackageDao.fetch(workOrder.getExctnPckgName());
 				taskList.addAll(pkg.getTasks());
@@ -266,7 +266,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 
 		if (workOrder == null)
 			throw new IllegalArgumentException("Work Order canot be null");
-		List<ExecutionPackageDTO> executionPackageDTOList = new ArrayList<ExecutionPackageDTO>();
+		List<ExecutionPackageDTO> executionPackageDTOList = new ArrayList();
 		ExecutionPackageDTO executionPackageDTO = null;
 		List<WorkOrder> workOrderList = new ArrayList<>();
 		if (workOrder.getWorkOrders() != null) {
@@ -414,7 +414,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	@Transactional
 	public List<WorkOrder> fetchDepotTaskForAddUpdateToDo(WorkOrderSearchRequest query) throws P6BusinessException {
 
-		List<Task> tasks = null;
+		List<Task> tasks;
 		ExecutionPackage executionPackage = null;
 		logger.debug("ExecPckgName >>>>{}", query.getExecPckgName());
 		logger.debug("WorkOrderId >>>>{}", query.getWorkOrderId());
@@ -425,8 +425,8 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
 		}
 
-		Map<String, WorkOrder> workOrderMap = new HashMap<String, WorkOrder>();
-		Map<String, Map<Long, ToDoItem>> workOrderToDoMap = new HashMap<String, Map<Long, ToDoItem>>();
+		Map<String, WorkOrder> workOrderMap = new HashMap();
+		Map<String, Map<Long, ToDoItem>> workOrderToDoMap = new HashMap();
 
 		for (Task task : tasks) {
 
@@ -453,7 +453,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				else{
 					executionPkg = task.getTaskId();
 				}
-				List<String> workOrders = new ArrayList<String>();
+				List<String> workOrders = new ArrayList();
 				workOrders.add(task.getTaskId());
 				workOrder.setWorkOrders(workOrders);
 				workOrder.setLeadCrew(task.getLeadCrewId());
@@ -463,7 +463,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				if (StringUtils.isEmpty(workOrder.getDepotToDoComment())) {
 					workOrder.setDepotToDoComment(task.getDeptCmt());
 				}
-				toDoMap = new HashMap<Long, ToDoItem>();
+				toDoMap = new HashMap();
 				workOrderMap.put(executionPkg, workOrder);
 			}
 
@@ -478,7 +478,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 						String toDoName = todoDAO.getToDoName(todoId);
 						item.setToDoName(toDoName);
 						item.setTypeId(todoDAO.getTypeId(toDoName));
-						List<String> workOrders = new ArrayList<String>();
+						List<String> workOrders = new ArrayList();
 						workOrders.add(todo.getTodoAssignMentPK().getTask().getTaskId());
 						item.setWorkOrders(workOrders);
 						toDoMap.put(todoId, item);
@@ -488,7 +488,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			}
 		}
 
-		List<WorkOrder> workOrders = new ArrayList<WorkOrder>(workOrderMap.values());
+		List<WorkOrder> workOrders = new ArrayList(workOrderMap.values());
 		for (WorkOrder workOrder : workOrders) {
 			String executionPkg = workOrder.getExctnPckgName();
 			if (StringUtils.isEmpty(executionPkg)) {
