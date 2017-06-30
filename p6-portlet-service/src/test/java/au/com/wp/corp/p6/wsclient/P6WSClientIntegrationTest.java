@@ -146,7 +146,7 @@ public class P6WSClientIntegrationTest {
 	@Test
 	public void test_7_LogoutFromP6 (){
 		RequestTrackingId trackingId = new RequestTrackingId();
-		boolean status = p6WSClient.logoutFromP6(trackingId);
+		boolean status = p6WSClient.logoutFromP6(trackingId, true);
 		Assert.assertTrue(status);
 	}
 	
@@ -156,7 +156,7 @@ public class P6WSClientIntegrationTest {
 		Entry<String, Integer> entryInMap = p6WSClient.getWorkOrderIdMap().entrySet().iterator().next();
 		Integer foreignObjectId = entryInMap.getValue();
 		foreignIds.add(foreignObjectId);
-		Boolean  success = p6WSClient.removeExecutionPackage(foreignIds);
+		Boolean  success = p6WSClient.removeExecutionPackage(foreignIds, true);
 		logger.info("success {}",success);
 		Assert.assertNotNull(success);
 
@@ -166,7 +166,7 @@ public class P6WSClientIntegrationTest {
 		List<Integer> foreignIds = new ArrayList<Integer>();
 		foreignIds.add(null);
 		p6WSClient.getWorkOrderIdMap().put("05236356002", 0);
-		Boolean  success = p6WSClient.removeExecutionPackage(foreignIds);
+		Boolean  success = p6WSClient.removeExecutionPackage(foreignIds, true);
 		logger.info("success {}",success);
 		Assert.assertNotNull(success);
 

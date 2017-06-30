@@ -288,9 +288,9 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					Optional<Task> task = findTask(tasksInDb, workOrderId);
 					Task dbTask = task.isPresent() ? task.get() : new Task();
 					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
-					if (!StringUtils.isEmpty(dbTask.getCrewId())) {					
+					/*if (!StringUtils.isEmpty(dbTask.getCrewId())) {					
 						workOrder.getCrewAssigned().add(dbTask.getCrewId());
-					}
+					}*/
 					workOrder.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate(),"/"));
 					if (dbTask.getExecutionPackage() != null) {
 						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());

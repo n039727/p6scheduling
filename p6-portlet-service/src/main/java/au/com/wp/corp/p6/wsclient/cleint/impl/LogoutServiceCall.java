@@ -72,6 +72,7 @@ public class LogoutServiceCall extends AbstractSOAPCall<LogoutResponse> {
 		LogoutResponse status;
 		try {
 			status = servicePort.logout(null);
+			CacheManager.getWsHeaders().clear();
 		} catch (Exception e) {
 			throw new P6ServiceException(e);
 		}
