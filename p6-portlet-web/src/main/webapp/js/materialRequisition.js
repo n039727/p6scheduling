@@ -8,7 +8,6 @@ function materialRequisitionResultController($scope, restTemplate, userAccessSer
 			//ctrl.isReadOnly = true;
 		}
 	}	
-	console.log('data received in material req.: ' + JSON.stringify(ctrl.data));
 	ctrl.toggleExpansion  = function($event, wo) {
 		var button = $event.target;
 		
@@ -31,8 +30,6 @@ function materialRequisitionResultController($scope, restTemplate, userAccessSer
 			}
 		}
 		query.workOrderList = workOrderArr.unique();
-		console.log('fetching Material Requisition for : ' + JSON.stringify(query));
-		
 		var req = {
 				method: 'POST',
 				url: serviceUrl,
@@ -45,7 +42,6 @@ function materialRequisitionResultController($scope, restTemplate, userAccessSer
 		
 		restTemplate.callService(req, function (response) {
 			wo.woMatReqMap = response.data.materialRequisitionMap;
-			console.log("wo.woMatReqMap: " + JSON.stringify(wo.woMatReqMap));
 			if(wo.woMatReqMap){
 				wo.woReqs = [];
 				for ( wos in wo.woMatReqMap) {
