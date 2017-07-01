@@ -17,12 +17,6 @@
            p:username="${elips.db.connection.username}"
            p:password="${elips.db.connection.password}" />
 
-	<!-- Mapper Factory Bean to intialize and register mappers -->
-	<bean id="ellipseDataMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<property name="mapperInterface" value="au.com.wp.corp.p6.integration.dao.mapper.P6EllipseMapper" />
-		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
-	</bean>
-
 	<!-- define the SqlSessionFactory, notice that configLocation is not needed 
 		when you use MapperFactoryBean -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
@@ -42,6 +36,12 @@
 	<bean id="ellipseTansactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
 		p:dataSource-ref="ellispeDataSource" />
+		
+		<!-- Mapper Factory Bean to intialize and register mappers -->
+	<bean id="ellipseDataMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="au.com.wp.corp.p6.integration.dao.mapper.P6EllipseMapper" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
 
 	<!-- **********************Configuration for P6 Portal ***************************************** -->
 

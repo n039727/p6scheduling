@@ -446,10 +446,10 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 						objectFactory.createActivityPrimaryResourceObjectId(p6ActivityDTO.getPrimaryResorceObjectId()));
 			activity.setPrimaryResourceId(p6ActivityDTO.getWorkGroup());
 
-			if (p6ActivityDTO.getOriginalDuration() > 0)
+			if (p6ActivityDTO.getOriginalDuration() > -1)
 				activity.setPlannedDuration(p6ActivityDTO.getOriginalDuration());
 
-			if (p6ActivityDTO.getRemainingDuration() > 0) {
+			if (p6ActivityDTO.getRemainingDuration() > -1) {
 				activity.setRemainingDuration(
 						objectFactory.createActivityRemainingDuration(p6ActivityDTO.getRemainingDuration()));
 			}

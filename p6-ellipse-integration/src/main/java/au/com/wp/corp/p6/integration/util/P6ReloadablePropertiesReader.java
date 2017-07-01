@@ -22,10 +22,6 @@ public class P6ReloadablePropertiesReader {
 
 	private static PropertiesConfiguration configuration;
 	
-	private P6ReloadablePropertiesReader(){
-		
-	}
-
 	/**
 	 * 
 	 */

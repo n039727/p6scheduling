@@ -42,10 +42,18 @@ public class P6ActivityDTO implements Serializable {
 	private String eGIUDF;
 
 	private String equipmentCodeUDF;
+	
+	/**
+	 * Default value -1 is required as the double variable default value is 0.0
+	 * but originalDuration can be 0.0
+	 */
+	private double originalDuration = -1;
 
-	private double originalDuration;
-
-	private double remainingDuration;
+	/**
+	 * Default value -1 is required as the double variable default value is 0.0
+	 * but remainingDuration can be 0.0
+	 */
+	private double remainingDuration = -1;
 
 	private String requiredByDateUDF;
 

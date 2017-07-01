@@ -33,6 +33,16 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>au.com.wp.corp.integration</groupId>
+			<artifactId>genos-dto</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>au.com.wp.corp.integration</groupId>
+			<artifactId>genos-client</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
 			<groupId>com.wp.snow</groupId>
 			<artifactId>SNowConnector</artifactId>
 			<version>1.10</version>
@@ -193,7 +203,7 @@
 
 
 
-		<!-- Aspect J -->
+		<!-- Test dependency -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -206,6 +216,36 @@
 			<version>12.1.0.2</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>1.5.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4-rule-agent</artifactId>
+			<version>1.5.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-classloading-xstream</artifactId>
+			<version>1.5.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>1.5.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4-rule</artifactId>
+			<version>1.5.5</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>p6-ellipse-integration</finalName>

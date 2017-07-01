@@ -29,11 +29,16 @@ public class ReadEllipseThread implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(ReadEllipseThread.class);
 	private P6EllipseDAO p6EllipseDAO;
 	private final List<String> workgroupList;
+	private final P6IntegrationExceptionHandler exceptionHandler;
 
-	public ReadEllipseThread(final P6EllipseDAO p6EllipseDAO, final List<String> workgroupList) {
+	public ReadEllipseThread(final P6EllipseDAO p6EllipseDAO, final List<String> workgroupList,
+			final P6IntegrationExceptionHandler exceptionHandler) {
 		this.p6EllipseDAO = p6EllipseDAO;
 		this.workgroupList = workgroupList;
-		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadWriteProcessStatus.STARTED);
+		this.exceptionHandler = exceptionHandler;
+
+		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS,
+				ReadWriteProcessStatus.STARTED);
 	}
 
 	/**
@@ -45,10 +50,6 @@ public class ReadEllipseThread implements Runnable {
 		final long startTime = System.currentTimeMillis();
 		Map<String, EllipseActivityDTO> activities = CacheManager.getEllipseActivitiesMap();
 
-		final String readingStrategy = P6ReloadablePropertiesReader.getProperty("ELLIPSE_READING_STRATEGY");
-
-		logger.debug("Ellipse reading strategy # {}", readingStrategy);
-
 		readEllipse(startTime, activities, workgroupList);
 	}
 
@@ -57,19 +58,20 @@ public class ReadEllipseThread implements Runnable {
 	 * @param activities
 	 */
 	private void readEllipse(final long startTime, Map<String, EllipseActivityDTO> activities,
-			final List<String> workgroupList){
+			final List<String> workgroupList) {
 		try {
 			for (EllipseActivityDTO activityDTO : p6EllipseDAO.readElipseWorkorderDetails(workgroupList)) {
 				activities.put(activityDTO.getWorkOrderTaskId(), activityDTO);
 			}
 			logger.debug("Size of activities from Ellipse # {}", activities.size());
 			logger.debug("Time taken to read record from Ellipse # {} ", System.currentTimeMillis() - startTime);
-			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS,
-					ReadWriteProcessStatus.COMPLETED);
 		} catch (P6DataAccessException e) {
 			logger.error("An error occurs while reading record from Ellipse : ", e);
-			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS, ReadWriteProcessStatus.FAILED);
-			P6IntegrationExceptionHandler.handleException(new P6DataAccessException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause()));
+			exceptionHandler
+					.handleException(new P6DataAccessException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause()));
+		} finally {
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS,
+					ReadWriteProcessStatus.COMPLETED);
 		}
 	}
 
