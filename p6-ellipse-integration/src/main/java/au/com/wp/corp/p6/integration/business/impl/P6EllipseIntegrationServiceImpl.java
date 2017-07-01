@@ -393,7 +393,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					&& CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadWriteProcessStatus.COMPLETED) {
 				break;
-			} 
+			}
 
 			try {
 				Thread.currentThread().sleep(sleepTimeLong);
@@ -443,8 +443,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 
 		} else if ((null != projectWorkgroup.get(p6Activity.getWorkGroup())
-				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox()
-				&& !projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y))
+				&& null == projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox())
 				&& null != p6Activity.getPlannedStartDate()
 				&& !dateUtil.isSameDate(p6Activity.getPlannedStartDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 						ellipseActivity.getPlannedStartDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)) {

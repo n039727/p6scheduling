@@ -24,9 +24,7 @@ import com.mincom.ews.service.connectivity.RunAs;
 import com.mincom.ews.service.transaction.Begin;
 import com.mincom.ews.service.transaction.BeginResponse;
 import com.mincom.ews.service.transaction.Commit;
-import com.mincom.ews.service.transaction.CommitResponse;
 import com.mincom.ews.service.transaction.Rollback;
-import com.mincom.ews.service.transaction.RollbackResponse;
 
 import au.com.wp.corp.integration.ellipsews.transaction.TransactionWsClient;
 import au.com.wp.corp.integration.ellipsews.workordertask.WorkOrderTaskWsClient;
@@ -126,7 +124,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				noOfActvtyTobeProccessedAtATime);
 
 		List<EllipseActivityDTO> ellipseActivities;
-		int noOfIteration = activities.size() > 0 ? (activities.size() / noOfActvtyTobeProccessedAtATime) + 1 : 0;
+		int noOfIteration = !activities.isEmpty() ? (activities.size() / noOfActvtyTobeProccessedAtATime) + 1 : 0;
 
 		for (int i = 0; i < noOfIteration; i++) {
 			String transId = startTransaction();
@@ -152,36 +150,43 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			ellipseActivities = activities.subList(startIndex, endIndex);
 			for (EllipseActivityDTO activity : ellipseActivities) {
 				workorderTask = getWorkOrderNoWithPrefixAndTask(activity.getWorkOrderTaskId());
-				workOrder = new WorkOrderDTO();
-				workOrder.setNo(workorderTask.get(WORK_ORDER));
-				workOrder.setPrefix(workorderTask.get(PREFIX));
-				woTaskModifyDTO = new WorkOrderTaskServiceModifyRequestDTO();
-				woTaskModifyDTO.setWorkOrder(workOrder);
-				woTaskModifyDTO.setWOTaskNo(workorderTask.get(TASK_NO));
-				if (null != activity.getWorkGroup() && !activity.getWorkGroup().trim().isEmpty())
-					woTaskModifyDTO.setWorkGroup(activity.getWorkGroup());
 
-				final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
-						DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
-				if (null != plantStrDate && !plantStrDate.trim().isEmpty()) {
-					woTaskModifyDTO.setPlanStrDate(plantStrDate);
-				} else if (activity.getPlannedStartDate().isEmpty() && null == activity.getPlannedFinishDate()) {
-					woTaskModifyDTO.setPlanStrDate("");
-					woTaskModifyDTO.setPlanFinDate("");
+				if (!workorderTask.isEmpty()) {
+					workOrder = new WorkOrderDTO();
+					workOrder.setNo(workorderTask.get(WORK_ORDER));
+					workOrder.setPrefix(workorderTask.get(PREFIX));
+					woTaskModifyDTO = new WorkOrderTaskServiceModifyRequestDTO();
+					woTaskModifyDTO.setWorkOrder(workOrder);
+					woTaskModifyDTO.setWOTaskNo(workorderTask.get(TASK_NO));
+					if (null != activity.getWorkGroup() && !activity.getWorkGroup().trim().isEmpty())
+						woTaskModifyDTO.setWorkGroup(activity.getWorkGroup());
 
+					final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
+							DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
+					if (null != plantStrDate && !plantStrDate.trim().isEmpty()) {
+						woTaskModifyDTO.setPlanStrDate(plantStrDate);
+					} else if (activity.getPlannedStartDate().isEmpty() && null == activity.getPlannedFinishDate()) {
+						woTaskModifyDTO.setPlanStrDate("");
+						woTaskModifyDTO.setPlanFinDate("");
+
+					}
+					if (null != activity.getTaskUserStatus() && !activity.getTaskUserStatus().trim().isEmpty())
+						woTaskModifyDTO.setTaskStatusU(activity.getTaskUserStatus());
+
+					arrayModify.getWorkOrderTaskServiceModifyRequestDTO().add(woTaskModifyDTO);
+					multipleModify.setRequestParameters(arrayModify);
 				}
-				if (null != activity.getTaskUserStatus() && !activity.getTaskUserStatus().trim().isEmpty())
-					woTaskModifyDTO.setTaskStatusU(activity.getTaskUserStatus());
-
-				arrayModify.getWorkOrderTaskServiceModifyRequestDTO().add(woTaskModifyDTO);
-				multipleModify.setRequestParameters(arrayModify);
 			}
 			logger.debug("Updating ellipse with list of work order task -{}",
 					arrayModify.getWorkOrderTaskServiceModifyRequestDTO().size());
 			try {
-				MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
-				if (response.getOut() != null)
-					commitTransaction(transId);
+				if (null != multipleModify.getRequestParameters()
+						&& null != multipleModify.getRequestParameters().getWorkOrderTaskServiceModifyRequestDTO()
+						&& !multipleModify.getRequestParameters().getWorkOrderTaskServiceModifyRequestDTO().isEmpty()) {
+					MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
+					if (response.getOut() != null)
+						commitTransaction(transId);
+				}
 			} catch (Exception e) {
 				rollbackTransaction(transId);
 				throw new P6ServiceException(e);

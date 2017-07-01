@@ -1405,7 +1405,6 @@ public class P6EllipseIntegrationServiceTest {
 
 		EllipseActivityDTO ellipseAtivityDTO = (EllipseActivityDTO) method.invoke(p6EllipseIntegrationService,
 				p6Activity, ellipseActivity, projectWorkGropMap);
-		System.out.println("ellipseAtivityDTO.getWorkOrderTaskId" + ellipseAtivityDTO.getWorkOrderTaskId());
 		Assert.assertEquals(p6Activity.getActivityId(), ellipseAtivityDTO.getWorkOrderTaskId());
 		Mockito.when(dateUtil.convertDateToString(ellipseAtivityDTO.getPlannedStartDate(),
 				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
