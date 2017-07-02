@@ -63,16 +63,17 @@ public class ReadEllipseThread implements Runnable {
 			for (EllipseActivityDTO activityDTO : p6EllipseDAO.readElipseWorkorderDetails(workgroupList)) {
 				activities.put(activityDTO.getWorkOrderTaskId(), activityDTO);
 			}
-			logger.debug("Size of activities from Ellipse # {}", activities.size());
-			logger.debug("Time taken to read record from Ellipse # {} ", System.currentTimeMillis() - startTime);
+			logger.info("Size of activities from Ellipse # {}", activities.size());
+			logger.info("Time taken to read record from Ellipse # {} ", System.currentTimeMillis() - startTime);
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS,
+					ReadWriteProcessStatus.COMPLETED);
 		} catch (P6DataAccessException e) {
 			logger.error("An error occurs while reading record from Ellipse : ", e);
 			exceptionHandler
 					.handleException(new P6DataAccessException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause()));
-		} finally {
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_READ_STATUS,
-					ReadWriteProcessStatus.COMPLETED);
-		}
+					ReadWriteProcessStatus.FAILED);
+		} 
 	}
 
 }

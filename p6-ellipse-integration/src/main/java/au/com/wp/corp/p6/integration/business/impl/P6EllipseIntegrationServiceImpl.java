@@ -83,7 +83,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 */
 	@Override
 	public boolean readUDFTypeMapping() throws P6BusinessException {
-		logger.info("Initiates P6 Portal Reading thread ....");
+		logger.info("Initiates P6 UDF Types Reading thread ....");
 		boolean status = false;
 		Map<String, UDFTypeDTO> udfTypeMap = CacheManager.getP6UDFTypeMap();
 
@@ -109,7 +109,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 */
 	@Override
 	public boolean readProjectWorkgroupMapping() throws P6BusinessException {
-		logger.info("Initiates P6 Portal Reading thread ....");
+		logger.info("Initiates P6 Project Workgroup mapping Reading thread ....");
 		final long startTime = System.currentTimeMillis();
 		boolean status = false;
 
@@ -155,11 +155,11 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 		}
 		status = true;
-		logger.debug("Size of project resource/workgroup mapping from P6 Portal# {}", projectWorkgroupMap.size());
-		logger.debug("Size of project resource/workgroup mapping List from P6 Portal# {}",
+		logger.info("Size of project resource/workgroup mapping from P6 Portal# {}", projectWorkgroupMap.size());
+		logger.info("Size of project resource/workgroup mapping List from P6 Portal# {}",
 				projectWorkgroupListMap.size());
 
-		logger.debug("Time taken to read record from P6 Portal # {} ", System.currentTimeMillis() - startTime);
+		logger.info("Time taken to read record from P6 Portal # {} ", System.currentTimeMillis() - startTime);
 
 		return status;
 
@@ -172,7 +172,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 * getActivityTobeUpdatedInP6()
 	 */
 	public void updateActivitiesInP6(final List<P6ActivityDTO> updateActivityP6Set) {
-		logger.debug("update activites in p6 - number of activities # {}", updateActivityP6Set.size());
+		logger.info("update activites in p6 - number of activities # {}", updateActivityP6Set.size());
 		UpdateP6ActivityThread thread = new UpdateP6ActivityThread(updateActivityP6Set, p6WSClient, exceptionHandler);
 		new Thread(thread).start();
 	}
@@ -184,14 +184,14 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 * getActivityTobeDeletedInP6()
 	 */
 	public void deleteActivityInP6(final List<P6ActivityDTO> deleteActivityP6Set) {
-		logger.debug("delete activites in p6 - number of activities # {}", deleteActivityP6Set.size());
+		logger.info("delete activites in p6 - number of activities # {}", deleteActivityP6Set.size());
 		DeleteP6ActivityThread thread = new DeleteP6ActivityThread(deleteActivityP6Set, p6WSClient, exceptionHandler);
 		new Thread(thread).start();
 
 	}
 
 	public void updateActivitiesInEllipse(final List<EllipseActivityDTO> updateActivityEllipseSet) {
-		logger.debug("update activites in Ellipse - number of activities # {}", updateActivityEllipseSet.size());
+		logger.info("update activites in Ellipse - number of activities # {}", updateActivityEllipseSet.size());
 		UpdateEllipseActivityThread thread = new UpdateEllipseActivityThread(updateActivityEllipseSet, ellipseWSClient,
 				exceptionHandler);
 		new Thread(thread).start();
@@ -205,7 +205,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 */
 	public void createActivityInP6(final List<P6ActivityDTO> createActivityP6Set,
 			final List<P6ActivityDTO> deleteActivityP6BforCreate) {
-		logger.debug("create activites in p6 - number of activities # {} and delete activites in p6 - {} ",
+		logger.info("create activites in p6 - number of activities # {} and delete activites in p6 - {} ",
 				createActivityP6Set.size(), deleteActivityP6BforCreate.size());
 		CreateP6ActivityThread thread = new CreateP6ActivityThread(createActivityP6Set, deleteActivityP6BforCreate,
 				p6WSClient, exceptionHandler);
@@ -302,7 +302,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					.get(ProcessStatus.ELLIPSE_READ_STATUS) == ReadWriteProcessStatus.FAILED
 					|| CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_READ_STATUS) == ReadWriteProcessStatus.FAILED) {
-				throw new P6BusinessException(P6ExceptionType.SYSTEM_ERROR.name());
+				throw new P6BusinessException();
 			}
 
 			try {

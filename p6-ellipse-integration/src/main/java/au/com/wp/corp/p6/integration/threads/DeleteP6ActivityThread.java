@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
-import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
 import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
@@ -50,7 +49,7 @@ public class DeleteP6ActivityThread implements Runnable {
 		} catch (P6ServiceException e) {
 			logger.error("An error occur while deleting activities in P6 ", e);
 						
-			exceptionHandler.handleDataExeception(e);
+			exceptionHandler.handleException(e);
 		} finally{
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_DELETE_STATUS,
 					ReadWriteProcessStatus.COMPLETED);

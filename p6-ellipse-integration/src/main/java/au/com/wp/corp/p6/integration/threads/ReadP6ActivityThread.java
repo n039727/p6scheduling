@@ -47,14 +47,14 @@ public class ReadP6ActivityThread implements Runnable {
 			for (P6ActivityDTO activityDTO : p6WSClient.readActivities(projectId)) {
 				activities.put(activityDTO.getActivityId(), activityDTO);
 			}
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadWriteProcessStatus.COMPLETED);
 		} catch (P6ServiceException e) {
 			logger.error("An error occurs while reading P6 activity : ", e);
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadWriteProcessStatus.FAILED);
 			exceptionHandler.handleException(e);
-		} finally{
-			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_READ_STATUS, ReadWriteProcessStatus.COMPLETED);
-		}
-		logger.debug("Size of activities from P6 # {}", activities.size());
-		logger.debug("Time taken to read record from P6 # {} ", System.currentTimeMillis() - startTime);
+		} 
+		logger.info("Size of activities from P6 # {}", activities.size());
+		logger.info("Time taken to read record from P6 # {} ", System.currentTimeMillis() - startTime);
 		
 		
 

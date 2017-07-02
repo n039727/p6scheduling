@@ -46,7 +46,7 @@ public class UpdateP6ActivityThread implements Runnable {
 				p6WSClient.updateActivities(updateActivityP6Set);
 		} catch (P6ServiceException e) {
 			logger.error("An error occur while updating activities in P6 ", e);
-			exceptionHandler.handleDataExeception(e);
+			exceptionHandler.handleException(e);
 		}finally {
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_UPDATE_STATUS,
 					ReadWriteProcessStatus.COMPLETED);

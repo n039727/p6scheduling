@@ -30,6 +30,7 @@ import au.com.wp.corp.integration.ellipsews.transaction.TransactionWsClient;
 import au.com.wp.corp.integration.ellipsews.workordertask.WorkOrderTaskWsClient;
 import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
 import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
+import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.DateUtil;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
@@ -37,6 +38,8 @@ import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.integration.wsclient.ellipse.EllipseWSClient;
 
 /**
+ * invokes ellipse web service
+ * 
  * @author N039126
  * @version 1.0
  */
@@ -61,6 +64,9 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 
 	@Autowired
 	TransactionWsClient transactionWsClient;
+	
+	@Autowired
+	P6IntegrationExceptionHandler exceptionHandler;
 
 	public String startTransaction() throws P6ServiceException {
 		BeginResponse beginResponse;
@@ -203,6 +209,8 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			workOrderMap.put(PREFIX, matcher.group(1));
 			workOrderMap.put(WORK_ORDER, matcher.group(2));
 			workOrderMap.put(TASK_NO, matcher.group(3));
+		} else {
+			exceptionHandler.handleException(new P6ServiceException("Invalid work order from P6 - workorder task - " + workorderTaskId));
 		}
 		logger.debug("Workorder task - {} after tokenize # {}", workorderTaskId, workOrderMap);
 		return workOrderMap;

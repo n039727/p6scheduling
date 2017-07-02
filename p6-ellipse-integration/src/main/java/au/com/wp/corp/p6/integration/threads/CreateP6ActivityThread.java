@@ -59,7 +59,7 @@ public class CreateP6ActivityThread implements Runnable {
 				p6WSClient.createActivities(createActivityP6Set);
 		} catch (P6ServiceException e) {
 			logger.error("An error occur while creating activities in P6 ", e);
-			exceptionHandler.handleDataExeception(e);
+			exceptionHandler.handleException(e);
 		} finally {
 			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.P6_ACTIVITY_CREATE_STATUS,
 					ReadWriteProcessStatus.COMPLETED);

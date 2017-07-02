@@ -77,7 +77,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 */
 	@Override
 	public List<P6ActivityDTO> readActivities(final Integer projectId) throws P6ServiceException {
-		logger.info("Calling activity service in P6 Webservice ...");
+		logger.info("Calling read activity service in P6 Webservice ...");
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
 
@@ -308,15 +308,15 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			throw new P6ServiceException("List of activties can't be null or empty");
 		}
 
-		logger.info("Creating activites in P6 ... number of activites # {}", activities.size());
+		logger.info("Create/update activites in P6 ... number of activites # {}", activities.size());
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		getAuthenticated(trackingId);
 
 		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty(NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6);
-		logger.debug("Defined P6 UDFValueService webservice call trigger value# {}", chunkSizeStr);
+		logger.debug("Defined P6 webservice call trigger value# {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
 		int crdActivitySize = activities.size();
-		logger.debug("Number of calls to P6 UDFValue web service # {}", (crdActivitySize / chunkSize) + 1);
+		logger.info("Number of calls to P6 web service create/update Activity # {}", (crdActivitySize / chunkSize) + 1);
 
 		for (int i = 0; i < (crdActivitySize / chunkSize) + 1; i++) {
 			final Map<String, P6ActivityDTO> activityMap = new HashMap<>();
@@ -324,7 +324,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			final List<Activity> crtdActivities = constructActivities(activities, chunkSize, i, activityMap);
 
 			if (isCreateActivities && !crtdActivities.isEmpty()) {
-				logger.debug("Creating activites in P6...................");
+				logger.info("Creating activites service call in P6...................");
 				final ActivityServiceCall<List<Integer>> crActivityService = new CreateActivityServiceCall(trackingId,
 						crtdActivities);
 				final Holder<List<Integer>> activityIds = crActivityService.run();
@@ -361,7 +361,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 				crdActivityFileds.addAll(activityMap.values());
 				createActivityFieldsUDF(trackingId, crdActivityFileds);
 			} else if (!crtdActivities.isEmpty()) {
-				logger.debug("Updating activites in P6 ........................");
+				logger.info("Update activity service call in P6 ........................");
 				final ActivityServiceCall<Boolean> crActivityService = new UpdateActivityServiceCall(trackingId,
 						crtdActivities);
 				final Holder<Boolean> status = crActivityService.run();
@@ -403,8 +403,6 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			if (null != p6ActivityDTO.getActivityStatus() && !p6ActivityDTO.getActivityStatus().trim().isEmpty())
 				activity.setStatus(p6ActivityDTO.getActivityStatus());
 
-			// logger.debug("plan start date for p6 ## {}",
-			// p6ActivityDTO.getPlannedStartDate());
 			if (null != p6ActivityDTO.getPlannedStartDate() && !p6ActivityDTO.getPlannedStartDate().trim().isEmpty()) {
 				final XMLGregorianCalendar plannedStartDate = dateUtil
 						.convertStringToXMLGregorianClalander(p6ActivityDTO.getPlannedStartDate());
@@ -434,13 +432,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			}
 
 			activity.setProjectObjectId(p6ActivityDTO.getProjectObjectId());
-			// logger.debug("p6ActivityDTO.getActivityObjectId() #{} ",
-			// p6ActivityDTO.getActivityObjectId());
 			if (p6ActivityDTO.getActivityObjectId() != null)
 				activity.setObjectId(p6ActivityDTO.getActivityObjectId());
 
-			// logger.debug("PrimaryResorceObjectId # {} ",
-			// p6ActivityDTO.getPrimaryResorceObjectId());
 			if (p6ActivityDTO.getPrimaryResorceObjectId() != 0)
 				activity.setPrimaryResourceObjectId(
 						objectFactory.createActivityPrimaryResourceObjectId(p6ActivityDTO.getPrimaryResorceObjectId()));
@@ -766,10 +760,10 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		getAuthenticated(trackingId);
 
 		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty(NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6);
-		logger.debug("Defined P6 UDFValueService webservice call trigger value # {}", chunkSizeStr);
+		logger.debug("Defined P6 delete activity webservice call trigger value # {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
 		int deleteActivitySize = activities.size();
-		logger.debug("Number of calls to P6 UDFValue web service #{}", (deleteActivitySize / chunkSize) + 1);
+		logger.info("Number of calls to P6 delete activity web service #{}", (deleteActivitySize / chunkSize) + 1);
 		Holder<Boolean> status = null;
 		for (int i = 0; i < (deleteActivitySize / chunkSize) + 1; i++) {
 

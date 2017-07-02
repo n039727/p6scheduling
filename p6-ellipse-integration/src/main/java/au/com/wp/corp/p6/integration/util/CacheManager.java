@@ -4,6 +4,7 @@
 
 package au.com.wp.corp.p6.integration.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +38,21 @@ public class CacheManager {
 	private static Map<Integer, List<UDFValue>> udfValueMap = null;
 
 	private static Map<String, Integer> projectsMap = null;
+	
+	private static List<Exception> dataErrors = null;
+	
+	
 
 	private CacheManager() {
 
+	}
+	
+	
+	public static final List<Exception> getDataErrors()
+	{
+		if ( null == dataErrors)
+			dataErrors = new ArrayList<>();
+		return dataErrors;
 	}
 
 	public static final Map<String, Integer> getProjectsMap() {
