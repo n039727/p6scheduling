@@ -284,7 +284,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			} catch (P6ServiceException e) {
 				logger.error("Error occurs during logout - ", e);
 			}
-			logger.debug("Is logout successfull ??  {} ", status);
+			logger.info("Is logout successfull ??  {} ", status);
 		}
 
 		return status;
