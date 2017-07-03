@@ -77,7 +77,7 @@
 		ELSE
 		CASE
 		WHEN est_lab_hrs > 0 THEN est_lab_hrs / 5
-		ELSE 8
+		ELSE 0
 		END
 		END)
 		AS original_duration_hours,
@@ -88,7 +88,7 @@
 		ELSE
 		CASE
 		WHEN est_lab_hrs > 0 THEN est_lab_hrs / 5
-		ELSE 8
+		ELSE 0
 		END
 		END)
 		AS remaining_dur_hours,

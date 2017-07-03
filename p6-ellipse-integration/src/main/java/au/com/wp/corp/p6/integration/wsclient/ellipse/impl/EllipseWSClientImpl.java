@@ -24,14 +24,13 @@ import com.mincom.ews.service.connectivity.RunAs;
 import com.mincom.ews.service.transaction.Begin;
 import com.mincom.ews.service.transaction.BeginResponse;
 import com.mincom.ews.service.transaction.Commit;
-import com.mincom.ews.service.transaction.CommitResponse;
 import com.mincom.ews.service.transaction.Rollback;
-import com.mincom.ews.service.transaction.RollbackResponse;
 
 import au.com.wp.corp.integration.ellipsews.transaction.TransactionWsClient;
 import au.com.wp.corp.integration.ellipsews.workordertask.WorkOrderTaskWsClient;
 import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
 import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
+import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.DateUtil;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
@@ -39,6 +38,8 @@ import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.integration.wsclient.ellipse.EllipseWSClient;
 
 /**
+ * invokes ellipse web service
+ * 
  * @author N039126
  * @version 1.0
  */
@@ -63,6 +64,9 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 
 	@Autowired
 	TransactionWsClient transactionWsClient;
+	
+	@Autowired
+	P6IntegrationExceptionHandler exceptionHandler;
 
 	public String startTransaction() throws P6ServiceException {
 		BeginResponse beginResponse;
@@ -104,7 +108,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e.getCause());
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -112,8 +116,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 	 * updateActivitiesEllipse(java.util.List)
 	 */
 	@Override
-	public void updateActivitiesEllipse(List<EllipseActivityDTO> activities)
-			throws P6ServiceException {
+	public void updateActivitiesEllipse(List<EllipseActivityDTO> activities) throws P6ServiceException {
 		logger.info("Updating activities in Ellipse..");
 		int noOfActvtyTobeProccessedAtATime;
 		try {
@@ -127,9 +130,10 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				noOfActvtyTobeProccessedAtATime);
 
 		List<EllipseActivityDTO> ellipseActivities;
-		int noOfIteration = (activities.size() / noOfActvtyTobeProccessedAtATime) + 1;
+		int noOfIteration = !activities.isEmpty() ? (activities.size() / noOfActvtyTobeProccessedAtATime) + 1 : 0;
+
 		for (int i = 0; i < noOfIteration; i++) {
-			String transId =startTransaction();
+			String transId = startTransaction();
 			MultipleModify multipleModify = new MultipleModify();
 			OperationContext operationContext = new OperationContext();
 			operationContext.setRunAs(new RunAs());
@@ -141,8 +145,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			WorkOrderTaskServiceModifyRequestDTO woTaskModifyDTO;
 			WorkOrderDTO workOrder;
 			Map<String, String> workorderTask;
-			
-			
+
 			arrayModify = new ArrayOfWorkOrderTaskServiceModifyRequestDTO();
 			int startIndex = i * noOfActvtyTobeProccessedAtATime;
 			int endIndex = ((i + 1) * noOfActvtyTobeProccessedAtATime - 1) < activities.size()
@@ -153,37 +156,43 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			ellipseActivities = activities.subList(startIndex, endIndex);
 			for (EllipseActivityDTO activity : ellipseActivities) {
 				workorderTask = getWorkOrderNoWithPrefixAndTask(activity.getWorkOrderTaskId());
-				workOrder = new WorkOrderDTO();
-				workOrder.setNo(workorderTask.get(WORK_ORDER));
-				workOrder.setPrefix(workorderTask.get(PREFIX));
-				woTaskModifyDTO = new WorkOrderTaskServiceModifyRequestDTO();
-				woTaskModifyDTO.setWorkOrder(workOrder);
-				woTaskModifyDTO.setWOTaskNo(workorderTask.get(TASK_NO));
-				if (null != activity.getWorkGroup() && !activity.getWorkGroup().trim().isEmpty())
-					woTaskModifyDTO.setWorkGroup(activity.getWorkGroup());
-				
-				final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
-						DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
-				if (null != plantStrDate && !plantStrDate.trim().isEmpty()){
-					woTaskModifyDTO.setPlanStrDate(plantStrDate);
-				}
-				else if ( activity.getPlannedStartDate().isEmpty() && null == activity.getPlannedFinishDate() ){
-					woTaskModifyDTO.setPlanStrDate("");
-					woTaskModifyDTO.setPlanFinDate("");
-					
-				}
-				if (null != activity.getTaskUserStatus() && !activity.getTaskUserStatus().trim().isEmpty())
-					woTaskModifyDTO.setTaskStatusU(activity.getTaskUserStatus());
 
-				arrayModify.getWorkOrderTaskServiceModifyRequestDTO().add(woTaskModifyDTO);
-				multipleModify.setRequestParameters(arrayModify);
+				if (!workorderTask.isEmpty()) {
+					workOrder = new WorkOrderDTO();
+					workOrder.setNo(workorderTask.get(WORK_ORDER));
+					workOrder.setPrefix(workorderTask.get(PREFIX));
+					woTaskModifyDTO = new WorkOrderTaskServiceModifyRequestDTO();
+					woTaskModifyDTO.setWorkOrder(workOrder);
+					woTaskModifyDTO.setWOTaskNo(workorderTask.get(TASK_NO));
+					if (null != activity.getWorkGroup() && !activity.getWorkGroup().trim().isEmpty())
+						woTaskModifyDTO.setWorkGroup(activity.getWorkGroup());
+
+					final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
+							DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
+					if (null != plantStrDate && !plantStrDate.trim().isEmpty()) {
+						woTaskModifyDTO.setPlanStrDate(plantStrDate);
+					} else if (activity.getPlannedStartDate().isEmpty() && null == activity.getPlannedFinishDate()) {
+						woTaskModifyDTO.setPlanStrDate("");
+						woTaskModifyDTO.setPlanFinDate("");
+
+					}
+					if (null != activity.getTaskUserStatus() && !activity.getTaskUserStatus().trim().isEmpty())
+						woTaskModifyDTO.setTaskStatusU(activity.getTaskUserStatus());
+
+					arrayModify.getWorkOrderTaskServiceModifyRequestDTO().add(woTaskModifyDTO);
+					multipleModify.setRequestParameters(arrayModify);
+				}
 			}
 			logger.debug("Updating ellipse with list of work order task -{}",
 					arrayModify.getWorkOrderTaskServiceModifyRequestDTO().size());
 			try {
-				MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
-				if ( response.getOut() != null)
-				commitTransaction(transId);
+				if (null != multipleModify.getRequestParameters()
+						&& null != multipleModify.getRequestParameters().getWorkOrderTaskServiceModifyRequestDTO()
+						&& !multipleModify.getRequestParameters().getWorkOrderTaskServiceModifyRequestDTO().isEmpty()) {
+					MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
+					if (response.getOut() != null)
+						commitTransaction(transId);
+				}
 			} catch (Exception e) {
 				rollbackTransaction(transId);
 				throw new P6ServiceException(e);
@@ -200,6 +209,8 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			workOrderMap.put(PREFIX, matcher.group(1));
 			workOrderMap.put(WORK_ORDER, matcher.group(2));
 			workOrderMap.put(TASK_NO, matcher.group(3));
+		} else {
+			exceptionHandler.handleException(new P6ServiceException("Invalid work order from P6 - workorder task - " + workorderTaskId));
 		}
 		logger.debug("Workorder task - {} after tokenize # {}", workorderTaskId, workOrderMap);
 		return workOrderMap;

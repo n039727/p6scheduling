@@ -73,6 +73,9 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	@Autowired
 	EllipseWSClient ellipseWSClient;
 
+	@Autowired
+	P6IntegrationExceptionHandler exceptionHandler;
+
 	/**
 	 * 
 	 * @return
@@ -80,7 +83,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 */
 	@Override
 	public boolean readUDFTypeMapping() throws P6BusinessException {
-		logger.info("Initiates P6 Portal Reading thread ....");
+		logger.info("Initiates P6 UDF Types Reading thread ....");
 		boolean status = false;
 		Map<String, UDFTypeDTO> udfTypeMap = CacheManager.getP6UDFTypeMap();
 
@@ -106,7 +109,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 */
 	@Override
 	public boolean readProjectWorkgroupMapping() throws P6BusinessException {
-		logger.info("Initiates P6 Portal Reading thread ....");
+		logger.info("Initiates P6 Project Workgroup mapping Reading thread ....");
 		final long startTime = System.currentTimeMillis();
 		boolean status = false;
 
@@ -152,11 +155,11 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 		}
 		status = true;
-		logger.debug("Size of project resource/workgroup mapping from P6 Portal# {}", projectWorkgroupMap.size());
-		logger.debug("Size of project resource/workgroup mapping List from P6 Portal# {}",
+		logger.info("Size of project resource/workgroup mapping from P6 Portal# {}", projectWorkgroupMap.size());
+		logger.info("Size of project resource/workgroup mapping List from P6 Portal# {}",
 				projectWorkgroupListMap.size());
 
-		logger.debug("Time taken to read record from P6 Portal # {} ", System.currentTimeMillis() - startTime);
+		logger.info("Time taken to read record from P6 Portal # {} ", System.currentTimeMillis() - startTime);
 
 		return status;
 
@@ -169,8 +172,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 * getActivityTobeUpdatedInP6()
 	 */
 	public void updateActivitiesInP6(final List<P6ActivityDTO> updateActivityP6Set) {
-		logger.debug("update activites in p6 - number of activities # {}", updateActivityP6Set.size());
-		UpdateP6ActivityThread thread = new UpdateP6ActivityThread(updateActivityP6Set, p6WSClient);
+		logger.info("update activites in p6 - number of activities # {}", updateActivityP6Set.size());
+		UpdateP6ActivityThread thread = new UpdateP6ActivityThread(updateActivityP6Set, p6WSClient, exceptionHandler);
 		new Thread(thread).start();
 	}
 
@@ -181,15 +184,16 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 * getActivityTobeDeletedInP6()
 	 */
 	public void deleteActivityInP6(final List<P6ActivityDTO> deleteActivityP6Set) {
-		logger.debug("delete activites in p6 - number of activities # {}", deleteActivityP6Set.size());
-		DeleteP6ActivityThread thread = new DeleteP6ActivityThread(deleteActivityP6Set, p6WSClient);
+		logger.info("delete activites in p6 - number of activities # {}", deleteActivityP6Set.size());
+		DeleteP6ActivityThread thread = new DeleteP6ActivityThread(deleteActivityP6Set, p6WSClient, exceptionHandler);
 		new Thread(thread).start();
 
 	}
 
 	public void updateActivitiesInEllipse(final List<EllipseActivityDTO> updateActivityEllipseSet) {
-		logger.debug("update activites in Ellipse - number of activities # {}", updateActivityEllipseSet.size());
-		UpdateEllipseActivityThread thread = new UpdateEllipseActivityThread(updateActivityEllipseSet, ellipseWSClient);
+		logger.info("update activites in Ellipse - number of activities # {}", updateActivityEllipseSet.size());
+		UpdateEllipseActivityThread thread = new UpdateEllipseActivityThread(updateActivityEllipseSet, ellipseWSClient,
+				exceptionHandler);
 		new Thread(thread).start();
 	}
 
@@ -201,10 +205,10 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	 */
 	public void createActivityInP6(final List<P6ActivityDTO> createActivityP6Set,
 			final List<P6ActivityDTO> deleteActivityP6BforCreate) {
-		logger.debug("create activites in p6 - number of activities # {} and delete activites in p6 - {} ",
+		logger.info("create activites in p6 - number of activities # {} and delete activites in p6 - {} ",
 				createActivityP6Set.size(), deleteActivityP6BforCreate.size());
 		CreateP6ActivityThread thread = new CreateP6ActivityThread(createActivityP6Set, deleteActivityP6BforCreate,
-				p6WSClient);
+				p6WSClient, exceptionHandler);
 		new Thread(thread).start();
 
 	}
@@ -218,7 +222,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			readUDFTypeMapping();
 			readProjectWorkgroupMapping();
 		} catch (P6BusinessException e) {
-			P6IntegrationExceptionHandler.handleException(e);
+			exceptionHandler.handleException(e);
 			throw e;
 		}
 
@@ -251,7 +255,6 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		} catch (P6BusinessException e) {
 			status = Boolean.FALSE;
 			logger.debug("error- ", e);
-			throw e;
 		} finally {
 			p6WSClient.logoutFromP6();
 			clearApplicationMemory();
@@ -265,7 +268,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	public List<P6ActivityDTO> startEllipseToP6Integration(final List<String> workgroupList, final Integer projectId)
 			throws P6BusinessException {
 
-		logger.info("Starting all rading threads ....");
+		logger.info("Starting all rading threads for Project # {}", projectId);
 		final String sleepTime = P6ReloadablePropertiesReader.getProperty(POLING_TIME_TO_CHECK_READ_STATUS_INMILI);
 		long sleepTimeLong;
 		try {
@@ -274,8 +277,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			throw new P6BusinessException("Polling time to check read status should be a number ", e1);
 		}
 
-		final ReadEllipseThread readEllipse = new ReadEllipseThread(p6EllipseDAO, workgroupList);
-		final ReadP6ActivityThread readP6Activity = new ReadP6ActivityThread(p6WSClient, projectId);
+		final ReadEllipseThread readEllipse = new ReadEllipseThread(p6EllipseDAO, workgroupList, exceptionHandler);
+		final ReadP6ActivityThread readP6Activity = new ReadP6ActivityThread(p6WSClient, projectId, exceptionHandler);
 		final Thread readEllipseThread = new Thread(readEllipse);
 		final Thread readP6ActivityThread = new Thread(readP6Activity);
 		readEllipseThread.start();
@@ -299,7 +302,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					.get(ProcessStatus.ELLIPSE_READ_STATUS) == ReadWriteProcessStatus.FAILED
 					|| CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_READ_STATUS) == ReadWriteProcessStatus.FAILED) {
-				throw new P6BusinessException(P6ExceptionType.SYSTEM_ERROR.name());
+				throw new P6BusinessException();
 			}
 
 			try {
@@ -390,24 +393,6 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					&& CacheManager.getSystemReadWriteStatusMap()
 							.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadWriteProcessStatus.COMPLETED) {
 				break;
-			} else if ((CacheManager.getSystemReadWriteStatusMap()
-					.get(ProcessStatus.ELLIPSE_UPDATE_STATUS) == ReadWriteProcessStatus.COMPLETED
-					|| CacheManager.getSystemReadWriteStatusMap()
-							.get(ProcessStatus.ELLIPSE_UPDATE_STATUS) == ReadWriteProcessStatus.FAILED)
-					&& (CacheManager.getSystemReadWriteStatusMap()
-							.get(ProcessStatus.P6_ACTIVITY_CREATE_STATUS) == ReadWriteProcessStatus.FAILED
-							|| CacheManager.getSystemReadWriteStatusMap()
-									.get(ProcessStatus.P6_ACTIVITY_CREATE_STATUS) == ReadWriteProcessStatus.COMPLETED)
-					&& (CacheManager.getSystemReadWriteStatusMap()
-							.get(ProcessStatus.P6_ACTIVITY_UPDATE_STATUS) == ReadWriteProcessStatus.FAILED
-							|| CacheManager.getSystemReadWriteStatusMap()
-									.get(ProcessStatus.P6_ACTIVITY_UPDATE_STATUS) == ReadWriteProcessStatus.COMPLETED)
-					&& (CacheManager.getSystemReadWriteStatusMap()
-							.get(ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadWriteProcessStatus.FAILED
-							|| CacheManager.getSystemReadWriteStatusMap().get(
-									ProcessStatus.P6_ACTIVITY_DELETE_STATUS) == ReadWriteProcessStatus.COMPLETED)) {
-
-				throw new P6BusinessException(P6ExceptionType.SYSTEM_ERROR.name());
 			}
 
 			try {
@@ -458,8 +443,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 
 		} else if ((null != projectWorkgroup.get(p6Activity.getWorkGroup())
-				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox()
-				&& !projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y))
+				&& null == projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox())
 				&& null != p6Activity.getPlannedStartDate()
 				&& !dateUtil.isSameDate(p6Activity.getPlannedStartDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 						ellipseActivity.getPlannedStartDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)) {
@@ -478,11 +462,15 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * same for the 1st Job run and next time the job runs it will update
 		 * the status from Ellipse to P6
 		 */
+		final String p6TaskUserStatus = null != p6Activity.getTaskUserStatusUDF()
+				? p6Activity.getTaskUserStatusUDF().toUpperCase() : "";
 		if ((null != p6Activity.getWorkGroup() && !p6Activity.getWorkGroup().equals(ellipseActivity.getWorkGroup()))
 				|| (null != p6Activity.getPlannedStartDate() && !dateUtil.isSameDate(p6Activity.getPlannedStartDate(),
 						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, ellipseActivity.getPlannedStartDate(),
 						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
-						&& !ellipseActivity.getTaskUserStatus().equals(USER_STATUS_AL)) {
+						&& (p6TaskUserStatus.equals(P6EllipseWSConstants.RR)
+								|| p6TaskUserStatus.equals(P6EllipseWSConstants.MR))
+						&& !ellipseActivity.getTaskUserStatus().toUpperCase().equals(USER_STATUS_AL)) {
 			ellipseActivityUpd.setTaskUserStatus(USER_STATUS_AL);
 			isUpdateReq = true;
 		}
@@ -619,19 +607,14 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
+		final String p6TaskUserStatus = null != p6Activity.getTaskUserStatusUDF() ? p6Activity.getTaskUserStatusUDF()
+				: "";
+
 		/*
-		 * If the WO task ='RR' and Planned Start Date = 'Todays Date' in
-		 * Ellipse when comparing the data between P6 and Ellipse then user
-		 * status in P6 will not be updated and it is left as it is else update
-		 * the user status from Ellipse
+		 * If the task user status is not same , update P6 task user status from
+		 * ellipse
 		 */
-		if (!ellipseActivity.getTaskUserStatus().equals(p6Activity.getTaskUserStatusUDF())
-				&& ((!ellipseActivity.getTaskUserStatus().equals(P6EllipseWSConstants.RR)
-						&& !dateUtil.isCurrentDate(ellipseActivity.getPlannedStartDate()))
-						|| (ellipseActivity.getTaskUserStatus().equals(P6EllipseWSConstants.RR)
-								&& !dateUtil.isCurrentDate(ellipseActivity.getPlannedStartDate()))
-						|| (!ellipseActivity.getTaskUserStatus().equals(P6EllipseWSConstants.RR)
-								&& dateUtil.isCurrentDate(ellipseActivity.getPlannedStartDate())))) {
+		if (!ellipseActivity.getTaskUserStatus().toUpperCase().equals(p6TaskUserStatus.toUpperCase())) {
 			p6ActivityUpd.setTaskUserStatusUDF(ellipseActivity.getTaskUserStatus());
 			isUpdateReq = true;
 		}
@@ -759,13 +742,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 	@Override
 	public void clearApplicationMemory() {
 		logger.debug("Clearing cache memory........");
-		CacheManager.getEllipseActivitiesMap().clear();
-		CacheManager.getP6ActivitiesMap().clear();
-		CacheManager.getP6ProjectWorkgroupMap().clear();
-		CacheManager.getProjectWorkgroupListMap().clear();
-		CacheManager.getSystemReadWriteStatusMap().clear();
-		CacheManager.getWsHeaders().clear();
-		CacheManager.getProjectsMap().clear();
+		CacheManager.clear();
 	}
 
 }

@@ -176,7 +176,7 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 					ctrl.fetchedData = response.data;
 //					console.log("Data from server for search: "
 //							+ JSON.stringify(ctrl.fetchedData));
-				    if(response.data.length > 0){
+				    if(response.data.length >= 0){
 				    	ctrl.metadata.activated = false;
 				    	if (angular.isDefined(stop)) {
 				            $interval.cancel(stop);

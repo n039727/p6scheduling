@@ -63,7 +63,7 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 		try {
 			if (outboundProperty.booleanValue()) {
 				requestTimeStamp = System.currentTimeMillis();
-				logger.debug("Tracking Id: {} # SOAP Service request timestamp:  {} ms", trackingId, requestTimeStamp);
+				logger.info("Tracking Id: {} # SOAP Service request timestamp:  {} ms", trackingId, requestTimeStamp);
 				loggingStream.write(("\n" + trackingId + " Outbound message: ").getBytes());
 			} else {
 				responseTimeStamp = System.currentTimeMillis();
@@ -85,7 +85,7 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 		logger.debug(loggingStream.toString());
 		if (responseTimeStamp > requestTimeStamp) {
 			final long serviceCallTime = responseTimeStamp - requestTimeStamp;
-			logger.debug("TrackingId : {} # SOAP Service response time taken by BackEnd system : {} ms", trackingId,
+			logger.info("TrackingId : {} # SOAP Service response time taken by BackEnd system : {} ms", trackingId,
 					serviceCallTime);
 		}
 	}

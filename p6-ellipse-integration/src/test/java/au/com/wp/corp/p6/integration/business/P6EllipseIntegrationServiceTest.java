@@ -457,7 +457,7 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setWorkOrderTaskId("03940943001");
 		ellipseActivity.setWorkGroup("NGERT01");
 		ellipseActivity.setWorkOrderDescription("TCS: HV Cross Arm");
-		ellipseActivity.setTaskUserStatus("");
+		ellipseActivity.setTaskUserStatus("00");
 		ellipseActivity.setTaskStatus("Not Started");
 		ellipseActivity.setEGI("PWOD");
 		ellipseActivity.setEllipseStandardJob("STD01");
@@ -576,7 +576,7 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setWorkOrderTaskId("03940943001");
 		ellipseActivity.setWorkGroup("NGERT01");
 		ellipseActivity.setWorkOrderDescription("TCS: HV Cross Arm");
-		ellipseActivity.setTaskUserStatus("");
+		ellipseActivity.setTaskUserStatus("RR");
 		ellipseActivity.setTaskStatus("Not Started");
 		ellipseActivity.setEGI("PWOD");
 		ellipseActivity.setEllipseStandardJob("STD01");
@@ -617,6 +617,7 @@ public class P6EllipseIntegrationServiceTest {
 		p6Activity.setTaskDescriptionUDF("");
 		p6Activity.setUpStreamSwitchUDF("");
 		p6Activity.setProjectObjectId(263780);
+		p6Activity.setTaskUserStatusUDF("AL");
 
 		Mockito.when(dateUtil.convertDateToString(ellipseActivity.getPlannedStartDate(),
 				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
@@ -960,7 +961,7 @@ public class P6EllipseIntegrationServiceTest {
 		Assert.assertEquals(ellipseActivity.getRequiredByDate(), p6AtivityDTO.getRequiredByDateUDF());
 		Assert.assertEquals(ellipseActivity.getTaskDescription(), p6AtivityDTO.getTaskDescriptionUDF());
 		Assert.assertEquals(ellipseActivity.getTaskStatus(), p6AtivityDTO.getActivityStatus());
-		Assert.assertNull(p6AtivityDTO.getTaskUserStatusUDF());
+		Assert.assertNotNull(p6AtivityDTO.getTaskUserStatusUDF());
 		Assert.assertEquals(ellipseActivity.getUpStreamSwitch(), p6AtivityDTO.getUpStreamSwitchUDF());
 
 		P6ProjWorkgroupDTO projWG = CacheManager.getP6ProjectWorkgroupMap().get(ellipseActivity.getWorkGroup());
@@ -989,7 +990,7 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setWorkOrderTaskId("03940943001");
 		ellipseActivity.setWorkGroup("NGERSCH");
 		ellipseActivity.setWorkOrderDescription("TCS: HV Cross Arm");
-		ellipseActivity.setTaskUserStatus("");
+		ellipseActivity.setTaskUserStatus("AL");
 		ellipseActivity.setTaskStatus("Not Started");
 		ellipseActivity.setEGI("PWOD");
 		ellipseActivity.setEllipseStandardJob("STD01");
@@ -1093,7 +1094,7 @@ public class P6EllipseIntegrationServiceTest {
 		ellipseActivity.setWorkOrderTaskId("03940943001");
 		ellipseActivity.setWorkGroup("NGERSCH");
 		ellipseActivity.setWorkOrderDescription("TCS: HV Cross Arm");
-		ellipseActivity.setTaskUserStatus("");
+		ellipseActivity.setTaskUserStatus("AL");
 		ellipseActivity.setTaskStatus("Not Started");
 		ellipseActivity.setEGI("PWOD");
 		ellipseActivity.setEllipseStandardJob("STD01");
@@ -1345,7 +1346,7 @@ public class P6EllipseIntegrationServiceTest {
 			SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		EllipseActivityDTO ellipseActivity = new EllipseActivityDTO();
 		ellipseActivity.setWorkOrderTaskId("03940943001");
-		ellipseActivity.setWorkGroup("MOMT2");
+		ellipseActivity.setWorkGroup("MONT2");
 		ellipseActivity.setWorkOrderDescription("TCS: HV Cross Arm");
 		ellipseActivity.setTaskUserStatus("");
 		ellipseActivity.setTaskStatus("Not Started");
@@ -1404,7 +1405,6 @@ public class P6EllipseIntegrationServiceTest {
 
 		EllipseActivityDTO ellipseAtivityDTO = (EllipseActivityDTO) method.invoke(p6EllipseIntegrationService,
 				p6Activity, ellipseActivity, projectWorkGropMap);
-
 		Assert.assertEquals(p6Activity.getActivityId(), ellipseAtivityDTO.getWorkOrderTaskId());
 		Mockito.when(dateUtil.convertDateToString(ellipseAtivityDTO.getPlannedStartDate(),
 				DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
