@@ -49,8 +49,9 @@ public class P6IntegrationExceptionHandler {
 	 * @param e
 	 */
 	@Async
-	public void handleDataExeception() {
+	public long handleDataExeception() {
 		logger.info("sending email to notify business about the data error ... ");
+		long id =0;
 		try {
 			if (!CacheManager.getDataErrors().isEmpty()) {
 				List<Exception> dataErrors = CacheManager.getDataErrors();
@@ -68,16 +69,18 @@ public class P6IntegrationExceptionHandler {
 				final Integer msgTypeID = Integer.parseInt(P6ReloadablePropertiesReader.getProperty(MSG_TYPE_ID_MT));
 				// Integer msgType, String message, String context, String
 				// comment
-				long id = genosClientService.sendMessage(msgTypeID, emailSubject, emailBody);
+				id = genosClientService.sendMessage(msgTypeID, emailSubject, emailBody);
 
 				logger.info("sent email to notify business with the message id # {}", id);
-
 			}
 		} catch (Exception e) {
 			logger.error("An Error occurs while sending business notification with Genos Email service: ", e);
 		} finally {
 			CacheManager.getDataErrors().clear();
 		}
+		
+		return id;
+		
 	}
 
 	/**
@@ -86,21 +89,28 @@ public class P6IntegrationExceptionHandler {
 	 * @param e
 	 */
 	@Async
-	private void handleTechnicalException(P6BaseException e) {
-		logger.debug("Calling SNow API to register a service ticket............... ");
-		logger.error("Short description -- {}", e.getCause().getMessage());
-		logger.error("Log details ---------------------------- ", e.getCause());
-		final String appName = P6ReloadablePropertiesReader.getProperty(APPLICATION_NAME);
-		final String sDescPattern = P6ReloadablePropertiesReader.getProperty(EXCEPTION_SHORT_DESC);
-		final String sDesc = formatMessage(sDescPattern, e.getCause().getMessage());
-		final String descPattern = P6ReloadablePropertiesReader.getProperty(EXCEPTION_DETAIL_DESC_TEMPLATE);
-		final String desc = formatMessage(descPattern, e.getCause().getMessage());
-		String aGroup = System.getProperty(APP_SUPPORT_GROUP);
-		logger.debug(" groups to be assigned the service ticket - {}", aGroup);
-		int priority = Integer.parseInt(P6ReloadablePropertiesReader.getProperty(SERVICE_TICKET_PRIORITY));
-		SnowConnector snow = new SnowConnector();
-		String status = snow.create(appName, sDesc, desc, aGroup, priority);
-		logger.debug("Service Now Status With ticket no # {}", status);
+	private boolean handleTechnicalException(P6BaseException e) {
+		try {
+			logger.debug("Calling SNow API to register a service ticket............... ");
+			logger.error("Short description -- {}", e.getCause().getMessage());
+			logger.error("Log details ---------------------------- ", e.getCause());
+			final String appName = P6ReloadablePropertiesReader.getProperty(APPLICATION_NAME);
+			final String sDescPattern = P6ReloadablePropertiesReader.getProperty(EXCEPTION_SHORT_DESC);
+			final String sDesc = formatMessage(sDescPattern, e.getCause().getMessage());
+			final String descPattern = P6ReloadablePropertiesReader.getProperty(EXCEPTION_DETAIL_DESC_TEMPLATE);
+			final String desc = formatMessage(descPattern, e.getCause().getMessage());
+			String aGroup = System.getProperty(APP_SUPPORT_GROUP);
+			logger.debug(" groups to be assigned the service ticket - {}", aGroup);
+			int priority = Integer.parseInt(P6ReloadablePropertiesReader.getProperty(SERVICE_TICKET_PRIORITY));
+			SnowConnector snow = new SnowConnector();
+			String status = snow.create(appName, sDesc, desc, aGroup, priority);
+			logger.debug("Service Now Status With ticket no # {}", status);
+			return true;
+		} catch (Exception e1) {
+			logger.error("An Error occurs while raising a service ticket: ", e);
+			return false;
+		}
+		
 
 	}
 
@@ -113,17 +123,19 @@ public class P6IntegrationExceptionHandler {
 	 * 
 	 * @param e
 	 */
-	public void handleException(P6BaseException e) {
+	public boolean handleException(P6BaseException e) {
 		if (P6ExceptionType.SYSTEM_ERROR.name().equals(e.getMessage())) {
-			handleTechnicalException(e);
+			return handleTechnicalException(e);
 		} else {
 			final String enableBusinessNotification = P6ReloadablePropertiesReader
 					.getProperty(ENABLE_BUSINESS_NOTIFICATION);
 			if (ENABLE_BUSINESS_NOTIFICATION_VALUE.equalsIgnoreCase(enableBusinessNotification)) {
 				CacheManager.getDataErrors().add(e);
+				return true;
 			}
-
 		}
+		
+		return false;
 	}
 
 }

@@ -436,14 +436,15 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 */
 		if (null != projectWorkgroup.get(p6Activity.getWorkGroup())
 				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox()
-				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y)
+				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equalsIgnoreCase(P6EllipseWSConstants.Y)
 				&& !ellipseActivity.getPlannedStartDate().isEmpty()) {
 			ellipseActivityUpd.setPlannedStartDate(null);
 			ellipseActivityUpd.setPlannedFinishDate(null);
 			isUpdateReq = true;
 
 		} else if ((null != projectWorkgroup.get(p6Activity.getWorkGroup())
-				&& null == projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox())
+				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getPrimaryResourceYN()
+				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getPrimaryResourceYN().equalsIgnoreCase(P6EllipseWSConstants.Y))
 				&& null != p6Activity.getPlannedStartDate()
 				&& !dateUtil.isSameDate(p6Activity.getPlannedStartDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 						ellipseActivity.getPlannedStartDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)) {

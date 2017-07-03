@@ -100,7 +100,10 @@ public class P6WSClientImplIntegrationTest {
 
 		Map<String, Integer> projWorkgroupDTOs = p6WsclientImpl.readResources();
 
+		Assert.assertNotNull(projWorkgroupDTOs);
+		
 		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
+		
 
 	}
 
@@ -151,7 +154,7 @@ public class P6WSClientImplIntegrationTest {
 	public void test_2_UpdateActivitiesP6() throws P6BusinessException {
 
 		p6serviceImpl.readUDFTypeMapping();
-		p6Activities = p6WsclientImpl.readActivities(27);
+		p6Activities = p6WsclientImpl.readActivities(263779);
 
 		List<P6ActivityDTO> activities = new ArrayList<>();
 
@@ -194,7 +197,7 @@ public class P6WSClientImplIntegrationTest {
 
 	@Test
 	public void test_3_ReadActivities() throws P6ServiceException {
-		p6Activities = p6WsclientImpl.readActivities(null);
+		p6Activities = p6WsclientImpl.readActivities(263779);
 		Assert.assertNotNull(p6Activities);
 
 		for (P6ActivityDTO activityDTO : p6Activities) {
@@ -204,7 +207,7 @@ public class P6WSClientImplIntegrationTest {
 
 	@Test
 	public void test_4_DeleteActivitiesP6() throws P6ServiceException {
-		p6Activities = p6WsclientImpl.readActivities(null);
+		p6Activities = p6WsclientImpl.readActivities(263779);
 		List<P6ActivityDTO> activities = new ArrayList<>();
 
 		P6ActivityDTO activityDTO = new P6ActivityDTO();

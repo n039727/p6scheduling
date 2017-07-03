@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import com.mincom.enterpriseservice.ellipse.dependant.dto.WorkOrderDTO;
 import com.mincom.enterpriseservice.ellipse.workordertask.ArrayOfWorkOrderTaskServiceModifyRequestDTO;
@@ -64,7 +65,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 
 	@Autowired
 	TransactionWsClient transactionWsClient;
-	
+
 	@Autowired
 	P6IntegrationExceptionHandler exceptionHandler;
 
@@ -193,9 +194,14 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 					if (response.getOut() != null)
 						commitTransaction(transId);
 				}
-			} catch (Exception e) {
+			} catch (SoapFaultClientException e) {
 				rollbackTransaction(transId);
-				throw new P6ServiceException(e);
+				throw new P6ServiceException(P6ExceptionType.DATA_ERROR.name(), e);
+			}
+
+			catch (Exception e) {
+				rollbackTransaction(transId);
+				throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e);
 			}
 		}
 
@@ -210,7 +216,8 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			workOrderMap.put(WORK_ORDER, matcher.group(2));
 			workOrderMap.put(TASK_NO, matcher.group(3));
 		} else {
-			exceptionHandler.handleException(new P6ServiceException("Invalid work order from P6 - workorder task - " + workorderTaskId));
+			exceptionHandler.handleException(
+					new P6ServiceException("Invalid work order from P6 - workorder task - " + workorderTaskId));
 		}
 		logger.debug("Workorder task - {} after tokenize # {}", workorderTaskId, workOrderMap);
 		return workOrderMap;
