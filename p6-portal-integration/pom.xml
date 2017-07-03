@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>au.com.wp.corp.p6.scheduling</groupId>
 		<artifactId>p6-scheduling</artifactId>
-		<version>1.2-SNAPSHOT</version>
+		<version>1.3-RC1</version>
 	</parent>
 	<artifactId>p6-portal-integration</artifactId>
 	<packaging>war</packaging>
@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>au.com.wp.corp.p6.scheduling</groupId>
 			<artifactId>p6-wsmodel</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>1.3-RC1</version>
 		</dependency>
 		<dependency>
 			<groupId>javax</groupId>
