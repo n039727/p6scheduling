@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import au.com.wp.corp.p6.integration.business.P6EllipseIntegrationService;
 import au.com.wp.corp.p6.integration.exception.P6BusinessException;
 import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
+import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.rest.controller.P6EllipseIntegrationController;
 
 /**
@@ -45,6 +46,9 @@ public class P6EllipseIntegrationControllerTest {
 
 	@Mock
 	P6EllipseIntegrationService p6EllipseService;
+	
+	@Mock
+	P6IntegrationExceptionHandler exceptionHandler;
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();

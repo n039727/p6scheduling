@@ -182,7 +182,7 @@ public class DateUtil {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error("Invalid date - cant parse date1# {}  - date2# {} -exception {}", date1, date2, e);
+			logger.debug("Invalid date - cant parse date1# {}  - date2# {} -exception {}", date1, date2, e);
 		}
 		
 		return false;

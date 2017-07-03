@@ -37,4 +37,5 @@
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<mvc:annotation-driven />
 	<context:component-scan base-package="au.com.wp.corp.p6" />
+	<context:component-scan base-package="au.com.wp.corp.integration" />
 </beans>

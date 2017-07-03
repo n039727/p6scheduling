@@ -142,6 +142,18 @@ function dynamicToDoSetterController($scope) {
 					//console.log("[DEBUG] ctrl.currentMap in onChange: " + JSON.stringify(ctrl.currentMap));
 				}
 			}
+		}else{
+					var tempColumnGroup = [];
+					var tempTodoName = "";
+					var isTempNewItem = false;
+					tempColumnGroup = ctrl.columnGroup[0];
+					for(var i=0;i< tempColumnGroup.length;i++){
+							tempTodoName = tempColumnGroup[i].todoName;
+							isTempNewItem = tempColumnGroup[i].isNewItem;
+							if(!isTempNewItem && angular.isUndefined(tempColumnGroup[i].workOrders)){
+								ctrl.currentMap[tempTodoName] = [];
+							}
+					}
 		}
 
 	};

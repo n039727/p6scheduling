@@ -146,6 +146,8 @@ public interface P6EllipseWSConstants {
 	
 	public static final String RR= "RR";
 	
+	public static final String MR= "MR";
+	
 	public static final String WS_COOKIE="WS_COOKIE";
 
 }

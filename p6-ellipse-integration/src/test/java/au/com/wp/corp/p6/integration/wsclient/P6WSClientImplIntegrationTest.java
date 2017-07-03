@@ -151,7 +151,7 @@ public class P6WSClientImplIntegrationTest {
 	public void test_2_UpdateActivitiesP6() throws P6BusinessException {
 
 		p6serviceImpl.readUDFTypeMapping();
-		p6Activities = p6WsclientImpl.readActivities(null);
+		p6Activities = p6WsclientImpl.readActivities(27);
 
 		List<P6ActivityDTO> activities = new ArrayList<>();
 

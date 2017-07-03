@@ -30,11 +30,15 @@ public class UpdateEllipseActivityThread implements Runnable {
 	private final List<EllipseActivityDTO> updateActivityEllipseSet;
 
 	private final EllipseWSClient ellipseWSClient;
+	private final P6IntegrationExceptionHandler exceptionHandler;
 
 	public UpdateEllipseActivityThread(final List<EllipseActivityDTO> updateActivityEllipseSet,
-			final EllipseWSClient ellipseWSClient) {
+			final EllipseWSClient ellipseWSClient, final P6IntegrationExceptionHandler exceptionHandler) {
 		this.updateActivityEllipseSet = updateActivityEllipseSet;
 		this.ellipseWSClient = ellipseWSClient;
+		this.exceptionHandler = exceptionHandler;
+		CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS,
+				ReadWriteProcessStatus.STARTED);
 	}
 
 	@Override
@@ -43,18 +47,13 @@ public class UpdateEllipseActivityThread implements Runnable {
 		try {
 			if (!updateActivityEllipseSet.isEmpty())
 				ellipseWSClient.updateActivitiesEllipse(updateActivityEllipseSet);
-			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS,
-					ReadWriteProcessStatus.COMPLETED);
+			
 		} catch (P6ServiceException e) {
 			logger.error("An error occurs while updating ellipse activity : ", e);
-			if (P6ExceptionType.SYSTEM_ERROR.name().equals(e.getMessage())){
-				CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS,
-						ReadWriteProcessStatus.FAILED);
-			} else{
-				CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS,
-						ReadWriteProcessStatus.COMPLETED);
-			}
-			P6IntegrationExceptionHandler.handleException(e);
+			exceptionHandler.handleException(e);
+		} finally{
+			CacheManager.getSystemReadWriteStatusMap().put(ProcessStatus.ELLIPSE_UPDATE_STATUS,
+					ReadWriteProcessStatus.COMPLETED);
 		}
 	}
 
