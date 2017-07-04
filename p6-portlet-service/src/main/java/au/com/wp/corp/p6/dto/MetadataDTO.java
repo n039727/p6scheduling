@@ -17,7 +17,7 @@ public class MetadataDTO {
 	
 	private List<ToDoItem> toDoItems;
 	private ResourceDTO resourceDTO;
-	//private List<Crew> crews;
+	
 	/**
 	 * @return the toDoItems
 	 */
@@ -30,18 +30,7 @@ public class MetadataDTO {
 	public void setToDoItems(List<ToDoItem> toDoItems) {
 		this.toDoItems = toDoItems;
 	}
-	/**
-	 * @return the crews
-	 */
-	/*public List<Crew> getCrews() {
-		return crews;
-	}*/
-	/**
-	 * @param crews the crews to set
-	 */
-	/*public void setCrews(List<Crew> crews) {
-		this.crews = crews;
-	}*/
+	
 	/**
 	 * @return the resourceDTO
 	 */

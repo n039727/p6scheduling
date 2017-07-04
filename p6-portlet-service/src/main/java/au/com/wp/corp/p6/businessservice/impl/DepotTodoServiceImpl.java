@@ -420,7 +420,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		logger.debug("WorkOrderId >>>>{}", query.getWorkOrderId());
 		if (null != query && null != query.getExecPckgName()) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
-			tasks = new ArrayList<Task>(executionPackage.getTasks());
+			tasks = new ArrayList(executionPackage.getTasks());
 		} else {
 			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
 		}

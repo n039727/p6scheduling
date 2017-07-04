@@ -29,6 +29,7 @@ public class TaskDAOImpl implements TaskDAO {
 	 * 
 	 * @return currentSession {@link Session}
 	 */
+	@Override
 	public Session getSession (){
 		return sessionFactory.getCurrentSession();
 	}
@@ -42,9 +43,7 @@ public class TaskDAOImpl implements TaskDAO {
 		try {
 			listTasks = (List<Task>) getSession().createCriteria(Task.class)
 					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-		} catch (HibernateException e) {
-			parseException(e);
-		} catch (Exception e){
+		}  catch (Exception e){
 			parseException(e);
 		}
 
