@@ -4,7 +4,7 @@
 		<thead class="query-result-header">
 			<tr>
 				<th>Select All
-					<input type="checkbox" ng-model="$ctrl.selectedAll" ng-click="$ctrl.isSelectAll();$ctrl.addRemoveWOOnSelectAll($event, $ctrl.data)" ></th>
+					<input type="checkbox" ng-model="$ctrl.metadata.selectedAll" ng-click="$ctrl.isSelectAll();$ctrl.addRemoveWOOnSelectAll($event, $ctrl.data)" ></th>
 				<th>WO #</th>
 				<th>Planned Start Date</th>
 				<th>Crew Assigned</th>
@@ -36,13 +36,13 @@
 	</table>
 </div>	
 <div class="form-group">
-	<div ng-show="$ctrl.errorMsgVisiable" class="col-md-offset-7 errormsg-floating error-message" >
+	<div ng-show="$ctrl.metadata.errorExecPckgMsgVisiable" class="col-md-offset-7 errormsg-floating error-message" >
 		<b>Please select at least 2 Jobs to create an execution package</b>
 	</div>
 
 	<div class="col-md-offset-9 col-md-2 auth-enabled-container" style="padding:5px">
 		<div ng-show="$ctrl.isReadOnly" class="read-only-cover"></div>
-		<button type="submit" class="btn btn-warning btn-lg btn-floating" ng-click="$ctrl.showPopup($ctrl.selectedExecPckg)">Create/Update Package</button>
+		<button type="submit" class="btn btn-warning btn-lg btn-floating" ng-click="$ctrl.showPopup($ctrl.metadata.selectedExecPckg)">Create/Update Package</button>
 	</div>
 </div>
 </div>

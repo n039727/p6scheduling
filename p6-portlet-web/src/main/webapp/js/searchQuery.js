@@ -70,6 +70,9 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 		if(ctrl.activeContext == 'ADD_SCHEDULING_TODO' || ctrl.activeContext == 'VIEW_TODO_STATUS' 
 			|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'){
 			this.scheduleToDate = "";
+			ctrl.metadata.selectedExecPckg = [];
+			ctrl.metadata.selectedAll = false;
+			ctrl.metadata.errorExecPckgMsgVisiable = false;
 		}	
 		for (var i = 0 ; i < ctrl.selectedDepotList.length; i++) {
 			ctrl.depots.push (ctrl.selectedDepotList[i].trim());

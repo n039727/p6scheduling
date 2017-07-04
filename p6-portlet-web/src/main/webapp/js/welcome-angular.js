@@ -130,6 +130,9 @@ function fetchMetaData(app) {
 				metadata.setToDateDisable = true;
 				metadata.determinateValue = 0;
 				metadata.activated = true;
+				metadata.selectedExecPckg = [];
+				metadata.selectedAll = false;
+				metadata.errorExecPckgMsgVisiable = false;
 				app.constant('metadata', metadata);
 			});
 }

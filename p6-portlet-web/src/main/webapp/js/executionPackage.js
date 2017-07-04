@@ -9,9 +9,8 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 			ctrl.isReadOnly = true;
 		}
 	}
-	
-	ctrl.selectedExecPckg = [];
-	ctrl.errorMsgVisiable = false;
+	ctrl.metadata.selectedExecPckg = [];
+//	ctrl.errorMsgVisiable = false;
 	ctrl.addRemoveWOOnSelectAll = function($event, wo){
 		for(var i=0;i<wo.length; i++){
 			ctrl.addRemoveWorkOrder($event,wo[i]);
@@ -21,20 +20,20 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 	ctrl.addRemoveWorkOrder = function($event, wo){
 		var cb = $event.target;
 		if (cb.checked) {
-			if (findCheckedWO(ctrl.selectedExecPckg, wo.workOrders[0]) == -1) {
-				if(!ctrl.selectedExecPckg)
-					ctrl.selectedExecPckg = [];
+			if (findCheckedWO(ctrl.metadata.selectedExecPckg, wo.workOrders[0]) == -1) {
+				if(!ctrl.metadata.selectedExecPckg)
+					ctrl.metadata.selectedExecPckg = [];
 					
-				ctrl.selectedExecPckg.push({leadCrew:wo.crewNames,crewNames:wo.crewNames, workOrders:[wo.workOrders[0]],scheduleDate:wo.scheduleDate,executionPckgName:wo.exctnPckgName});
+				ctrl.metadata.selectedExecPckg.push({leadCrew:wo.crewNames,crewNames:wo.crewNames, workOrders:[wo.workOrders[0]],scheduleDate:wo.scheduleDate,executionPckgName:wo.exctnPckgName});
 			}
 			
 				
 		} else {
-			var index = findCheckedWO(ctrl.selectedExecPckg, wo.workOrders[0]);
+			var index = findCheckedWO(ctrl.metadata.selectedExecPckg, wo.workOrders[0]);
 			if (index > -1) {
-				ctrl.selectedExecPckg.splice(index, 1);
+				ctrl.metadata.selectedExecPckg.splice(index, 1);
 			}
-			ctrl.selectedAll = false;
+			ctrl.metadata.selectedAll = false;
 		}
 		
 	};
@@ -51,7 +50,7 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 	}
 	
 	ctrl.isSelectAll = function(){
-		var status = ctrl.selectedAll;
+		var status = ctrl.metadata.selectedAll;
 		angular.forEach(ctrl.data,function(wo){
 			wo.selected = status;
 		});
@@ -61,12 +60,12 @@ function executionPackageResultController($scope, ModalService, userAccessServic
 
     ctrl.showPopup = function(wo) {
     	var isValid = false;
-    	if(ctrl.selectedExecPckg.length < 2){
+    	if(ctrl.metadata.selectedExecPckg.length < 2){
     		isValid = false;
-    		ctrl.errorMsgVisiable = true;
+    		ctrl.metadata.errorExecPckgMsgVisiable = true;
     	}else{
     		isValid = true;
-    		ctrl.errorMsgVisiable = false;
+    		ctrl.metadata.errorExecPckgMsgVisiable = false;
     		
     	}
     	if(isValid){
@@ -156,6 +155,7 @@ angular.module('todoPortal').component('executionPackageResult', {
   bindings: {
 	  activeContext: '<',
 	  data: '<',
+	  metadata: '<',
 	  handleDataChange: '&',
 	  functionId: '<'
   }
