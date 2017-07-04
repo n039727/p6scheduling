@@ -46,8 +46,8 @@ public class P6ControllerAdvice {
 		ErrorResponse error = new ErrorResponse();
 		if(ex != null && ex.getMessage() != null)
 		{
-			error.setErrorCode(ex.getMessage().split(":")[1].trim());
-			error.setErrorMessage((String) configuration.getProperty(ex.getMessage().split(":")[1].trim()));
+			error.setErrorCode(ex.getMessage().trim());
+			error.setErrorMessage((String) configuration.getProperty(ex.getMessage().trim()));
 		}else{
 			error.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 			error.setErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());

@@ -3,7 +3,6 @@
  */
 package au.com.wp.corp.p6.model;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -46,7 +45,6 @@ import au.com.wp.corp.p6.dto.TaskDTO;
 import au.com.wp.corp.p6.dto.ToDoAssignment;
 import au.com.wp.corp.p6.dto.ToDoItem;
 import au.com.wp.corp.p6.dto.UDFCreateRequest;
-import au.com.wp.corp.p6.dto.UserAuthorizationDTO;
 import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
@@ -78,7 +76,6 @@ public class P6DtoTestThroughRefection {
 		Assert.assertEquals(true, (boolean) checkDTO(ViewToDoStatus.class, new ViewToDoStatus()));
 		Assert.assertEquals(true, (boolean) checkDTO(WorkOrder.class, new WorkOrder()));
 		Assert.assertEquals(true, (boolean) checkDTO(WorkOrderSearchRequest.class, new WorkOrderSearchRequest()));
-		Assert.assertEquals(true, (boolean) checkDTO(UserAuthorizationDTO.class, new UserAuthorizationDTO()));
 	}
 	public Boolean checkDTO(Class type, Object obj) {
 
@@ -137,7 +134,7 @@ public class P6DtoTestThroughRefection {
 				} else if (method.getParameterTypes()[0].getName().equals("[B")) {
 					byte[] bytes = "abc".getBytes();
 					method.invoke(obj, bytes);
-				} else if (method.getParameterTypes()[0].getName().equals("boolean")) {
+				} else if (method.getParameterTypes()[0].getName().equals("boolean")|| method.getParameterTypes()[0].getName().equals("java.lang.Boolean")) {
 					boolean bl = false;
 					method.invoke(obj, bl);
 				} else if (method.getParameterTypes()[0].getName().equals("org.springframework.http.HttpStatus")) {

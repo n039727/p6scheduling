@@ -28,6 +28,7 @@ import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
+import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.service.PortletServiceEndpoint;
 import au.com.wp.corp.p6.utils.CacheManager;
 import au.com.wp.corp.p6.validation.Validator;
@@ -113,7 +114,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 		} catch (P6BaseException e) {
 			logger.error(" P6BaseException catched>> {}", e);
 			p6BusinessService.clearApplicationMemory();
-			return new ResponseEntity<List<WorkOrder>>(workOrders, HttpStatus.NO_CONTENT);
+			throw new P6BusinessException (e.getMessage(), e);
 		}
 		return new ResponseEntity<List<WorkOrder>>(workOrders, HttpStatus.OK);
 	}
