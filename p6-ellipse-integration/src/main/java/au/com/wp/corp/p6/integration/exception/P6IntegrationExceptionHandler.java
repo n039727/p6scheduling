@@ -107,7 +107,7 @@ public class P6IntegrationExceptionHandler {
 			logger.debug("Service Now Status With ticket no # {}", status);
 			return true;
 		} catch (Exception e1) {
-			logger.error("An Error occurs while raising a service ticket: ", e);
+			logger.error("An Error occurs while raising a service ticket: ", e1);
 			return false;
 		}
 		
