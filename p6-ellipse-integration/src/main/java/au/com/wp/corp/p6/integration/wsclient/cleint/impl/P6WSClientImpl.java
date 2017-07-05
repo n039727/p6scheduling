@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 
 import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.integration.dto.UDFTypeDTO;
+import au.com.wp.corp.p6.integration.exception.P6BaseException;
+import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
+import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.DateUtil;
@@ -46,6 +49,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 	@Autowired
 	DateUtil dateUtil;
+
+	@Autowired
+	P6IntegrationExceptionHandler exceptionHandler;
 
 	@Override
 	public Map<String, Integer> readProjects() throws P6ServiceException {
@@ -110,7 +116,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		P6ActivityDTO activityDTO;
 		List<Activity> activityList = activities.value;
 		int activitySize = activityList.size();
-		for ( int i = activitySize; --i>=0; ) {
+		for (int i = activitySize; --i >= 0;) {
 			activityDTO = new P6ActivityDTO();
 			Activity activity = activityList.get(i);
 			activityDTO.setActivityObjectId(activity.getObjectId());
@@ -131,14 +137,13 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			// setting all udf fields
 			List<UDFValue> udfValueList = udfValueMap.get(activity.getObjectId());
 
-			if (null != udfValueList)
-			{
+			if (null != udfValueList) {
 				int udfsize = udfValueList.size();
-				for (int j = udfsize; --j>=0;) {
-					 UDFValue udfValue =udfValueList.get(j);
+				for (int j = udfsize; --j >= 0;) {
+					UDFValue udfValue = udfValueList.get(j);
 					setUDFValues(activityDTO, udfValue);
 				}
-			}	
+			}
 
 			activityDTOs.add(activityDTO);
 		}
@@ -319,58 +324,80 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		logger.info("Number of calls to P6 web service create/update Activity # {}", (crdActivitySize / chunkSize) + 1);
 
 		for (int i = 0; i < (crdActivitySize / chunkSize) + 1; i++) {
-			final Map<String, P6ActivityDTO> activityMap = new HashMap<>();
+			try {
+				final Map<String, P6ActivityDTO> activityMap = new HashMap<>();
 
-			final List<Activity> crtdActivities = constructActivities(activities, chunkSize, i, activityMap);
+				final List<Activity> crtdActivities = constructActivities(activities, chunkSize, i, activityMap);
 
-			if (isCreateActivities && !crtdActivities.isEmpty()) {
-				logger.info("Creating activites service call in P6...................");
-				final ActivityServiceCall<List<Integer>> crActivityService = new CreateActivityServiceCall(trackingId,
-						crtdActivities);
-				final Holder<List<Integer>> activityIds = crActivityService.run();
-				logger.debug("list of activities from P6 # {}", activityIds);
-				int j = 0;
-				final StringBuilder filter = new StringBuilder();
-				filter.append("ObjectId IN (");
-				for (Integer activityObjectId : activityIds.value) {
-					if (j > 0)
-						filter.append(",");
-					filter.append(activityObjectId);
-					j++;
-					if (j == 999) {
-						filter.append(")");
-						filter.append(OR);
-						filter.append("ObjectId IN (");
-						logger.debug("Filter criteria length for Read Value services # {} ", i);
-						j = 0;
+				if (isCreateActivities && !crtdActivities.isEmpty()) {
+					logger.info("Creating activites service call in P6...................");
+					final ActivityServiceCall<List<Integer>> crActivityService = new CreateActivityServiceCall(
+							trackingId, crtdActivities);
+					final Holder<List<Integer>> activityIds = crActivityService.run();
+					logger.debug("list of activities from P6 # {}", activityIds);
+					int j = 0;
+					final StringBuilder filter = new StringBuilder();
+					filter.append("ObjectId IN (");
+					for (Integer activityObjectId : activityIds.value) {
+						if (j > 0)
+							filter.append(",");
+						filter.append(activityObjectId);
+						j++;
+						if (j == 999) {
+							filter.append(")");
+							filter.append(OR);
+							filter.append("ObjectId IN (");
+							logger.debug("Filter criteria length for Read Value services # {} ", i);
+							j = 0;
+						}
+
 					}
 
+					filter.append(")");
+
+					final ActivityServiceCall<List<Activity>> rdActservice = new ReadActivityServiceCall(trackingId,
+							filter.toString());
+					final Holder<List<Activity>> newlyCrdActivites = rdActservice.run();
+
+					for (Activity newActivity : newlyCrdActivites.value) {
+						activityMap.get(newActivity.getId()).setActivityObjectId(newActivity.getObjectId());
+					}
+
+					final List<P6ActivityDTO> crdActivityFileds = new ArrayList<>();
+					crdActivityFileds.addAll(activityMap.values());
+					createActivityFieldsUDF(trackingId, crdActivityFileds);
+				} else if (!crtdActivities.isEmpty()) {
+					logger.info("Update activity service call in P6 ........................");
+					final ActivityServiceCall<Boolean> crActivityService = new UpdateActivityServiceCall(trackingId,
+							crtdActivities);
+					final Holder<Boolean> status = crActivityService.run();
+					logger.debug("list of activities from P6 # {}", status.value);
+					int startIndex = i * chunkSize;
+					int endIndex = ((i + 1) * chunkSize - 1) < activities.size() ? ((i + 1) * chunkSize - 1)
+							: activities.size();
+
+					updateActivityFieldsUDF(trackingId, activities.subList(startIndex, endIndex), chunkSize);
+
 				}
+			} catch (P6ServiceException e) {
+				logger.debug("error - ", e);
+				if (e.getMessage().equals(P6ExceptionType.DATA_ERROR.name())) {
+					int startIndex = i * chunkSize;
+					int endIndex = ((i + 1) * chunkSize - 1) < activities.size() ? ((i + 1) * chunkSize - 1)
+							: activities.size();
+					StringBuilder sb = new StringBuilder();
+					sb.append(e.getCause().getMessage());
+					sb.append(" for any workorder with in the list [ ");
+					for (P6ActivityDTO activity : activities.subList(startIndex, endIndex)) {
+						sb.append(activity.getActivityId());
+						sb.append(",");
+					}
+					sb.append("]");
 
-				filter.append(")");
-
-				final ActivityServiceCall<List<Activity>> rdActservice = new ReadActivityServiceCall(trackingId,
-						filter.toString());
-				final Holder<List<Activity>> newlyCrdActivites = rdActservice.run();
-
-				for (Activity newActivity : newlyCrdActivites.value) {
-					activityMap.get(newActivity.getId()).setActivityObjectId(newActivity.getObjectId());
+					exceptionHandler.handleException(new P6ServiceException(sb.toString()));
+				} else {
+					throw e;
 				}
-
-				final List<P6ActivityDTO> crdActivityFileds = new ArrayList<>();
-				crdActivityFileds.addAll(activityMap.values());
-				createActivityFieldsUDF(trackingId, crdActivityFileds);
-			} else if (!crtdActivities.isEmpty()) {
-				logger.info("Update activity service call in P6 ........................");
-				final ActivityServiceCall<Boolean> crActivityService = new UpdateActivityServiceCall(trackingId,
-						crtdActivities);
-				final Holder<Boolean> status = crActivityService.run();
-				logger.debug("list of activities from P6 # {}", status.value);
-				int startIndex = i * chunkSize;
-				int endIndex = ((i + 1) * chunkSize - 1) < activities.size() ? ((i + 1) * chunkSize - 1)
-						: activities.size();
-
-				updateActivityFieldsUDF(trackingId, activities.subList(startIndex, endIndex), chunkSize);
 
 			}
 

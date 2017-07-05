@@ -2094,7 +2094,7 @@ public class P6EllipseIntegrationServiceTest {
 		p6Activities.add(p6Activity);
 		
 		
-		Mockito.when(p6WSClient.readActivities(projWorkgroupDTOs.get("MOMT3"))).thenReturn(p6Activities);
+		Mockito.when(p6WSClient.readActivities(projWorkgroupDTOs.get("NGERT01"))).thenReturn(p6Activities);
 		Mockito.when(p6EllipseDAO.readElipseWorkorderDetails(workgroupList)).thenReturn(ellipseActivities);
 		
 		Mockito.doThrow(new P6ServiceException()).when(ellipseWSClient).updateActivitiesEllipse(ellipseActivities);
