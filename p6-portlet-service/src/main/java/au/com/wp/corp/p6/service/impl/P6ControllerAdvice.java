@@ -53,7 +53,7 @@ public class P6ControllerAdvice {
 			error.setErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
 		}
 		
-		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<ErrorResponse>(error, HttpStatus.OK);
 	}
 
 }
