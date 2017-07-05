@@ -198,20 +198,17 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			} catch (SoapFaultClientException e) {
 				rollbackTransaction(transId);
 				logger.debug("error - ", e);
-				if (e.getMessage().equals(P6ExceptionType.DATA_ERROR.name())) {
-					StringBuilder sb = new StringBuilder();
-					sb.append(e.getCause().getMessage());
-					sb.append(" for any workorder with in the list [ ");
-					for (EllipseActivityDTO activity : ellipseActivities) {
-						sb.append(activity.getWorkOrderTaskId());
-						sb.append(",");
-					}
-					sb.append("]");
-
-					exceptionHandler.handleException(new P6ServiceException(sb.toString()));
+				StringBuilder sb = new StringBuilder();
+				sb.append(e.getMessage());
+				sb.append(" for any workorder with in the list [ ");
+				for (EllipseActivityDTO activity : ellipseActivities) {
+					sb.append(activity.getWorkOrderTaskId());
+					sb.append(",");
 				}
-			}
-			catch (Exception e) {
+				sb.append("]");
+
+				exceptionHandler.handleException(new P6ServiceException(sb.toString()));
+			} catch (Exception e) {
 				rollbackTransaction(transId);
 				throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e);
 			}
