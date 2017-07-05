@@ -68,46 +68,6 @@ public class P6WSClientImplIntegrationTest {
 	}
 
 	@Test
-	public void test_5_readResource() throws P6BusinessException {
-
-		p6serviceImpl.readUDFTypeMapping();
-		p6serviceImpl.readProjectWorkgroupMapping();
-		List<P6ActivityDTO> activities = new ArrayList<>();
-
-		P6ActivityDTO activityDTO = new P6ActivityDTO();
-
-		activityDTO.setActivityId("TW245976001");
-		activityDTO.setActivityName("12 MTHS PATROL (GROUND)");
-		activityDTO.setActivityStatus("Not Started");
-		activityDTO.setPlannedStartDate("2017-07-06T08:00:00");
-		activityDTO.setWorkGroup("MONT1");
-		activityDTO.setOriginalDuration(33);
-		activityDTO.setRemainingDuration(33);
-		activityDTO.seteGIUDF("TX_LINE_OH");
-		activityDTO.setEllipseStandardJobUDF("KT1408");
-		activityDTO.setActivityJDCodeUDF("EA");
-		activityDTO.setEquipmentNoUDF("4700218");
-		activityDTO.setEquipmentCodeUDF("PINT");
-		activityDTO.setRequiredByDateUDF("2017-07-30T08:00:00");
-		activityDTO.setUpStreamSwitchUDF("DOF 4187606");
-		activityDTO.setTaskDescriptionUDF("Test task desc");
-		activityDTO.setTaskUserStatusUDF("MR");
-		activityDTO.setPickIdUDF("MH-PNJ 81");
-		activityDTO.setFeederUDF("E 316.0 SOUTH ST");
-		activityDTO.setAddressUDF("Perth WA");
-		activityDTO.setProjectObjectId(263779);
-		activities.add(activityDTO);
-
-		Map<String, Integer> projWorkgroupDTOs = p6WsclientImpl.readResources();
-
-		Assert.assertNotNull(projWorkgroupDTOs);
-		
-		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
-		
-
-	}
-
-	@Test
 	public void test_1_CreateActivitiesP6() throws P6BusinessException {
 
 		p6serviceImpl.readUDFTypeMapping();
@@ -151,9 +111,66 @@ public class P6WSClientImplIntegrationTest {
 	}
 
 	@Test
-	public void test_2_UpdateActivitiesP6() throws P6BusinessException {
+	public void test_1_CreateActivitiesP6_Error() throws P6BusinessException {
 
 		p6serviceImpl.readUDFTypeMapping();
+		p6serviceImpl.readProjectWorkgroupMapping();
+		List<P6ActivityDTO> activities = new ArrayList<>();
+
+		P6ActivityDTO activityDTO = new P6ActivityDTO();
+
+		activityDTO.setActivityId("TW245976001");
+		activityDTO.setActivityName("12 MTHS PATROL (GROUND)");
+		activityDTO.setActivityStatus("Not Started");
+		activityDTO.setPlannedStartDate("2017-07-06T08:00:00");
+		activityDTO.setWorkGroup("MONT1");
+		activityDTO.setOriginalDuration(33);
+		activityDTO.setRemainingDuration(33);
+		activityDTO.seteGIUDF("TX_LINE_OH");
+		activityDTO.setEllipseStandardJobUDF("KT1408");
+		activityDTO.setActivityJDCodeUDF("EA");
+		activityDTO.setEquipmentNoUDF("4700218");
+		activityDTO.setEquipmentCodeUDF("PINT");
+		activityDTO.setRequiredByDateUDF("2017-07-30T08:00:00");
+		activityDTO.setUpStreamSwitchUDF("DOF 4187606");
+		activityDTO.setTaskDescriptionUDF("Test task desc");
+		activityDTO.setTaskUserStatusUDF("MR");
+		activityDTO.setPickIdUDF("MH-PNJ 81");
+		activityDTO.setFeederUDF("E 316.0 SOUTH ST");
+		activityDTO.setAddressUDF("Perth WA");
+		activityDTO.setProjectObjectId(263779);
+		activityDTO.setEstimatedLabourHours(8.0);
+		activityDTO.setActualStartDate("2017-07-06T08:00:00");
+		activityDTO.setActualFinishDate("2017-07-08T08:00:00");
+		activityDTO.setExecutionPckgUDF("T123344465");
+		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
+
+		activityDTO.setPrimaryResorceObjectId(resourceMap.get("MONT1").getPrimaryResourceObjectId());
+
+		activities.add(activityDTO);
+
+		p6WsclientImpl.createActivities(activities);
+
+		List<Exception> errors = CacheManager.getDataErrors();
+
+		Assert.assertFalse(errors.isEmpty());
+		Assert.assertNotNull(errors.get(0).getMessage());
+
+	}
+
+	@Test
+	public void test_2_ReadActivities() throws P6ServiceException {
+		p6Activities = p6WsclientImpl.readActivities(263779);
+		Assert.assertNotNull(p6Activities);
+
+		for (P6ActivityDTO activityDTO : p6Activities) {
+			Assert.assertNotNull(activityDTO.getActivityId());
+		}
+	}
+
+	@Test
+	public void test_3_UpdateActivitiesP6() throws P6BusinessException {
+
 		p6Activities = p6WsclientImpl.readActivities(263779);
 
 		List<P6ActivityDTO> activities = new ArrayList<>();
@@ -196,14 +213,56 @@ public class P6WSClientImplIntegrationTest {
 	}
 
 	@Test
-	public void test_3_ReadActivities() throws P6ServiceException {
+	public void test_3_UpdateActivitiesP6_Error() throws P6BusinessException {
+		CacheManager.getDataErrors().clear();
 		p6Activities = p6WsclientImpl.readActivities(263779);
-		Assert.assertNotNull(p6Activities);
 
-		for (P6ActivityDTO activityDTO : p6Activities) {
-			Assert.assertNotNull(activityDTO.getActivityId());
+		List<P6ActivityDTO> activities = new ArrayList<>();
+
+		P6ActivityDTO activityDTO = new P6ActivityDTO();
+
+		activityDTO.setActivityId("TW245976001");
+		activityDTO.setActivityName("12 MTHS PATROL (GROUND)");
+		activityDTO.setActivityStatus("Completed1");
+		activityDTO.setPlannedStartDate("2017-07-06T08:00:00");
+		activityDTO.setWorkGroup("MONT1");
+		activityDTO.setOriginalDuration(33);
+		activityDTO.setRemainingDuration(33);
+		activityDTO.setEstimatedLabourHours(35);
+		activityDTO.seteGIUDF("TX_LINE_OH_1");
+		activityDTO.setEllipseStandardJobUDF("KT1409");
+		activityDTO.setActivityJDCodeUDF("EA1");
+		activityDTO.setEquipmentNoUDF("4700218");
+		activityDTO.setEquipmentCodeUDF("PINT");
+		activityDTO.setRequiredByDateUDF("2017-07-30T08:00:00");
+		activityDTO.setUpStreamSwitchUDF("DOF 41876061");
+		activityDTO.setTaskDescriptionUDF("Test task desc1");
+		activityDTO.setTaskUserStatusUDF("MR1");
+		activityDTO.setPickIdUDF("MH-PNJ 8128");
+		activityDTO.setFeederUDF("E 316.0 SOUTH ST1");
+		activityDTO.setAddressUDF("Perth WA");
+		activityDTO.setProjectObjectId(263779);
+		activityDTO.setActualStartDate("2017-07-06T08:00:00");
+		activityDTO.setActualFinishDate("2017-07-05T08:00:00");
+		activityDTO.setExecutionPckgUDF("");
+		for (P6ActivityDTO activityDTO2 : p6Activities) {
+			if (activityDTO.getActivityId().equals(activityDTO2.getActivityId())) {
+				activityDTO.setActivityObjectId(activityDTO2.getActivityObjectId());
+				break;
+			}
 		}
+		activities.add(activityDTO);
+		p6WsclientImpl.updateActivities(activities);
+
+		List<Exception> errors = CacheManager.getDataErrors();
+
+		Assert.assertFalse(errors.isEmpty());
+		Assert.assertNotNull(errors.get(0).getMessage());
+		System.out.println(errors.get(0).getMessage());
+
 	}
+
+	
 
 	@Test
 	public void test_4_DeleteActivitiesP6() throws P6ServiceException {
@@ -246,6 +305,45 @@ public class P6WSClientImplIntegrationTest {
 	}
 
 	@Test
+	public void test_5_readResource() throws P6BusinessException {
+
+		p6serviceImpl.readUDFTypeMapping();
+		p6serviceImpl.readProjectWorkgroupMapping();
+		List<P6ActivityDTO> activities = new ArrayList<>();
+
+		P6ActivityDTO activityDTO = new P6ActivityDTO();
+
+		activityDTO.setActivityId("TW245976001");
+		activityDTO.setActivityName("12 MTHS PATROL (GROUND)");
+		activityDTO.setActivityStatus("Not Started");
+		activityDTO.setPlannedStartDate("2017-07-06T08:00:00");
+		activityDTO.setWorkGroup("MONT1");
+		activityDTO.setOriginalDuration(33);
+		activityDTO.setRemainingDuration(33);
+		activityDTO.seteGIUDF("TX_LINE_OH");
+		activityDTO.setEllipseStandardJobUDF("KT1408");
+		activityDTO.setActivityJDCodeUDF("EA");
+		activityDTO.setEquipmentNoUDF("4700218");
+		activityDTO.setEquipmentCodeUDF("PINT");
+		activityDTO.setRequiredByDateUDF("2017-07-30T08:00:00");
+		activityDTO.setUpStreamSwitchUDF("DOF 4187606");
+		activityDTO.setTaskDescriptionUDF("Test task desc");
+		activityDTO.setTaskUserStatusUDF("MR");
+		activityDTO.setPickIdUDF("MH-PNJ 81");
+		activityDTO.setFeederUDF("E 316.0 SOUTH ST");
+		activityDTO.setAddressUDF("Perth WA");
+		activityDTO.setProjectObjectId(263779);
+		activities.add(activityDTO);
+
+		Map<String, Integer> projWorkgroupDTOs = p6WsclientImpl.readResources();
+
+		Assert.assertNotNull(projWorkgroupDTOs);
+
+		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
+
+	}
+
+	@Test
 	public void test_6_ReadProjects() throws P6ServiceException {
 		Map<String, Integer> projects = p6WsclientImpl.readProjects();
 		for (String key : projects.keySet()) {
@@ -254,11 +352,11 @@ public class P6WSClientImplIntegrationTest {
 		}
 
 	}
-	
+
 	@Test
-	public void test_7_LogoutFromP6 (){
+	public void test_7_LogoutFromP6() {
 		boolean status = p6WsclientImpl.logoutFromP6();
 		Assert.assertTrue(status);
 	}
-	
+
 }

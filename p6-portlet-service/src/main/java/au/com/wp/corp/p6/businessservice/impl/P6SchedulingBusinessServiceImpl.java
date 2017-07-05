@@ -58,6 +58,7 @@ import au.com.wp.corp.p6.utils.WorkOrderComparatorOnActioned;
 import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
 
 @Service
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessService {
 
 	private static final Logger logger = LoggerFactory.getLogger(P6SchedulingBusinessServiceImpl.class);
@@ -85,7 +86,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Autowired
 	ResourceDetailDAO resourceDetailDAO;
 
-	private Map<String, List<String>> depotCrewMap = new HashMap<String, List<String>>();
+	private Map<String, List<String>> depotCrewMap = new HashMap();
 	List<WorkOrder> listWOData = null;
 	List<Task> tasksInDb = null;
 	@Autowired
@@ -99,7 +100,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	public List<WorkOrder> retrieveWorkOrders(WorkOrderSearchRequest input) throws P6BusinessException {
 		logger.info("input date # {} ", input.getFromDate());
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
-		List<String> crewListAll = new ArrayList<String>();
+		List<String> crewListAll = new ArrayList();
 		crewListAll = depotCrewMap.values().stream().flatMap(List::stream).collect(Collectors.toList());
 
 		searchRequest.setCrewList(crewListAll);
@@ -119,9 +120,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	
 
 	private List<WorkOrder> applyFilters(List<WorkOrder> listWOData, WorkOrderSearchRequest input) {
-		List<WorkOrder> resultListWOData = new ArrayList<WorkOrder>();
+		List<WorkOrder> resultListWOData = new ArrayList();
 		List<String> listOfCrew = null;
-		if (input.getWorkOrderId() != null && !input.getWorkOrderId().equals("")) {
+		if (input.getWorkOrderId() != null && !"".equals(input.getWorkOrderId())) {
 			Optional<WorkOrder> wo = findWOByTaskId(listWOData, input.getWorkOrderId());
 			if (wo.isPresent()) {
 				resultListWOData.add(wo.get());
@@ -129,7 +130,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		} else if (!CollectionUtils.isEmpty(input.getCrewList())) {
 			listOfCrew = input.getCrewList();
 		} else if (!CollectionUtils.isEmpty(input.getDepotList()) && (CollectionUtils.isEmpty(input.getCrewList()))) {
-			List<String> crewListAll = new ArrayList<String>();
+			List<String> crewListAll = new ArrayList();
 			input.getDepotList().forEach(depot -> {
 				crewListAll.addAll(depotCrewMap.get(depot));
 			});
@@ -140,7 +141,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		if (!CollectionUtils.isEmpty(listOfCrew)) {
 			for (String crew : listOfCrew) {
 				List<WorkOrder> woList = findWoByCrew(listWOData, crew);
-				if (null != woList && woList.size() > 0) {
+				if (null != woList && !woList.isEmpty()) {
 					resultListWOData.addAll(woList);
 				}
 			}
@@ -155,8 +156,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		long startTime = System.currentTimeMillis();
 		logger.debug("User logged in as ======================================={}",
 				userTokenRequest.getUserPrincipal());
-		Map<String, WorkOrder> mapOfExecutionPkgWO = new HashMap<String, WorkOrder>();
-		List<WorkOrder> ungroupedWorkorders = new ArrayList<WorkOrder>();
+		Map<String, WorkOrder> mapOfExecutionPkgWO = new HashMap();
+		List<WorkOrder> ungroupedWorkorders = new ArrayList();
 		try {
 			listWOData = retrieveWorkOrders(input); // 1 clear and nullify after
 			// remove
@@ -228,7 +229,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	private void regroupEPForOtherWO(List<WorkOrder> listOfWo, Map<String, WorkOrder> mapOfExecutionPkgWO,
 			Set<Task> taskForExePak, String dbWOExecPkg) {
 		WorkOrder workOrdersalreadyinGroup = mapOfExecutionPkgWO.get(dbWOExecPkg);
-		if (taskForExePak.size() > 0) {
+		if (!taskForExePak.isEmpty()) {
 			for (Task tsk : taskForExePak) {
 				Optional<WorkOrder> wo = findWOByTaskId(listOfWo, tsk.getTaskId());
 				if (wo.isPresent()) {
@@ -289,7 +290,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		String executionPkgLeadCrew = executionpackage.getLeadCrewId() == null ? "" : executionpackage.getLeadCrewId();
 		logger.debug("in removExecutionPackageFromTask creew id from exec pakage ()", executionPkgLeadCrew);
 		/* turn blank the lead crew if matching remove the task */
-		if ((!executionPkgLeadCrew.equals("")) && (!StringUtils.contains(crewPresent, executionPkgLeadCrew))) {
+		if ((!"".equals(executionPkgLeadCrew)) && (!StringUtils.contains(crewPresent, executionPkgLeadCrew))) {
 			logger.debug("in prepare workorder removed lead creew id from exec pakage ()",
 					executionpackage.getLeadCrewId());
 			executionpackage.setLeadCrewId("");
@@ -313,21 +314,21 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	private List<Task> fetchListOfTasksBySearchedDate(WorkOrderSearchRequest input, List<WorkOrder> listWOData)
 			throws P6BusinessException {
 		long startTime = System.currentTimeMillis();
-		List<String> worOrders = new ArrayList<String>();
+		List<String> worOrders = new ArrayList();
 		if (listWOData != null) {
 			listWOData.forEach(workOrder -> {
 				worOrders.add(workOrder.getWorkOrderId());
 			});
 
 		}
-		List<Date> dateRange = new ArrayList<Date>();
+		List<Date> dateRange = new ArrayList();
 		if (input != null) {
 			dateRange.add(input.getFromDate() != null ? dateUtils.toDateFromYYYY_MM_DD(input.getFromDate()) : null);
 			dateRange.add(input.getToDate() != null ? dateUtils.toDateFromYYYY_MM_DD(input.getToDate()) : null);
 
 		}
 		logger.debug("Total time taken to updateTasksInDB {}", System.currentTimeMillis() - startTime);
-		if (worOrders.size() > 0) {
+		if (!worOrders.isEmpty()) {
 			return workOrderDAO.fetchTasksByDateAndWo(dateRange, worOrders);
 		} else {
 			return workOrderDAO.fetchTasksByOnlyDate(dateRange);
@@ -391,7 +392,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				logger.debug("removeExecutionPackageinP6 called with tasks # {}", workOrderIds.size());
 				logger.debug("Calling to remove execution package for work orders {}", workOrderIds);
 				Map<String, Integer> workOrderIdMap = p6wsClient.getWorkOrderIdMap();
-				List<Integer> listOfObjectId = new ArrayList<Integer>();
+				List<Integer> listOfObjectId = new ArrayList();
 				workOrderIds.forEach(workOrderId -> {
 					Integer objectId = workOrderIdMap.get(workOrderId);
 					if ((!workOrderIdMap.containsKey(workOrderId)) || objectId == null) {
@@ -477,19 +478,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				dbTask.setSchdDt(scheduledDateForWorkOrder);
 				// if date is changed then execution package is null
 				if (executionPackage != null) {
-					/*
-					 * check of other tasks on the execution package if for all
-					 * other tasks the dates are same then don't remove the
-					 * package
-					 */
-					/*
-					 * if(isExecutionPackageTobeRetained(dbTask)){ //update
-					 * execution package in
-					 * 
-					 * }else{
-					 */
+					
 					removExecutionPackageFromTask(dbTask);
-					// }
+		
 				}
 			}
 		}
@@ -562,21 +553,21 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Transactional
 	public ViewToDoStatus fetchWorkOrdersForViewToDoStatus(WorkOrderSearchRequest query) throws P6BusinessException {
 
-		List<Task> tasks = null;
+		List<Task> tasks;
 
-		Map<String, List<au.com.wp.corp.p6.dto.ToDoAssignment>> mapOfToDoIdWorkOrders = new HashMap<String, List<au.com.wp.corp.p6.dto.ToDoAssignment>>();
-		ExecutionPackage executionPackage = null;
+		Map<String, List<au.com.wp.corp.p6.dto.ToDoAssignment>> mapOfToDoIdWorkOrders = new HashMap();
+		ExecutionPackage executionPackage;
 		ViewToDoStatus returnedVal = new ViewToDoStatus();
 		if (null != query && (null != query.getExecPckgName() && (!"".equals(query.getExecPckgName())))) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
-			tasks = new ArrayList<Task>(executionPackage.getTasks()); // multiple
+			tasks = new ArrayList(executionPackage.getTasks()); // multiple
 			// tasks
 		} else {
 			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query); // single
 			// task
 		}
 		for (Task task : tasks) {
-			String key = null;
+			String key;
 			if (task.getExecutionPackage() != null) {
 				key = task.getExecutionPackage().getExctnPckgNam();
 				returnedVal.setExctnPckgName(key);
@@ -592,7 +583,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			// TO DO
 			Set<TodoAssignment> toDoEntities = task.getTodoAssignments();
 
-			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
+			List<au.com.wp.corp.p6.dto.ToDoAssignment> assignmentDTOs = new ArrayList();
 			if (null != toDoEntities) {
 				logger.debug("Size of ToDoAssignment for task>>>{}", toDoEntities.size());
 			}
@@ -622,7 +613,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 					/* new entry added for this todo */
 					logger.debug("added  todoname =={} as key in global map with  entry  of AssignmentDto {}", toDoName,
 							workOrderId);
-					List<au.com.wp.corp.p6.dto.ToDoAssignment> assignments = new ArrayList<au.com.wp.corp.p6.dto.ToDoAssignment>();
+					List<au.com.wp.corp.p6.dto.ToDoAssignment> assignments = new ArrayList();
 					assignments.add(assignmentDTO);
 
 					mapOfToDoIdWorkOrders.put(toDoName, assignments);
@@ -632,7 +623,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 		}
 		Map<String, ToDoAssignment> mapOfGroupedTodoRecord = getGroupedTodowithWorkOrders(mapOfToDoIdWorkOrders);
-		List<ToDoAssignment> listOfTodoAssignments = new ArrayList<ToDoAssignment>(mapOfGroupedTodoRecord.values());
+		List<ToDoAssignment> listOfTodoAssignments = new ArrayList(mapOfGroupedTodoRecord.values());
 		returnedVal.setTodoAssignments(listOfTodoAssignments);
 		return returnedVal;
 	}
@@ -647,7 +638,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	private Map<String, ToDoAssignment> getGroupedTodowithWorkOrders(
 			Map<String, List<ToDoAssignment>> mapOfToDoIdWorkOrders) {
 
-		Map<String, ToDoAssignment> todoMap = new HashMap<String, ToDoAssignment>();
+		Map<String, ToDoAssignment> todoMap = new HashMap();
 		mapOfToDoIdWorkOrders.forEach((todoName, assignments) -> {
 			logger.debug("Merging for ToDo name {}, total assignments records count {}", todoName, assignments.size());
 			ToDoAssignment groupedTodoAssignment = groupTodoAssinmentRecord(assignments);
@@ -670,9 +661,9 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		ToDoAssignment singleMergedTodo = new ToDoAssignment();
 		Set<String> workOrders = new HashSet<>();
 		Set<String> requiredByDate = new HashSet<>();
-		Set<String> status = new HashSet<String>();
-		Set<String> comments = new HashSet<String>();
-		Set<String> supDocLinks = new HashSet<String>();
+		Set<String> status = new HashSet();
+		Set<String> comments = new HashSet();
+		Set<String> supDocLinks = new HashSet();
 		// String toDoName ;
 		logger.debug("before starting loop for assignments size = {}", assignments);
 		assignments.forEach(toDoAssignment -> {
@@ -719,7 +710,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 
 		if (workOrder == null)
 			throw new IllegalArgumentException("Work Order canot be null");
-		List<ExecutionPackageDTO> executionPackageDTOList = new ArrayList<ExecutionPackageDTO>();
+		List<ExecutionPackageDTO> executionPackageDTOList = new ArrayList<>();
 		ExecutionPackageDTO executionPackageDTO = null;
 		List<WorkOrder> workOrderList = new ArrayList<>();
 		for (String workOrderId : workOrder.getWorkOrders()) { // can be
@@ -854,19 +845,19 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 	@Transactional
 	public List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(WorkOrderSearchRequest query) throws P6BusinessException {
 
-		List<Task> tasks = null;
-		ExecutionPackage executionPackage = null;
+		List<Task> tasks;
+		ExecutionPackage executionPackage=null;
 		logger.debug("ExecPckgName >>>>{}", query.getExecPckgName());
 		logger.debug("WorkOrderId >>>>{}", query.getWorkOrderId());
 		if (null != query && null != query.getExecPckgName()) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
-			tasks = new ArrayList<Task>(executionPackage.getTasks());
+			tasks = new ArrayList<>(executionPackage.getTasks());
 		} else {
 			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
 		}
 
-		Map<String, WorkOrder> workOrderMap = new HashMap<String, WorkOrder>();
-		Map<String, Map<Long, ToDoItem>> workOrderToDoMap = new HashMap<String, Map<Long, ToDoItem>>();
+		Map<String, WorkOrder> workOrderMap = new HashMap<>();
+		Map<String, Map<Long, ToDoItem>> workOrderToDoMap = new HashMap<>();
 
 		for (Task task : tasks) {
 
@@ -875,8 +866,8 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				executionPkg = task.getExecutionPackage().getExctnPckgNam();
 			}
 
-			WorkOrder workOrder = null;
-			Map<Long, ToDoItem> toDoMap = null;
+			WorkOrder workOrder;
+			Map<Long, ToDoItem> toDoMap;
 			if (!StringUtils.isEmpty(executionPkg) && workOrderMap.containsKey(executionPkg)) {
 				workOrder = workOrderMap.get(executionPkg);
 				workOrder.setCrewNames(workOrder.getCrewNames() + "," + task.getCrewId());
@@ -891,7 +882,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				} else {
 					executionPkg = task.getTaskId();
 				}
-				List<String> workOrders = new ArrayList<String>();
+				List<String> workOrders = new ArrayList<>();
 				workOrders.add(task.getTaskId());
 				workOrder.setWorkOrders(workOrders);
 				workOrder.setLeadCrew(task.getLeadCrewId());
@@ -901,7 +892,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				if (StringUtils.isEmpty(workOrder.getDepotToDoComment())) {
 					workOrder.setDepotToDoComment(task.getDeptCmt());
 				}
-				toDoMap = new HashMap<Long, ToDoItem>();
+				toDoMap = new HashMap<>();
 				workOrderMap.put(executionPkg, workOrder);
 			}
 
@@ -916,7 +907,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 							ToDoItem item = new ToDoItem();
 							item.setTodoId(String.valueOf(todoId));
 							item.setToDoName(todoDAO.getToDoName(todoId));
-							List<String> workOrders = new ArrayList<String>();
+							List<String> workOrders = new ArrayList<>();
 							workOrders.add(taskToDo.getTaskId());
 							item.setWorkOrders(workOrders);
 							toDoMap.put(todoId, item);
@@ -927,7 +918,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 			}
 		}
 
-		List<WorkOrder> workOrders = new ArrayList<WorkOrder>(workOrderMap.values());
+		List<WorkOrder> workOrders = new ArrayList<>(workOrderMap.values());
 		for (WorkOrder workOrder : workOrders) {
 			String executionPkg = workOrder.getExctnPckgName();
 			if (StringUtils.isEmpty(executionPkg)) {
