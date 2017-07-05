@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.integration.dto.UDFTypeDTO;
-import au.com.wp.corp.p6.integration.exception.P6BaseException;
 import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
 import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;

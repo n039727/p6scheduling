@@ -30,6 +30,7 @@ import com.mincom.ews.service.transaction.Rollback;
 import au.com.wp.corp.integration.ellipsews.transaction.TransactionWsClient;
 import au.com.wp.corp.integration.ellipsews.workordertask.WorkOrderTaskWsClient;
 import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
+import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
 import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
@@ -196,9 +197,20 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				}
 			} catch (SoapFaultClientException e) {
 				rollbackTransaction(transId);
-				throw new P6ServiceException(P6ExceptionType.DATA_ERROR.name(), e);
-			}
+				logger.debug("error - ", e);
+				if (e.getMessage().equals(P6ExceptionType.DATA_ERROR.name())) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(e.getCause().getMessage());
+					sb.append(" for any workorder with in the list [ ");
+					for (EllipseActivityDTO activity : ellipseActivities) {
+						sb.append(activity.getWorkOrderTaskId());
+						sb.append(",");
+					}
+					sb.append("]");
 
+					exceptionHandler.handleException(new P6ServiceException(sb.toString()));
+				}
+			}
 			catch (Exception e) {
 				rollbackTransaction(transId);
 				throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e);
