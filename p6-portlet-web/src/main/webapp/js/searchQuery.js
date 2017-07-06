@@ -25,6 +25,8 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 			
 		}
 		ctrl.crewList = ctrl.allCrewList;
+		ctrl.depotList.sort();
+		ctrl.crewList.sort();
 	}
 	
 	ctrl.onDepotChange = function() {
