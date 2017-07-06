@@ -180,7 +180,7 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 					ctrl.fetchedData = response.data;
 					if(response.data && angular.isDefined(response.data.errorCode)){
 						ctrl.metadata.isErrdataAvail = true;
-						ctrl.metadata.errorMsg=data.errorMessage;
+						ctrl.metadata.errorMsg=response.data.errorMessage;
 				    	ctrl.metadata.activated = false;
 				    	if (angular.isDefined(stop)) {
 				            $interval.cancel(stop);
