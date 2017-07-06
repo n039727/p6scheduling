@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -30,8 +29,9 @@ import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
 @ContextConfiguration(locations = { "/servlet-context.xml" })
 public class P6IntegrationExceptionHandlerTest {
 
-	private static final String BUSINESS_NOTIFICATION_EAMIL_SUBJECT = "BUSINESS_NOTIFICATION_EAMIL_SUBJECT";
-	private static final String BUSINESS_NOTIFICATION_EAMIL_BODY = "BUSINESS_NOTIFICATION_EAMIL_BODY";
+	private static final String BUSINESS_NOTIFICATION_EAMIL_COMMENT = "BUSINESS_NOTIFICATION_EAMIL_COMMENT";
+	private static final String BUSINESS_NOTIFICATION_EAMIL_CONTEXT = "BUSINESS_NOTIFICATION_EAMIL_CONTEXT";
+	private static final String BUSINESS_NOTIFICATION_EAMIL_MSG = "BUSINESS_NOTIFICATION_EAMIL_MSG";
 
 	private static final String MSG_TYPE_ID_MT = "MSG_TYPE_ID_MT";
 
@@ -71,12 +71,18 @@ public class P6IntegrationExceptionHandlerTest {
 				errors.append("<br>");
 			}
 
-			final String emailSubject = P6ReloadablePropertiesReader.getProperty(BUSINESS_NOTIFICATION_EAMIL_SUBJECT);
-			final String emailBody = formatMessage(
-					P6ReloadablePropertiesReader.getProperty(BUSINESS_NOTIFICATION_EAMIL_BODY), errors.toString());
+			final String emailComment = P6ReloadablePropertiesReader
+					.getProperty(BUSINESS_NOTIFICATION_EAMIL_COMMENT);
+
+			final String emailMsg = P6ReloadablePropertiesReader.getProperty(BUSINESS_NOTIFICATION_EAMIL_MSG);
+
+			final String emailContext = formatMessage(
+					P6ReloadablePropertiesReader.getProperty(BUSINESS_NOTIFICATION_EAMIL_CONTEXT),
+					errors.toString());
 			final Integer msgTypeID = Integer.parseInt(P6ReloadablePropertiesReader.getProperty(MSG_TYPE_ID_MT));
 
-			Mockito.when(genosClientService.sendMessage(msgTypeID, emailSubject, emailBody)).thenReturn(123L);
+
+			Mockito.when(genosClientService.sendMessage(msgTypeID, emailMsg, emailContext, emailComment)).thenReturn(123L);
 
 			Assert.assertEquals(123L, exceptionHandler.handleDataExeception());
 		}
