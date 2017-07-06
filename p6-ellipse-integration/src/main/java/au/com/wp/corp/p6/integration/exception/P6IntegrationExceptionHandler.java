@@ -9,7 +9,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.wp.snow.SnowConnector;
@@ -35,8 +34,9 @@ public class P6IntegrationExceptionHandler {
 	private static final String EXCEPTION_SHORT_DESC = "EXCEPTION_SHORT_DESC";
 	private static final String EXCEPTION_DETAIL_DESC_TEMPLATE = "EXCEPTION_DETAIL_DESC_TEMPLATE";
 	private static final String APPLICATION_NAME = "APPLICATION_NAME";
-	private static final String BUSINESS_NOTIFICATION_EAMIL_SUBJECT = "BUSINESS_NOTIFICATION_EAMIL_SUBJECT";
-	private static final String BUSINESS_NOTIFICATION_EAMIL_BODY = "BUSINESS_NOTIFICATION_EAMIL_BODY";
+	private static final String BUSINESS_NOTIFICATION_EAMIL_COMMENT = "BUSINESS_NOTIFICATION_EAMIL_COMMENT";
+	private static final String BUSINESS_NOTIFICATION_EAMIL_CONTEXT = "BUSINESS_NOTIFICATION_EAMIL_CONTEXT";
+	private static final String BUSINESS_NOTIFICATION_EAMIL_MSG = "BUSINESS_NOTIFICATION_EAMIL_MSG";
 
 	private static final String MSG_TYPE_ID_MT = "MSG_TYPE_ID_MT";
 
@@ -48,10 +48,9 @@ public class P6IntegrationExceptionHandler {
 	 * 
 	 * @param e
 	 */
-	@Async
 	public long handleDataExeception() {
 		logger.info("sending email to notify business about the data error ... ");
-		long id =0;
+		long id = 0;
 		try {
 			if (!CacheManager.getDataErrors().isEmpty()) {
 				List<Exception> dataErrors = CacheManager.getDataErrors();
@@ -60,16 +59,23 @@ public class P6IntegrationExceptionHandler {
 					errors.append(e.getMessage());
 					errors.append("<br>");
 				}
-				
-				final String emailSubject = P6ReloadablePropertiesReader
-						.getProperty(BUSINESS_NOTIFICATION_EAMIL_SUBJECT);
-				final String emailBody = formatMessage(
-						P6ReloadablePropertiesReader.getProperty(BUSINESS_NOTIFICATION_EAMIL_BODY), errors.toString());
-				logger.info("Data errors - {}", emailBody);
+
+				final String emailComment = P6ReloadablePropertiesReader
+						.getProperty(BUSINESS_NOTIFICATION_EAMIL_COMMENT);
+
+				final String emailMsg = P6ReloadablePropertiesReader.getProperty(BUSINESS_NOTIFICATION_EAMIL_MSG);
+
+				final String emailContext = formatMessage(
+						P6ReloadablePropertiesReader.getProperty(BUSINESS_NOTIFICATION_EAMIL_CONTEXT),
+						errors.toString());
 				final Integer msgTypeID = Integer.parseInt(P6ReloadablePropertiesReader.getProperty(MSG_TYPE_ID_MT));
+
+				logger.info(
+						" MSG_TYPE_ID_MT == {}, BUSINESS_NOTIFICATION_EAMIL_COMMENT = {}, BUSINESS_NOTIFICATION_EAMIL_MSG= {}, BUSINESS_NOTIFICATION_EAMIL_CONTEXT={}",
+						msgTypeID, emailComment, emailMsg, emailContext);
 				// Integer msgType, String message, String context, String
 				// comment
-				id = genosClientService.sendMessage(msgTypeID, emailSubject, emailBody);
+				id = genosClientService.sendMessage(msgTypeID, emailMsg, emailContext, emailComment);
 
 				logger.info("sent email to notify business with the message id # {}", id);
 			}
@@ -78,9 +84,9 @@ public class P6IntegrationExceptionHandler {
 		} finally {
 			CacheManager.getDataErrors().clear();
 		}
-		
+
 		return id;
-		
+
 	}
 
 	/**
@@ -88,7 +94,6 @@ public class P6IntegrationExceptionHandler {
 	 * 
 	 * @param e
 	 */
-	@Async
 	private boolean handleTechnicalException(P6BaseException e) {
 		try {
 			logger.debug("Calling SNow API to register a service ticket............... ");
@@ -110,7 +115,6 @@ public class P6IntegrationExceptionHandler {
 			logger.error("An Error occurs while raising a service ticket: ", e1);
 			return false;
 		}
-		
 
 	}
 
@@ -134,7 +138,7 @@ public class P6IntegrationExceptionHandler {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 

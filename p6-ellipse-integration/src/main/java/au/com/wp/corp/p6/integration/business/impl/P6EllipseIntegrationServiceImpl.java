@@ -635,7 +635,10 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()) {
+		if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()
+				&& !dateUtil.isSameDate(ellipseActivity.getActualStartDate(),
+						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, p6Activity.getActualStartDate(),
+						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP)) {
 			p6ActivityUpd.setActualStartDate(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),
 					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 			isUpdateReq = true;
