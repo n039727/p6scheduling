@@ -32,11 +32,12 @@ public class ResourceDetailDAOImpl implements ResourceDetailDAO {
 		if(null == depotCrewMap){
 			depotCrewMap = new HashMap();
 			List<ResourceDetail> resourceDetails = (List<ResourceDetail>) getSession()
-					.createCriteria(ResourceDetail.class)
+					.createCriteria(ResourceDetail.class).addOrder(org.hibernate.criterion.Order.asc("depotNam"))
 					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 			
 			List<String> crewList = null;
 			for (ResourceDetail resource:resourceDetails) {
+				
 				if(!depotCrewMap.containsKey(resource.getDepotNam())){
 					crewList = new ArrayList();
 					crewList.add(resource.getRsrcNam());
