@@ -95,6 +95,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				viewToDoStatus.setExctnPckgName(task.getExecutionPackage().getExctnPckgNam());
 				viewToDoStatus.setSchedulingComment(task.getExecutionPackage().getExecSchdlrCmt());
 				viewToDoStatus.setDeportComment(task.getExecutionPackage().getExecDeptCmt());
+				
 			} else {
 				viewToDoStatus.setExctnPckgName("");
 				viewToDoStatus.setSchedulingComment(task.getSchdlrCmt());
