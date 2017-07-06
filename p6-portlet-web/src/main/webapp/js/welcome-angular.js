@@ -133,6 +133,7 @@ function fetchMetaData(app) {
 				metadata.selectedExecPckg = [];
 				metadata.selectedAll = false;
 				metadata.errorExecPckgMsgVisiable = false;
+				metadata.errorMsg = "";
 				app.constant('metadata', metadata);
 			});
 }
@@ -177,16 +178,25 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 		};
 		restTemplate.callService(config, function(response) {
 					ctrl.fetchedData = response.data;
-//					console.log("Data from server for search: "
-//							+ JSON.stringify(ctrl.fetchedData));
-				    if(response.data.length >= 0){
+					if(response.data && angular.isDefined(response.data.errorCode)){
+						ctrl.metadata.isErrdataAvail = true;
+						ctrl.metadata.errorMsg=data.errorMessage;
 				    	ctrl.metadata.activated = false;
 				    	if (angular.isDefined(stop)) {
 				            $interval.cancel(stop);
 				            stop = undefined;
 				        }
-				    }
-
+						
+					}else{
+					    if(response.data.length >= 0){
+					    	ctrl.metadata.activated = false;
+					    	if (angular.isDefined(stop)) {
+					            $interval.cancel(stop);
+					            stop = undefined;
+					        }
+					    }
+						
+					}					
 					success(response.data);
 
 				}, null);
@@ -199,14 +209,21 @@ app.controller("toDoPortalCOntroller", function($scope, metadata, restTemplate, 
 		
 		var serviceUrl = "";
 		ctrl.reload(query, function(data) {
-			ctrl.workOrders = data;
-			ctrl.resultVisible = data.length > 0;
-			if(ctrl.resultVisible){
-				ctrl.metadata.isErrdataAvail = false;
-			}else{
+			if(data && angular.isDefined(data.errorCode)){
 				ctrl.metadata.isErrdataAvail = true;
+				ctrl.metadata.errorMsg=data.errorMessage;
+				
+			}else{
+				ctrl.workOrders = data;
+				ctrl.resultVisible = data.length > 0;
+				if(ctrl.resultVisible){
+					ctrl.metadata.isErrdataAvail = false;
+				}else{
+					ctrl.metadata.errorMsg="No result found with entered criteria.";
+					ctrl.metadata.isErrdataAvail = true;
+				}
+				ctrl.savedMsgVisible = false;
 			}
-			ctrl.savedMsgVisible = false;
 		});
 	};
 
