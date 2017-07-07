@@ -235,6 +235,12 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			logger.info("Batch run strategy # {}", integrationRunStartegy);
 			final List<String> workgroupList = new ArrayList<>();
 			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
+			if (CacheManager.getProjectWorkgroupListMap().isEmpty()){
+			
+				logger.info("Project workgroup mapping required to configure in P6 Portal DB");
+				return true;
+			}
+			
 			if (integrationRunStartegy.equals(EllipseReadParameter.ALL.name())) {
 				for (String key : keys) {
 					workgroupList.addAll(CacheManager.getProjectWorkgroupListMap().get(key));
