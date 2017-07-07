@@ -95,6 +95,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 				viewToDoStatus.setExctnPckgName(task.getExecutionPackage().getExctnPckgNam());
 				viewToDoStatus.setSchedulingComment(task.getExecutionPackage().getExecSchdlrCmt());
 				viewToDoStatus.setDeportComment(task.getExecutionPackage().getExecDeptCmt());
+				
 			} else {
 				viewToDoStatus.setExctnPckgName("");
 				viewToDoStatus.setSchedulingComment(task.getSchdlrCmt());
@@ -420,7 +421,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		logger.debug("WorkOrderId >>>>{}", query.getWorkOrderId());
 		if (null != query && null != query.getExecPckgName()) {
 			executionPackage = executionPackageDao.fetch(query.getExecPckgName());
-			tasks = new ArrayList<Task>(executionPackage.getTasks());
+			tasks = new ArrayList(executionPackage.getTasks());
 		} else {
 			tasks = workOrderDAO.fetchWorkOrdersForViewToDoStatus(query);
 		}

@@ -2,6 +2,5 @@
     <wb-module deploy-name="p6-wsmodel">
         <wb-resource deploy-path="/" source-path="/src/main/java"/>
         <wb-resource deploy-path="/" source-path="/src/main/resources"/>
-        <wb-resource deploy-path="/" source-path="/target/generated/src/main/java"/>
     </wb-module>
 </project-modules>

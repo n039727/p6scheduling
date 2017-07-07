@@ -26,19 +26,20 @@ public class ResourceDetailDAOImpl implements ResourceDetailDAO {
 		return sessionFactory.getCurrentSession();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Map<String, List<String>> fetchAllResourceDetail() {
 		if(null == depotCrewMap){
-			depotCrewMap = new HashMap<String, List<String>>();
+			depotCrewMap = new HashMap();
 			List<ResourceDetail> resourceDetails = (List<ResourceDetail>) getSession()
-					.createCriteria(ResourceDetail.class)
+					.createCriteria(ResourceDetail.class).addOrder(org.hibernate.criterion.Order.asc("depotNam"))
 					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 			
 			List<String> crewList = null;
 			for (ResourceDetail resource:resourceDetails) {
+				
 				if(!depotCrewMap.containsKey(resource.getDepotNam())){
-					crewList = new ArrayList<String>();
+					crewList = new ArrayList();
 					crewList.add(resource.getRsrcNam());
 					depotCrewMap.put(resource.getDepotNam(), crewList);
 				}

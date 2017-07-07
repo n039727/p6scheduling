@@ -11,7 +11,6 @@ import javax.transaction.Transactional;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,19 +32,19 @@ public class TodoDAOImpl implements TodoDAO {
 	private Object lock = new Object();
 	private Long maxPk = null;
 	
-	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
 	@Transactional
 	public List<TodoTemplate> fetchAllToDos() {
 
 		if (toDoMap == null) {
 			synchronized (lock) {
 				if (toDoMap == null) {
-					@SuppressWarnings("unchecked")
 					List<TodoTemplate> listToDo = (List<TodoTemplate>) getSession()
 							.createCriteria(TodoTemplate.class)
 							.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-					toDoMap = new HashMap<Long, TodoTemplate>();
-					toDoNameMap = new HashMap<String, TodoTemplate>();
+					toDoMap = new HashMap();
+					toDoNameMap = new HashMap();
 					for (TodoTemplate todo:listToDo) {
 						toDoMap.put(todo.getTodoId(), todo);
 						toDoNameMap.put(todo.getTodoNam(), todo);
@@ -54,7 +53,7 @@ public class TodoDAOImpl implements TodoDAO {
 			}
 		}
 
-		return new ArrayList<TodoTemplate>(toDoMap.values());
+		return new ArrayList(toDoMap.values());
 		
 	}
 	

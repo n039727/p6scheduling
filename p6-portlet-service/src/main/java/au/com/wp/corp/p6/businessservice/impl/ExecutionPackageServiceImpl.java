@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +51,7 @@ import au.com.wp.corp.p6.wsclient.cleint.P6WSClient;
  * @version 1.0
  */
 @Service
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExecutionPackageServiceImpl.class);
@@ -74,7 +74,8 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 
 
 	private List<ExecutionPackageDTO> executionPackageDTOFoP6List;
-	private List<String> workOrdersForExcnPkgDelP6 = new ArrayList<String>();
+	
+	private List<String> workOrdersForExcnPkgDelP6 = new ArrayList();
 	@Override
 	public List<ExecutionPackageDTO> getExecutionPackageDTDOFoP6() {
 		return executionPackageDTOFoP6List;
@@ -184,7 +185,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		updateOldExecutionPackages(executionPackages);
 		logger.info("execution package has been created with execution package id # {} ",
 				execPackgDTO.getExctnPckgName());
-		List<ExecutionPackageDTO> execPkgdtos = new ArrayList<ExecutionPackageDTO>();
+		List<ExecutionPackageDTO> execPkgdtos = new ArrayList();
 		execPkgdtos.add(execPackgDTO);
 		executionPackageDTOFoP6List = execPkgdtos;
 		return execPackgDTO;
@@ -238,7 +239,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	private void updateOldExecutionPackages(Set<ExecutionPackage> executionPackages) throws P6BusinessException{
 		if(null != executionPackages){
 			logger.debug("Number of old Execution package>> {} ", executionPackages.size());
-			String OldExePkgleadCrew = "";
+			String OldExePkgleadCrew;
 			boolean crewMatches = Boolean.FALSE;
 			for (ExecutionPackage executionPackage : executionPackages) {
 				OldExePkgleadCrew = executionPackage.getLeadCrewId();
@@ -279,8 +280,8 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	@Transactional
 	public List<WorkOrder> searchByExecutionPackage(WorkOrderSearchRequest input) throws P6BaseException {
 		List<WorkOrder> listWOData = retrieveWorkOrdersForExecutionPackage(input);
-		List<WorkOrder> listWODataWithEp = new ArrayList<WorkOrder>();
-		List<WorkOrder> listWODataWithOutEp = new ArrayList<WorkOrder>();
+		List<WorkOrder> listWODataWithEp = new ArrayList();
+		List<WorkOrder> listWODataWithOutEp = new ArrayList();
 		List<Task> tasksInDb = fetchListOfTasksForWorkOrders(listWOData);
 		for (WorkOrder workOrder : listWOData) {
 			if (workOrder.getWorkOrders() != null) {
@@ -288,9 +289,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					Optional<Task> task = findTask(tasksInDb, workOrderId);
 					Task dbTask = task.isPresent() ? task.get() : new Task();
 					logger.debug("Rerieved task in db for the the given workder in String array {}",workOrderId);
-					/*if (!StringUtils.isEmpty(dbTask.getCrewId())) {					
-						workOrder.getCrewAssigned().add(dbTask.getCrewId());
-					}*/
+					
 					workOrder.setScheduleDate(dateUtils.convertDateDDMMYYYY(workOrder.getScheduleDate(),"/"));
 					if (dbTask.getExecutionPackage() != null) {
 						logger.debug("Execution package obtained ===={}",dbTask.getExecutionPackage());
@@ -317,7 +316,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	}
 	private List<Task> fetchListOfTasksForWorkOrders(List<WorkOrder> listWOData) throws P6BusinessException{
 		long startTime = System.currentTimeMillis();
-		List<String> worOrders = new ArrayList<String>();
+		List<String> worOrders = new ArrayList();
 		if (listWOData != null) {
 			listWOData.forEach(workOrder->{
 				worOrders.add(workOrder.getWorkOrderId());
@@ -335,15 +334,15 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 		ActivitySearchRequest searchRequest = new ActivitySearchRequest();
 		Map<String, List<String>> depoCrewMap = p6SchedulingService.getDepotCrewMap();
 		// if crew list is null then append all crew in the criteria
-		if(input.getCrewList() == null || input.getCrewList().size() == 0){
-			List<String> crewListAll = new ArrayList<String>();
+		if(input.getCrewList() == null || input.getCrewList().isEmpty()){
+			List<String> crewListAll = new ArrayList();
 			crewListAll = depoCrewMap.values().stream().flatMap(List::stream)
 					.collect(Collectors.toList());
 			input.setCrewList(crewListAll);
 		}
 		//if depot is there select all crew for that depot
-		if(input.getDepotList() != null && input.getDepotList().size() >0){
-			List<String> crewListAll = new ArrayList<String>();
+		if(input.getDepotList() != null && !input.getDepotList().isEmpty()){
+			List<String> crewListAll = new ArrayList();
 			input.getDepotList().forEach(depot ->{
 				crewListAll.addAll(depoCrewMap.get(depot));
 			});

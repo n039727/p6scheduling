@@ -11,7 +11,8 @@ public class WorkOrder {
 	
 	private String exctnPckgName;
 	private List<String> workOrders;
-	private List<String> crewAssigned = new ArrayList<String>();
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private List<String> crewAssigned = new ArrayList();
 	private String workOrderId;
 	private String scheduleDate;
 	private String leadCrew;

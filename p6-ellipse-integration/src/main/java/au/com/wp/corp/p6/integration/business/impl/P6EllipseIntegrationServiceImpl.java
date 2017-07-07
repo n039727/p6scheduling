@@ -235,6 +235,12 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			logger.info("Batch run strategy # {}", integrationRunStartegy);
 			final List<String> workgroupList = new ArrayList<>();
 			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
+			if (CacheManager.getProjectWorkgroupListMap().isEmpty()){
+			
+				logger.info("Project workgroup mapping required to configure in P6 Portal DB");
+				return true;
+			}
+			
 			if (integrationRunStartegy.equals(EllipseReadParameter.ALL.name())) {
 				for (String key : keys) {
 					workgroupList.addAll(CacheManager.getProjectWorkgroupListMap().get(key));
@@ -436,14 +442,15 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 */
 		if (null != projectWorkgroup.get(p6Activity.getWorkGroup())
 				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox()
-				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equals(P6EllipseWSConstants.Y)
+				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equalsIgnoreCase(P6EllipseWSConstants.Y)
 				&& !ellipseActivity.getPlannedStartDate().isEmpty()) {
 			ellipseActivityUpd.setPlannedStartDate(null);
 			ellipseActivityUpd.setPlannedFinishDate(null);
 			isUpdateReq = true;
 
 		} else if ((null != projectWorkgroup.get(p6Activity.getWorkGroup())
-				&& null == projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox())
+				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getPrimaryResourceYN()
+				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getPrimaryResourceYN().equalsIgnoreCase(P6EllipseWSConstants.Y))
 				&& null != p6Activity.getPlannedStartDate()
 				&& !dateUtil.isSameDate(p6Activity.getPlannedStartDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 						ellipseActivity.getPlannedStartDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)) {
@@ -634,7 +641,10 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()) {
+		if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()
+				&& !dateUtil.isSameDate(ellipseActivity.getActualStartDate(),
+						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, p6Activity.getActualStartDate(),
+						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP)) {
 			p6ActivityUpd.setActualStartDate(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),
 					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 			isUpdateReq = true;

@@ -11,9 +11,9 @@ import java.io.Serializable;
  * @author N039126
  * @version 1.0
  */
-public class EllipseActivityDTO  implements Serializable{
+public class EllipseActivityDTO implements Serializable {
 	/**
-	 *  serial id
+	 * serial id
 	 */
 	private static final long serialVersionUID = 5740767208457113061L;
 
@@ -21,7 +21,7 @@ public class EllipseActivityDTO  implements Serializable{
 	 * activityId = workOrderId + taskId
 	 */
 	private String workOrderTaskId;
-	
+
 	private String workGroup;
 
 	private String workOrderDescription;
@@ -29,7 +29,7 @@ public class EllipseActivityDTO  implements Serializable{
 	private String taskStatus;
 
 	private String plannedStartDate;
-	
+
 	private String plannedFinishDate;
 
 	private String jdCode;
@@ -49,15 +49,15 @@ public class EllipseActivityDTO  implements Serializable{
 	private double remainingDuration;
 
 	private String requiredByDate;
-	
+
 	private String ellipseStandardJob;
-	
+
 	private String feeder;
 
 	private String upStreamSwitch;
-	
+
 	private String estimatedLabourHours;
-	
+
 	private String address;
 
 	private String locationInStreet;
@@ -65,22 +65,21 @@ public class EllipseActivityDTO  implements Serializable{
 	private String taskDescription;
 
 	private String slippageCode;
-	
+
 	private String actualStartDate;
-	
+
 	private String actualFinishDate;
-	
-	
 
 	/**
 	 * @return the workOrderTaskId
 	 */
 	public String getWorkOrderTaskId() {
-		return workOrderTaskId != null ? workOrderTaskId.trim(): "";
+		return workOrderTaskId != null ? workOrderTaskId.trim() : "";
 	}
 
 	/**
-	 * @param workOrderTaskId the workOrderTaskId to set
+	 * @param workOrderTaskId
+	 *            the workOrderTaskId to set
 	 */
 	public void setWorkOrderTaskId(String workOrderTaskId) {
 		this.workOrderTaskId = workOrderTaskId;
@@ -90,11 +89,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the workGroup
 	 */
 	public String getWorkGroup() {
-		return workGroup != null ?  workGroup.trim() : "";
+		return workGroup != null ? workGroup.trim() : "";
 	}
 
 	/**
-	 * @param workGroup the workGroup to set
+	 * @param workGroup
+	 *            the workGroup to set
 	 */
 	public void setWorkGroup(String workGroup) {
 		this.workGroup = workGroup;
@@ -104,11 +104,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the workOrderDescription
 	 */
 	public String getWorkOrderDescription() {
-		return workOrderDescription != null ?  workOrderDescription.trim() : "";
+		return workOrderDescription != null ? workOrderDescription.trim() : "";
 	}
 
 	/**
-	 * @param workOrderDescription the workOrderDescription to set
+	 * @param workOrderDescription
+	 *            the workOrderDescription to set
 	 */
 	public void setWorkOrderDescription(String workOrderDescription) {
 		this.workOrderDescription = workOrderDescription;
@@ -118,11 +119,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the taskStatus
 	 */
 	public String getTaskStatus() {
-		return taskStatus != null ?  taskStatus.trim() : "";
+		return taskStatus != null ? taskStatus.trim() : "";
 	}
 
 	/**
-	 * @param taskStatus the taskStatus to set
+	 * @param taskStatus
+	 *            the taskStatus to set
 	 */
 	public void setTaskStatus(String taskStatus) {
 		this.taskStatus = taskStatus;
@@ -132,11 +134,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the plannedStartDate
 	 */
 	public String getPlannedStartDate() {
-		return plannedStartDate != null ?  plannedStartDate.trim() : "";
+		return plannedStartDate != null ? plannedStartDate.trim() : "";
 	}
 
 	/**
-	 * @param plannedStartDate the plannedStartDate to set
+	 * @param plannedStartDate
+	 *            the plannedStartDate to set
 	 */
 	public void setPlannedStartDate(String plannedStartDate) {
 		this.plannedStartDate = plannedStartDate;
@@ -146,11 +149,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the jdCode
 	 */
 	public String getJdCode() {
-		return jdCode != null ?  jdCode.trim() : "";
+		return jdCode != null ? jdCode.trim() : "";
 	}
 
 	/**
-	 * @param jdCode the jdCode to set
+	 * @param jdCode
+	 *            the jdCode to set
 	 */
 	public void setJdCode(String jdCode) {
 		this.jdCode = jdCode;
@@ -160,11 +164,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the taskUserStatus
 	 */
 	public String getTaskUserStatus() {
-		return taskUserStatus != null ?  taskUserStatus.trim() : "";
+		return taskUserStatus != null ? taskUserStatus.trim() : "";
 	}
 
 	/**
-	 * @param taskUserStatus the taskUserStatus to set
+	 * @param taskUserStatus
+	 *            the taskUserStatus to set
 	 */
 	public void setTaskUserStatus(String taskUserStatus) {
 		this.taskUserStatus = taskUserStatus;
@@ -174,11 +179,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the equipmentNo
 	 */
 	public String getEquipmentNo() {
-		return equipmentNo != null ?  equipmentNo.trim() : "";
+		return equipmentNo != null ? equipmentNo.trim() : "";
 	}
 
 	/**
-	 * @param equipmentNo the equipmentNo to set
+	 * @param equipmentNo
+	 *            the equipmentNo to set
 	 */
 	public void setEquipmentNo(String equipmentNo) {
 		this.equipmentNo = equipmentNo;
@@ -188,11 +194,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the plantNoOrPickId
 	 */
 	public String getPlantNoOrPickId() {
-		return plantNoOrPickId != null ?  plantNoOrPickId.trim() : "";
+		return plantNoOrPickId != null ? plantNoOrPickId.trim() : "";
 	}
 
 	/**
-	 * @param plantNoOrPickId the plantNoOrPickId to set
+	 * @param plantNoOrPickId
+	 *            the plantNoOrPickId to set
 	 */
 	public void setPlantNoOrPickId(String plantNoOrPickId) {
 		this.plantNoOrPickId = plantNoOrPickId;
@@ -202,11 +209,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the eGI
 	 */
 	public String getEGI() {
-		return EGI != null ?  EGI.trim() : "";
+		return EGI != null ? EGI.trim() : "";
 	}
 
 	/**
-	 * @param eGI the eGI to set
+	 * @param eGI
+	 *            the eGI to set
 	 */
 	public void setEGI(String eGI) {
 		this.EGI = eGI;
@@ -216,11 +224,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the equipmentCode
 	 */
 	public String getEquipmentCode() {
-		return equipmentCode != null ?  equipmentCode.trim() : "";
+		return equipmentCode != null ? equipmentCode.trim() : "";
 	}
 
 	/**
-	 * @param equipmentCode the equipmentCode to set
+	 * @param equipmentCode
+	 *            the equipmentCode to set
 	 */
 	public void setEquipmentCode(String equipmentCode) {
 		this.equipmentCode = equipmentCode;
@@ -230,11 +239,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the originalDuration
 	 */
 	public double getOriginalDuration() {
-		return originalDuration ;
+		return originalDuration;
 	}
 
 	/**
-	 * @param originalDuration the originalDuration to set
+	 * @param originalDuration
+	 *            the originalDuration to set
 	 */
 	public void setOriginalDuration(double originalDuration) {
 		this.originalDuration = originalDuration;
@@ -248,7 +258,8 @@ public class EllipseActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param remainingDuration the remainingDuration to set
+	 * @param remainingDuration
+	 *            the remainingDuration to set
 	 */
 	public void setRemainingDuration(double remainingDuration) {
 		this.remainingDuration = remainingDuration;
@@ -258,11 +269,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the requiredByDate
 	 */
 	public String getRequiredByDate() {
-		return requiredByDate != null ?  requiredByDate.trim() : "";
+		return requiredByDate != null ? requiredByDate.trim() : "";
 	}
 
 	/**
-	 * @param requiredByDate the requiredByDate to set
+	 * @param requiredByDate
+	 *            the requiredByDate to set
 	 */
 	public void setRequiredByDate(String requiredByDate) {
 		this.requiredByDate = requiredByDate;
@@ -272,11 +284,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the ellipseStandardJob
 	 */
 	public String getEllipseStandardJob() {
-		return ellipseStandardJob != null ?  ellipseStandardJob.trim() : "";
+		return ellipseStandardJob != null ? ellipseStandardJob.trim() : "";
 	}
 
 	/**
-	 * @param ellipseStandardJob the ellipseStandardJob to set
+	 * @param ellipseStandardJob
+	 *            the ellipseStandardJob to set
 	 */
 	public void setEllipseStandardJob(String ellipseStandardJob) {
 		this.ellipseStandardJob = ellipseStandardJob;
@@ -286,11 +299,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the feeder
 	 */
 	public String getFeeder() {
-		return feeder != null ?  feeder.trim() : "";
+		return feeder != null ? feeder.trim() : "";
 	}
 
 	/**
-	 * @param feeder the feeder to set
+	 * @param feeder
+	 *            the feeder to set
 	 */
 	public void setFeeder(String feeder) {
 		this.feeder = feeder;
@@ -300,11 +314,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the upStreamSwitch
 	 */
 	public String getUpStreamSwitch() {
-		return upStreamSwitch != null ?  upStreamSwitch.trim() : "";
+		return upStreamSwitch != null ? upStreamSwitch.trim() : "";
 	}
 
 	/**
-	 * @param upStreamSwitch the upStreamSwitch to set
+	 * @param upStreamSwitch
+	 *            the upStreamSwitch to set
 	 */
 	public void setUpStreamSwitch(String upStreamSwitch) {
 		this.upStreamSwitch = upStreamSwitch;
@@ -314,11 +329,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the estimatedLabourHours
 	 */
 	public String getEstimatedLabourHours() {
-		return estimatedLabourHours != null ?  estimatedLabourHours.trim() : "";
+		return estimatedLabourHours != null ? estimatedLabourHours.trim() : "";
 	}
 
 	/**
-	 * @param estimatedLabourHours the estimatedLabourHours to set
+	 * @param estimatedLabourHours
+	 *            the estimatedLabourHours to set
 	 */
 	public void setEstimatedLabourHours(String estimatedLabourHours) {
 		this.estimatedLabourHours = estimatedLabourHours;
@@ -328,11 +344,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the address
 	 */
 	public String getAddress() {
-		return address != null ?  address.trim() : "";
+		return address != null ? address.trim() : "";
 	}
 
 	/**
-	 * @param address the address to set
+	 * @param address
+	 *            the address to set
 	 */
 	public void setAddress(String address) {
 		this.address = address;
@@ -342,11 +359,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the locationInStreet
 	 */
 	public String getLocationInStreet() {
-		return locationInStreet != null ?  locationInStreet.trim() : "";
+		return locationInStreet != null ? locationInStreet.trim() : "";
 	}
 
 	/**
-	 * @param locationInStreet the locationInStreet to set
+	 * @param locationInStreet
+	 *            the locationInStreet to set
 	 */
 	public void setLocationInStreet(String locationInStreet) {
 		this.locationInStreet = locationInStreet;
@@ -356,11 +374,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the taskDescription
 	 */
 	public String getTaskDescription() {
-		return taskDescription != null ?  taskDescription.trim() : "";
+		return taskDescription != null ? taskDescription.trim() : "";
 	}
 
 	/**
-	 * @param taskDescription the taskDescription to set
+	 * @param taskDescription
+	 *            the taskDescription to set
 	 */
 	public void setTaskDescription(String taskDescription) {
 		this.taskDescription = taskDescription;
@@ -370,11 +389,12 @@ public class EllipseActivityDTO  implements Serializable{
 	 * @return the slippageCode
 	 */
 	public String getSlippageCode() {
-		return slippageCode != null ?  slippageCode.trim() : "";
+		return slippageCode != null ? slippageCode.trim() : "";
 	}
 
 	/**
-	 * @param slippageCode the slippageCode to set
+	 * @param slippageCode
+	 *            the slippageCode to set
 	 */
 	public void setSlippageCode(String slippageCode) {
 		this.slippageCode = slippageCode;
@@ -388,7 +408,8 @@ public class EllipseActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param actualStartDate the actualStartDate to set
+	 * @param actualStartDate
+	 *            the actualStartDate to set
 	 */
 	public void setActualStartDate(String actualStartDate) {
 		this.actualStartDate = actualStartDate;
@@ -402,7 +423,8 @@ public class EllipseActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param actualFinishDate the actualFinishDate to set
+	 * @param actualFinishDate
+	 *            the actualFinishDate to set
 	 */
 	public void setActualFinishDate(String actualFinishDate) {
 		this.actualFinishDate = actualFinishDate;
@@ -416,11 +438,26 @@ public class EllipseActivityDTO  implements Serializable{
 	}
 
 	/**
-	 * @param plannedFinishDate the plannedFinishDate to set
+	 * @param plannedFinishDate
+	 *            the plannedFinishDate to set
 	 */
 	public void setPlannedFinishDate(String plannedFinishDate) {
 		this.plannedFinishDate = plannedFinishDate;
 	}
-	
-	
+
+	@Override
+	public int hashCode() {
+		return workOrderTaskId.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof EllipseActivityDTO) {
+			EllipseActivityDTO other = (EllipseActivityDTO) obj;
+			if (this.getWorkOrderTaskId().equals(other.getWorkOrderTaskId())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

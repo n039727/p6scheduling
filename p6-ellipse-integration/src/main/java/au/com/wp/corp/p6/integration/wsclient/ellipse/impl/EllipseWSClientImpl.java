@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import com.mincom.enterpriseservice.ellipse.dependant.dto.WorkOrderDTO;
 import com.mincom.enterpriseservice.ellipse.workordertask.ArrayOfWorkOrderTaskServiceModifyRequestDTO;
@@ -29,6 +30,7 @@ import com.mincom.ews.service.transaction.Rollback;
 import au.com.wp.corp.integration.ellipsews.transaction.TransactionWsClient;
 import au.com.wp.corp.integration.ellipsews.workordertask.WorkOrderTaskWsClient;
 import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
+import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
 import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
@@ -64,7 +66,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 
 	@Autowired
 	TransactionWsClient transactionWsClient;
-	
+
 	@Autowired
 	P6IntegrationExceptionHandler exceptionHandler;
 
@@ -193,9 +195,22 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 					if (response.getOut() != null)
 						commitTransaction(transId);
 				}
+			} catch (SoapFaultClientException e) {
+				rollbackTransaction(transId);
+				logger.debug("error - ", e);
+				StringBuilder sb = new StringBuilder();
+				sb.append(e.getMessage());
+				sb.append(" for any workorder with in the list [ ");
+				for (EllipseActivityDTO activity : ellipseActivities) {
+					sb.append(activity.getWorkOrderTaskId());
+					sb.append(",");
+				}
+				sb.append("]");
+
+				exceptionHandler.handleException(new P6ServiceException(sb.toString()));
 			} catch (Exception e) {
 				rollbackTransaction(transId);
-				throw new P6ServiceException(e);
+				throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e);
 			}
 		}
 
@@ -210,7 +225,8 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			workOrderMap.put(WORK_ORDER, matcher.group(2));
 			workOrderMap.put(TASK_NO, matcher.group(3));
 		} else {
-			exceptionHandler.handleException(new P6ServiceException("Invalid work order from P6 - workorder task - " + workorderTaskId));
+			exceptionHandler.handleException(
+					new P6ServiceException("Invalid work order from P6 - workorder task - " + workorderTaskId));
 		}
 		logger.debug("Workorder task - {} after tokenize # {}", workorderTaskId, workOrderMap);
 		return workOrderMap;
