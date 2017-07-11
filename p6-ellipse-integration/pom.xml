@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>au.com.wp.corp.p6.scheduling</groupId>
 		<artifactId>p6-scheduling</artifactId>
-		<version>1.5-SNAPSHOT</version>
+		<version>1.7-SNAPSHOT</version>
 	</parent>
 	<artifactId>p6-ellipse-integration</artifactId>
 	<packaging>war</packaging>
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>au.com.wp.corp.p6.scheduling</groupId>
 			<artifactId>p6-wsmodel</artifactId>
-			<version>1.5-SNAPSHOT</version>
+			<version>1.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>au.com.wp.corp.integration</groupId>

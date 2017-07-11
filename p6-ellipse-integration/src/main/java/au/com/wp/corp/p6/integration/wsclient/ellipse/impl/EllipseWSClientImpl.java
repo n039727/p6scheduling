@@ -30,7 +30,6 @@ import com.mincom.ews.service.transaction.Rollback;
 import au.com.wp.corp.integration.ellipsews.transaction.TransactionWsClient;
 import au.com.wp.corp.integration.ellipsews.workordertask.WorkOrderTaskWsClient;
 import au.com.wp.corp.p6.integration.dto.EllipseActivityDTO;
-import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
 import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
@@ -120,6 +119,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 	@Override
 	public void updateActivitiesEllipse(List<EllipseActivityDTO> activities) throws P6ServiceException {
 		logger.info("Updating activities in Ellipse..");
+		final long startTime = System.currentTimeMillis();
 		int noOfActvtyTobeProccessedAtATime;
 		try {
 			noOfActvtyTobeProccessedAtATime = Integer.valueOf(P6ReloadablePropertiesReader
@@ -173,7 +173,8 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 							DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
 					if (null != plantStrDate && !plantStrDate.trim().isEmpty()) {
 						woTaskModifyDTO.setPlanStrDate(plantStrDate);
-					} else if (activity.getPlannedStartDate().isEmpty() && null == activity.getPlannedFinishDate()) {
+					} else if (null != activity.getPlannedFinishDate() && "NULL".equals(activity.getPlannedStartDate())
+							&& "NULL".equals(activity.getPlannedFinishDate())) {
 						woTaskModifyDTO.setPlanStrDate("");
 						woTaskModifyDTO.setPlanFinDate("");
 
@@ -192,14 +193,15 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 						&& null != multipleModify.getRequestParameters().getWorkOrderTaskServiceModifyRequestDTO()
 						&& !multipleModify.getRequestParameters().getWorkOrderTaskServiceModifyRequestDTO().isEmpty()) {
 					MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
+
 					if (response.getOut() != null)
 						commitTransaction(transId);
 				}
 			} catch (SoapFaultClientException e) {
 				rollbackTransaction(transId);
-				logger.debug("error - ", e);
+				logger.debug("error - ", e.getSoapFault().getFaultStringOrReason());
 				StringBuilder sb = new StringBuilder();
-				sb.append(e.getMessage());
+				sb.append(e.getSoapFault().getFaultStringOrReason());
 				sb.append(" for any workorder with in the list [ ");
 				for (EllipseActivityDTO activity : ellipseActivities) {
 					sb.append(activity.getWorkOrderTaskId());
@@ -211,6 +213,8 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 			} catch (Exception e) {
 				rollbackTransaction(transId);
 				throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e);
+			} finally {
+				logger.info("Time taken to update ellipse # {}", System.currentTimeMillis() - startTime);
 			}
 		}
 

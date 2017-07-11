@@ -1243,6 +1243,7 @@ public class P6EllipseIntegrationServiceTest {
 		p6Activity.setPlannedStartDate("2012-06-10 08:00:00");
 		p6Activity.setRemainingDuration(7.00);
 		p6Activity.setRequiredByDateUDF("2012-07-10 08:00:00");
+		p6Activity.setTaskUserStatusUDF("MR");
 		p6Activity.setTaskDescriptionUDF("");
 		p6Activity.setUpStreamSwitchUDF("");
 		p6Activity.setProjectObjectId(263780);
@@ -1317,6 +1318,7 @@ public class P6EllipseIntegrationServiceTest {
 		p6Activity.setRemainingDuration(7.00);
 		p6Activity.setRequiredByDateUDF("2012-07-10 08:00:00");
 		p6Activity.setTaskDescriptionUDF("");
+		p6Activity.setTaskUserStatusUDF("RR");
 		p6Activity.setUpStreamSwitchUDF("");
 		p6Activity.setProjectObjectId(263780);
 
@@ -1331,7 +1333,7 @@ public class P6EllipseIntegrationServiceTest {
 		Assert.assertEquals(p6Activity.getActivityId(), ellipseActivityDTO.getWorkOrderTaskId());
 		Assert.assertEquals(p6Activity.getWorkGroup(), ellipseActivityDTO.getWorkGroup());
 		Assert.assertEquals("AL", ellipseActivityDTO.getTaskUserStatus());
-		Assert.assertEquals("", ellipseActivityDTO.getPlannedStartDate());
+		Assert.assertEquals("NULL", ellipseActivityDTO.getPlannedStartDate());
 	}
 
 	/**

@@ -441,11 +441,11 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * as blank and leave the Planned start date in P6 as it is
 		 */
 		if (null != projectWorkgroup.get(p6Activity.getWorkGroup())
-				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox()
-				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox().equalsIgnoreCase(P6EllipseWSConstants.Y)
+				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getSchedulerinbox() && projectWorkgroup
+						.get(p6Activity.getWorkGroup()).getSchedulerinbox().equalsIgnoreCase(P6EllipseWSConstants.Y)
 				&& !ellipseActivity.getPlannedStartDate().isEmpty()) {
-			ellipseActivityUpd.setPlannedStartDate(null);
-			ellipseActivityUpd.setPlannedFinishDate(null);
+			ellipseActivityUpd.setPlannedStartDate("NULL");
+			ellipseActivityUpd.setPlannedFinishDate("NULL");
 			isUpdateReq = true;
 
 		} else if ((null != projectWorkgroup.get(p6Activity.getWorkGroup())
@@ -463,6 +463,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP));
 			isUpdateReq = true;
 		}
+		
 		/*
 		 * If the P6 Planned start or the P6 Work group changes then Update the
 		 * User Status in Ellipse as 'AL'. The User Status in P6 will remain the
@@ -471,13 +472,15 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 */
 		final String p6TaskUserStatus = null != p6Activity.getTaskUserStatusUDF()
 				? p6Activity.getTaskUserStatusUDF().toUpperCase() : "";
-		if ((null != p6Activity.getWorkGroup() && !p6Activity.getWorkGroup().equals(ellipseActivity.getWorkGroup()))
-				|| (null != p6Activity.getPlannedStartDate() && !dateUtil.isSameDate(p6Activity.getPlannedStartDate(),
-						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, ellipseActivity.getPlannedStartDate(),
-						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP))
+		if (!ellipseActivity.getTaskUserStatus().toUpperCase().equals(USER_STATUS_AL)
+				&& (((null != p6Activity.getWorkGroup()
+						&& !p6Activity.getWorkGroup().equals(ellipseActivity.getWorkGroup()))
+						|| (null != p6Activity.getPlannedStartDate()
+								&& !dateUtil.isSameDate(p6Activity.getPlannedStartDate(),
+										DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, ellipseActivity.getPlannedStartDate(),
+										DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)))
 						&& (p6TaskUserStatus.equals(P6EllipseWSConstants.RR)
-								|| p6TaskUserStatus.equals(P6EllipseWSConstants.MR))
-						&& !ellipseActivity.getTaskUserStatus().toUpperCase().equals(USER_STATUS_AL)) {
+								|| p6TaskUserStatus.equals(P6EllipseWSConstants.MR)))) {
 			ellipseActivityUpd.setTaskUserStatus(USER_STATUS_AL);
 			isUpdateReq = true;
 		}
