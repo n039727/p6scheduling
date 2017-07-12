@@ -2,6 +2,8 @@ package au.com.wp.corp.p6.service.impl;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import au.com.wp.corp.p6.businessservice.DepotTodoService;
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -36,6 +39,8 @@ public class DepotController {
 	private IExecutionPackageService executionPackageService;
 	@Autowired
 	Validator validator;
+	@Autowired
+	private UserTokenRequest userTokenRequest;
 
 	@RequestMapping(value = "/viewTodo", method = RequestMethod.POST, produces = {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
@@ -50,13 +55,13 @@ public class DepotController {
 	
 	@RequestMapping(value = "/updateTodo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
 	@ResponseBody
-	public ResponseEntity<ViewToDoStatus> updateDepotToDo(RequestEntity<ViewToDoStatus> request)
+	public ResponseEntity<ViewToDoStatus> updateDepotToDo(RequestEntity<ViewToDoStatus> request, HttpServletRequest servletRequest)
 			throws P6BaseException {
 		if (request.getBody() == null) {
 			logger.error(" Invalid request - {}", request.getBody());
 			throw new P6BaseException("invalid request");
 		}
-		
+		userTokenRequest.setUserPrincipal(servletRequest.getUserPrincipal().getName());
 		return new ResponseEntity<ViewToDoStatus>(dpotTodoService.UpdateDepotToDo(request.getBody()), HttpStatus.OK);
 	}
 	
@@ -75,7 +80,7 @@ public class DepotController {
 	
 	@RequestMapping(value = "/addTodo", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE )
 	@ResponseBody
-	public ResponseEntity<WorkOrder> saveDepotToDo(RequestEntity<WorkOrder> request)
+	public ResponseEntity<WorkOrder> saveDepotToDo(RequestEntity<WorkOrder> request, HttpServletRequest servletRequest)
 			throws P6BaseException {
 		WorkOrder savedWorkOrder = null;
 		if (request.getBody() == null) {
@@ -84,6 +89,7 @@ public class DepotController {
 		}
 		try {
 			logger.debug("The json for save to do depot : {}", mapper.writeValueAsString(request.getBody()));
+			userTokenRequest.setUserPrincipal(servletRequest.getUserPrincipal().getName());
 			savedWorkOrder = dpotTodoService.saveDepotToDo(request.getBody());
 			executionPackageService.updateP6ForExecutionPackage();
 		} catch (JsonProcessingException e) {

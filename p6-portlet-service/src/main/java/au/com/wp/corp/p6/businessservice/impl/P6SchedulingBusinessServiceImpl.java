@@ -832,7 +832,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 		} else {
 			dbTask.setActioned(ACTIONED_Y);
 		}
-		String userName = "Test User";
+		String userName = "";
 		if (userTokenRequest != null && userTokenRequest.getUserPrincipal() != null) {
 			userName = userTokenRequest.getUserPrincipal();
 		}

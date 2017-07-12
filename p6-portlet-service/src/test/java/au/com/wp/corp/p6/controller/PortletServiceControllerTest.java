@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -61,6 +62,8 @@ public class PortletServiceControllerTest {
 	
 	@Mock
 	Validator validator;
+	@Mock
+	private UserTokenRequest userTokenRequest;
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -114,7 +117,7 @@ public class PortletServiceControllerTest {
 		request.setFromDate("2017-05-15'T'00:00:00.000Z");
 
 		ResultActions actions = mockMvc
-				.perform(post("/scheduler/search").contentType(MediaType.APPLICATION_JSON_VALUE)
+				.perform(post("/scheduler/search").contentType(MediaType.APPLICATION_JSON_VALUE).principal(new UserPrincipal())
 						.accept(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(request)))
 				.andExpect(status().isOk());
 	}
@@ -126,7 +129,7 @@ public class PortletServiceControllerTest {
 		request.setFromDate("2017-05-15'T'00:00:00.000Z");
 
 		ResultActions actions = mockMvc
-				.perform(post("/scheduler/search").contentType(MediaType.APPLICATION_JSON_VALUE)
+				.perform(post("/scheduler/search").contentType(MediaType.APPLICATION_JSON_VALUE).principal(new UserPrincipal())
 						.accept(MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(status().isOk());
 	}
@@ -141,7 +144,7 @@ public class PortletServiceControllerTest {
 		request.setScheduleDate("15/05/2017");
 
 		ResultActions actions = mockMvc
-				.perform(post("/scheduler/saveWorkOrder").contentType(MediaType.APPLICATION_JSON_VALUE)
+				.perform(post("/scheduler/saveWorkOrder").contentType(MediaType.APPLICATION_JSON_VALUE).principal(new UserPrincipal())
 						.accept(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(request)))
 				.andExpect(status().is(HttpStatus.CREATED.value()));
 	}
@@ -158,17 +161,12 @@ public class PortletServiceControllerTest {
 		workOrders.add("WO11");
 		request.setWorkOrders(workOrders);
 		ResultActions actions = mockMvc
-				.perform(post("/scheduler/saveWorkOrderForViewToDoStatus").contentType(MediaType.APPLICATION_JSON_VALUE)
+				.perform(post("/scheduler/saveWorkOrderForViewToDoStatus").contentType(MediaType.APPLICATION_JSON_VALUE).principal(new UserPrincipal())
 						.accept(MediaType.APPLICATION_JSON_VALUE).content(mapper.writeValueAsString(request)))
 				.andExpect(status().is(HttpStatus.CREATED.value()));
 		
 	}
 	
 	
-	
-	@Test
-	public void testSaveExecutionPackages () {
-		
-	}
 	
 }
