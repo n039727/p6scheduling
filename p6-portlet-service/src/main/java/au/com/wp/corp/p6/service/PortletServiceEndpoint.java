@@ -5,6 +5,8 @@ package au.com.wp.corp.p6.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -24,10 +26,10 @@ import au.com.wp.corp.p6.exception.P6BusinessException;
 public interface PortletServiceEndpoint {
 	
 	ViewToDoStatus fetchWorkOrdersForViewToDoStatus(RequestEntity<WorkOrderSearchRequest> query) throws P6BusinessException;
-	ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) throws P6BusinessException;
+	ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder, HttpServletRequest request) throws P6BusinessException;
 
 	public MetadataDTO  fetchMetadata()throws P6BusinessException;
-	ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus) throws P6BusinessException;
+	ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus, HttpServletRequest request) throws P6BusinessException;
 	List<WorkOrder> fetchWorkOrdersForAddUpdateToDo(RequestEntity<WorkOrderSearchRequest> query) throws P6BusinessException;
 	ResponseEntity<MaterialRequisitionDTO> fetchMetReqdata(RequestEntity<MaterialRequisitionRequest> request) throws P6BaseException;
 

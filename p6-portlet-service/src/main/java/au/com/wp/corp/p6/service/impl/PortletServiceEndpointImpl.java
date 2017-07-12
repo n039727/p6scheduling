@@ -5,6 +5,8 @@ package au.com.wp.corp.p6.service.impl;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +25,12 @@ import au.com.wp.corp.p6.businessservice.P6SchedulingBusinessService;
 import au.com.wp.corp.p6.dto.MaterialRequisitionDTO;
 import au.com.wp.corp.p6.dto.MaterialRequisitionRequest;
 import au.com.wp.corp.p6.dto.MetadataDTO;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
 import au.com.wp.corp.p6.exception.P6BusinessException;
-import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.service.PortletServiceEndpoint;
 import au.com.wp.corp.p6.utils.CacheManager;
 import au.com.wp.corp.p6.validation.Validator;
@@ -50,6 +52,8 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	private P6MaterialRequisitionService materialRequisitionService;
 	@Autowired
 	Validator validator;
+	@Autowired
+	private UserTokenRequest userTokenRequest;
 
 	@RequestMapping(value = "/fetchMetadata", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Override
@@ -77,7 +81,8 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	@Override
-	public ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder) throws P6BusinessException {
+	public ResponseEntity<WorkOrder> saveWorkOrder(RequestEntity<WorkOrder> workOrder, HttpServletRequest request) throws P6BusinessException {
+		userTokenRequest.setUserPrincipal(request.getUserPrincipal().getName());
 		WorkOrder worder = p6BusinessService.saveToDo(workOrder.getBody());
 		executionPackageService.updateP6ForExecutionPackage();
 		return new ResponseEntity<WorkOrder>(worder, HttpStatus.CREATED);
@@ -87,8 +92,9 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	@Override
-	public ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus)
+	public ResponseEntity<ViewToDoStatus> saveViewToDoStatus(RequestEntity<ViewToDoStatus> viewToDoStatus, HttpServletRequest request)
 			throws P6BusinessException {
+		userTokenRequest.setUserPrincipal(request.getUserPrincipal().getName());
 		return new ResponseEntity<ViewToDoStatus>(p6BusinessService.saveViewToDoStatus(viewToDoStatus.getBody()),
 				HttpStatus.CREATED);
 	}
@@ -96,7 +102,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 	
 	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<List<WorkOrder>> search(RequestEntity<WorkOrderSearchRequest> request)
+	public ResponseEntity<List<WorkOrder>> search(RequestEntity<WorkOrderSearchRequest> request, HttpServletRequest servletRequest)
 			throws P6BaseException {
 		if (request.getBody() == null) {
 			logger.error(" Invalid request - {}", request.getBody());
@@ -106,6 +112,7 @@ public class PortletServiceEndpointImpl implements PortletServiceEndpoint {
 				request.getBody().getFromDate(), request.getBody().getWorkOrderId());
 		List<WorkOrder> workOrders = null;
 		try {
+			userTokenRequest.setUserPrincipal(servletRequest.getUserPrincipal().getName());
 			workOrders = p6BusinessService.search(request.getBody());
 			logger.debug("Checking data from Cachemanager taskforUpdate {}",CacheManager.getTasksforupdate());
 			logger.debug("Checking data from Cachemanager getExecpkglistforupdate {}",CacheManager.getExecpkglistforupdate());

@@ -6,6 +6,7 @@ package au.com.wp.corp.p6.service.impl;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.exception.P6BaseException;
@@ -41,12 +43,17 @@ public class ExecutionPackageContoller {
 	private IExecutionPackageService executionPackageService;
 	@Autowired
 	Validator validator;
+	
+	@Autowired
+	private UserTokenRequest userTokenRequest;
 
 	@RequestMapping(value = "/createOrUpdate", method = RequestMethod.POST, produces = {
 			MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<ExecutionPackageDTO> createOrUpdateExecutionPackages(
 			RequestEntity<ExecutionPackageDTO> executionPackageDTO, HttpServletRequest request) throws P6BaseException {
-		logger.info(" create or update service is called ....");
+		logger.error(" create or update service is called uith user....{}", request.getUserPrincipal().getName());
+		userTokenRequest.setUserPrincipal(request.getUserPrincipal().getName());
+		
 		validator.validate(executionPackageDTO.getBody());
 		ExecutionPackageDTO resutltDTO = executionPackageService
 				.createOrUpdateExecutionPackage(executionPackageDTO.getBody());

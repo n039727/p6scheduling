@@ -6,9 +6,12 @@ package au.com.wp.corp.p6.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,6 +25,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -34,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
 import au.com.wp.corp.p6.service.impl.ExecutionPackageContoller;
@@ -55,6 +60,8 @@ public class ExecutionPackageControllerTest {
 
 	@Mock
 	private IExecutionPackageService executionPckg;
+	@Mock
+	private UserTokenRequest userTokenRequest;
 	
 	@Mock(answer=Answers.CALLS_REAL_METHODS)
 	private Validator validator;
@@ -71,7 +78,6 @@ public class ExecutionPackageControllerTest {
 	public void testCreateOrUpdateExecutionPackages() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		ExecutionPackageDTO executionPackageDTO = new ExecutionPackageDTO();
-
 		executionPackageDTO.setExctnPckgName("123457");
 
 		WorkOrder workOrder = new WorkOrder();
@@ -80,12 +86,14 @@ public class ExecutionPackageControllerTest {
 		List<WorkOrder> workOrders = new ArrayList<>();
 		workOrders.add(workOrder);
 		executionPackageDTO.setWorkOrders(workOrders);
+		
 		Mockito.when(executionPckg.createOrUpdateExecutionPackage(executionPackageDTO))
 				.thenReturn(executionPackageDTO);
+		
 	//	Mockito.doNothing().when(executionPckg).setExecutionPackageDTDOFoP6(Arrays.asList(executionPackageDTO));
 	//	Mockito.doNothing().when(executionPckg).updateP6ForExecutionPackage();
 		ResultActions actions = mockMvc.perform(post("/executionpackage/createOrUpdate")
-				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE).principal(new UserPrincipal())
 				.content(mapper.writeValueAsString(executionPackageDTO))).andExpect(status().is(HttpStatus.CREATED.value()));
 	}
 	
