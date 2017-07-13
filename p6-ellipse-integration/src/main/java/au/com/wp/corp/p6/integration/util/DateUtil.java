@@ -87,7 +87,7 @@ public class DateUtil {
 		try {
 			return sdf.format(convertStringToDatetime(date, proviedDateFormat));
 		} catch (Exception e) {
-			logger.error("Invalid date - cant parse date# {}  - proviedDateFormat# {}  - expectedDateFormat# {} - the exception# {}", date,
+			logger.debug("Invalid date - cant parse date# {}  - proviedDateFormat# {}  - expectedDateFormat# {} - the exception# {}", date,
 					proviedDateFormat, expectedDateFormat, e);
 		}
 		return null;
@@ -101,7 +101,7 @@ public class DateUtil {
 		try {
 			return sdf.parse(date);
 		} catch (ParseException e) {
-			logger.error("Invalid date - cant parse date# {}  - format# {}", date, format);
+			logger.debug("Invalid date - cant parse date# {}  - format# {}", date, format);
 		}
 		return null;
 
@@ -114,7 +114,7 @@ public class DateUtil {
 		try {
 			return sdf.parse(date);
 		} catch (ParseException e) {
-			logger.error("Invalid date - cant parse date# {} ", date);
+			logger.debug("Invalid date - cant parse date# {} ", date);
 
 		}
 		return null;
@@ -128,7 +128,7 @@ public class DateUtil {
 		try {
 			return sdf.parse(sdf.format(date));
 		} catch (ParseException e) {
-			logger.error("Invalid date - cant parse date# {} ", date);
+			logger.debug("Invalid date - cant parse date# {} ", date);
 		}
 		return null;
 
@@ -157,8 +157,8 @@ public class DateUtil {
 			cal.setTime(dt);
 			return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
 		} catch (Exception e) {
-			logger.error("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
-			logger.error("Can't covert to XMLGregorianCalendar - ", e);
+			logger.debug("Invalid date -- {} , can't covert to XMLGregorianCalendar", date);
+			logger.debug("Can't covert to XMLGregorianCalendar - ", e);
 		}
 		return null;
 
@@ -202,8 +202,8 @@ public class DateUtil {
 			return sdf.format(newDt);
 			
 		} catch (ParseException e) {
-			logger.error("Invalid date - cant parse date# {}  - format# {}", date, format);
-			logger.error("Can't parse input date - ", e);
+			logger.debug("Invalid date - cant parse date# {}  - format# {}", date, format);
+			logger.debug("Can't parse input date - ", e);
 		}
 		
 		return null;
@@ -220,8 +220,8 @@ public class DateUtil {
 			return dt1.compareTo(dt2) ;
 			
 		} catch (Exception e) {
-			logger.error("Invalid date - cant parse date1# {}  - date2# {}", date1, date2);
-			logger.error("Can't parse input date - ", e);
+			logger.debug("Invalid date - cant parse date1# {}  - date2# {}", date1, date2);
+			logger.debug("Can't parse input date - ", e);
 		}
 		
 		return -1;

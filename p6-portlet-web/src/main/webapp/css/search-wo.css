@@ -67,7 +67,7 @@ body {
 
 .container-endless {
 	padding: 0px;
-	overflow:scoll;
+	overflow:hidden;
 	display: table;
 	height: 100%;
 }

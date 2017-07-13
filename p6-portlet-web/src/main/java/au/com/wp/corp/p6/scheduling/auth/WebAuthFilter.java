@@ -31,7 +31,7 @@ public class WebAuthFilter implements Filter {
 	private static final String AUTH_TOKEN_HEADER = "AUTH_TOKEN";
 	
 	private AuthTokenBuilder authTokenBuilder = new AuthTokenBuilder(); 
-
+	
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#destroy()
 	 */
@@ -47,6 +47,7 @@ public class WebAuthFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+		
 		HttpServletRequest httpRequest = (HttpServletRequest)request; 
 		
 		logger.debug("Calling WebAuthFilter for request uri: {}", httpRequest.getRequestURI());
@@ -67,6 +68,7 @@ public class WebAuthFilter implements Filter {
 		if (!StringUtils.isEmpty(authToken)) {
 			logger.debug("Setting auth header as {}", authToken);
 			((HttpServletResponse)response).addHeader(AUTH_TOKEN_HEADER, authToken);
+			
 		}
 		
 		chain.doFilter(request, response);

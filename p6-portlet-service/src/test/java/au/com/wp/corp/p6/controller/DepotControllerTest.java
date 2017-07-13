@@ -35,6 +35,7 @@ import au.com.wp.corp.p6.businessservice.IExecutionPackageService;
 import au.com.wp.corp.p6.businessservice.impl.DepotTodoServiceImpl;
 import au.com.wp.corp.p6.businessservice.impl.ExecutionPackageServiceImpl;
 import au.com.wp.corp.p6.dto.ExecutionPackageDTO;
+import au.com.wp.corp.p6.dto.UserTokenRequest;
 import au.com.wp.corp.p6.dto.ViewToDoStatus;
 import au.com.wp.corp.p6.dto.WorkOrder;
 import au.com.wp.corp.p6.dto.WorkOrderSearchRequest;
@@ -64,6 +65,8 @@ public class DepotControllerTest {
 	
 	@Mock
 	Validator validator;
+	@Mock
+	private UserTokenRequest userTokenRequest;
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -124,7 +127,7 @@ public class DepotControllerTest {
 		.thenReturn(viewToDoStatus);
 		
 		ResultActions actions = mockMvc.perform(post("/depot/updateTodo")
-				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE).principal(new UserPrincipal())
 				.content(mapper.writeValueAsString(request))).andExpect(status().isOk());
 	}
 	
@@ -173,7 +176,7 @@ public class DepotControllerTest {
 		.thenReturn(workOrder);
 		
 		ResultActions actions = mockMvc.perform(post("/depot/addTodo")
-				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE).principal(new UserPrincipal())
 				.content(mapper.writeValueAsString(request))).andExpect(status().isOk());
 	}
 

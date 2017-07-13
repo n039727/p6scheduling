@@ -104,7 +104,7 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 	@Override
 	public ExecutionPackageDTO createOrUpdateExecutionPackage(ExecutionPackageDTO execPackgDTO)
 			throws P6BusinessException {
-		String userName = "Test User";
+		String userName = "";
 		if(userTokenRequest != null && userTokenRequest.getUserPrincipal() != null){
 			userName = userTokenRequest.getUserPrincipal();
 		}

@@ -43,14 +43,14 @@ public class AppConfig {
 	public SessionFactory getSessionFactory(DataSource dataSource) {
 	    LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(dataSource);
 	    sessionBuilder.scanPackages("au.com.wp.corp.p6.model","au.com.wp.corp.p6.scheduling.model");
-	    sessionBuilder.setProperty("hibernate.show_sql", "true");
+	    sessionBuilder.setProperty("hibernate.show_sql", "false");
 	    sessionBuilder.addProperties(getHibernateProperties());
 	    return sessionBuilder.buildSessionFactory();
 	}
 
 	private Properties getHibernateProperties() {
 	    Properties properties = new Properties();
-	    properties.put("hibernate.show_sql", "true");
+	    properties.put("hibernate.show_sql", "false");
 	    properties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
 	    properties.put("hibernate.default_schema" ,"P6PORTAL");
 	    return properties;
@@ -77,9 +77,9 @@ public class AppConfig {
 	public SessionFactory getElipsSessionFactory(DataSource elipseDataSource) {
 	    LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(elipseDataSource);
 	    sessionBuilder.scanPackages("au.com.wp.corp.p6.model.elipse");
-	    sessionBuilder.setProperty("hibernate.show_sql", "true");
+	    sessionBuilder.setProperty("hibernate.show_sql", "false");
 	    Properties properties = new Properties();
-	    properties.put("hibernate.show_sql", "true");
+	    properties.put("hibernate.show_sql", "false");
 	    properties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
 	    properties.put("hibernate.default_schema" ,"NELL");
 	    sessionBuilder.addProperties(properties);

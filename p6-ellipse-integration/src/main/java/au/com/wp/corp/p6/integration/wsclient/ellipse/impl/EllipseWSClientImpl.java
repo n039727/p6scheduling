@@ -119,7 +119,6 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 	@Override
 	public void updateActivitiesEllipse(List<EllipseActivityDTO> activities) throws P6ServiceException {
 		logger.info("Updating activities in Ellipse..");
-		final long startTime = System.currentTimeMillis();
 		int noOfActvtyTobeProccessedAtATime;
 		try {
 			noOfActvtyTobeProccessedAtATime = Integer.valueOf(P6ReloadablePropertiesReader
@@ -135,6 +134,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 		int noOfIteration = !activities.isEmpty() ? (activities.size() / noOfActvtyTobeProccessedAtATime) + 1 : 0;
 
 		for (int i = 0; i < noOfIteration; i++) {
+			final long startTime = System.currentTimeMillis();
 			String transId = startTransaction();
 			MultipleModify multipleModify = new MultipleModify();
 			OperationContext operationContext = new OperationContext();
@@ -168,7 +168,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 					woTaskModifyDTO.setWOTaskNo(workorderTask.get(TASK_NO));
 					if (null != activity.getWorkGroup() && !activity.getWorkGroup().trim().isEmpty())
 						woTaskModifyDTO.setWorkGroup(activity.getWorkGroup());
-
+					
 					final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
 							DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
 					if (null != plantStrDate && !plantStrDate.trim().isEmpty()) {
@@ -199,7 +199,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				}
 			} catch (SoapFaultClientException e) {
 				rollbackTransaction(transId);
-				logger.debug("error - ", e.getSoapFault().getFaultStringOrReason());
+				logger.debug("error - ", e);
 				StringBuilder sb = new StringBuilder();
 				sb.append(e.getSoapFault().getFaultStringOrReason());
 				sb.append(" for any workorder with in the list [ ");

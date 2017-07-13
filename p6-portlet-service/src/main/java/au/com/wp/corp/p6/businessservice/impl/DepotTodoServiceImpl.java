@@ -326,7 +326,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			} 
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		}
-		String  userName = "Test User";
+		String  userName = "";
 		if(userTokenRequest != null && userTokenRequest.getUserPrincipal() != null){
 			userName = userTokenRequest.getUserPrincipal();
 		}
@@ -396,11 +396,15 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 	
 	private TodoTemplate addTodo(ToDoItem item) throws P6BusinessException {
 		logger.debug("inside addTodo ");
+		String  userName = "";
+		if(userTokenRequest != null && userTokenRequest.getUserPrincipal() != null){
+			userName = userTokenRequest.getUserPrincipal();
+		}
 		TodoTemplate todoTemplate = new TodoTemplate();
 		todoTemplate.setCrtdTs(new Timestamp(System.currentTimeMillis()));
-		todoTemplate.setCrtdUsr(userTokenRequest == null ? "test user" : userTokenRequest.getUserPrincipal());
+		todoTemplate.setCrtdUsr(userName);
 		todoTemplate.setLstUpdtdTs(new Timestamp(System.currentTimeMillis()));
-		todoTemplate.setLstUpdtdUsr(userTokenRequest == null ? "test user" : userTokenRequest.getUserPrincipal());
+		todoTemplate.setLstUpdtdUsr(userName);
 		todoTemplate.setTmpltDesc(item.getToDoName());
 		todoTemplate.setTodoNam(item.getToDoName());
 		todoTemplate.setTypId(new BigDecimal(2));
