@@ -222,7 +222,6 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					if (createdExecutionPackage != null) {
 						logger.info("execution package created in P6 for {} with work orders {}",
 								createdExecutionPackage.getExctnPckgName(), createdExecutionPackage.getWorkOrders());
-						executionPackageDTOForP6.getWorkOrders().clear();
 					}
 				} catch (P6ServiceException e) {
 					parseException(e);
@@ -231,7 +230,6 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			}
 
 		}
-		executionPackageDTOFoP6List.clear();
 		executionPackageDTOFoP6List = null;
 	
 	}
