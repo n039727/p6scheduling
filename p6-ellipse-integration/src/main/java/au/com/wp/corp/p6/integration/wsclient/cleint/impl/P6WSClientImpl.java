@@ -123,6 +123,14 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			activityDTO.setActivityName(activity.getName());
 			activityDTO.setActivityStatus(activity.getStatus());
 			activityDTO.setPlannedStartDate(activity.getPlannedStartDate().toString());
+
+			if (null != activity.getActualStartDate() && null != activity.getActualStartDate().getValue()) {
+				activityDTO.setActualStartDate(activity.getActualStartDate().getValue().toString());
+			}
+
+			if (null != activity.getActualFinishDate() && null != activity.getActualFinishDate().getValue()) {
+				activityDTO.setActualFinishDate(activity.getActualFinishDate().getValue().toString());
+			}
 			activityDTO.setWorkGroup(activity.getPrimaryResourceId());
 			activityDTO.setOriginalDuration(activity.getPlannedDuration());
 			activityDTO.setRemainingDuration(activity.getRemainingDuration().getValue());
