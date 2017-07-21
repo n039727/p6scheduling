@@ -134,91 +134,94 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 		int noOfIteration = !activities.isEmpty() ? (activities.size() / noOfActvtyTobeProccessedAtATime) + 1 : 0;
 
 		for (int i = 0; i < noOfIteration; i++) {
-			final long startTime = System.currentTimeMillis();
-			String transId = startTransaction();
-			MultipleModify multipleModify = new MultipleModify();
-			OperationContext operationContext = new OperationContext();
-			operationContext.setRunAs(new RunAs());
-			operationContext.setDistrict("CORP");
-			operationContext.setTransaction(transId);
-			multipleModify.setContext(operationContext);
-
-			ArrayOfWorkOrderTaskServiceModifyRequestDTO arrayModify;
-			WorkOrderTaskServiceModifyRequestDTO woTaskModifyDTO;
-			WorkOrderDTO workOrder;
-			Map<String, String> workorderTask;
-
-			arrayModify = new ArrayOfWorkOrderTaskServiceModifyRequestDTO();
 			int startIndex = i * noOfActvtyTobeProccessedAtATime;
-			int endIndex = (((i + 1) * noOfActvtyTobeProccessedAtATime) < activities.size())
-					&& noOfActvtyTobeProccessedAtATime != 1 ? ((i + 1) * noOfActvtyTobeProccessedAtATime)
+			int endIndex = ((i + 1) * noOfActvtyTobeProccessedAtATime) < activities.size() ? ((i + 1) * noOfActvtyTobeProccessedAtATime)
 							: activities.size();
 
 			logger.debug("constructing activity start index # {}  - end index # {}", startIndex, endIndex);
 
 			ellipseActivities = activities.subList(startIndex, endIndex);
-			for (EllipseActivityDTO activity : ellipseActivities) {
-				workorderTask = getWorkOrderNoWithPrefixAndTask(activity.getWorkOrderTaskId());
+			if (null != ellipseActivities && !ellipseActivities.isEmpty()) {
+				final long startTime = System.currentTimeMillis();
+				String transId = startTransaction();
+				MultipleModify multipleModify = new MultipleModify();
+				OperationContext operationContext = new OperationContext();
+				operationContext.setRunAs(new RunAs());
+				operationContext.setDistrict("CORP");
+				operationContext.setTransaction(transId);
+				multipleModify.setContext(operationContext);
 
-				if (!workorderTask.isEmpty()) {
-					workOrder = new WorkOrderDTO();
-					workOrder.setNo(workorderTask.get(WORK_ORDER));
-					workOrder.setPrefix(workorderTask.get(PREFIX));
-					woTaskModifyDTO = new WorkOrderTaskServiceModifyRequestDTO();
-					woTaskModifyDTO.setWorkOrder(workOrder);
-					woTaskModifyDTO.setWOTaskNo(workorderTask.get(TASK_NO));
-					if (null != activity.getWorkGroup() && !activity.getWorkGroup().trim().isEmpty())
-						woTaskModifyDTO.setWorkGroup(activity.getWorkGroup());
+				ArrayOfWorkOrderTaskServiceModifyRequestDTO arrayModify;
+				WorkOrderTaskServiceModifyRequestDTO woTaskModifyDTO;
+				WorkOrderDTO workOrder;
+				Map<String, String> workorderTask;
 
-					final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
-							DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
-					if (null != plantStrDate && !plantStrDate.trim().isEmpty()) {
-						woTaskModifyDTO.setPlanStrDate(plantStrDate);
-					} else if (null != activity.getPlannedFinishDate() && "NULL".equals(activity.getPlannedStartDate())
-							&& "NULL".equals(activity.getPlannedFinishDate())) {
-						woTaskModifyDTO.setPlanStrDate("");
-						woTaskModifyDTO.setPlanFinDate("");
+				arrayModify = new ArrayOfWorkOrderTaskServiceModifyRequestDTO();
 
-					}
-					if (null != activity.getTaskUserStatus() && !activity.getTaskUserStatus().trim().isEmpty())
-						woTaskModifyDTO.setTaskStatusU(activity.getTaskUserStatus());
-
-					arrayModify.getWorkOrderTaskServiceModifyRequestDTO().add(woTaskModifyDTO);
-					multipleModify.setRequestParameters(arrayModify);
-				}
-			}
-			logger.debug("Updating ellipse with list of work order task -{}",
-					arrayModify.getWorkOrderTaskServiceModifyRequestDTO().size());
-			try {
-				if (null != multipleModify.getRequestParameters()
-						&& null != multipleModify.getRequestParameters().getWorkOrderTaskServiceModifyRequestDTO()
-						&& !multipleModify.getRequestParameters().getWorkOrderTaskServiceModifyRequestDTO().isEmpty()) {
-					MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
-
-					if (response.getOut() != null)
-						commitTransaction(transId);
-				}
-			} catch (SoapFaultClientException e) {
-				rollbackTransaction(transId);
-				logger.debug("error - ", e);
-				StringBuilder sb = new StringBuilder();
-				sb.append(e.getSoapFault().getFaultStringOrReason());
-				sb.append(" for any workorder with in the list [ ");
 				for (EllipseActivityDTO activity : ellipseActivities) {
-					sb.append(activity.getWorkOrderTaskId());
-					sb.append(",");
-				}
-				sb.append("]");
+					workorderTask = getWorkOrderNoWithPrefixAndTask(activity.getWorkOrderTaskId());
 
-				exceptionHandler.handleException(new P6ServiceException(sb.toString()));
-			} catch (Exception e) {
-				rollbackTransaction(transId);
-				throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e);
-			} finally {
-				logger.info("Time taken to update ellipse # {}", System.currentTimeMillis() - startTime);
+					if (!workorderTask.isEmpty()) {
+						workOrder = new WorkOrderDTO();
+						workOrder.setNo(workorderTask.get(WORK_ORDER));
+						workOrder.setPrefix(workorderTask.get(PREFIX));
+						woTaskModifyDTO = new WorkOrderTaskServiceModifyRequestDTO();
+						woTaskModifyDTO.setWorkOrder(workOrder);
+						woTaskModifyDTO.setWOTaskNo(workorderTask.get(TASK_NO));
+						if (null != activity.getWorkGroup() && !activity.getWorkGroup().trim().isEmpty())
+							woTaskModifyDTO.setWorkGroup(activity.getWorkGroup());
+
+						final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
+								DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
+						if (null != plantStrDate && !plantStrDate.trim().isEmpty()) {
+							woTaskModifyDTO.setPlanStrDate(plantStrDate);
+						} else if (null != activity.getPlannedFinishDate()
+								&& "NULL".equals(activity.getPlannedStartDate())
+								&& "NULL".equals(activity.getPlannedFinishDate())) {
+							woTaskModifyDTO.setPlanStrDate("");
+							woTaskModifyDTO.setPlanFinDate("");
+
+						}
+						if (null != activity.getTaskUserStatus() && !activity.getTaskUserStatus().trim().isEmpty())
+							woTaskModifyDTO.setTaskStatusU(activity.getTaskUserStatus());
+
+						arrayModify.getWorkOrderTaskServiceModifyRequestDTO().add(woTaskModifyDTO);
+						multipleModify.setRequestParameters(arrayModify);
+					}
+				}
+				logger.debug("Updating ellipse with list of work order task -{}",
+						arrayModify.getWorkOrderTaskServiceModifyRequestDTO().size());
+				try {
+					if (null != multipleModify.getRequestParameters()
+							&& null != multipleModify.getRequestParameters().getWorkOrderTaskServiceModifyRequestDTO()
+							&& !multipleModify.getRequestParameters().getWorkOrderTaskServiceModifyRequestDTO()
+									.isEmpty()) {
+						MultipleModifyResponse response = workOrderTaskWsClient.multipleModify(multipleModify);
+
+						if (response.getOut() != null)
+							commitTransaction(transId);
+					}
+				} catch (SoapFaultClientException e) {
+					rollbackTransaction(transId);
+					logger.debug("error - ", e);
+					StringBuilder sb = new StringBuilder();
+					sb.append(e.getSoapFault().getFaultStringOrReason());
+					sb.append(" for any workorder with in the list [ ");
+					for (EllipseActivityDTO activity : ellipseActivities) {
+						sb.append(activity.getWorkOrderTaskId());
+						sb.append(",");
+					}
+					sb.append("]");
+
+					exceptionHandler.handleException(new P6ServiceException(sb.toString()));
+				} catch (Exception e) {
+					rollbackTransaction(transId);
+					throw new P6ServiceException(P6ExceptionType.SYSTEM_ERROR.name(), e);
+				} finally {
+					logger.info("Time taken to update ellipse # {}", System.currentTimeMillis() - startTime);
+				}
 			}
 		}
-
 	}
 
 	private Map<String, String> getWorkOrderNoWithPrefixAndTask(String workorderTaskId) {

@@ -507,21 +507,29 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		logger.debug("Defined P6 UDFValueService webservice call trigger value # {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
 
-		final List<UDFValue> udfValues = new ArrayList<>();
+		final List<List<UDFValue>> udfValueList = new ArrayList<>();
 		for (P6ActivityDTO activity : activityDTOs) {
+			final List<UDFValue> udfValues = new ArrayList<>();
 			findUDFValueForUDFType(udfValues, null, activity);
+			udfValueList.add(udfValues);
 		}
 
-		int udfValueSize = udfValues.size();
+		int udfValueSize = udfValueList.size();
 		logger.debug("Number of calls to P6 UDFValue web service #{}", (udfValueSize / chunkSize) + 1);
 
 		for (int i = 0; i < (udfValueSize / chunkSize) + 1; i++) {
 			int startIndex = i * chunkSize;
 
-			int endIndex = ((i + 1) * chunkSize) < udfValues.size() ? ((i + 1) * chunkSize) : udfValues.size();
+			int endIndex = ((i + 1) * chunkSize) < udfValueList.size() ? ((i + 1) * chunkSize) : udfValueList.size();
 
 			logger.debug("calling UDFValue service with start index # {}  - end index # {}", startIndex, endIndex);
-			callUDFvalueService(trackingId, udfValues.subList(startIndex, endIndex));
+			
+			List<UDFValue> udfValue1 = new ArrayList<>();
+			for ( List<UDFValue> udfValue : udfValueList.subList(startIndex, endIndex)) {
+				udfValue1.addAll(udfValue);
+			}
+			if ( !udfValue1.isEmpty())
+			callUDFvalueService(trackingId, udfValue1);
 
 		}
 
@@ -747,13 +755,22 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	private void updateActivityFieldsUDF(final RequestTrackingId trackingId, List<P6ActivityDTO> activityDTOs,
 			final int chunkSize) throws P6ServiceException {
 
-		final List<UDFValue> updateUDFFields = new ArrayList<>();
-		final List<UDFValue> createUDFFields = new ArrayList<>();
+		final List<List<UDFValue>> updUDFList = new ArrayList<>();
+		final List<List<UDFValue>> crdUDFList = new ArrayList<>();
 		for (P6ActivityDTO activity : activityDTOs) {
+			final List<UDFValue> updateUDFFields = new ArrayList<>();
+			final List<UDFValue> createUDFFields = new ArrayList<>();
 			findUDFValueForUDFType(createUDFFields, updateUDFFields, activity);
+			if ( !updateUDFFields.isEmpty() ) {
+				updUDFList.add(updateUDFFields);
+			}
+			
+			if ( !createUDFFields.isEmpty() ) {
+				crdUDFList.add(createUDFFields);
+			}
 		}
 
-		int createUDFValueSize = createUDFFields.size();
+		int createUDFValueSize = crdUDFList.size();
 		logger.debug("Number of calls to P6 UDFValue Create web service #{}", (createUDFValueSize / chunkSize) + 1);
 		for (int i = 0; i < (createUDFValueSize / chunkSize) + 1; i++) {
 			int startIndex = i * chunkSize;
@@ -761,24 +778,32 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			int endIndex  = ((i + 1) * chunkSize) < createUDFValueSize ? ((i + 1) * chunkSize )
 						: createUDFValueSize;
 			logger.debug("creating udf values start index # {}  - end index # {}", startIndex, endIndex);
+			
+			List<UDFValue> crdUDFs = new ArrayList<>();
+			for ( List<UDFValue> crdUDF: crdUDFList.subList(startIndex, endIndex) )
+			{
+				crdUDFs.addAll(crdUDF);
+			}
+			
 			UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService = new CreateUDFValueServiceCall(
-					trackingId, createUDFFields.subList(startIndex, endIndex));
+					trackingId, crdUDFs);
 			udfValueService.run();
 
 		}
 
-		int udfValueSize = updateUDFFields.size();
+		int udfValueSize = updUDFList.size();
 		logger.debug("Number of calls to P6 UDFValue Update web service #{}", (udfValueSize / chunkSize) + 1);
 		for (int i = 0; i < (udfValueSize / chunkSize) + 1; i++) {
 			int startIndex = i * chunkSize;
-			int endIndex  = ((i + 1) * chunkSize) < udfValueSize ? ((i + 1) * chunkSize)
-
-						: udfValueSize;
+			int endIndex  = ((i + 1) * chunkSize) < udfValueSize ? ((i + 1) * chunkSize) : udfValueSize;
 
 			logger.debug("updating udf values start index # {}  - end index # {}", startIndex, endIndex);
-
-			UDFValueServiceCall<Boolean> udfValueService = new UpdateUDFValueServiceCall(trackingId,
-					updateUDFFields.subList(startIndex, endIndex));
+			List<UDFValue> updUDFs = new ArrayList<>();
+			for ( List<UDFValue> updUDF: updUDFList.subList(startIndex, endIndex) )
+			{
+				updUDFs.addAll(updUDF);
+			}
+			UDFValueServiceCall<Boolean> udfValueService = new UpdateUDFValueServiceCall(trackingId, updUDFs);
 			udfValueService.run();
 
 		}
