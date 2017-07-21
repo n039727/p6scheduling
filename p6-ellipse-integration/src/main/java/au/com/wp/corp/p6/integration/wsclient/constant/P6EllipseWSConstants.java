@@ -142,6 +142,7 @@ public interface P6EllipseWSConstants {
 	public static final String NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6 = "NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6";
 
 	public static final String  NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_ELLIPSE = "NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_ELLIPSE";
+	
 	public static final String Y="Y";
 	
 	public static final String RR= "RR";
@@ -149,5 +150,7 @@ public interface P6EllipseWSConstants {
 	public static final String MR= "MR";
 	
 	public static final String WS_COOKIE="WS_COOKIE";
+	
+	public static final String ACTIVITY_STATUS_COMPLETED = "Completed";
 
 }
