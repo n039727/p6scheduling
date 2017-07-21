@@ -380,9 +380,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 					final Holder<Boolean> status = crActivityService.run();
 					logger.debug("list of activities from P6 # {}", status.value);
 					int startIndex = i * chunkSize;
-					int endIndex = ((i + 1) * chunkSize - 1) < activities.size() ? ((i + 1) * chunkSize - 1)
-							: activities.size();
-
+					int endIndex  = ((i + 1) * chunkSize) < activities.size() ? ((i + 1) * chunkSize)
+								: activities.size();
+					
 					updateActivityFieldsUDF(trackingId, activities.subList(startIndex, endIndex), chunkSize);
 
 				}
@@ -390,8 +390,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 				logger.debug("error - ", e);
 				if (e.getMessage().equals(P6ExceptionType.DATA_ERROR.name())) {
 					int startIndex = i * chunkSize;
-					int endIndex = ((i + 1) * chunkSize - 1) < activities.size() ? ((i + 1) * chunkSize - 1)
-							: activities.size();
+					int endIndex  = ((i + 1) * chunkSize) < activities.size() ? ((i + 1) * chunkSize)
+								: activities.size();
+					
 					StringBuilder sb = new StringBuilder();
 					sb.append(e.getCause().getMessage());
 					sb.append(" for any workorder with in the list [ ");
@@ -425,7 +426,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		final List<Activity> _activities = new ArrayList<>();
 		Activity activity;
 		int startIndex = i * chunkSize;
-		int endIndex = ((i + 1) * chunkSize - 1) < activities.size() ? ((i + 1) * chunkSize - 1) : activities.size();
+		int endIndex = ((i + 1) * chunkSize) < activities.size() ? ((i + 1) * chunkSize) : activities.size();
 
 		logger.debug("constructing activity start index # {}  - end index # {}", startIndex, endIndex);
 
@@ -445,7 +446,8 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 				else
 					logger.error("Invalid planned start date# {}", p6ActivityDTO.getPlannedStartDate());
 			}
-			if (null != p6ActivityDTO.getActualFinishDate()) {
+			if (null != p6ActivityDTO.getActualFinishDate() && null != p6ActivityDTO.getActivityStatus()
+					&& p6ActivityDTO.getActivityStatus().equals(P6EllipseWSConstants.ACTIVITY_STATUS_COMPLETED)) {
 				String actStartDate = p6ActivityDTO.getActualStartDate();
 				if (dateUtil.compare(p6ActivityDTO.getActualStartDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 						p6ActivityDTO.getActualFinishDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP) == 1) {
@@ -515,7 +517,8 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 		for (int i = 0; i < (udfValueSize / chunkSize) + 1; i++) {
 			int startIndex = i * chunkSize;
-			int endIndex = ((i + 1) * chunkSize - 1) < udfValues.size() ? ((i + 1) * chunkSize - 1) : udfValues.size();
+
+			int endIndex = ((i + 1) * chunkSize) < udfValues.size() ? ((i + 1) * chunkSize) : udfValues.size();
 
 			logger.debug("calling UDFValue service with start index # {}  - end index # {}", startIndex, endIndex);
 			callUDFvalueService(trackingId, udfValues.subList(startIndex, endIndex));
@@ -754,9 +757,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		logger.debug("Number of calls to P6 UDFValue Create web service #{}", (createUDFValueSize / chunkSize) + 1);
 		for (int i = 0; i < (createUDFValueSize / chunkSize) + 1; i++) {
 			int startIndex = i * chunkSize;
-			int endIndex = ((i + 1) * chunkSize - 1) < createUDFValueSize ? ((i + 1) * chunkSize - 1)
-					: createUDFValueSize;
 
+			int endIndex  = ((i + 1) * chunkSize) < createUDFValueSize ? ((i + 1) * chunkSize )
+						: createUDFValueSize;
 			logger.debug("creating udf values start index # {}  - end index # {}", startIndex, endIndex);
 			UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService = new CreateUDFValueServiceCall(
 					trackingId, createUDFFields.subList(startIndex, endIndex));
@@ -768,7 +771,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		logger.debug("Number of calls to P6 UDFValue Update web service #{}", (udfValueSize / chunkSize) + 1);
 		for (int i = 0; i < (udfValueSize / chunkSize) + 1; i++) {
 			int startIndex = i * chunkSize;
-			int endIndex = ((i + 1) * chunkSize - 1) < udfValueSize ? ((i + 1) * chunkSize - 1) : udfValueSize;
+			int endIndex  = ((i + 1) * chunkSize) < udfValueSize ? ((i + 1) * chunkSize)
+
+						: udfValueSize;
 
 			logger.debug("updating udf values start index # {}  - end index # {}", startIndex, endIndex);
 
@@ -804,7 +809,8 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			final List<Integer> activityIds = new ArrayList<>();
 			final List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds = new ArrayList<>();
 			int startIndex = i * chunkSize;
-			int endIndex = ((i + 1) * chunkSize - 1) < deleteActivitySize ? ((i + 1) * chunkSize - 1)
+
+			int endIndex = endIndex = ((i + 1) * chunkSize) < deleteActivitySize ? ((i + 1) * chunkSize)
 					: deleteActivitySize;
 
 			logger.debug("deleting activity start index # {}  - end index # {}", startIndex, endIndex);

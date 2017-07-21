@@ -150,8 +150,9 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 
 			arrayModify = new ArrayOfWorkOrderTaskServiceModifyRequestDTO();
 			int startIndex = i * noOfActvtyTobeProccessedAtATime;
-			int endIndex = ((i + 1) * noOfActvtyTobeProccessedAtATime - 1) < activities.size()
-					? ((i + 1) * noOfActvtyTobeProccessedAtATime - 1) : activities.size();
+			int endIndex = (((i + 1) * noOfActvtyTobeProccessedAtATime) < activities.size())
+					&& noOfActvtyTobeProccessedAtATime != 1 ? ((i + 1) * noOfActvtyTobeProccessedAtATime)
+							: activities.size();
 
 			logger.debug("constructing activity start index # {}  - end index # {}", startIndex, endIndex);
 
@@ -168,7 +169,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 					woTaskModifyDTO.setWOTaskNo(workorderTask.get(TASK_NO));
 					if (null != activity.getWorkGroup() && !activity.getWorkGroup().trim().isEmpty())
 						woTaskModifyDTO.setWorkGroup(activity.getWorkGroup());
-					
+
 					final String plantStrDate = dateUtil.convertDateToString(activity.getPlannedStartDate(),
 							DateUtil.ELLIPSE_DATE_FORMAT, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP);
 					if (null != plantStrDate && !plantStrDate.trim().isEmpty()) {
