@@ -254,10 +254,12 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			case "DATA_CHANGE":
 				if (angular.isDefined(data) && data != null) {
 					ctrl.populateDepotToDo(data.map, wo);
+					wo.savedMsgVisible = false;
 				}
 				break;
 			case "ADD_TO_DO_IN_PROGRESS":
 				ctrl.disableSaving = true;
+				wo.savedMsgVisible = false;
 				break;
 			case "ADD_TO_DO_COMPLETED":
 				ctrl.disableSaving = false;
