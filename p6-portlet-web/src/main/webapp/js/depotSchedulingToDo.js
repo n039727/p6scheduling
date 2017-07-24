@@ -110,6 +110,8 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 		}else if(angular.isDefined(wo) && angular.isDefined(wo.toDoItems) && wo.toDoItems.length > 0){
 			wo.actioned = 'Y';
 		}
+//		console.log("[DEBUG] wo in saveToDo before: " + JSON.stringify(wo));
+		
 		var req = {
 			 method: 'POST',
 			 url: '/p6-portal/web/depot/addTodo',
@@ -123,6 +125,7 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			$scope.fetchedData = response.data;
 			wo.successSavedMsg = "Depot To Do Saved Successfully";
 			wo.savedMsgVisible = true;
+			ctrl.createToDoMap(wo);
 			
 		}, null);
 		
@@ -206,9 +209,9 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 		if(angular.isDefined(workOrder)
 				&& angular.isDefined(workOrder.toDoItems)) {
 			for (var i = 0; i< workOrder.toDoItems.length; i++) {
-				if (workOrder.toDoItems[i].typeId === 2) {
+				//if (workOrder.toDoItems[i].typeId === 2 ) {
 					todoMap[workOrder.toDoItems[i].toDoName] = workOrder.toDoItems[i].workOrders;
-				}
+				//}
 			}
 			workOrder.todoMap = todoMap;
 		}
