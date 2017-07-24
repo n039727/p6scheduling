@@ -36,6 +36,7 @@ import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.utils.DateUtils;
+import au.com.wp.corp.p6.utils.ExecutionPackageComparator;
 import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.utils.WorkOrderComparator;
 import au.com.wp.corp.p6.utils.WorkOrderComparatorOnActioned;
@@ -302,9 +303,10 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			}
 		}
 		List<WorkOrder> workorders = new ArrayList<> (listWODataWithOutEp);
-		Collections.sort(workorders, new WorkOrderComparatorOnActioned());
+		//Collections.sort(workorders, new WorkOrderComparatorOnActioned());
 		workorders.addAll(listWODataWithEp);
-		Collections.sort(workorders,new WorkOrderComparator());
+		//Collections.sort(workorders,new WorkOrderComparator());
+		Collections.sort(workorders,new ExecutionPackageComparator());
 		logger.debug("final grouped work orders size {}",workorders.size());
 		return workorders;
 	}
