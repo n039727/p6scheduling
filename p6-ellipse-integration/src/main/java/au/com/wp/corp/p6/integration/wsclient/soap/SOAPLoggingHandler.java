@@ -13,6 +13,7 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
 
 /**
@@ -30,9 +31,15 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 	private final RequestTrackingId trackingId;
 	private long requestTimeStamp;
 	private long responseTimeStamp;
+	
+	private static final String P6_PRINT_REQ_RES_XML_ON = "P6_PRINT_REQ_RES_XML_ON";
 
+	private final String P6_PRINT_REQ_RES_XML_FLAG;
+	
 	public SOAPLoggingHandler(final RequestTrackingId trackingId) {
 		this.trackingId = trackingId;
+		this.P6_PRINT_REQ_RES_XML_FLAG = P6ReloadablePropertiesReader.getProperty(P6_PRINT_REQ_RES_XML_ON);
+				
 	}
 
 	@Override
@@ -63,7 +70,7 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 		try {
 			if (outboundProperty.booleanValue()) {
 				requestTimeStamp = System.currentTimeMillis();
-				logger.info("Tracking Id: {} # SOAP Service request timestamp:  {} ms", trackingId, requestTimeStamp);
+				logger.debug("Tracking Id: {} # SOAP Service request timestamp:  {} ms", trackingId, requestTimeStamp);
 				loggingStream.write(("\n" + trackingId + " Outbound message: ").getBytes());
 			} else {
 				responseTimeStamp = System.currentTimeMillis();
@@ -81,8 +88,10 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 		} catch (final IOException e) {
 			logger.error("An error occurs while logging SOAP service call details", e);
 		}
-
-		logger.debug(loggingStream.toString());
+		
+		
+		if ( this.P6_PRINT_REQ_RES_XML_FLAG != null && this.P6_PRINT_REQ_RES_XML_FLAG.equals("Y"))
+			logger.info(loggingStream.toString());
 		if (responseTimeStamp > requestTimeStamp) {
 			final long serviceCallTime = responseTimeStamp - requestTimeStamp;
 			logger.info("TrackingId : {} # SOAP Service response time taken by BackEnd system : {} ms", trackingId,

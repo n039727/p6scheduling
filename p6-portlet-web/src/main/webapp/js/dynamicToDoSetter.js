@@ -37,7 +37,7 @@ function dynamicToDoSetterController($scope) {
 							workOrders:workOrders, 
 							isNewItem:false
 				});
-				ctrl.removeToDo(ctrl.toDos, todo);
+				//ctrl.removeToDo(ctrl.toDos, todo);
 				index++;
 			}
 		}
@@ -224,12 +224,12 @@ function dynamicToDoSetterController($scope) {
 	ctrl.isNotEmpty = function(obj) {
 		return !(obj === undefined || obj === null || Object.keys(obj).length === 0)
 	};
-	ctrl.addToDo = function(todoName) { 
+	/*ctrl.addToDo = function(todoName) { 
 		if (!angular.isDefined(ctrl.toDos)) {
 			ctrl.toDos = [];
 		}
 		ctrl.toDos.push(todoName);
-	};
+	};*/
 	ctrl.isEqArrays = function(arr1, arr2) {
 		if ( arr1.length !== arr2.length ) {
 			return false;

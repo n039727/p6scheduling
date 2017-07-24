@@ -90,8 +90,8 @@ public class DateUtilTest {
 
 	@Test
 	public void testIsSameDate() {
-		Assert.assertTrue(dateUtil.isSameDate("2017-03-13T00:00:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
-				"13/03/2017 08:00:00", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+		Assert.assertTrue(dateUtil.isSameDate("27/10/2016 12:14:35", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP,
+				"2016-10-27T00:14:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP));
 	}
 
 	@Test

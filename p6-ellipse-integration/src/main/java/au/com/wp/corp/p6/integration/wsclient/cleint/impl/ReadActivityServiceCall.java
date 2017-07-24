@@ -37,12 +37,11 @@ public class ReadActivityServiceCall extends ActivityServiceCall<List<Activity>>
 		List<ActivityFieldType> fields = new ArrayList<>();
 		
 		fields.add(ActivityFieldType.PLANNED_START_DATE );
-		//fields.add(ActivityFieldType.PLANNED_FINISH_DATE );
 		fields.add(ActivityFieldType.ID);
 		fields.add(ActivityFieldType.OBJECT_ID);
 		fields.add(ActivityFieldType.NAME);
-		//fields.add(ActivityFieldType.PRIMARY_RESOURCE_OBJECT_ID);
-		//fields.add(ActivityFieldType.PRIMARY_RESOURCE_NAME);
+		fields.add(ActivityFieldType.ACTUAL_FINISH_DATE);
+		fields.add(ActivityFieldType.ACTUAL_START_DATE);
 		fields.add(ActivityFieldType.PROJECT_OBJECT_ID);
 		fields.add(ActivityFieldType.PRIMARY_RESOURCE_ID);
 		fields.add(ActivityFieldType.PLANNED_DURATION);
