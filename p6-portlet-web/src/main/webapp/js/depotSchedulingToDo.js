@@ -209,13 +209,12 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 		if(angular.isDefined(workOrder)
 				&& angular.isDefined(workOrder.toDoItems)) {
 			for (var i = 0; i< workOrder.toDoItems.length; i++) {
-				//if (workOrder.toDoItems[i].typeId === 2 ) {
+				if (workOrder.toDoItems[i].typeId === 2 || angular.isUndefined(workOrder.toDoItems[i].typeId)) {
 					todoMap[workOrder.toDoItems[i].toDoName] = workOrder.toDoItems[i].workOrders;
-				//}
+				}
 			}
 			workOrder.todoMap = todoMap;
 		}
-		//return todoMap;
 	}
 	
 	ctrl.populateToDoItemsFromMap = function(workOrder) {
