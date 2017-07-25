@@ -69,6 +69,8 @@ public class EllipseActivityDTO implements Serializable {
 	private String actualStartDate;
 
 	private String actualFinishDate;
+	
+	private String calcDurFlag;
 
 	/**
 	 * @return the workOrderTaskId
@@ -443,6 +445,22 @@ public class EllipseActivityDTO implements Serializable {
 	 */
 	public void setPlannedFinishDate(String plannedFinishDate) {
 		this.plannedFinishDate = plannedFinishDate;
+	}
+
+		
+	
+	/**
+	 * @return the calcDurFlag
+	 */
+	public String getCalcDurFlag() {
+		return calcDurFlag;
+	}
+
+	/**
+	 * @param calcDurFlag the calcDurFlag to set
+	 */
+	public void setCalcDurFlag(String calcDurFlag) {
+		this.calcDurFlag = calcDurFlag;
 	}
 
 	@Override

@@ -235,12 +235,12 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			logger.info("Batch run strategy # {}", integrationRunStartegy);
 			final List<String> workgroupList = new ArrayList<>();
 			final Set<String> keys = CacheManager.getProjectWorkgroupListMap().keySet();
-			if (CacheManager.getProjectWorkgroupListMap().isEmpty()){
-			
+			if (CacheManager.getProjectWorkgroupListMap().isEmpty()) {
+
 				logger.info("Project workgroup mapping required to configure in P6 Portal DB");
 				return true;
 			}
-			
+
 			if (integrationRunStartegy.equals(EllipseReadParameter.ALL.name())) {
 				for (String key : keys) {
 					workgroupList.addAll(CacheManager.getProjectWorkgroupListMap().get(key));
@@ -450,7 +450,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 		} else if ((null != projectWorkgroup.get(p6Activity.getWorkGroup())
 				&& null != projectWorkgroup.get(p6Activity.getWorkGroup()).getPrimaryResourceYN()
-				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getPrimaryResourceYN().equalsIgnoreCase(P6EllipseWSConstants.Y))
+				&& projectWorkgroup.get(p6Activity.getWorkGroup()).getPrimaryResourceYN()
+						.equalsIgnoreCase(P6EllipseWSConstants.Y))
 				&& null != p6Activity.getPlannedStartDate()
 				&& !dateUtil.isSameDate(p6Activity.getPlannedStartDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 						ellipseActivity.getPlannedStartDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP)) {
@@ -463,7 +464,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP));
 			isUpdateReq = true;
 		}
-		
+
 		/*
 		 * If the P6 Planned start or the P6 Work group changes then Update the
 		 * User Status in Ellipse as 'AL'. The User Status in P6 will remain the
@@ -551,8 +552,27 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (!P6Utility.isEqual(p6Activity.getOriginalDuration(), ellipseActivity.getOriginalDuration())) {
-			p6ActivityUpd.setOriginalDuration(ellipseActivity.getOriginalDuration());
+		double originalDuration = 0;
+
+		double estimatdLaborHours = 0;
+
+		double ellipseEstLaborsHours = ellipseActivity.getEstimatedLabourHours().isEmpty() ? 0
+				: P6Utility.covertStringToDouble(ellipseActivity.getEstimatedLabourHours());
+
+		if (P6Utility.isEqual(ellipseEstLaborsHours, 0)
+				&& P6Utility.isEqual(ellipseActivity.getOriginalDuration(), 0)) {
+			originalDuration = 0;
+			estimatdLaborHours = 0;
+		} else if (ellipseEstLaborsHours > 0 && ellipseActivity.getOriginalDuration() < 1) {
+			originalDuration = 1;
+			estimatdLaborHours = 1;
+		} else if (ellipseEstLaborsHours > 0 && ellipseActivity.getOriginalDuration() >= 1) {
+			originalDuration = ellipseActivity.getOriginalDuration();
+			estimatdLaborHours = ellipseEstLaborsHours;
+		}
+
+		if (!P6Utility.isEqual(p6Activity.getOriginalDuration(), originalDuration)) {
+			p6ActivityUpd.setOriginalDuration(originalDuration);
 			isUpdateReq = true;
 		}
 
@@ -585,11 +605,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (!ellipseActivity.getEstimatedLabourHours().isEmpty()
-				&& !P6Utility.isEqual(P6Utility.covertStringToDouble(ellipseActivity.getEstimatedLabourHours()),
-						p6Activity.getEstimatedLabourHours())) {
-			p6ActivityUpd
-					.setEstimatedLabourHours(P6Utility.covertStringToDouble(ellipseActivity.getEstimatedLabourHours()));
+		if (!P6Utility.isEqual(estimatdLaborHours, p6Activity.getEstimatedLabourHours())) {
+			p6ActivityUpd.setEstimatedLabourHours(estimatdLaborHours);
 			isUpdateReq = true;
 		}
 
@@ -644,23 +661,25 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			isUpdateReq = true;
 		}
 
-		if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()
-				&& !dateUtil.isSameDate(ellipseActivity.getActualStartDate(),
-						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, p6Activity.getActualStartDate(),
-						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP)) {
-			p6ActivityUpd.setActualStartDate(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),
-					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
-			isUpdateReq = true;
-		}
-
 		if (null != ellipseActivity.getActualFinishDate() && !ellipseActivity.getActualFinishDate().isEmpty()
-				&& !dateUtil.isSameDate(ellipseActivity.getActualFinishDate(),
-						DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, p6Activity.getActualFinishDate(),
-						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP)) {
-			p6ActivityUpd.setActualFinishDate(dateUtil.convertDateToString(ellipseActivity.getActualFinishDate(),
-					DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
-			isUpdateReq = true;
+				&& null != ellipseActivity.getTaskStatus()
+				&& ellipseActivity.getTaskStatus().equals(TASK_STATUS_COMPLETED)) {
+			if (null != ellipseActivity.getActualStartDate() && !ellipseActivity.getActualStartDate().trim().isEmpty()
+					&& !dateUtil.isSameDate(ellipseActivity.getActualStartDate(),
+							DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, p6Activity.getActualStartDate(),
+							DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP)) {
+				p6ActivityUpd.setActualStartDate(dateUtil.convertDateToString(ellipseActivity.getActualStartDate(),
+						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+				isUpdateReq = true;
+			}
 
+			if (!dateUtil.isSameDate(ellipseActivity.getActualFinishDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP,
+					p6Activity.getActualFinishDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP)) {
+				p6ActivityUpd.setActualFinishDate(dateUtil.convertDateToString(ellipseActivity.getActualFinishDate(),
+						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+				isUpdateReq = true;
+
+			}
 		}
 
 		/*
