@@ -46,6 +46,12 @@
 							<bundleFileName>p6-ellipse-integration.war</bundleFileName>
 							<contextRoot>/p6-ellipse-integration</contextRoot>
 						</webModule>
+						<webModule>
+							<groupId>au.com.wp.corp.p6.scheduling</groupId>
+							<artifactId>p6-portal-integration</artifactId>
+							<bundleFileName>p6-portal-integration.war</bundleFileName>
+							<contextRoot>/p6-portal-integration</contextRoot>
+						</webModule>
 					</modules>
 					<displayName>p6 scheduling forntend</displayName>
 					<!-- Maven to generate the application.xml, set this to true -->
@@ -73,6 +79,12 @@
 		<dependency>
 			<groupId>au.com.wp.corp.p6.scheduling</groupId>
 			<artifactId>p6-ellipse-integration</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>au.com.wp.corp.p6.scheduling</groupId>
+			<artifactId>p6-portal-integration</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>

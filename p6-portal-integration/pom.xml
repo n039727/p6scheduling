@@ -33,6 +33,16 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>au.com.wp.corp.integration</groupId>
+			<artifactId>genos-dto</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>au.com.wp.corp.integration</groupId>
+			<artifactId>genos-client</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
 			<groupId>com.wp.snow</groupId>
 			<artifactId>SNowConnector</artifactId>
 			<version>1.10</version>
@@ -41,7 +51,7 @@
 		<dependency>
 			<groupId>au.com.wp.corp.p6.scheduling</groupId>
 			<artifactId>p6-wsmodel</artifactId>
-			<version>1.9-SNAPSHOT</version>
+			<version>1.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>javax</groupId>

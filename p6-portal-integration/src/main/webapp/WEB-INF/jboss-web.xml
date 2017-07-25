@@ -1,0 +1,14 @@
+<jboss-web>
+    <!-- Needed to override default security domain JBoss (that uses ApplicationRealm) -->
+    <security-domain>java:/jaas/active-directory</security-domain>
+    <!--  <resource-ref id="ResourceRef_CF">
+		<description></description>
+		<res-ref-name>jms/QCF</res-ref-name>
+		<res-type>javax.jms.QueueConnectionFactory</res-type>
+		<res-auth>Container</res-auth>  
+		<res-sharing-scope>Shareable</res-sharing-scope>  
+		<jndi-name>java:/ConnectionFactory</jndi-name>
+	</resource-ref>  -->
+	
+	
+</jboss-web>
