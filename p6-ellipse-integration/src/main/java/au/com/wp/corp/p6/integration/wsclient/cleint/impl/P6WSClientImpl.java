@@ -446,8 +446,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 				else
 					logger.error("Invalid planned start date# {}", p6ActivityDTO.getPlannedStartDate());
 			}
-			if (null != p6ActivityDTO.getActualFinishDate() && null != p6ActivityDTO.getActivityStatus()
-					&& p6ActivityDTO.getActivityStatus().equals(P6EllipseWSConstants.ACTIVITY_STATUS_COMPLETED)) {
+			if (null != p6ActivityDTO.getActualFinishDate()) {
 				String actStartDate = p6ActivityDTO.getActualStartDate();
 				if (dateUtil.compare(p6ActivityDTO.getActualStartDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 						p6ActivityDTO.getActualFinishDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP) == 1) {
@@ -784,10 +783,11 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			{
 				crdUDFs.addAll(crdUDF);
 			}
-			
+			if ( !crdUDFs.isEmpty() ) {
 			UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService = new CreateUDFValueServiceCall(
 					trackingId, crdUDFs);
 			udfValueService.run();
+			}
 
 		}
 
@@ -803,9 +803,10 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			{
 				updUDFs.addAll(updUDF);
 			}
+			if ( !updUDFs.isEmpty() ) {
 			UDFValueServiceCall<Boolean> udfValueService = new UpdateUDFValueServiceCall(trackingId, updUDFs);
 			udfValueService.run();
-
+			}
 		}
 	}
 

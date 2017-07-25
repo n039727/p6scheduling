@@ -105,13 +105,19 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 	
 	this.validateForm = function(){
 		if(ctrl.isInvalidDateFormat){
-			ctrl.showErrorMsg = 'Date format is invalid,format should be ' + ctrl.dateFormat;
-			ctrl.isValidationErr = true;
+			ctrl.metadata.isErrdataAvail = true;
+			ctrl.metadata.errorMsg= 'Date format is invalid,format should be ' + ctrl.dateFormat;
+
+			//ctrl.showErrorMsg = 'Date format is invalid,format should be ' + ctrl.dateFormat;
+			//ctrl.isValidationErr = true;
 			return false;
 		}
 		if(angular.isUndefined(ctrl.activeContext)){
-			ctrl.showErrorMsg = '*Please select an Action(Scheduling/Depot) for searching the data' ;
-			ctrl.isValidationErr = true;
+			ctrl.metadata.isErrdataAvail = true;
+			ctrl.metadata.errorMsg= '*Please select an Action(Scheduling/Depot) for searching the data' ;
+
+			//ctrl.showErrorMsg = '*Please select an Action(Scheduling/Depot) for searching the data' ;
+			//ctrl.isValidationErr = true;
 			return false;
 		}
 		
@@ -119,23 +125,30 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 				|| ctrl.activeContext == 'CREATE_EXECUTION_PACKAGE' || ctrl.activeContext == 'VIEW_MATERIAL_REQUISITION'){
 			if(this.wo == null || this.wo == ""){
 				if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == ""){
-					ctrl.showErrorMsg = 'Planned Start From Date is required';
-					ctrl.isValidationErr = true;
+					//ctrl.showErrorMsg = 'Planned Start From Date is required';
+					//ctrl.isValidationErr = true;
+					ctrl.metadata.isErrdataAvail = true;
+					ctrl.metadata.errorMsg= 'Planned Start From Date is required';
+
 					return false;
 				}
 				else{
-					ctrl.isValidationErr = false;
+					ctrl.metadata.isErrdataAvail = false;
+					//ctrl.isValidationErr = false;
 					return true;
 				}
 			}else{
-				ctrl.isValidationErr = false;
+				ctrl.metadata.isErrdataAvail = false;
+				//ctrl.isValidationErr = false;
 				return true;
 			}
 		}else if(ctrl.activeContext == 'DEPOT_VIEW_TODO_STATUS' || ctrl.activeContext == 'DEPOT_ADD_SCHEDULING_TODO' || ctrl.activeContext == 'DEPOT_VIEW_MATERIAL_REQUISITION'){
 			if(this.wo == null || this.wo == ""){
 				if(ctrl.scheduleFromDate == null || ctrl.scheduleFromDate == "" ){
-					ctrl.showErrorMsg = 'Planned Start From Date  is required';
-					ctrl.isValidationErr = true;
+//					ctrl.showErrorMsg = 'Planned Start From Date  is required';
+//					ctrl.isValidationErr = true;
+					ctrl.metadata.isErrdataAvail = true;
+					ctrl.metadata.errorMsg= 'Planned Start From Date is required';
 					return false;
 				}else if(ctrl.scheduleToDate !=="" && ctrl.scheduleToDate !== null){
 					this.schFromDate = ctrl.formatDate(this.scheduleFromDate);
@@ -143,23 +156,30 @@ function searchQueryController($scope,$mdDateLocale,$filter) {
 					var isSamedate = moment(this.schFromDate).isSame(this.schToDate);
 					var isPastDate = moment(this.schFromDate).isBefore(this.schToDate); 
 					if(!isSamedate && !isPastDate){
-						ctrl.showErrorMsg = 'To Date must be future date of From Date';
-						ctrl.isValidationErr = true;
+						//ctrl.showErrorMsg = 'To Date must be future date of From Date';
+						//ctrl.isValidationErr = true;
+						ctrl.metadata.isErrdataAvail = true;
+						ctrl.metadata.errorMsg= 'To Date must be future date of From Date';
 						return false;
 					}else if(moment(this.schToDate).diff(this.schFromDate,'days') >= 14){
-						ctrl.showErrorMsg = 'Search is allowed for a maximum of 2 weeks period';
-						ctrl.isValidationErr = true;
+//						ctrl.showErrorMsg = 'Search is allowed for a maximum of 2 weeks period';
+//						ctrl.isValidationErr = true;
+						ctrl.metadata.isErrdataAvail = true;
+						ctrl.metadata.errorMsg= 'Search is allowed for a maximum of 2 weeks period';
 						return false;
 					}else{
-						ctrl.isValidationErr = false;
+						//ctrl.isValidationErr = false;
+						ctrl.metadata.isErrdataAvail = false;
 						return true;
 					}
 				}else{
-					ctrl.isValidationErr = false;
+					ctrl.metadata.isErrdataAvail = false;
+//					ctrl.isValidationErr = false;
 					return true;
 				}
 			}else{
-				ctrl.isValidationErr = false;
+				ctrl.metadata.isErrdataAvail = false;
+//				ctrl.isValidationErr = false;
 				return true;
 			}
 		}
