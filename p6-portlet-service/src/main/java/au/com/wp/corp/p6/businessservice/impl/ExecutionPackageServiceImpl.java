@@ -339,15 +339,17 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			crewListAll = depoCrewMap.values().stream().flatMap(List::stream)
 					.collect(Collectors.toList());
 			input.setCrewList(crewListAll);
+			//if depot is there select all crew for that depot
+			if(input.getDepotList() != null && !input.getDepotList().isEmpty()){
+				List<String> crewListDepot = new ArrayList();
+				input.getDepotList().forEach(depot ->{
+					crewListDepot.addAll(depoCrewMap.get(depot));
+				});
+				
+					input.setCrewList(crewListDepot);
+			}
 		}
-		//if depot is there select all crew for that depot
-		if(input.getDepotList() != null && !input.getDepotList().isEmpty()){
-			List<String> crewListAll = new ArrayList();
-			input.getDepotList().forEach(depot ->{
-				crewListAll.addAll(depoCrewMap.get(depot));
-			});
-			input.setCrewList(crewListAll);
-		}
+	
 		searchRequest.setCrewList(input.getCrewList());
 		searchRequest.setPlannedStartDate(input.getFromDate() != null ? dateUtils.convertDate(input.getFromDate()): null);
 		searchRequest.setPlannedEndDate(input.getToDate() != null ? dateUtils.convertDate(input.getToDate()) : null);
