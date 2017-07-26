@@ -60,7 +60,7 @@ function dynamicToDoSetterController($scope) {
 
 	ctrl.init();
 
-	ctrl.onChange = function(workOrders) {
+	ctrl.onChange = function(workOrders,todoName) {
 		if(angular.isDefined(workOrders)){
 			var allIndex = workOrders.indexOf('ALL');
 			if (allIndex == 0 && allIndex < ctrl.workOrderListWithAll.length - 1) {
@@ -69,28 +69,31 @@ function dynamicToDoSetterController($scope) {
 					var tempColumnGroup = [];
 					var tempTodoName = "";
 					var isTempNewItem = false;
+					var woLength =0;
 					tempColumnGroup = ctrl.columnGroup[0];
 					for(var i=0;i< tempColumnGroup.length;i++){
 						if(ctrl.isEqArrays(tempColumnGroup[i].workOrders ,workOrders)){
-							//console.log("[DEBUG] tempColumnGroup[i].workOrders1 in onChange: " + JSON.stringify(tempColumnGroup[i].workOrders));
 							tempTodoName = tempColumnGroup[i].todoName;
-							//console.log("[DEBUG] tempTodoName1 in onChange: " + JSON.stringify(tempTodoName));
 							isTempNewItem = tempColumnGroup[i].isNewItem;
+							woLength = workOrders.length;
 							if(workOrders.length > 1){
 								workOrders.splice(allIndex, 1);
 							}
 							tempColumnGroup[i].workOrders = workOrders;
 							ctrl.columnGroup[i] = tempColumnGroup;
-							if(isTempNewItem){
+							if(woLength> 1){
 								break;
 							}
+							//if(isTempNewItem){
+								//break;
+							//}
 						}
 					}
 					if(!isTempNewItem){
 						ctrl.currentMap[tempTodoName] = workOrders;
 					}
 					//console.log("[DEBUG] ctrl.columnGroup in onChange: " + JSON.stringify(ctrl.columnGroup));
-					//console.log("[DEBUG] ctrl.currentMap in onChange: " + JSON.stringify(ctrl.currentMap));
+					//console.log("[DEBUG] ctrl.currentMap after first all removed in onChange: " + JSON.stringify(ctrl.currentMap));
 				}
 			} else if (allIndex > -1 && allIndex < ctrl.workOrderListWithAll.length - 1) {
 				if(ctrl.columnGroup.length > 0){
@@ -101,9 +104,7 @@ function dynamicToDoSetterController($scope) {
 					tempColumnGroup = ctrl.columnGroup[0];
 					for(var i=0;i< tempColumnGroup.length;i++){
 						if(ctrl.isEqArrays(tempColumnGroup[i].workOrders ,workOrders)){
-							//	console.log("[DEBUG] tempColumnGroup[i].workOrders2 in onChange: " + JSON.stringify(tempColumnGroup[i].workOrders));
 							tempTodoName = tempColumnGroup[i].todoName;
-							//	console.log("[DEBUG] tempTodoName2 in onChange: " + JSON.stringify(tempTodoName));
 							isTempNewItem = tempColumnGroup[i].isNewItem;
 							tempColumnGroup[i].workOrders = ['ALL'];
 							ctrl.columnGroup[i] = tempColumnGroup;
@@ -118,18 +119,15 @@ function dynamicToDoSetterController($scope) {
 				}
 			} else if (ctrl.workOrderListWithAll.length-1 == workOrders.length) {
 				if(ctrl.columnGroup.length > 0){
-//					console.log("[DEBUG] ctrl.workOrderListWithAll.length-1 == workOrders.length in onChange: " + JSON.stringify(allIndex));
+					//console.log("[DEBUG] ctrl.workOrderListWithAll.length-1 == workOrders.length in onChange: " + JSON.stringify(allIndex));
 					var tempColumnGroup = [];
 					var tempTodoName = "";
 					var isTempNewItem = false;
 					tempColumnGroup = ctrl.columnGroup[0];
 					for(var i=0;i< tempColumnGroup.length;i++){
 						if(ctrl.isEqArrays(tempColumnGroup[i].workOrders ,workOrders)){
-							//	console.log("[DEBUG] tempColumnGroup[i].workOrders3 in onChange: " + JSON.stringify(tempColumnGroup[i].workOrders));
 							tempColumnGroup[i].workOrders = ['ALL'];
 							tempTodoName = tempColumnGroup[i].todoName;
-							//	console.log("[DEBUG] tempTodoName3 in onChange: " + JSON.stringify(tempTodoName));
-
 							isTempNewItem = tempColumnGroup[i].isNewItem;
 							ctrl.columnGroup[i] = tempColumnGroup;
 							break;
@@ -141,19 +139,32 @@ function dynamicToDoSetterController($scope) {
 					//console.log("[DEBUG] ctrl.columnGroup in onChange: " + JSON.stringify(ctrl.columnGroup));
 					//console.log("[DEBUG] ctrl.currentMap in onChange: " + JSON.stringify(ctrl.currentMap));
 				}
+			}else {
+				var tempColumnGroup = [];
+				var isTempNewItem = false;
+				tempColumnGroup = ctrl.columnGroup[0];
+				for(var i=0;i< tempColumnGroup.length;i++){
+					if(tempColumnGroup[i].todoName === todoName){
+						isTempNewItem = tempColumnGroup[i].isNewItem;
+						break;
+					}
+				}
+				if(!isTempNewItem){
+					ctrl.currentMap[todoName] = workOrders;
+				}
 			}
 		}else{
-					var tempColumnGroup = [];
-					var tempTodoName = "";
-					var isTempNewItem = false;
-					tempColumnGroup = ctrl.columnGroup[0];
-					for(var i=0;i< tempColumnGroup.length;i++){
-							tempTodoName = tempColumnGroup[i].todoName;
-							isTempNewItem = tempColumnGroup[i].isNewItem;
-							if(!isTempNewItem && angular.isUndefined(tempColumnGroup[i].workOrders)){
-								ctrl.currentMap[tempTodoName] = [];
-							}
-					}
+			var tempColumnGroup = [];
+			var tempTodoName = "";
+			var isTempNewItem = false;
+			tempColumnGroup = ctrl.columnGroup[0];
+			for(var i=0;i< tempColumnGroup.length;i++){
+				tempTodoName = tempColumnGroup[i].todoName;
+				isTempNewItem = tempColumnGroup[i].isNewItem;
+				if(!isTempNewItem && angular.isUndefined(tempColumnGroup[i].workOrders)){
+					ctrl.currentMap[tempTodoName] = [];
+				}
+			}
 		}
 
 	};
@@ -183,8 +194,7 @@ function dynamicToDoSetterController($scope) {
 	  if(!ctrl.isToDoRemoved){
 		  if (!ctrl.validateNewItem(ctrl.newItem)) {
 			    return;
-			  }
-		  
+		  }
 		  ctrl.currentMap[ctrl.newItem.todoName] = (ctrl.newItem.workOrders.indexOf('ALL') >= 0) ? ctrl.workOrders: ctrl.newItem.workOrders;
 		  ctrl.newItem = {isNewItem:true};
 	  }	  
@@ -199,6 +209,10 @@ function dynamicToDoSetterController($scope) {
 	ctrl.validateNewItem = function(newItem) {
 		if (!angular.isDefined(newItem.todoName)) {
 			ctrl.addErrorMessage = "Please select a valid to do";
+			ctrl.isAddError = true;
+			return false;
+		}else if(!angular.isDefined(newItem.workOrders)){
+			ctrl.addErrorMessage = "Linked WO is required";
 			ctrl.isAddError = true;
 			return false;
 		}else if(ctrl.isNotEmpty(ctrl.currentMap)){

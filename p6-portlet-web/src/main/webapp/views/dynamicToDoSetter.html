@@ -24,7 +24,7 @@
 							<oi-select required oi-options="workOrderId for workOrderId in $ctrl.workOrderListWithAll"
 								ng-model="row.workOrders"
 								multiple=true
-								data-ng-change="$ctrl.onChange(row.workOrders)"
+								data-ng-change="$ctrl.onChange(row.workOrders,row.todoName)"
 								placeholder="Select">
 							</oi-select>
 							<div class="warning" ng-show="row.isNewItem == false && row.workOrders == undefined || row.workOrders.length == 0">This item will be removed when you save</div>

@@ -478,9 +478,7 @@ public class P6SchedulingBusinessServiceImpl implements P6SchedulingBusinessServ
 				dbTask.setSchdDt(scheduledDateForWorkOrder);
 				// if date is changed then execution package is null
 				if (executionPackage != null) {
-					
 					removExecutionPackageFromTask(dbTask);
-		
 				}
 			}
 		}
