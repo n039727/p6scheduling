@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>au.com.wp.corp.p6.scheduling</groupId>
 		<artifactId>p6-scheduling</artifactId>
-		<version>1.13-SNAPSHOT</version>
+		<version>1.14-RC1</version>
 	</parent>
 	<artifactId>p6-wsmodel</artifactId>
 	<name>p6-wsmodel</name>
