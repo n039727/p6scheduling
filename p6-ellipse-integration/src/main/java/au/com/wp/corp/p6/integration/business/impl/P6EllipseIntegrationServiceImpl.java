@@ -716,7 +716,27 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			Map<String, P6ProjWorkgroupDTO> projectWorkgroup, final String woGroup) throws P6BusinessException {
 		logger.debug("Constructing new activity for p6...");
 		final String workGroup = null == woGroup ? ellipseActivity.getWorkGroup() : woGroup;
+		
+		double originalDuration = 0;
 
+		double estimatdLaborHours = 0;
+
+		double ellipseEstLaborsHours = ellipseActivity.getEstimatedLabourHours().isEmpty() ? 0
+				: P6Utility.covertStringToDouble(ellipseActivity.getEstimatedLabourHours());
+
+		if (P6Utility.isEqual(ellipseEstLaborsHours, 0)
+				&& P6Utility.isEqual(ellipseActivity.getOriginalDuration(), 0)) {
+			originalDuration = 0;
+			estimatdLaborHours = 0;
+		} else if (ellipseEstLaborsHours > 0 && ellipseActivity.getOriginalDuration() < 1) {
+			originalDuration = 1;
+			estimatdLaborHours = 1;
+		} else if (ellipseEstLaborsHours > 0 && ellipseActivity.getOriginalDuration() >= 1) {
+			originalDuration = ellipseActivity.getOriginalDuration();
+			estimatdLaborHours = ellipseEstLaborsHours;
+		}
+		
+		
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId(ellipseActivity.getWorkOrderTaskId());
 		p6Activity.setActivityJDCodeUDF(ellipseActivity.getJdCode());
@@ -727,10 +747,13 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		p6Activity.setEllipseStandardJobUDF(ellipseActivity.getEllipseStandardJob());
 		p6Activity.setEquipmentCodeUDF(ellipseActivity.getEquipmentCode());
 		p6Activity.setEquipmentNoUDF(ellipseActivity.getEquipmentNo());
-		p6Activity.setEstimatedLabourHours(P6Utility.covertStringToDouble(ellipseActivity.getEstimatedLabourHours()));
+		
 		p6Activity.setFeederUDF(ellipseActivity.getFeeder());
 		p6Activity.setLocationInStreetUDF(ellipseActivity.getLocationInStreet());
-		p6Activity.setOriginalDuration(ellipseActivity.getOriginalDuration());
+		
+		p6Activity.setEstimatedLabourHours(estimatdLaborHours);
+		p6Activity.setOriginalDuration(originalDuration);
+		
 		p6Activity.setPickIdUDF(ellipseActivity.getPlantNoOrPickId());
 
 		/*

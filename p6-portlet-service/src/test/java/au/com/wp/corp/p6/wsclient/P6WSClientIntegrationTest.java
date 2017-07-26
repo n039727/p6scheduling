@@ -63,7 +63,7 @@ public class P6WSClientIntegrationTest {
 	@Before
 	public void setup() {
 		ActivitySearchRequest activitySearchRequest = new ActivitySearchRequest();
-		activitySearchRequest.setPlannedStartDate("2017-05-18");
+		activitySearchRequest.setPlannedStartDate("2017-03-02");
 		try {
 			baseWorders = p6WSClient.searchWorkOrder(activitySearchRequest);
 		} catch (P6ServiceException e) {
