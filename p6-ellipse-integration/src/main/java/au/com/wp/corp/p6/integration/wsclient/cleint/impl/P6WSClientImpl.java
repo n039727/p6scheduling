@@ -328,7 +328,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		logger.debug("Defined P6 webservice call trigger value# {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
 		int crdActivitySize = activities.size();
-		logger.info("Number of calls to P6 web service create/update Activity # {}", (crdActivitySize / chunkSize) + 1);
+		logger.debug("Number of calls to P6 web service create/update Activity # {}", (crdActivitySize / chunkSize) + 1);
 
 		for (int i = 0; i < (crdActivitySize / chunkSize) + 1; i++) {
 			try {
@@ -828,7 +828,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		logger.debug("Defined P6 delete activity webservice call trigger value # {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
 		int deleteActivitySize = activities.size();
-		logger.info("Number of calls to P6 delete activity web service #{}", (deleteActivitySize / chunkSize) + 1);
+		logger.debug("Number of calls to P6 delete activity web service #{}", (deleteActivitySize / chunkSize) + 1);
 		Holder<Boolean> status = null;
 		for (int i = 0; i < (deleteActivitySize / chunkSize) + 1; i++) {
 
