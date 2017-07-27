@@ -131,7 +131,7 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 			logger.debug("error- ", e);
 			exceptionHandler.handleException(e);
 			throw e;
-		} finally {
+		}finally {
 			p6WSClient.logoutFromP6();
 			clearApplicationMemory();
 		}
@@ -190,13 +190,15 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 
 		ExecutionPackage executionPackage = dbTask.getExecutionPackage();
 		String executionPackageWo = workOrder.getExctnPckgName();
-		if(executionPackage != null && (!executionPackage.getExctnPckgNam().equals(executionPackageWo))){
+		if(executionPackage != null && !executionPackage.getExctnPckgNam().equals(executionPackageWo)){
 			workOrder.setExctnPckgName(executionPackage.getExctnPckgNam());
 			executionPackageNameForUpdate.add(workOrder);
 		}
 		if(isWOInboxed(crewAssignedForWorkOrder)){
 			if (executionPackage != null) {
 				removOrRetainExecutionPackageFromTask(dbTask, workOrder);
+			}else{
+				tasksForUpdate.add(dbTask);
 			}
 		}else if (scheduledDateForWorkOrder != null && scheduledDateInTask != null) {
 			logger.debug("in prepare workorder scheduledDateForWorkOrder {}", scheduledDateForWorkOrder);
@@ -208,6 +210,8 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 				// if date is changed then execution package is null
 				if (executionPackage != null) {
 					removOrRetainExecutionPackageFromTask(dbTask, workOrder);
+				}else{
+					tasksForUpdate.add(dbTask);
 				}
 			}
 		}
