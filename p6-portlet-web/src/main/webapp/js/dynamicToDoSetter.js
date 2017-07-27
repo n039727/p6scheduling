@@ -62,6 +62,7 @@ function dynamicToDoSetterController($scope) {
 
 	ctrl.onChange = function(workOrders,todoName) {
 		if(angular.isDefined(workOrders)){
+			ctrl.handleEvent({eventId:"MODIFY_TO_DO", data:{}})
 			var allIndex = workOrders.indexOf('ALL');
 			if (allIndex == 0 && allIndex < ctrl.workOrderListWithAll.length - 1) {
 //				console.log("[DEBUG] allIndex == 0 in onChange: " + JSON.stringify(allIndex));

@@ -48,8 +48,10 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 	
 		
 	ctrl.addRemoveTodo = function ($event, wo, todo) {
+		
 			var cb = $event.target;
 			if (cb.checked) {
+				wo.savedMsgVisible = false;
 				if (findToDo(wo.toDoItems, todo) == -1) {
 					if(!wo.toDoItems)
 						wo.toDoItems = [];
@@ -61,6 +63,7 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 					wo.toDoBindingVar[ctrl.getWorkOrderToDoKey(wo, todo)] = [wo.workOrderIdDisplayArray[0]];	
 				}
 			} else {
+				wo.savedMsgVisible = false;
 				var index = findToDo(wo.toDoItems, todo);
 				if (index > -1) {
 					wo.toDoItems.splice(index, 1);
@@ -162,6 +165,8 @@ function schedulingToDoResultController($scope, restTemplate, userAccessService)
 
 	ctrl.updateBindingVarOnSelect= function(wo, todoName) {
 		var key = ctrl.getWorkOrderToDoKey(wo, todoName);
+		wo.savedMsgVisible = false;
+
 		var selectedValArray = wo.toDoBindingVar[key];
 		if (angular.isDefined(selectedValArray) && selectedValArray.length > 0) {
 			var allIndex = selectedValArray.indexOf('ALL');
