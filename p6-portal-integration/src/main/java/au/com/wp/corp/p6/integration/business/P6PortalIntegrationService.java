@@ -3,7 +3,6 @@
  */
 package au.com.wp.corp.p6.integration.business;
 
-import au.com.wp.corp.p6.integration.dao.P6DAOExceptionParser;
 import au.com.wp.corp.p6.integration.exception.P6BusinessException;
 import au.com.wp.corp.p6.integration.exception.P6BusinessExceptionParser;
 

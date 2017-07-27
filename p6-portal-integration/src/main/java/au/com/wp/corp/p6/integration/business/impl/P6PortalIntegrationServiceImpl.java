@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import au.com.wp.corp.p6.integration.business.P6PortalIntegrationService;
 import au.com.wp.corp.p6.integration.dao.P6PortalDAO;
 import au.com.wp.corp.p6.integration.dto.ExecutionPackageCreateRequest;
-import au.com.wp.corp.p6.integration.dto.ExecutionPackageDTO;
-import au.com.wp.corp.p6.integration.dto.UDFTypeDTO;
 import au.com.wp.corp.p6.integration.dto.WorkOrder;
 import au.com.wp.corp.p6.integration.exception.P6BaseException;
 import au.com.wp.corp.p6.integration.exception.P6BusinessException;
 import au.com.wp.corp.p6.integration.exception.P6DataAccessException;
-import au.com.wp.corp.p6.integration.exception.P6ExceptionType;
 import au.com.wp.corp.p6.integration.exception.P6IntegrationExceptionHandler;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
@@ -194,7 +190,7 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 
 		ExecutionPackage executionPackage = dbTask.getExecutionPackage();
 		String executionPackageWo = workOrder.getExctnPckgName();
-		if(!executionPackage.getExctnPckgNam().equals(executionPackageWo)){
+		if(executionPackage != null && (!executionPackage.getExctnPckgNam().equals(executionPackageWo))){
 			workOrder.setExctnPckgName(executionPackage.getExctnPckgNam());
 			executionPackageNameForUpdate.add(workOrder);
 		}
@@ -499,6 +495,7 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 		for (WorkOrder workOrder : woList) {
 			ExecutionPackageCreateRequest executionPackageCreateRequest = new ExecutionPackageCreateRequest();
 			Integer foreignObjId = p6WSClient.getWorkOrderIdMap().get(workOrder.getWorkOrderId());
+			logger.debug("foreignObjId {} returned for workOrderId {}",foreignObjId,workOrder.getWorkOrderId());
 			executionPackageCreateRequest.setForeignObjectId(foreignObjId);
 			executionPackageCreateRequest.setText(workOrder.getExctnPckgName());
 			executionPackageCreateRequest.setUdfTypeDataType(P6Constant.TEXT);

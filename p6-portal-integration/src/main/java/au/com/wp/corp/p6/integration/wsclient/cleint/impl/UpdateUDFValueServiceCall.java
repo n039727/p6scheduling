@@ -48,10 +48,11 @@ public class UpdateUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
 		Boolean returnVal = Boolean.FALSE;
 		try {
 			logger.debug("calling createUDFValues with udf values == {}", updateUDFValues);
-			returnVal = servicePort.updateUDFValues(updateUDFValues);
+			if(!updateUDFValues.isEmpty()){
+				returnVal = servicePort.updateUDFValues(updateUDFValues);
+			}
 		} catch (au.com.wp.corp.p6.wsclient.udfvalue.IntegrationFault e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new P6ServiceException(e);
 		}
 		return new Holder<Boolean>(returnVal);
 	}
