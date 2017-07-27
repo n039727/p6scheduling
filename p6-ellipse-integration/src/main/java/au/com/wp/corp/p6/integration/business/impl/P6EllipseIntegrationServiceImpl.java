@@ -563,14 +563,21 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 				&& P6Utility.isEqual(ellipseActivity.getOriginalDuration(), 0)) {
 			originalDuration = 0;
 			estimatdLaborHours = 0;
-		} else if (ellipseEstLaborsHours > 0 && ellipseActivity.getOriginalDuration() < 1) {
+		} else if (ellipseEstLaborsHours > 0 && ellipseEstLaborsHours < 1) {
 			originalDuration = 1;
 			estimatdLaborHours = 1;
-		} else if (ellipseEstLaborsHours > 0 && ellipseActivity.getOriginalDuration() >= 1) {
+
+		} else if (ellipseEstLaborsHours >=1 && ellipseEstLaborsHours < 5) {
+			originalDuration = 1;
+			estimatdLaborHours = ellipseEstLaborsHours;
+
+		} else if (ellipseEstLaborsHours >=5) {
 			originalDuration = ellipseActivity.getOriginalDuration();
 			estimatdLaborHours = ellipseEstLaborsHours;
+		
 		}
-
+		
+		
 		if (!P6Utility.isEqual(p6Activity.getOriginalDuration(), originalDuration)) {
 			p6ActivityUpd.setOriginalDuration(originalDuration);
 			isUpdateReq = true;
@@ -728,14 +735,19 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 				&& P6Utility.isEqual(ellipseActivity.getOriginalDuration(), 0)) {
 			originalDuration = 0;
 			estimatdLaborHours = 0;
-		} else if (ellipseEstLaborsHours > 0 && ellipseActivity.getOriginalDuration() < 1) {
+		} else if (ellipseEstLaborsHours > 0 && ellipseEstLaborsHours < 1) {
 			originalDuration = 1;
 			estimatdLaborHours = 1;
-		} else if (ellipseEstLaborsHours > 0 && ellipseActivity.getOriginalDuration() >= 1) {
+
+		} else if (ellipseEstLaborsHours >=1 && ellipseEstLaborsHours < 5) {
+			originalDuration = 1;
+			estimatdLaborHours = ellipseEstLaborsHours;
+
+		} else if (ellipseEstLaborsHours >=5) {
 			originalDuration = ellipseActivity.getOriginalDuration();
 			estimatdLaborHours = ellipseEstLaborsHours;
-		}
 		
+		}		
 		
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId(ellipseActivity.getWorkOrderTaskId());
