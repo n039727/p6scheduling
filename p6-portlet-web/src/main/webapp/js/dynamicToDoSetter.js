@@ -179,6 +179,7 @@ function dynamicToDoSetterController($scope) {
 		ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}});
 		ctrl.handleEvent({eventId:"ADD_TO_DO_DELETED", data:{}});
 		ctrl.isToDoRemoved = true;
+		ctrl.isAddError = false;
 		ctrl.init();
 	};
 	ctrl.newAddIndex = -1;
