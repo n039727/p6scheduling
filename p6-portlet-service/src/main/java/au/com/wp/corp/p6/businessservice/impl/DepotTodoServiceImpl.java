@@ -321,9 +321,14 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 		if (!org.springframework.util.StringUtils.isEmpty(workOrder.getExctnPckgName())){
 			ExecutionPackage executionPackage = executionPackageDao.fetch(workOrder.getExctnPckgName());
 			if(null != executionPackage){
+				executionPackage.setActioned(ACTIONED_Y);
 				executionPackage.setExecDeptCmt(workOrder.getDepotToDoComment());
 				dbTask.setExecutionPackage(executionPackage);
+				dbTask.setActioned(ACTIONED_N);
 			} 
+			else{
+				dbTask.setActioned(ACTIONED_Y);
+			}
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		}
 		String  userName = "";
@@ -375,7 +380,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					updatedTask.setTodoAssignments(newToDos);
 				}
 			}
-			updatedTask.setActioned(ACTIONED_Y);
+			//updatedTask.setActioned(ACTIONED_Y);
 		} else {
 			dBToDos = updatedTask.getTodoAssignments();
 			if (null != dBToDos) {
@@ -388,7 +393,7 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 					updatedTask.getTodoAssignments().remove(deleteDbToDo);
 				}
 			}
-			updatedTask.setActioned(ACTIONED_N);
+			//updatedTask.setActioned(ACTIONED_N);
 		}
 
 		logger.debug("After merging to do assignments size: " + updatedTask.getTodoAssignments());
