@@ -3,6 +3,10 @@ function dynamicToDoSetterController($scope) {
 
 	// Create Column Groups
 	ctrl.init = function() {
+		if(angular.isDefined(ctrl.newItem) && angular.isDefined(ctrl.newItem.isNewItem)){
+			ctrl.newAddIndex = -1;
+			ctrl.handleEvent({eventId:"ADD_TO_DO_DELETED", data:{}});
+		}
 		ctrl.disableRemove = false;
 		if (angular.isDefined(ctrl.columns)) {
 			ctrl.columnGroup = [];
@@ -173,6 +177,7 @@ function dynamicToDoSetterController($scope) {
 		delete ctrl.currentMap[todoName]; 
 		//ctrl.handleDataChange({map: ctrl.currentMap});
 		ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}});
+		ctrl.handleEvent({eventId:"ADD_TO_DO_DELETED", data:{}});
 		ctrl.isToDoRemoved = true;
 		ctrl.init();
 	};

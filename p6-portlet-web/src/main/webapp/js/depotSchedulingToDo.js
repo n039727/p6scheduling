@@ -269,6 +269,9 @@ function depotSchedulingToDoResultController($scope, restTemplate, userAccessSer
 			case "MODIFY_TO_DO":
 				wo.savedMsgVisible = false;
 				break;
+			case "ADD_TO_DO_DELETED":
+				wo.disableSaving = false;
+				break;
 			default:
 //				console.log("No handler found for event: " + eventId);
 		} 
