@@ -25,15 +25,16 @@ public class UpdateUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
 	private static final Logger logger = LoggerFactory.getLogger(UpdateUDFValueServiceCall.class);
 	
 	private List<ExecutionPackageCreateRequest> executionPackageCreateRequest;
-	public UpdateUDFValueServiceCall(final RequestTrackingId trackingId, String endPoint, List<ExecutionPackageCreateRequest> executionPackageCreateRequest) {
+	private int typeObjectId;
+	public UpdateUDFValueServiceCall(final RequestTrackingId trackingId, String endPoint, List<ExecutionPackageCreateRequest> executionPackageCreateRequest, int typeObjectId) {
 		super(trackingId);
 		this.executionPackageCreateRequest = executionPackageCreateRequest;
+		this.typeObjectId = typeObjectId;
 	}
 
 	@Override
 	protected Holder<Boolean> command() throws P6ServiceException {
 		List<UDFValue> updateUDFValues = new ArrayList<UDFValue>();
-		int typeObjectId = readUDFTypeForExecutionPackage();
 		for (ExecutionPackageCreateRequest request : executionPackageCreateRequest) {
 			UDFValue udfValue = new UDFValue();
 			udfValue.setForeignObjectId(request.getForeignObjectId());
@@ -57,17 +58,5 @@ public class UpdateUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
 		}
 		return new Holder<Boolean>(returnVal);
 	}
-	
-	private int readUDFTypeForExecutionPackage() throws P6ServiceException {
-		logger.info("Reading UDF type details from P6 ..");
-	
-		StringBuilder filter = new StringBuilder();
-		filter.append("SubjectArea='Activity' and Title = 'Execution Grouping'");
-
-		UDFTypeServiceCall udfTypeServiceCall = new UDFTypeServiceCall(trackingId, filter.toString());
-		Holder<List<UDFType>> udfTypes = udfTypeServiceCall.run();
-		return udfTypes.value.get(0).getObjectId();
-	}
-
 
 }

@@ -197,6 +197,7 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 				workOrder.setExctnPckgName(executionPackage.getExctnPckgNam());
 				executionPackageNameForUpdate.add(workOrder);
 			}else{
+				workOrder.setExctnPckgName(executionPackage.getExctnPckgNam());
 				executionPackageForCreate.add(workOrder);
 			}
 		}
@@ -505,10 +506,14 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 	private Boolean syncExecutionPackage(Set<WorkOrder> woListUpdate, Set<WorkOrder> woListCreate) throws P6BusinessException {
 		Boolean result = false;
 		try {
-			result= p6WSClient.createExecutionPackage(prepareRequest(woListCreate));
-			logger.debug("execution package created with request{} : ",woListCreate);
-			result = p6WSClient.updateExecutionPackage(prepareRequest(woListUpdate));
-			logger.debug("execution package updated with request{} : ",woListUpdate);
+			if(!woListCreate.isEmpty()){
+				result= p6WSClient.createExecutionPackage(prepareRequest(woListCreate));
+				logger.debug("execution package created with request{} : ",woListCreate);
+			}
+			if(!woListUpdate.isEmpty()){
+				result = p6WSClient.updateExecutionPackage(prepareRequest(woListUpdate));
+				logger.debug("execution package updated with request{} : ",woListUpdate);
+			}
 		}catch (P6ServiceException e) {
 			logger.error("An error occurs while updating data in P6 for executionPackage : ", e);
 			parseException(e);

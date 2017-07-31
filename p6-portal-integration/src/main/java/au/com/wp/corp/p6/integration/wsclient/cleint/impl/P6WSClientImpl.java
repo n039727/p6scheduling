@@ -55,6 +55,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	private String udfServiceWSDL;
 	
 	private Map<String, Integer> workOrderIdMap = new HashMap<String, Integer>();
+	private int udfObjectId;
 	@Override
 	public Map<String, Integer> getWorkOrderIdMap() {
 		return workOrderIdMap;
@@ -148,7 +149,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			throws P6ServiceException {
 		final StringBuilder filter = new StringBuilder();
 		filter.append("UDFTypeSubjectArea= ");
-		filter.append("'" + P6EllipseWSConstants.SUBJECT_AREA + "'");
+		filter.append("'" + getProperty(P6EllipseWSConstants.SUBJECT_AREA )+ "'");
 		List<ExecutionPackageDTO> dtoList = new ArrayList<ExecutionPackageDTO>();
 
 		filter.append(AND);
@@ -365,7 +366,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		if (null == foreignObjIds) {
 			throw new P6ServiceException("NO_SEARCH_CRITERIA_FOUND");
 		}
-		int udfObjectId = readUDFTypeForExecutionPackage();
+		udfObjectId = readUDFTypeForExecutionPackage();
 		List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds = new ArrayList<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId>();
 		if (foreignObjIds.contains(null)) {
 			for (Iterator<Integer> iterator = foreignObjIds.iterator(); iterator.hasNext();) {
@@ -384,7 +385,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		logger.debug("request {}",objectIds);
 		final UDFValueServiceCall<Boolean> deleteUdfservice = new DeleteUDFValueServiceCall(trackingId, objectIds);
 		final Holder<Boolean> isDeleted = deleteUdfservice.run();
-		logoutFromP6();
+		//logoutFromP6();
 		return isDeleted.value;
 	}
 	@Override
@@ -396,7 +397,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			throw new P6ServiceException("NO_SEARCH_CRITERIA_FOUND");
 		}
 		final UDFValueServiceCall<Boolean> updateUdfservice = new UpdateUDFValueServiceCall(trackingId,
-				udfServiceWSDL, request);
+				udfServiceWSDL, request, udfObjectId);
 		logger.debug("creating for request package name {}", request.get(0).getText());
 		final Holder<Boolean> result = updateUdfservice.run();
 		return result.value;
@@ -419,11 +420,11 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		
 		 removeExecutionPackage(foreignIds, false);
 		logger.debug("deleted for request package name {} ", request.get(0).getText());
-		final UDFValueServiceCall<List<ObjectId>> createUdfservice = new CreateUDFValueServiceCall(trackingId, request);
+		final UDFValueServiceCall<List<ObjectId>> createUdfservice = new CreateUDFValueServiceCall(trackingId, request, udfObjectId);
 		logger.debug("creating for request package name {}", request.get(0).getText());
 		final Holder<List<ObjectId>> objectIds = createUdfservice.run();
 		List<ObjectId> objectIdList = objectIds.value;
-		logoutFromP6();
+		//logoutFromP6();
 		return objectIdList.isEmpty()?false:true;
 	}
 
