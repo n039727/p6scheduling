@@ -84,6 +84,7 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 		CacheManager.getTasksforremove().clear();
 		CacheManager.getExecpkglistforupdate().clear();
 		CacheManager.getExecutionpackagenameforupdate().clear();
+		CacheManager.getExecutionpackageforcreate().clear();
 		listWOData = null;
 	}
 
@@ -187,12 +188,17 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 		Set<Task> tasksForUpdate = CacheManager.getTasksforupdate();
 		Set<ExecutionPackage> executionPackageUpdateList = CacheManager.getExecpkglistforupdate();
 		Set<WorkOrder> executionPackageNameForUpdate = CacheManager.getExecutionpackagenameforupdate();
+		Set<WorkOrder> executionPackageForCreate = CacheManager.getExecutionpackageforcreate();
 
 		ExecutionPackage executionPackage = dbTask.getExecutionPackage();
 		String executionPackageWo = workOrder.getExctnPckgName();
 		if(executionPackage != null && !executionPackage.getExctnPckgNam().equals(executionPackageWo)){
-			workOrder.setExctnPckgName(executionPackage.getExctnPckgNam());
-			executionPackageNameForUpdate.add(workOrder);
+			if(null!=executionPackageWo){
+				workOrder.setExctnPckgName(executionPackage.getExctnPckgNam());
+				executionPackageNameForUpdate.add(workOrder);
+			}else{
+				executionPackageForCreate.add(workOrder);
+			}
 		}
 		if(isWOInboxed(crewAssignedForWorkOrder)){
 			if (executionPackage != null) {
@@ -256,6 +262,7 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 		Set<String> deletetedExecPkagList = CacheManager.getDeletetedexecpkaglist();
 		Set<ExecutionPackage> execPkgListForUpdate = CacheManager.getExecpkglistforupdate();
 		Set<WorkOrder> executionPackageNameForUpdate = CacheManager.getExecutionpackagenameforupdate();
+		Set<WorkOrder> executionPackageForCreate = CacheManager.getExecutionpackageforcreate();
 		/********* Using Cachemanager for temp data store ************/
 		ExecutionPackage executionpackage = task.getExecutionPackage();
 		/*
@@ -408,6 +415,7 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 		Set<Task> tasksForRemove = CacheManager.getTasksforremove();
 		Set<ExecutionPackage> execPkgList = CacheManager.getExecpkglistforupdate();
 		Set<WorkOrder> updateExecPkgNameList = CacheManager.getExecutionpackagenameforupdate();
+		Set<WorkOrder> createExecPkgNameList = CacheManager.getExecutionpackageforcreate();
 		try {
 			if (!CollectionUtils.isEmpty(tasksForUpdate)) {
 				logger.debug("updateTasksInDB called with tasks # {}", tasksForUpdate.size());// can
@@ -454,7 +462,7 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 		}
 		logger.debug("Total time taken to updateTasksInDB {}", System.currentTimeMillis() - startTime);
 		removeExecutionPackageinP6();
-		updateExecutionPackage(updateExecPkgNameList);
+		syncExecutionPackage(updateExecPkgNameList, createExecPkgNameList);
 	}
 
 	/**
@@ -494,7 +502,21 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 	 * Method to update execution package name in P6.
 	 * @throws P6BusinessException
 	 */
-	private Boolean updateExecutionPackage(Set<WorkOrder> woList) throws P6BusinessException {
+	private Boolean syncExecutionPackage(Set<WorkOrder> woListUpdate, Set<WorkOrder> woListCreate) throws P6BusinessException {
+		Boolean result = false;
+		try {
+			result= p6WSClient.createExecutionPackage(prepareRequest(woListCreate));
+			logger.debug("execution package created with request{} : ",woListCreate);
+			result = p6WSClient.updateExecutionPackage(prepareRequest(woListUpdate));
+			logger.debug("execution package updated with request{} : ",woListUpdate);
+		}catch (P6ServiceException e) {
+			logger.error("An error occurs while updating data in P6 for executionPackage : ", e);
+			parseException(e);
+		}
+		return result;
+	}
+	
+	private List<ExecutionPackageCreateRequest> prepareRequest(Set<WorkOrder> woList){
 		List<ExecutionPackageCreateRequest> request = new ArrayList<>();
 		for (WorkOrder workOrder : woList) {
 			ExecutionPackageCreateRequest executionPackageCreateRequest = new ExecutionPackageCreateRequest();
@@ -507,13 +529,6 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 			executionPackageCreateRequest.setUdfTypeTitle(P6Constant.EXECUTION_GROUPING);
 			request.add(executionPackageCreateRequest);
 		}
-		Boolean createdExecutionPackage = false;
-		try {
-			createdExecutionPackage = p6WSClient.updateExecutionPackage(request);
-		}catch (P6ServiceException e) {
-			logger.error("An error occurs while updating data in P6 for executionPackage : ", e);
-			parseException(e);
-		}
-		return createdExecutionPackage;
+		return request;
 	}
 }

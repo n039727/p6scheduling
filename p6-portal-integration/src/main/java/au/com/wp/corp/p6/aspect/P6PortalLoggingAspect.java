@@ -16,7 +16,6 @@ public class P6PortalLoggingAspect {
 	    // Use "logAround" pointcut declaration in the advice
 	   @Before("within(au.com.wp.corp.p6..*) && !within(au.com.wp.corp.p6.config..*) && !within(au.com.wp.corp.p6.utils.DateUtils*) "
 	   		+ "&& !within(au.com.wp.corp.p6.integration.util.DateUtil*)"
-	   		+ "&& !within(au.com.wp.corp.p6.integration.wsclient.cleint.impl.P6WSClientImpl.getWorkOrderIdMap()*)"
 	   		+ "&& !within(au.com.wp.corp.p6.dto..*)")
 	    public void logBefore(JoinPoint joinPoint) {
 		   String[] retval = returnMetaValues(joinPoint);

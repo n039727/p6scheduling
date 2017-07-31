@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import au.com.wp.corp.p6.integration.dto.ExecutionPackageCreateRequest;
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
+import au.com.wp.corp.p6.wsclient.udftype.UDFType;
 import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
 
 /**
@@ -32,13 +33,13 @@ public class UpdateUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
 	@Override
 	protected Holder<Boolean> command() throws P6ServiceException {
 		List<UDFValue> updateUDFValues = new ArrayList<UDFValue>();
-
+		int typeObjectId = readUDFTypeForExecutionPackage();
 		for (ExecutionPackageCreateRequest request : executionPackageCreateRequest) {
 			UDFValue udfValue = new UDFValue();
 			udfValue.setForeignObjectId(request.getForeignObjectId());
 			udfValue.setText(request.getText());
 			udfValue.setUDFTypeDataType(request.getUdfTypeDataType());
-			udfValue.setUDFTypeObjectId(request.getUdfTypeObjectId());
+			udfValue.setUDFTypeObjectId(typeObjectId);
 			udfValue.setUDFTypeSubjectArea(request.getUdfTypeSubjectArea());
 			udfValue.setUDFTypeTitle(request.getUdfTypeTitle());
 			updateUDFValues.add(udfValue);
@@ -55,6 +56,17 @@ public class UpdateUDFValueServiceCall extends UDFValueServiceCall<Boolean> {
 			throw new P6ServiceException(e);
 		}
 		return new Holder<Boolean>(returnVal);
+	}
+	
+	private int readUDFTypeForExecutionPackage() throws P6ServiceException {
+		logger.info("Reading UDF type details from P6 ..");
+	
+		StringBuilder filter = new StringBuilder();
+		filter.append("SubjectArea='Activity' and Title = 'Execution Grouping'");
+
+		UDFTypeServiceCall udfTypeServiceCall = new UDFTypeServiceCall(trackingId, filter.toString());
+		Holder<List<UDFType>> udfTypes = udfTypeServiceCall.run();
+		return udfTypes.value.get(0).getObjectId();
 	}
 
 

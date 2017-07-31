@@ -35,6 +35,7 @@ import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.udftype.UDFType;
+import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
 import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
 
 /**
@@ -400,5 +401,31 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		final Holder<Boolean> result = updateUdfservice.run();
 		return result.value;
 	}
+	@Override
+	public boolean createExecutionPackage(List<ExecutionPackageCreateRequest> request)
+			throws P6ServiceException {
+		logger.info("Calling udfvalue  service in P6 Webservice to create executionpackage...");
+		final RequestTrackingId trackingId = new RequestTrackingId();
+		getAuthenticated(trackingId);
+		if (null == request) {
+			throw new P6ServiceException("NO_SEARCH_CRITERIA_FOUND");
+		}
+		ExecutionPackageDTO dto = null;
+		List<Integer> foreignIds = new ArrayList<>();
+		for (ExecutionPackageCreateRequest executionPackageCreateRequest : request) {
+			Integer foregnObjId = executionPackageCreateRequest.getForeignObjectId();
+			foreignIds.add(foregnObjId);
+		}
+		
+		 removeExecutionPackage(foreignIds, false);
+		logger.debug("deleted for request package name {} ", request.get(0).getText());
+		final UDFValueServiceCall<List<ObjectId>> createUdfservice = new CreateUDFValueServiceCall(trackingId, request);
+		logger.debug("creating for request package name {}", request.get(0).getText());
+		final Holder<List<ObjectId>> objectIds = createUdfservice.run();
+		List<ObjectId> objectIdList = objectIds.value;
+		logoutFromP6();
+		return objectIdList.isEmpty()?false:true;
+	}
+
 }
 

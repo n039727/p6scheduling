@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import au.com.wp.corp.p6.integration.dto.ExecutionPackageCreateRequest;
+import au.com.wp.corp.p6.integration.dto.ExecutionPackageDTO;
 import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
 import au.com.wp.corp.p6.integration.dto.UDFTypeDTO;
 import au.com.wp.corp.p6.integration.dto.WorkOrder;
@@ -43,5 +44,9 @@ public interface P6WSClient {
 
 
 	Boolean updateExecutionPackage(List<ExecutionPackageCreateRequest> request) throws P6ServiceException;
+
+
+
+	boolean createExecutionPackage(List<ExecutionPackageCreateRequest> request) throws P6ServiceException;
 	
 }

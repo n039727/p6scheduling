@@ -51,8 +51,13 @@ public class CacheManager {
 	private static final Set<String> deletetedExecPkagList = new HashSet<String>(); 
 	private static final Set<ExecutionPackage> execPkgListForUpdate = new HashSet<ExecutionPackage>(); 
 	private static final Set<WorkOrder> executionPackageNameForUpdate = new HashSet<WorkOrder>();
+	private static final Set<WorkOrder> executionPackageForCreate = new HashSet<WorkOrder>();
 
 	
+	public static Set<WorkOrder> getExecutionpackageforcreate() {
+		return executionPackageForCreate;
+	}
+
 	public static Set<WorkOrder> getExecutionpackagenameforupdate() {
 		return executionPackageNameForUpdate;
 	}

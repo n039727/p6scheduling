@@ -50,7 +50,7 @@ public interface P6EllipseWSConstants {
 	/**
 	 * Subject area defined in P6
 	 */
-	public static final String SUBJECT_AREA = "Activity";
+	public static final String SUBJECT_AREA = "P6_SUBJECT_AREA";
 
 	/**
 	 * 1.Ellipse task user status - object Id of P6 UDF Type
@@ -136,7 +136,7 @@ public interface P6EllipseWSConstants {
 	
 	
 	public static final String  FOREIGN_OBJECT_ID = "ForeignObjectId";
-	public static final String  EXECUTION_GROUPING = "Execution Grouping";
+	public static final String  EXECUTION_GROUPING = "P6_EXECUTION_PCKG_TITLE";
 	/**
 	 * Required only for searching workorders based on Id
 	 */
