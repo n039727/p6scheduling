@@ -331,6 +331,9 @@ public class DepotTodoServiceImpl implements DepotTodoService {
 			}
 			logger.debug("Execution Package {}", workOrder.getExctnPckgName());
 		}
+		else{
+			dbTask.setActioned(ACTIONED_Y);
+		}
 		String  userName = "";
 		if(userTokenRequest != null && userTokenRequest.getUserPrincipal() != null){
 			userName = userTokenRequest.getUserPrincipal();
