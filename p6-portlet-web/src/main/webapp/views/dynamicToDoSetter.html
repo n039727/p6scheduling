@@ -30,7 +30,7 @@
 							<div class="warning" ng-show="row.isNewItem == false && row.workOrders == undefined || row.workOrders.length == 0">This item will be removed when you save</div>
 						</td>
 						<td >
-							<span class="glyphicon glyphicon-trash"  ng-click="$ctrl.removeItem(row.todoName, groupIndex)"></span>
+							<span class="glyphicon glyphicon-trash"  ng-click="$ctrl.removeItem(row.todoName, row.isNewItem)"></span>
 						</td>
 					</tr>
 				</tbody>

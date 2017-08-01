@@ -173,9 +173,18 @@ function dynamicToDoSetterController($scope) {
 		}
 
 	};
-	ctrl.removeItem = function(todoName, groupIndex) {
-		delete ctrl.currentMap[todoName]; 
-		//ctrl.handleDataChange({map: ctrl.currentMap});
+	ctrl.removeItem = function(todoName, isNewItem) {
+		if(angular.isDefined(ctrl.newItem)&& angular.isDefined(ctrl.newItem.isNewItem)){
+			if(ctrl.newItem.isNewItem){
+				ctrl.newItem = {isNewItem:true};
+			}
+		}
+		if(angular.isDefined(isNewItem)){
+			if(!isNewItem){
+				delete ctrl.currentMap[todoName]; 
+			}
+		}
+//		delete ctrl.currentMap[todoName]; 
 		ctrl.handleEvent({eventId:"DATA_CHANGE", data:{map: ctrl.currentMap}});
 		ctrl.handleEvent({eventId:"ADD_TO_DO_DELETED", data:{}});
 		ctrl.isToDoRemoved = true;
