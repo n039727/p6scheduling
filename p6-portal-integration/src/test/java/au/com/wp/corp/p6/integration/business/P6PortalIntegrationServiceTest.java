@@ -103,11 +103,10 @@ public class P6PortalIntegrationServiceTest {
 		executionPackage.setTasks(tasks);
 		List<Task> taskList = new ArrayList<Task>();
 		Task task = new Task();
-		task.setTaskId("11");
+		task.setTaskId("12");
 		task.setActioned("Y");
 		task.setCrewId("CRW1");
 		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(scheduleDate));
-		task.setExecutionPackage(executionPackage);
 		Set<TodoAssignment> todoAssignments = new HashSet<TodoAssignment>();
 		TodoAssignmentPK todoAssignMentPK = new TodoAssignmentPK();
 		todoAssignMentPK.setTask(task);
@@ -117,24 +116,23 @@ public class P6PortalIntegrationServiceTest {
 		todo.setStat("Completed");
 		task.setTodoAssignments(todoAssignments);
 		Task task1 = new Task();
-		task1.setTaskId("12");
+		task1.setTaskId("11");
 		task1.setActioned("Y");
 		task1.setCrewId("CRW2");
-		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY("18/05/2017"));
+		task.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(scheduleDate));
 		task1.setExecutionPackage(executionPackage);
 		Task task2 = new Task();
-		task2.setTaskId("13");
+		task2.setTaskId("14");
 		task2.setActioned("Y");
 		task2.setCrewId("CRW1");
-		task2.setSchdDt(dateUtils.toDateFromDD_MM_YYYY("18/05/2017"));
+		task2.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(scheduleDate));
 		task2.setExecutionPackage(executionPackage);
 		Task task3 = new Task();
-		task3.setTaskId("14");
+		task3.setTaskId("15");
 		task3.setActioned("Y");
 		task3.setCrewId(crewNames);
 		task3.setSchdDt(dateUtils.toDateFromDD_MM_YYYY(scheduleDate));
 		task3.setExecutionPackage(executionPackage);
-		tasks.add(task);
 		taskList.add(task);
 		tasks.add(task1);
 		taskList.add(task1);
@@ -160,7 +158,7 @@ public class P6PortalIntegrationServiceTest {
 		workOrder.setWorkOrderId("11");
 		workOrder.setCrewNames(crewNames);
 		workOrder.setDepotId("DEPOT1");
-		workOrder.setScheduleDate("19/05/2017");
+		workOrder.setScheduleDate(scheduleDate);
 		workOrder.setExctnPckgName(exctnPckgName);
 		workOrder.setLeadCrew("MOST1");
 		WorkOrder workOrder2 = new WorkOrder();
@@ -173,7 +171,18 @@ public class P6PortalIntegrationServiceTest {
 		workOrder2.setDepotId("DEPOT1");
 		workOrder2.setScheduleDate(scheduleDate);
 		workOrder2.setExctnPckgName(exctnPckgName);
+		WorkOrder workOrder3 = new WorkOrder();
+
+		List<String> workOrderIds3 = new ArrayList<>();
+		workOrderIds3.add("15");
+		workOrder3.setWorkOrders(workOrderIds2);
+		workOrder3.setWorkOrderId("15");
+		workOrder3.setCrewNames(crewNames);
+		workOrder3.setDepotId("DEPOT1");
+		workOrder3.setScheduleDate(scheduleDate);
+		workOrder3.setExctnPckgName(exctnPckgName);
 		woList.add(workOrder2);
+		woList.add(workOrder3);
 		woList.add(workOrder);
 		return woList;
 	}
@@ -206,6 +215,16 @@ public class P6PortalIntegrationServiceTest {
 	public void testSync_ExeckPackageChange() throws P6BusinessException{
 		List<Task> tasklist = prepareTaskList("18/05/2017","MOST1","123456789");
 		List<WorkOrder> woList = prepareWoList("18/05/2017", "MOST1", "1234567890");
+		Mockito.when(p6PortalDAO.getALlTasks()).thenReturn(tasklist);
+		Mockito.when(p6WSClient.readActivities(Mockito.anyList())).thenReturn(woList);
+		Mockito.when(dateUtil.convertStringToDate((Mockito.anyString()))).thenReturn(new Date());
+		Mockito.when(p6WSClient.logoutFromP6()).thenReturn(true);
+		p6PortalIntegrationService.startPortalToP6Integration();
+	}
+	@Test
+	public void testSync_retainPackage() throws P6BusinessException{
+		List<Task> tasklist = prepareTaskList("18/05/2017","MOST1","1234567890");
+		List<WorkOrder> woList = prepareWoList("19/05/2017", "MOST1", "1234567890");
 		Mockito.when(p6PortalDAO.getALlTasks()).thenReturn(tasklist);
 		Mockito.when(p6WSClient.readActivities(Mockito.anyList())).thenReturn(woList);
 		Mockito.when(dateUtil.convertStringToDate((Mockito.anyString()))).thenReturn(new Date());
