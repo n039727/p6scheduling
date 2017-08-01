@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.ws.Holder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +25,14 @@ import au.com.wp.corp.p6.integration.util.DateUtil;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.integration.util.P6Utility;
 import au.com.wp.corp.p6.integration.wsclient.cleint.P6WSClient;
+import au.com.wp.corp.p6.integration.wsclient.cleint.qualifier.CreateActivity;
+import au.com.wp.corp.p6.integration.wsclient.cleint.qualifier.CreateUDFValue;
+import au.com.wp.corp.p6.integration.wsclient.cleint.qualifier.DeleteActivity;
+import au.com.wp.corp.p6.integration.wsclient.cleint.qualifier.DeleteUDFValue;
+import au.com.wp.corp.p6.integration.wsclient.cleint.qualifier.ReadActivity;
+import au.com.wp.corp.p6.integration.wsclient.cleint.qualifier.ReadUDFValue;
+import au.com.wp.corp.p6.integration.wsclient.cleint.qualifier.UpdateActivity;
+import au.com.wp.corp.p6.integration.wsclient.cleint.qualifier.UpdateUDFValue;
 import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
 import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
@@ -52,22 +59,66 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	@Autowired
 	P6IntegrationExceptionHandler exceptionHandler;
 
+	@Autowired
+	@CreateActivity
+	ActivityServiceCall<List<Integer>> crActivityService;
+	
+	@Autowired
+	@ReadActivity
+	ActivityServiceCall<List<Activity>> rdActservice;
+
+	@Autowired
+	@UpdateActivity
+	ActivityServiceCall<Boolean> updActivityService;
+	
+	@Autowired
+	@DeleteActivity
+	ActivityServiceCall<Boolean> delActivityService;
+
+	@Autowired
+	@CreateUDFValue
+	UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> crdUdfValueService;
+
+	@Autowired
+	@UpdateUDFValue
+	UDFValueServiceCall<Boolean> updUdfValueService;
+	
+	@Autowired
+	@ReadUDFValue
+	UDFValueServiceCall<List<UDFValue>> readUdfValueService;
+	
+	@Autowired
+	@DeleteUDFValue
+	UDFValueServiceCall<Boolean> delUdfValueServiceCall;
+	
+	@Autowired
+	ProjectServiceCall projectService;
+
+	@Autowired
+	ResourceAssignmentServiceCall<List<ResourceAssignment>> readResourceAssignmentService ;
+	
+	@Autowired
+	AuthenticationService authService;
+	
+	@Autowired
+	UDFTypeServiceCall udfTypeServiceCall;
+	
+	@Autowired
+	ResourceService resourceService;
+	
 	@Override
 	public Map<String, Integer> readProjects() throws P6ServiceException {
 		logger.info("Calling project service in P6 Webservice ...");
 		final RequestTrackingId trackingId = new RequestTrackingId();
-		getAuthenticated(trackingId);
-
-		final ProjectServiceCall projectService = new ProjectServiceCall(trackingId);
-
-		final Holder<List<Project>> projects = projectService.run();
+		getAuthenticated();
+		final List<Project> projects = projectService.readProjects();
 		logger.debug("list of projects from P6#{}", projects);
 
 		Map<String, Integer> projectsMap = new HashMap<>();
-		if (null == projects || projects.value == null) {
+		if (null == projects || projects == null) {
 			throw new P6ServiceException("No projects available in P6");
 		}
-		for (Project project : projects.value)
+		for (Project project : projects)
 			projectsMap.put(project.getName(), project.getObjectId());
 		return projectsMap;
 
@@ -83,8 +134,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	@Override
 	public List<P6ActivityDTO> readActivities(final Integer projectId) throws P6ServiceException {
 		logger.info("Calling read activity service in P6 Webservice ...");
-		final RequestTrackingId trackingId = new RequestTrackingId();
-		getAuthenticated(trackingId);
+		getAuthenticated();
 
 		final StringBuilder filter = new StringBuilder();
 		if (projectId != null) {
@@ -95,25 +145,22 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 		}
 
-		final ActivityServiceCall<List<Activity>> activityService = new ReadActivityServiceCall(trackingId,
-				filter.toString().isEmpty() ? null : filter.toString());
-
-		final Holder<List<Activity>> activities = activityService.run();
+		final List<Activity> activities = rdActservice
+				.readActivities(filter.toString().isEmpty() ? null : filter.toString());
 		logger.debug("list of activities from P6#{}", activities);
 
 		final StringBuilder udfValueFilter = createFilters(activities, P6EllipseWSConstants.FOREIGN_OBJECT_ID);
 
-		final Map<Integer, List<UDFValue>> udfValueMap = readUDFvalues(trackingId, udfValueFilter);
+		final Map<Integer, List<UDFValue>> udfValueMap = readUDFvalues(udfValueFilter);
 		final StringBuilder resourceAssignmentFilter = createFilters(activities,
 				P6EllipseWSConstants.ACTIVITY_OBJECT_ID);
-		final Map<Integer, ResourceAssignment> resourceAssignments = readResourceAssignments(trackingId,
-				resourceAssignmentFilter);
+		final Map<Integer, ResourceAssignment> resourceAssignments = readResourceAssignments(resourceAssignmentFilter);
 
 		logger.debug("UDFValues from P6 # {}", udfValueMap);
 
 		final List<P6ActivityDTO> activityDTOs = new ArrayList<>();
 		P6ActivityDTO activityDTO;
-		List<Activity> activityList = activities.value;
+		List<Activity> activityList = activities;
 		int activitySize = activityList.size();
 		for (int i = activitySize; --i >= 0;) {
 			activityDTO = new P6ActivityDTO();
@@ -196,23 +243,26 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @param activities
 	 * @return
 	 */
-	private StringBuilder createFilters(final Holder<List<Activity>> activities, String filterParam) {
+	private StringBuilder createFilters(final List<Activity> activities, String filterParam) {
 		int i = 0;
 		final StringBuilder filter = new StringBuilder();
-		if (!activities.value.isEmpty()) {
+		int activitySize = activities.size();
+		if (!activities.isEmpty()) {
 			filter.append(filterParam + " IN (");
-			for (Activity activity : activities.value) {
+			for (Activity activity : activities) {
 				if (i > 0)
 					filter.append(",");
 				filter.append(activity.getObjectId());
 				i++;
-				if (i == 999) {
+				activitySize = activitySize - 1;
+				if (i == 999 && activitySize != 0) {
 					filter.append(")");
 					filter.append(OR);
 					filter.append(filterParam + " IN (");
 					logger.debug("Filter criteria length for Read Value services # {} ", i);
 					i = 0;
 				}
+
 			}
 			filter.append(")");
 		}
@@ -225,17 +275,14 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @return
 	 * @throws P6ServiceException
 	 */
-	private Map<Integer, List<UDFValue>> readUDFvalues(final RequestTrackingId trackingId, final StringBuilder filter)
-			throws P6ServiceException {
-		final UDFValueServiceCall<List<UDFValue>> udfValueService = new ReadUDFValueServiceCall(trackingId,
-				filter.toString(), null);
+	private Map<Integer, List<UDFValue>> readUDFvalues(final StringBuilder filter) throws P6ServiceException {
 
-		final Holder<List<UDFValue>> udfValues = udfValueService.run();
+		final List<UDFValue> udfValues = readUdfValueService.readUDFValues(filter.toString(), null);
 
 		final Map<Integer, List<UDFValue>> udfValueMap = CacheManager.getUDFValueMap();
 		List<UDFValue> udfValueList;
 		Integer foreignObjectId;
-		for (UDFValue udfValue : udfValues.value) {
+		for (UDFValue udfValue : udfValues) {
 			foreignObjectId = udfValue.getForeignObjectId();
 			if (null == udfValueMap.get(foreignObjectId)) {
 				udfValueList = new ArrayList<>();
@@ -254,16 +301,15 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @return
 	 * @throws P6ServiceException
 	 */
-	private Map<Integer, ResourceAssignment> readResourceAssignments(final RequestTrackingId trackingId,
-			final StringBuilder filter) throws P6ServiceException {
-		final ResourceAssignmentServiceCall<List<ResourceAssignment>> resourceAssignmentService = new ReadResourceAssignmentServiceCall(
-				trackingId, filter.toString());
+	private Map<Integer, ResourceAssignment> readResourceAssignments(final StringBuilder filter)
+			throws P6ServiceException {
 
-		final Holder<List<ResourceAssignment>> resourceAssignments = resourceAssignmentService.run();
+		final List<ResourceAssignment> resourceAssignments = readResourceAssignmentService
+				.readResourceAssigment(filter.toString());
 
 		final Map<Integer, ResourceAssignment> resourceAssignmenteMap = new HashMap<>();
 		Integer activityObjectId;
-		for (ResourceAssignment resourceAssignment : resourceAssignments.value) {
+		for (ResourceAssignment resourceAssignment : resourceAssignments) {
 			activityObjectId = resourceAssignment.getActivityObjectId();
 			resourceAssignmenteMap.put(activityObjectId, resourceAssignment);
 		}
@@ -274,12 +320,11 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @param trackingId
 	 * @throws P6ServiceException
 	 */
-	private Boolean getAuthenticated(final RequestTrackingId trackingId) throws P6ServiceException {
+	private Boolean getAuthenticated() throws P6ServiceException {
 		if (null == CacheManager.getWsHeaders().get(WS_COOKIE)) {
-			AuthenticationService authService = new AuthenticationService(trackingId);
-			Holder<Boolean> holder = authService.run();
-			logger.debug("Is authentication successfull ??  {} ", holder.value);
-			return holder.value;
+			boolean status = authService.run();
+			logger.debug("Is authentication successfull ??  {} ", status);
+			return status;
 		}
 
 		return false;
@@ -290,9 +335,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		final RequestTrackingId trackingId = new RequestTrackingId();
 		boolean status = false;
 		if (null != CacheManager.getWsHeaders().get(WS_COOKIE)) {
-			LogoutServiceCall authService = new LogoutServiceCall(trackingId);
 			try {
-				status = authService.run().value.isReturn();
+				LogoutServiceCall authService = new LogoutServiceCall();
+				status = authService.logout();
 			} catch (P6ServiceException e) {
 				logger.error("Error occurs during logout - ", e);
 			}
@@ -320,15 +365,21 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			throw new P6ServiceException("List of activties can't be null or empty");
 		}
 
+//		final ActivityServiceCall<List<Integer>> crActivityService = new CreateActivityServiceCall();
+//		final ActivityServiceCall<List<Activity>> rdActservice = new ReadActivityServiceCall();
+//		final ActivityServiceCall<Boolean> updActivityService = new UpdateActivityServiceCall();
+//		final UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> crdUdfValueService = new CreateUDFValueServiceCall();
+//		final UDFValueServiceCall<Boolean> updUdfValueService = new UpdateUDFValueServiceCall();
+//		final UDFValueServiceCall<Boolean> delUdfValueServiceCall = new DeleteUDFValueServiceCall();
 		logger.info("Create/update activites in P6 ... number of activites # {}", activities.size());
-		final RequestTrackingId trackingId = new RequestTrackingId();
-		getAuthenticated(trackingId);
+		getAuthenticated();
 
 		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty(NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6);
 		logger.debug("Defined P6 webservice call trigger value# {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
 		int crdActivitySize = activities.size();
-		logger.debug("Number of calls to P6 web service create/update Activity # {}", (crdActivitySize / chunkSize) + 1);
+		logger.debug("Number of calls to P6 web service create/update Activity # {}",
+				(crdActivitySize / chunkSize) + 1);
 
 		for (int i = 0; i < (crdActivitySize / chunkSize) + 1; i++) {
 			try {
@@ -338,14 +389,12 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 				if (isCreateActivities && !crtdActivities.isEmpty()) {
 					logger.info("Creating activites service call in P6...................");
-					final ActivityServiceCall<List<Integer>> crActivityService = new CreateActivityServiceCall(
-							trackingId, crtdActivities);
-					final Holder<List<Integer>> activityIds = crActivityService.run();
+					final List<Integer> activityIds = crActivityService.createActivities(crtdActivities);
 					logger.debug("list of activities from P6 # {}", activityIds);
 					int j = 0;
 					final StringBuilder filter = new StringBuilder();
 					filter.append("ObjectId IN (");
-					for (Integer activityObjectId : activityIds.value) {
+					for (Integer activityObjectId : activityIds) {
 						if (j > 0)
 							filter.append(",");
 						filter.append(activityObjectId);
@@ -361,38 +410,34 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 					}
 
 					filter.append(")");
+					final List<Activity> newlyCrdActivites = rdActservice.readActivities(filter.toString());
 
-					final ActivityServiceCall<List<Activity>> rdActservice = new ReadActivityServiceCall(trackingId,
-							filter.toString());
-					final Holder<List<Activity>> newlyCrdActivites = rdActservice.run();
-
-					for (Activity newActivity : newlyCrdActivites.value) {
+					for (Activity newActivity : newlyCrdActivites) {
 						activityMap.get(newActivity.getId()).setActivityObjectId(newActivity.getObjectId());
 					}
 
 					final List<P6ActivityDTO> crdActivityFileds = new ArrayList<>();
 					crdActivityFileds.addAll(activityMap.values());
-					createActivityFieldsUDF(trackingId, crdActivityFileds);
+					createActivityFieldsUDF(delUdfValueServiceCall, crdUdfValueService, crdActivityFileds);
 				} else if (!crtdActivities.isEmpty()) {
 					logger.info("Update activity service call in P6 ........................");
-					final ActivityServiceCall<Boolean> crActivityService = new UpdateActivityServiceCall(trackingId,
-							crtdActivities);
-					final Holder<Boolean> status = crActivityService.run();
-					logger.debug("list of activities from P6 # {}", status.value);
+					final boolean status = updActivityService.updateActivities(crtdActivities);
+					logger.debug("list of activities from P6 # {}", status);
 					int startIndex = i * chunkSize;
-					int endIndex  = ((i + 1) * chunkSize) < activities.size() ? ((i + 1) * chunkSize)
-								: activities.size();
-					
-					updateActivityFieldsUDF(trackingId, activities.subList(startIndex, endIndex), chunkSize);
+					int endIndex = ((i + 1) * chunkSize) < activities.size() ? ((i + 1) * chunkSize)
+							: activities.size();
+
+					updateActivityFieldsUDF(delUdfValueServiceCall, updUdfValueService, crdUdfValueService,
+							activities.subList(startIndex, endIndex), chunkSize);
 
 				}
 			} catch (P6ServiceException e) {
 				logger.debug("error - ", e);
 				if (e.getMessage().equals(P6ExceptionType.DATA_ERROR.name())) {
 					int startIndex = i * chunkSize;
-					int endIndex  = ((i + 1) * chunkSize) < activities.size() ? ((i + 1) * chunkSize)
-								: activities.size();
-					
+					int endIndex = ((i + 1) * chunkSize) < activities.size() ? ((i + 1) * chunkSize)
+							: activities.size();
+
 					StringBuilder sb = new StringBuilder();
 					sb.append(e.getCause().getMessage());
 					sb.append(" for any workorder with in the list [ ");
@@ -500,8 +545,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @param activityDTOs
 	 * @throws P6ServiceException
 	 */
-	private void createActivityFieldsUDF(final RequestTrackingId trackingId, List<P6ActivityDTO> activityDTOs)
-			throws P6ServiceException {
+	private void createActivityFieldsUDF(final UDFValueServiceCall<Boolean> delUdfValueServiceCall,
+			final UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService,
+			List<P6ActivityDTO> activityDTOs) throws P6ServiceException {
 		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty(NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6);
 		logger.debug("Defined P6 UDFValueService webservice call trigger value # {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
@@ -509,7 +555,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		final List<List<UDFValue>> udfValueList = new ArrayList<>();
 		for (P6ActivityDTO activity : activityDTOs) {
 			final List<UDFValue> udfValues = new ArrayList<>();
-			findUDFValueForUDFType(udfValues, null, activity);
+			findUDFValueForUDFType(delUdfValueServiceCall, udfValues, null, activity);
 			udfValueList.add(udfValues);
 		}
 
@@ -522,13 +568,13 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			int endIndex = ((i + 1) * chunkSize) < udfValueList.size() ? ((i + 1) * chunkSize) : udfValueList.size();
 
 			logger.debug("calling UDFValue service with start index # {}  - end index # {}", startIndex, endIndex);
-			
+
 			List<UDFValue> udfValue1 = new ArrayList<>();
-			for ( List<UDFValue> udfValue : udfValueList.subList(startIndex, endIndex)) {
+			for (List<UDFValue> udfValue : udfValueList.subList(startIndex, endIndex)) {
 				udfValue1.addAll(udfValue);
 			}
-			if ( !udfValue1.isEmpty())
-			callUDFvalueService(trackingId, udfValue1);
+			if (!udfValue1.isEmpty())
+				callUDFvalueService(udfValueService, udfValue1);
 
 		}
 
@@ -553,8 +599,8 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @param createUdfValues
 	 * @param activity
 	 */
-	private void findUDFValueForUDFType(final List<UDFValue> createUdfValues, final List<UDFValue> updateUDFValues,
-			P6ActivityDTO activity) {
+	private void findUDFValueForUDFType(final UDFValueServiceCall<Boolean> delUdfValueServiceCall,
+			final List<UDFValue> createUdfValues, final List<UDFValue> updateUDFValues, P6ActivityDTO activity) {
 
 		if (null != activity.getActivityJDCodeUDF() && !activity.getActivityJDCodeUDF().isEmpty()) {
 			UDFValue udfValue = createUDFValue(activity.getActivityObjectId(),
@@ -692,7 +738,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			excActivity.setExecutionPckgUDF(activity.getExecutionPckgUDF());
 			prepareDeleteUDFValues(excActivity, objectIds);
 			try {
-				deleteActivityFieldsUDF(new RequestTrackingId(), objectIds);
+				deleteActivityFieldsUDF(delUdfValueServiceCall, objectIds);
 			} catch (P6ServiceException e) {
 				logger.error("Unable to delete Execution package UDF for activity Id #{}", activity.getActivityId());
 				logger.error("An error occurs while delete execution package UDF", e);
@@ -707,12 +753,11 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @param udfValues
 	 * @throws P6ServiceException
 	 */
-	private void callUDFvalueService(final RequestTrackingId trackingId, final List<UDFValue> udfValues)
-			throws P6ServiceException {
+	private void callUDFvalueService(
+			final UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService,
+			final List<UDFValue> udfValues) throws P6ServiceException {
 		if (null != udfValues && !udfValues.isEmpty()) {
-			final UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService = new CreateUDFValueServiceCall(
-					trackingId, udfValues);
-			udfValueService.run();
+			udfValueService.createUDFValues(udfValues);
 		}
 	}
 
@@ -751,20 +796,22 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @param chunkSize
 	 * @throws P6ServiceException
 	 */
-	private void updateActivityFieldsUDF(final RequestTrackingId trackingId, List<P6ActivityDTO> activityDTOs,
-			final int chunkSize) throws P6ServiceException {
+	private void updateActivityFieldsUDF(final UDFValueServiceCall<Boolean> delUdfValueServiceCall,
+			UDFValueServiceCall<Boolean> updUdfValueService,
+			UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> crdUdfValueService,
+			List<P6ActivityDTO> activityDTOs, final int chunkSize) throws P6ServiceException {
 
 		final List<List<UDFValue>> updUDFList = new ArrayList<>();
 		final List<List<UDFValue>> crdUDFList = new ArrayList<>();
 		for (P6ActivityDTO activity : activityDTOs) {
 			final List<UDFValue> updateUDFFields = new ArrayList<>();
 			final List<UDFValue> createUDFFields = new ArrayList<>();
-			findUDFValueForUDFType(createUDFFields, updateUDFFields, activity);
-			if ( !updateUDFFields.isEmpty() ) {
+			findUDFValueForUDFType(delUdfValueServiceCall, createUDFFields, updateUDFFields, activity);
+			if (!updateUDFFields.isEmpty()) {
 				updUDFList.add(updateUDFFields);
 			}
-			
-			if ( !createUDFFields.isEmpty() ) {
+
+			if (!createUDFFields.isEmpty()) {
 				crdUDFList.add(createUDFFields);
 			}
 		}
@@ -774,19 +821,15 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		for (int i = 0; i < (createUDFValueSize / chunkSize) + 1; i++) {
 			int startIndex = i * chunkSize;
 
-			int endIndex  = ((i + 1) * chunkSize) < createUDFValueSize ? ((i + 1) * chunkSize )
-						: createUDFValueSize;
+			int endIndex = ((i + 1) * chunkSize) < createUDFValueSize ? ((i + 1) * chunkSize) : createUDFValueSize;
 			logger.debug("creating udf values start index # {}  - end index # {}", startIndex, endIndex);
-			
+
 			List<UDFValue> crdUDFs = new ArrayList<>();
-			for ( List<UDFValue> crdUDF: crdUDFList.subList(startIndex, endIndex) )
-			{
+			for (List<UDFValue> crdUDF : crdUDFList.subList(startIndex, endIndex)) {
 				crdUDFs.addAll(crdUDF);
 			}
-			if ( !crdUDFs.isEmpty() ) {
-			UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> udfValueService = new CreateUDFValueServiceCall(
-					trackingId, crdUDFs);
-			udfValueService.run();
+			if (!crdUDFs.isEmpty()) {
+				crdUdfValueService.createUDFValues(crdUDFs);
 			}
 
 		}
@@ -795,17 +838,15 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		logger.debug("Number of calls to P6 UDFValue Update web service #{}", (udfValueSize / chunkSize) + 1);
 		for (int i = 0; i < (udfValueSize / chunkSize) + 1; i++) {
 			int startIndex = i * chunkSize;
-			int endIndex  = ((i + 1) * chunkSize) < udfValueSize ? ((i + 1) * chunkSize) : udfValueSize;
+			int endIndex = ((i + 1) * chunkSize) < udfValueSize ? ((i + 1) * chunkSize) : udfValueSize;
 
 			logger.debug("updating udf values start index # {}  - end index # {}", startIndex, endIndex);
 			List<UDFValue> updUDFs = new ArrayList<>();
-			for ( List<UDFValue> updUDF: updUDFList.subList(startIndex, endIndex) )
-			{
+			for (List<UDFValue> updUDF : updUDFList.subList(startIndex, endIndex)) {
 				updUDFs.addAll(updUDF);
 			}
-			if ( !updUDFs.isEmpty() ) {
-			UDFValueServiceCall<Boolean> udfValueService = new UpdateUDFValueServiceCall(trackingId, updUDFs);
-			udfValueService.run();
+			if (!updUDFs.isEmpty()) {
+				updUdfValueService.updateUDFValues(updUDFs);
 			}
 		}
 	}
@@ -821,15 +862,14 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			throw new P6ServiceException("List of activties can't be null or empty");
 		}
 		logger.info("Deleting activites in P6 ... number of activites # {}", activities.size());
-		final RequestTrackingId trackingId = new RequestTrackingId();
-		getAuthenticated(trackingId);
+		getAuthenticated();
 
 		final String chunkSizeStr = P6ReloadablePropertiesReader.getProperty(NO_ACTVTY_TO_BE_PRCSSD_ATATIME_IN_P6);
 		logger.debug("Defined P6 delete activity webservice call trigger value # {}", chunkSizeStr);
 		final int chunkSize = Integer.parseInt(chunkSizeStr);
 		int deleteActivitySize = activities.size();
 		logger.debug("Number of calls to P6 delete activity web service #{}", (deleteActivitySize / chunkSize) + 1);
-		Holder<Boolean> status = null;
+		boolean status = false;
 		for (int i = 0; i < (deleteActivitySize / chunkSize) + 1; i++) {
 
 			final List<Integer> activityIds = new ArrayList<>();
@@ -846,12 +886,11 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 			logger.debug("list of activities to be deleted in P6 # {}", activityIds);
 			logger.debug("number of activities to be deleted in P6 # {}", activityIds.size());
-			ActivityServiceCall<Boolean> activityService = new DeleteActivityServiceCall(trackingId, activityIds);
-			status = activityService.run();
+			status = delActivityService.deleteActivities(activityIds);
 
 		}
 
-		return null != status ? status.value.booleanValue() : Boolean.FALSE;
+		return status;
 
 	}
 
@@ -882,13 +921,10 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	 * @return
 	 * @throws P6ServiceException
 	 */
-	private Boolean deleteActivityFieldsUDF(final RequestTrackingId trackingId,
+	private Boolean deleteActivityFieldsUDF(final UDFValueServiceCall<Boolean> delUdfValueServiceCall,
 			final List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds)
 			throws P6ServiceException {
-
-		UDFValueServiceCall<Boolean> udfValueServiceCall = new DeleteUDFValueServiceCall(trackingId, objectIds);
-		Holder<Boolean> status = udfValueServiceCall.run();
-		return status.value;
+		return delUdfValueServiceCall.deleteUDFValues(objectIds);
 
 	}
 
@@ -896,15 +932,14 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	public List<UDFTypeDTO> readUDFTypes() throws P6ServiceException {
 		logger.info("Reading UDF type details from P6 ..");
 		final RequestTrackingId trackingId = new RequestTrackingId();
-		getAuthenticated(trackingId);
+		getAuthenticated();
 		StringBuilder filter = new StringBuilder();
 		filter.append("SubjectArea='Activity'");
 
-		UDFTypeServiceCall udfTypeServiceCall = new UDFTypeServiceCall(trackingId, filter.toString());
-		Holder<List<UDFType>> udfTypes = udfTypeServiceCall.run();
+		List<UDFType> udfTypes = udfTypeServiceCall.readUDFTypes(filter.toString());
 		List<UDFTypeDTO> udfTypeDTOs = new ArrayList<>();
 		UDFTypeDTO udfTypeDTO;
-		for (UDFType udfType : udfTypes.value) {
+		for (UDFType udfType : udfTypes) {
 			udfTypeDTO = new UDFTypeDTO();
 			udfTypeDTO.setDataType(udfType.getDataType());
 			udfTypeDTO.setObjectId(udfType.getObjectId());
@@ -940,13 +975,12 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	public Map<String, Integer> readResources() throws P6ServiceException {
 		logger.debug("Reading resources from P6....");
 
-		final RequestTrackingId trackingId = new RequestTrackingId();
-		getAuthenticated(trackingId);
-		ResourceService resourceService = new ResourceService(trackingId, null, null);
-		Holder<List<Resource>> holders = resourceService.run();
+		getAuthenticated();
+		
+		List<Resource> reasources = resourceService.readResource(null, null);
 
 		Map<String, Integer> p6ProjWorkgroupDTOs = new HashMap<>();
-		for (Resource resource : holders.value) {
+		for (Resource resource : reasources) {
 			p6ProjWorkgroupDTOs.put(resource.getId(), resource.getObjectId());
 		}
 		return p6ProjWorkgroupDTOs;

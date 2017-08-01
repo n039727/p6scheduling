@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
-import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
 
 /**
  * SOAPLOggingHandler logs the web service request and response and also capture
@@ -28,17 +27,14 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 
 	private static Logger logger = LoggerFactory.getLogger(SOAPLoggingHandler.class);
 
-	private final RequestTrackingId trackingId;
 	private long requestTimeStamp;
 	private long responseTimeStamp;
 	
 	private static final String P6_PRINT_REQ_RES_XML_ON = "P6_PRINT_REQ_RES_XML_ON";
 
-	private final String P6_PRINT_REQ_RES_XML_FLAG;
+	private String P6_PRINT_REQ_RES_XML_FLAG;
 	
-	public SOAPLoggingHandler(final RequestTrackingId trackingId) {
-		this.trackingId = trackingId;
-		this.P6_PRINT_REQ_RES_XML_FLAG = P6ReloadablePropertiesReader.getProperty(P6_PRINT_REQ_RES_XML_ON);
+	public SOAPLoggingHandler() {
 				
 	}
 
@@ -64,18 +60,19 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 	}
 
 	private void log(final SOAPMessageContext soapMessageContext) {
+		this.P6_PRINT_REQ_RES_XML_FLAG = P6ReloadablePropertiesReader.getProperty(P6_PRINT_REQ_RES_XML_ON);
 		final Boolean outboundProperty = (Boolean) soapMessageContext.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 		final ByteArrayOutputStream loggingStream = new ByteArrayOutputStream();
 
 		try {
 			if (outboundProperty.booleanValue()) {
 				requestTimeStamp = System.currentTimeMillis();
-				logger.debug("Tracking Id: {} # SOAP Service request timestamp:  {} ms", trackingId, requestTimeStamp);
-				loggingStream.write(("\n" + trackingId + " Outbound message: ").getBytes());
+				logger.debug("SOAP Service request timestamp:  {} ms", requestTimeStamp);
+				loggingStream.write(("\n" + " Outbound message: ").getBytes());
 			} else {
 				responseTimeStamp = System.currentTimeMillis();
-				logger.debug("Tracking Id: {} # SOAPService response timestamp: {} ms", trackingId, responseTimeStamp);
-				loggingStream.write(("\n" + trackingId + " Inbound message: ").getBytes());
+				logger.debug("SOAPService response timestamp: {} ms", responseTimeStamp);
+				loggingStream.write(("\n" + " Inbound message: ").getBytes());
 			}
 
 			final SOAPMessage message = soapMessageContext.getMessage();
@@ -83,7 +80,7 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 				message.writeTo(loggingStream);
 				loggingStream.write("".getBytes());
 			} catch (final Exception e) {
-				loggingStream.write(("\n" + trackingId + " Exception in handler: " + e).getBytes());
+				loggingStream.write(("\n" + " Exception in handler: " + e).getBytes());
 			}
 		} catch (final IOException e) {
 			logger.error("An error occurs while logging SOAP service call details", e);
@@ -94,8 +91,7 @@ public class SOAPLoggingHandler implements SOAPHandler<SOAPMessageContext> {
 			logger.info(loggingStream.toString());
 		if (responseTimeStamp > requestTimeStamp) {
 			final long serviceCallTime = responseTimeStamp - requestTimeStamp;
-			logger.info("TrackingId : {} # SOAP Service response time taken by BackEnd system : {} ms", trackingId,
-					serviceCallTime);
+			logger.info("SOAP Service response time taken by BackEnd system : {} ms", serviceCallTime);
 		}
 	}
 }

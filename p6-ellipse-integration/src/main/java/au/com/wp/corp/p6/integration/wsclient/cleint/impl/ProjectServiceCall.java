@@ -11,17 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
 import javax.xml.ws.handler.Handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
-import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.integration.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.integration.wsclient.soap.SOAPLoggingHandler;
 import au.com.wp.corp.p6.wsclient.project.IntegrationFault;
@@ -33,19 +32,18 @@ import au.com.wp.corp.p6.wsclient.project.ProjectService;
  * @author n039126
  *
  */
+@Component
 public class ProjectServiceCall extends AbstractSOAPCall<List<Project>> {
 	private static final Logger log = LoggerFactory.getLogger(ProjectServiceCall.class);
 	
 	protected ProjectPortType servicePort;
-	private final String endPoint; 
+	protected BindingProvider bp;
+	protected SOAPLoggingHandler soapHandler;
 	
-	public ProjectServiceCall(final RequestTrackingId trackingId) {
-		super(trackingId);
-		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_PROJECT_SERVICE_WSDL);
-	}
-
-	@Override
-	protected void doBefore() throws P6ServiceException {
+	
+	public ProjectServiceCall() throws P6ServiceException{
+		super();
+		String endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_PROJECT_SERVICE_WSDL);
 		if ( null == endPoint ){
 			throw new P6ServiceException("Project Service end point is null ");
 		}
@@ -58,8 +56,13 @@ public class ProjectServiceCall extends AbstractSOAPCall<List<Project>> {
 		
 		ProjectService service = new ProjectService(
 				wsdlURL);
-		servicePort = service.getProjectPort();
-		BindingProvider bp = (BindingProvider) servicePort;
+		this.servicePort = service.getProjectPort();
+		this.bp = (BindingProvider) servicePort;
+		this.soapHandler = new SOAPLoggingHandler();
+	}
+
+	@Override
+	protected void doBefore() throws P6ServiceException {
 		
 		Map<String, List<String>> headers = (Map<String, List<String>>) bp.getRequestContext()
 				.get("javax.xml.ws.http.request.headers");
@@ -73,12 +76,12 @@ public class ProjectServiceCall extends AbstractSOAPCall<List<Project>> {
 		headers.put("cookie", CacheManager.getWsHeaders().get("WS_COOKIE"));
 		
 		final List<Handler> handlerChain = bp.getBinding().getHandlerChain();
-        handlerChain.add(new SOAPLoggingHandler(trackingId));
+        handlerChain.add(soapHandler);
         bp.getBinding().setHandlerChain(handlerChain);
 	}
 
 	@Override
-	protected Holder<List<Project>> command() throws P6ServiceException {
+	protected List<Project> command() throws P6ServiceException {
 		List<String> fields = new ArrayList<>();
 		fields.add("ObjectId");
 		fields.add("Name");
@@ -90,9 +93,15 @@ public class ProjectServiceCall extends AbstractSOAPCall<List<Project>> {
 			throw new P6ServiceException(e);
 		}
 		
-		return new Holder<>(projects);
+		return projects;
 		
 	}
+	
+	public List<Project> readProjects() throws P6ServiceException
+	{
+		return run();
+	}
+	
 	
 	@Override
 	protected void doAfter() {

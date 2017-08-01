@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.Handler;
 
@@ -20,9 +19,10 @@ import au.com.wp.corp.p6.integration.exception.P6ServiceException;
 import au.com.wp.corp.p6.integration.util.CacheManager;
 import au.com.wp.corp.p6.integration.util.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.integration.wsclient.constant.P6EllipseWSConstants;
-import au.com.wp.corp.p6.integration.wsclient.logging.RequestTrackingId;
 import au.com.wp.corp.p6.integration.wsclient.soap.AbstractSOAPCall;
 import au.com.wp.corp.p6.integration.wsclient.soap.SOAPLoggingHandler;
+import au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId;
+import au.com.wp.corp.p6.wsclient.udfvalue.UDFValue;
 import au.com.wp.corp.p6.wsclient.udfvalue.UDFValuePortType;
 import au.com.wp.corp.p6.wsclient.udfvalue.UDFValueService;
 
@@ -37,17 +37,13 @@ import au.com.wp.corp.p6.wsclient.udfvalue.UDFValueService;
 public abstract class UDFValueServiceCall<T> extends AbstractSOAPCall<T> {
 	private static final Logger log = LoggerFactory.getLogger(UDFValueServiceCall.class);
 
-	private BindingProvider bp;
 	protected UDFValuePortType servicePort;
-	private String endPoint;
-
-	public UDFValueServiceCall(final RequestTrackingId trackingId) {
-		super(trackingId);
-		this.endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_UDF_SERVICE_WSDL);
-	}
-
-	@Override
-	protected void doBefore() throws P6ServiceException {
+	protected BindingProvider bp;
+	protected SOAPLoggingHandler soapHandler;
+	
+	public UDFValueServiceCall() throws P6ServiceException{
+		super();
+		String endPoint = P6ReloadablePropertiesReader.getProperty(P6EllipseWSConstants.P6_UDF_SERVICE_WSDL);
 		if ( null == endPoint ){
 			throw new P6ServiceException("UDF Value Service end point is null ");
 		}
@@ -58,10 +54,18 @@ public abstract class UDFValueServiceCall<T> extends AbstractSOAPCall<T> {
 			throw new P6ServiceException(e);
 		}
 
-		final UDFValueService udfValueService = new UDFValueService(wsdlURL,
-				new QName("http://xmlns.oracle.com/Primavera/P6/WS/UDFValue/V1", "UDFValueService"));
-		servicePort = udfValueService.getUDFValuePort();
-		bp = (BindingProvider) servicePort;
+		final UDFValueService udfValueService = new UDFValueService(wsdlURL);
+		this.servicePort = udfValueService.getUDFValuePort();
+		this.bp = (BindingProvider) servicePort;
+		this.soapHandler = new SOAPLoggingHandler();
+
+		final List<Handler> handlerChain = bp.getBinding().getHandlerChain();
+		handlerChain.add(soapHandler);
+		this.bp.getBinding().setHandlerChain(handlerChain);
+	}
+
+	@Override
+	protected void doBefore() throws P6ServiceException {
 		@SuppressWarnings("unchecked")
 		Map<String, List<String>> headers = (Map<String, List<String>>) bp.getRequestContext()
 				.get("javax.xml.ws.http.request.headers");
@@ -74,10 +78,6 @@ public abstract class UDFValueServiceCall<T> extends AbstractSOAPCall<T> {
 
 		headers.put("cookie", CacheManager.getWsHeaders().get("WS_COOKIE"));
 
-		final List<Handler> handlerChain = bp.getBinding().getHandlerChain();
-		handlerChain.add(new SOAPLoggingHandler(trackingId));
-		bp.getBinding().setHandlerChain(handlerChain);
-
 	}
 
 	@Override
@@ -85,4 +85,22 @@ public abstract class UDFValueServiceCall<T> extends AbstractSOAPCall<T> {
 
 	}
 
+	protected List<ObjectId> createUDFValues(List<UDFValue> udfValues) throws P6ServiceException{
+		return null;
+	}
+	
+	protected List<UDFValue> readUDFValues(final String filter, final String orderBy) throws P6ServiceException{
+		return null;
+	}
+
+	protected boolean deleteUDFValues(List<au.com.wp.corp.p6.wsclient.udfvalue.DeleteUDFValues.ObjectId> objectIds) throws P6ServiceException{
+		return Boolean.FALSE;
+	}
+
+	protected boolean updateUDFValues(List<UDFValue> udfValues) throws P6ServiceException{
+		return Boolean.FALSE;
+	}
+	
+	
+	
 }
