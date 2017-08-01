@@ -106,6 +106,9 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	@Autowired
 	ResourceService resourceService;
 	
+	@Autowired
+	LogoutServiceCall logoutService;
+	
 	@Override
 	public Map<String, Integer> readProjects() throws P6ServiceException {
 		logger.info("Calling project service in P6 Webservice ...");
@@ -336,8 +339,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 		boolean status = false;
 		if (null != CacheManager.getWsHeaders().get(WS_COOKIE)) {
 			try {
-				LogoutServiceCall authService = new LogoutServiceCall();
-				status = authService.logout();
+				status = logoutService.logout();
 			} catch (P6ServiceException e) {
 				logger.error("Error occurs during logout - ", e);
 			}
@@ -365,12 +367,6 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			throw new P6ServiceException("List of activties can't be null or empty");
 		}
 
-//		final ActivityServiceCall<List<Integer>> crActivityService = new CreateActivityServiceCall();
-//		final ActivityServiceCall<List<Activity>> rdActservice = new ReadActivityServiceCall();
-//		final ActivityServiceCall<Boolean> updActivityService = new UpdateActivityServiceCall();
-//		final UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> crdUdfValueService = new CreateUDFValueServiceCall();
-//		final UDFValueServiceCall<Boolean> updUdfValueService = new UpdateUDFValueServiceCall();
-//		final UDFValueServiceCall<Boolean> delUdfValueServiceCall = new DeleteUDFValueServiceCall();
 		logger.info("Create/update activites in P6 ... number of activites # {}", activities.size());
 		getAuthenticated();
 
