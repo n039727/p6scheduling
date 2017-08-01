@@ -184,7 +184,7 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			}
 			filter.append(AND);
 			filter.append("UDFTypeTitle = ");
-			filter.append("'" + P6EllipseWSConstants.EXECUTION_GROUPING + "'");
+			filter.append("'" + getProperty(P6EllipseWSConstants.EXECUTION_GROUPING) + "'");
 
 		}
 		logger.debug("filter criteria for search # {} ", filter.toString());

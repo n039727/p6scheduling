@@ -271,7 +271,7 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 		 * all other tasks the dates are same then don't remove the package(TBD)
 		 * Remove execution package if work order in P6 moved to scheduling inbox
 		 */
-		if (isWOInboxed(workOrder.getCrewNames() == null ? "" : workOrder.getCrewNames())||!isExecutionPackageTobeRetained(task)) {
+		if (isWOInboxed(workOrder.getCrewNames() == null ? "" : workOrder.getCrewNames())||!isExecutionPackageTobeRetained(task,workOrder.getScheduleDate())) {
 			executionpackage.removeTask(task);
 			updateExecutionPackageLeadCrew(executionpackage, task, false);
 			// update for scheduled date or any change in task
@@ -324,10 +324,11 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 	 * Checks for execution package retaintion logic.
 	 * 
 	 * @param task
+	 * @param scheduledDate 
 	 * @return
 	 */
-	private boolean isExecutionPackageTobeRetained(Task task) {
-		boolean retValue = false;
+	private boolean isExecutionPackageTobeRetained(Task task, String scheduledDate) {
+		boolean retValue = true;
 		if ((!CollectionUtils.isEmpty(listWOData))) {
 			ExecutionPackage executionPackage = task.getExecutionPackage();
 			if (executionPackage != null) {
@@ -351,20 +352,23 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 				 */
 				if (acceptableWorkOrders.size() > 0 && (acceptableWorkOrders.size() == taskIdsInexecPkg.size())) {
 					for (WorkOrder workOrder : acceptableWorkOrders) {
-						String packageName = workOrder.getExctnPckgName();	
+						String packageName = workOrder.getExctnPckgName();
+						String schedDate = workOrder.getScheduleDate();
+						
 						/*
-						 * Check if all the work orders belong to 
-						 * the same execution package a of the corresponding task 
-						 * to be deleted.
+						 * Check if all the work orders in the execution package belong to 
+						 * the same date of the work order for which data is mismatched.
 						 */
-						if(!packageName.equalsIgnoreCase(executionPackage.getExctnPckgNam())){
-							retValue = false;
-							break;
+						if(schedDate != null && scheduledDate != null){ 
+							if(schedDate.compareTo(scheduledDate) != 0){
+								retValue = false;
+								break;
+							}
 						}
 					}
 
 				}else{
-					retValue = true;
+					retValue = false;
 				}				
 			}
 		}
