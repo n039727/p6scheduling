@@ -59,6 +59,10 @@ public class ProjectServiceCall extends AbstractSOAPCall<List<Project>> {
 		this.servicePort = service.getProjectPort();
 		this.bp = (BindingProvider) servicePort;
 		this.soapHandler = new SOAPLoggingHandler();
+		final List<Handler> handlerChain = bp.getBinding().getHandlerChain();
+        handlerChain.add(soapHandler);
+        bp.getBinding().setHandlerChain(handlerChain);
+		
 	}
 
 	@Override
@@ -72,12 +76,7 @@ public class ProjectServiceCall extends AbstractSOAPCall<List<Project>> {
 
 		}
 		log.debug("WS_COOKIE == "+ CacheManager.getWsHeaders().get("WS_COOKIE"));
-		
 		headers.put("cookie", CacheManager.getWsHeaders().get("WS_COOKIE"));
-		
-		final List<Handler> handlerChain = bp.getBinding().getHandlerChain();
-        handlerChain.add(soapHandler);
-        bp.getBinding().setHandlerChain(handlerChain);
 	}
 
 	@Override
