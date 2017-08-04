@@ -8,7 +8,7 @@
         <dependent-module archiveName="p6-ellipse-integration.war" deploy-path="/" handle="module:/resource/p6-ellipse-integration/p6-ellipse-integration">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="p6-portal-integration.war" deploy-path="/" handle="module:/resource/p6-portal-integration/p6-portal-integration">
+        <dependent-module archiveName="p6-portal-integration.war" deploy-path="/" handle="module:/classpath/var/M2_REPO/au/com/wp/corp/p6/scheduling/p6-portal-integration/1.9-SNAPSHOT/p6-portal-integration-1.9-SNAPSHOT.war">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="reflections-0.9.10.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/org/reflections/reflections/0.9.10/reflections-0.9.10.jar">

@@ -81,10 +81,10 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 		CacheManager.getProjectsMap().clear();
 		CacheManager.getDeletetedexecpkaglist().clear();
 		CacheManager.getTasksforupdate().clear();
-		CacheManager.getTasksforremove().clear();
 		CacheManager.getExecpkglistforupdate().clear();
 		CacheManager.getExecutionpackagenameforupdate().clear();
 		CacheManager.getExecutionpackageforcreate().clear();
+		CacheManager.getUDFValueMap().clear();
 		listWOData = null;
 	}
 
@@ -101,17 +101,8 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 				crewListAll = depotCrewMap.values().stream().flatMap(List::stream).collect(Collectors.toList());
 			}
 
-			Set<Task> tasksForRemove = CacheManager.getTasksforremove();
 			List<Task> tasksInDb = getAlltasksInPortal();
 			listWOData = retrieveWorkOrdersFromP6(tasksInDb);
-			for(Task task: tasksInDb){
-				Optional<WorkOrder> workOrder = findWOByTaskId(listWOData, task.getTaskId());
-				if(!workOrder.isPresent()){
-					if(task.getTodoAssignments() == null || task.getTodoAssignments().isEmpty()){
-						tasksForRemove.add(task);
-					}
-				}
-			}
 			for(WorkOrder workOrder : listWOData) {
 				if (workOrder.getWorkOrders() != null) {
 					String[] workOrders = workOrder.getWorkOrders()
@@ -417,7 +408,6 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 	private void updateTasksAndExecutionPackageInP6AndDB() throws P6BusinessException {
 		long startTime = System.currentTimeMillis();
 		Set<Task> tasksForUpdate = CacheManager.getTasksforupdate();
-		Set<Task> tasksForRemove = CacheManager.getTasksforremove();
 		Set<ExecutionPackage> execPkgList = CacheManager.getExecpkglistforupdate();
 		Set<WorkOrder> updateExecPkgNameList = CacheManager.getExecutionpackagenameforupdate();
 		Set<WorkOrder> createExecPkgNameList = CacheManager.getExecutionpackageforcreate();
@@ -435,13 +425,6 @@ public class P6PortalIntegrationServiceImpl implements P6PortalIntegrationServic
 							"Task with task id {} being updated for execution package of work order sync in portlet db",
 							task.getTaskId());
 					p6PortalDAO.saveTask(task);
-				}
-				for (Iterator<Task> iterator = tasksForRemove.iterator(); iterator.hasNext();) {
-					Task task = (Task) iterator.next();
-					logger.debug(
-							"Task with task id {} being deleted from portal DB of work order sync in portlet db",
-							task.getTaskId());
-					p6PortalDAO.removeTask(task);
 				}
 			}
 		} catch (P6DataAccessException e) {

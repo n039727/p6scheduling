@@ -47,7 +47,6 @@ public class CacheManager {
 		
 	}
 	private static final Set<Task> tasksForUpdate = new HashSet<Task>(); 
-	private static final Set<Task> tasksForRemove = new HashSet<Task>();
 	private static final Set<String> deletetedExecPkagList = new HashSet<String>(); 
 	private static final Set<ExecutionPackage> execPkgListForUpdate = new HashSet<ExecutionPackage>(); 
 	private static final Set<WorkOrder> executionPackageNameForUpdate = new HashSet<WorkOrder>();
@@ -60,10 +59,6 @@ public class CacheManager {
 
 	public static Set<WorkOrder> getExecutionpackagenameforupdate() {
 		return executionPackageNameForUpdate;
-	}
-
-	public static Set<Task> getTasksforremove() {
-		return tasksForRemove;
 	}
 
 	public static Set<Task> getTasksforupdate() {

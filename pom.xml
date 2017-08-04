@@ -14,6 +14,7 @@
 		<module>p6-portlet-service</module>
 		<module>p6-portlet-web</module>
 		<module>p6-portlet-app</module>
+		<module>p6-common</module>
 	</modules>
 
 	<properties>

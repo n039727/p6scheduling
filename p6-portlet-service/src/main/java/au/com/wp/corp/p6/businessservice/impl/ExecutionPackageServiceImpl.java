@@ -36,6 +36,7 @@ import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.model.ExecutionPackage;
 import au.com.wp.corp.p6.model.Task;
 import au.com.wp.corp.p6.utils.DateUtils;
+import au.com.wp.corp.p6.utils.ExecutionPackageComparator;
 import au.com.wp.corp.p6.utils.P6Constant;
 import au.com.wp.corp.p6.utils.WorkOrderComparator;
 import au.com.wp.corp.p6.utils.WorkOrderComparatorOnActioned;
@@ -222,7 +223,6 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 					if (createdExecutionPackage != null) {
 						logger.info("execution package created in P6 for {} with work orders {}",
 								createdExecutionPackage.getExctnPckgName(), createdExecutionPackage.getWorkOrders());
-						executionPackageDTOForP6.getWorkOrders().clear();
 					}
 				} catch (P6ServiceException e) {
 					parseException(e);
@@ -231,7 +231,6 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			}
 
 		}
-		executionPackageDTOFoP6List.clear();
 		executionPackageDTOFoP6List = null;
 	
 	}
@@ -304,9 +303,10 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			}
 		}
 		List<WorkOrder> workorders = new ArrayList<> (listWODataWithOutEp);
-		Collections.sort(workorders, new WorkOrderComparatorOnActioned());
+		//Collections.sort(workorders, new WorkOrderComparatorOnActioned());
 		workorders.addAll(listWODataWithEp);
-		Collections.sort(workorders,new WorkOrderComparator());
+		//Collections.sort(workorders,new WorkOrderComparator());
+		Collections.sort(workorders,new ExecutionPackageComparator());
 		logger.debug("final grouped work orders size {}",workorders.size());
 		return workorders;
 	}
@@ -339,15 +339,17 @@ public class ExecutionPackageServiceImpl implements IExecutionPackageService {
 			crewListAll = depoCrewMap.values().stream().flatMap(List::stream)
 					.collect(Collectors.toList());
 			input.setCrewList(crewListAll);
+			//if depot is there select all crew for that depot
+			if(input.getDepotList() != null && !input.getDepotList().isEmpty()){
+				List<String> crewListDepot = new ArrayList();
+				input.getDepotList().forEach(depot ->{
+					crewListDepot.addAll(depoCrewMap.get(depot));
+				});
+				
+					input.setCrewList(crewListDepot);
+			}
 		}
-		//if depot is there select all crew for that depot
-		if(input.getDepotList() != null && !input.getDepotList().isEmpty()){
-			List<String> crewListAll = new ArrayList();
-			input.getDepotList().forEach(depot ->{
-				crewListAll.addAll(depoCrewMap.get(depot));
-			});
-			input.setCrewList(crewListAll);
-		}
+	
 		searchRequest.setCrewList(input.getCrewList());
 		searchRequest.setPlannedStartDate(input.getFromDate() != null ? dateUtils.convertDate(input.getFromDate()): null);
 		searchRequest.setPlannedEndDate(input.getToDate() != null ? dateUtils.convertDate(input.getToDate()) : null);
