@@ -648,7 +648,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * If the task user status is not same , update P6 task user status from
 		 * ellipse
 		 */
-		if (!ellipseActivity.getTaskUserStatus().toUpperCase().equals(p6TaskUserStatus.toUpperCase())) {
+		if (!ellipseActivity.getTaskUserStatus().isEmpty() &&!ellipseActivity.getTaskUserStatus().toUpperCase().equals(p6TaskUserStatus.toUpperCase())) {
 			p6ActivityUpd.setTaskUserStatusUDF(ellipseActivity.getTaskUserStatus());
 			isUpdateReq = true;
 		}
@@ -681,7 +681,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			}
 
 			if (!dateUtil.isSameDate(ellipseActivity.getActualFinishDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP,
-					p6Activity.getActualFinishDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP)) {
+					p6Activity.getActualFinishDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP) && p6ActivityUpd.getActualStartDate() != null) {
 				p6ActivityUpd.setActualFinishDate(dateUtil.convertDateToString(ellipseActivity.getActualFinishDate(),
 						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 				isUpdateReq = true;
