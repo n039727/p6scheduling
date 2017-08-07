@@ -112,6 +112,17 @@ public interface P6EllipseWSConstants {
 	 * 14. Ellipse Execution package - object Id of P6 UDF Type
 	 */
 	public static final String ELLIPSE_EXECUTION_PCKG_TITLE = "ELLIPSE_EXECUTION_PCKG_TITLE";
+
+	
+	/**
+	 * 15. Ellipse Street name - object Id of P6 UDF Type
+	 */
+	public static final String ELLIPSE_STREET_NAME_TITLE = "ELLIPSE_STREET_NAME_TITLE";
+	
+	/**
+	 * 16. Ellipse suburb - object Id of P6 UDF Type
+	 */
+	public static final String ELLIPSE_SUBURB_TITLE = "ELLIPSE_SUBURB_TITLE";
 	
 	
 	public static final String P6_ACTIVITY_SERVICE_WSDL ="P6_ACTIVITY_SERVICE_WSDL";

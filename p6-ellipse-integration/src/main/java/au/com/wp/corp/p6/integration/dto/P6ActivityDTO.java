@@ -42,7 +42,7 @@ public class P6ActivityDTO implements Serializable {
 	private String eGIUDF;
 
 	private String equipmentCodeUDF;
-	
+
 	/**
 	 * Default value -1 is required as the double variable default value is 0.0
 	 * but originalDuration can be 0.0
@@ -90,6 +90,10 @@ public class P6ActivityDTO implements Serializable {
 	private String actualStartDate;
 
 	private String actualFinishDate;
+
+	private String suburbUDF;
+
+	private String streetNameUDF;
 
 	/**
 	 * @return the estimatedLabourHours
@@ -524,6 +528,34 @@ public class P6ActivityDTO implements Serializable {
 	 */
 	public void setActualFinishDate(String actualFinishDate) {
 		this.actualFinishDate = actualFinishDate;
+	}
+	
+	/**
+	 * @return the suburbUDF
+	 */
+	public String getSuburbUDF() {
+		return suburbUDF;
+	}
+
+	/**
+	 * @param suburbUDF the suburbUDF to set
+	 */
+	public void setSuburbUDF(String suburbUDF) {
+		this.suburbUDF = suburbUDF;
+	}
+
+	/**
+	 * @return the streetNameUDF
+	 */
+	public String getStreetNameUDF() {
+		return streetNameUDF;
+	}
+
+	/**
+	 * @param streetNameUDF the streetNameUDF to set
+	 */
+	public void setStreetNameUDF(String streetNameUDF) {
+		this.streetNameUDF = streetNameUDF;
 	}
 
 	/*

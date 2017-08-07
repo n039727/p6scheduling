@@ -15,6 +15,7 @@ import javax.xml.ws.handler.Handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
@@ -34,6 +35,7 @@ import au.com.wp.corp.p6.wsclient.udftype.UDFTypeService;
  * @version 1.0
  */
 @Component
+@Lazy
 public class UDFTypeServiceCall extends AbstractSOAPCall<List<UDFType>> {
 	private static final Logger logger1 = LoggerFactory.getLogger(UDFTypeServiceCall.class);
 

@@ -71,6 +71,10 @@ public class EllipseActivityDTO implements Serializable {
 	private String actualFinishDate;
 	
 	private String calcDurFlag;
+	
+	private String suburb;
+	
+	private String streetName;
 
 	/**
 	 * @return the workOrderTaskId
@@ -466,6 +470,35 @@ public class EllipseActivityDTO implements Serializable {
 	@Override
 	public int hashCode() {
 		return workOrderTaskId.hashCode();
+	}
+
+	
+	/**
+	 * @return the suburb
+	 */
+	public String getSuburb() {
+		return suburb != null ? suburb.trim() : "";
+	}
+
+	/**
+	 * @param suburb the suburb to set
+	 */
+	public void setSuburb(String suburb) {
+		this.suburb = suburb;
+	}
+
+	/**
+	 * @return the streetName
+	 */
+	public String getStreetName() {
+		return streetName != null ? streetName.trim() : "";
+	}
+
+	/**
+	 * @param streetName the streetName to set
+	 */
+	public void setStreetName(String streetName) {
+		this.streetName = streetName;
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
@@ -20,6 +21,7 @@ import au.com.wp.corp.p6.wsclient.activity.IntegrationFault;
  */
 @Component
 @UpdateActivity
+@Lazy
 public class UpdateActivityServiceCall extends ActivityServiceCall<Boolean> {
 	private static final Logger logger1 = LoggerFactory.getLogger(UpdateActivityServiceCall.class);
 

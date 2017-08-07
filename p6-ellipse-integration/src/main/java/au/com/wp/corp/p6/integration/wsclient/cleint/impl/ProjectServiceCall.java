@@ -15,6 +15,7 @@ import javax.xml.ws.handler.Handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
@@ -33,6 +34,7 @@ import au.com.wp.corp.p6.wsclient.project.ProjectService;
  *
  */
 @Component
+@Lazy
 public class ProjectServiceCall extends AbstractSOAPCall<List<Project>> {
 	private static final Logger log = LoggerFactory.getLogger(ProjectServiceCall.class);
 	

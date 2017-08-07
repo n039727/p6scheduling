@@ -100,6 +100,8 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setActualStartDate("2017-07-06T08:00:00");
 		activityDTO.setActualFinishDate("2017-07-08T08:00:00");
 		activityDTO.setExecutionPckgUDF("T123344465");
+		activityDTO.setSuburbUDF("Test Suburb");
+		activityDTO.setStreetNameUDF("Test street name");
 		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
 
 		activityDTO.setPrimaryResorceObjectId(resourceMap.get("MONT1").getPrimaryResourceObjectId());
@@ -143,6 +145,8 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setActualStartDate("2017-07-06T08:00:00");
 		activityDTO.setActualFinishDate("2017-07-08T08:00:00");
 		activityDTO.setExecutionPckgUDF("T123344465");
+		activityDTO.setSuburbUDF("Test Suburb");
+		activityDTO.setStreetNameUDF("Test street name");
 		Map<String, P6ProjWorkgroupDTO> resourceMap = CacheManager.getP6ProjectWorkgroupMap();
 
 		activityDTO.setPrimaryResorceObjectId(resourceMap.get("MONT1").getPrimaryResourceObjectId());
@@ -165,6 +169,10 @@ public class P6WSClientImplIntegrationTest {
 
 		for (P6ActivityDTO activityDTO : p6Activities) {
 			Assert.assertNotNull(activityDTO.getActivityId());
+			if ( activityDTO.getActivityId().equals("TW245976001")){
+				Assert.assertEquals("Test Suburb", activityDTO.getSuburbUDF());
+				Assert.assertEquals("Test street name", activityDTO.getStreetNameUDF());
+			}
 		}
 	}
 
@@ -200,6 +208,8 @@ public class P6WSClientImplIntegrationTest {
 		activityDTO.setProjectObjectId(263779);
 		activityDTO.setActualStartDate("2017-07-06T08:00:00");
 		activityDTO.setActualFinishDate("2017-07-08T08:00:00");
+		activityDTO.setSuburbUDF("Test Suburb1");
+		activityDTO.setStreetNameUDF("Test street name1");
 		activityDTO.setExecutionPckgUDF("");
 		for (P6ActivityDTO activityDTO2 : p6Activities) {
 			if (activityDTO.getActivityId().equals(activityDTO2.getActivityId())) {

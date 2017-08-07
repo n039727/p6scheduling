@@ -13,6 +13,7 @@ import javax.xml.ws.handler.Handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import au.com.wp.corp.p6.integration.exception.P6ServiceException;
@@ -26,6 +27,7 @@ import au.com.wp.corp.p6.wsclient.resource.ResourceFieldType;
 import au.com.wp.corp.p6.wsclient.resource.ResourcePortType;
 
 @Component
+@Lazy
 public class ResourceService extends AbstractSOAPCall<List<Resource>> {
 	private static final Logger logger1 = LoggerFactory.getLogger(ResourceService.class);
 

@@ -6,6 +6,7 @@ package au.com.wp.corp.p6.integration.wsclient.ellipse;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,16 +37,15 @@ public class EllipseIntegrationTest {
 		List<EllipseActivityDTO> activities = new ArrayList<>();
 
 		EllipseActivityDTO activity = new EllipseActivityDTO();
-		activity.setWorkOrderTaskId("04790653002");
-		activity.setWorkGroup("MOMT2");
-		activity.setPlannedStartDate("06/08/2017 10:12:30");
+		activity.setWorkOrderTaskId("05234288001");
+		activity.setPlannedStartDate("06/08/2015 10:12:30");
 		activity.setTaskUserStatus("AL");
+		activity.setCalcDurFlag("Y");
 		activities.add(activity);
-		ellipseWSClient.updateActivitiesEllipse(activities);
-
+		boolean status = ellipseWSClient.updateActivitiesEllipse(activities);
+		Assert.assertTrue(status);
 	}
 
-	
 	@Test
 	public void testEllipseWorkOrdertaskUpdate_1() throws P6ServiceException {
 		
@@ -58,8 +58,45 @@ public class EllipseIntegrationTest {
 		activity.setPlannedFinishDate(null);
 		activity.setTaskUserStatus("AL");
 		activities.add(activity);
-		ellipseWSClient.updateActivitiesEllipse(activities);
+		boolean status = ellipseWSClient.updateActivitiesEllipse(activities);
+		Assert.assertTrue(status);
 
 	}
 	
+	@Test
+	public void testEllipseWorkOrdertaskUpdate_2() throws P6ServiceException {
+		List<EllipseActivityDTO> activities = new ArrayList<>();
+		EllipseActivityDTO activity = new EllipseActivityDTO();
+		activity.setWorkOrderTaskId("05419074002");
+		activity.setWorkGroup("EJERSCH");
+		activity.setPlannedStartDate(null);
+		activity.setPlannedFinishDate(null);
+		activity.setTaskUserStatus("AL");
+		activity.setCalcDurFlag("Y");
+		activities.add(activity);
+		boolean status = ellipseWSClient.updateActivitiesEllipse(activities);
+		Assert.assertTrue(status);
+
+	}
+	
+	
+	@Test
+	public void testEllipseWorkOrderUpdate_1() throws P6ServiceException {
+		
+		String transId = ellipseWSClient.startTransaction();
+		
+		List<EllipseActivityDTO> activities = new ArrayList<>();
+
+		EllipseActivityDTO activity = new EllipseActivityDTO();
+		activity.setWorkOrderTaskId("05419074002");
+		activity.setCalcDurFlag("N");
+		activities.add(activity);
+		boolean status = ellipseWSClient.updateWorkOrderEllipse(activities, transId);
+		ellipseWSClient.commitTransaction(transId);
+
+		Assert.assertTrue(status);
+
+	}
+	
+		
 }

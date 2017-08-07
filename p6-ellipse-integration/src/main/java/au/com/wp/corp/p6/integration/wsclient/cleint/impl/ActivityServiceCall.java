@@ -57,6 +57,7 @@ public abstract class ActivityServiceCall<T> extends AbstractSOAPCall<T> {
 		final List<Handler> handlerChain = bp.getBinding().getHandlerChain();
 		handlerChain.add(soapHandler);
 		bp.getBinding().setHandlerChain(handlerChain);
+		log.info("ActivityServiceCall object creating......");
 	}
 
 	@Override

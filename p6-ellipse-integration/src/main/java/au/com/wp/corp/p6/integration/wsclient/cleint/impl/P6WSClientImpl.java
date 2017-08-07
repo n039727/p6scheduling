@@ -13,6 +13,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import au.com.wp.corp.p6.integration.dto.P6ActivityDTO;
@@ -57,56 +58,71 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 	DateUtil dateUtil;
 
 	@Autowired
+	@Lazy
 	P6IntegrationExceptionHandler exceptionHandler;
 
 	@Autowired
+	@Lazy
 	@CreateActivity
 	ActivityServiceCall<List<Integer>> crActivityService;
 	
 	@Autowired
+	@Lazy
 	@ReadActivity
 	ActivityServiceCall<List<Activity>> rdActservice;
 
 	@Autowired
+	@Lazy
 	@UpdateActivity
 	ActivityServiceCall<Boolean> updActivityService;
 	
 	@Autowired
+	@Lazy
 	@DeleteActivity
 	ActivityServiceCall<Boolean> delActivityService;
 
 	@Autowired
+	@Lazy
 	@CreateUDFValue
 	UDFValueServiceCall<List<au.com.wp.corp.p6.wsclient.udfvalue.CreateUDFValuesResponse.ObjectId>> crdUdfValueService;
 
 	@Autowired
+	@Lazy
 	@UpdateUDFValue
 	UDFValueServiceCall<Boolean> updUdfValueService;
 	
 	@Autowired
+	@Lazy
 	@ReadUDFValue
 	UDFValueServiceCall<List<UDFValue>> readUdfValueService;
 	
 	@Autowired
+	@Lazy
 	@DeleteUDFValue
 	UDFValueServiceCall<Boolean> delUdfValueServiceCall;
 	
 	@Autowired
+	@Lazy
 	ProjectServiceCall projectService;
 
 	@Autowired
+	@Lazy
 	ResourceAssignmentServiceCall<List<ResourceAssignment>> readResourceAssignmentService ;
 	
 	@Autowired
+	@Lazy
 	AuthenticationService authService;
 	
 	@Autowired
+	@Lazy
 	UDFTypeServiceCall udfTypeServiceCall;
 	
 	@Autowired
+	@Lazy
 	ResourceService resourceService;
 	
 	@Autowired
+	@Lazy
 	LogoutServiceCall logoutService;
 	
 	@Override
@@ -239,6 +255,10 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 			activityDTO.setTaskDescriptionUDF(udfValue.getText());
 		} else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_EXECUTION_PCKG_TITLE))) {
 			activityDTO.setExecutionPckgUDF(udfValue.getText());
+		}else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_STREET_NAME_TITLE))) {
+			activityDTO.setStreetNameUDF(udfValue.getText());
+		}else if (udfValue.getUDFTypeTitle().equals(getProperty(ELLIPSE_SUBURB_TITLE))) {
+			activityDTO.setSuburbUDF(udfValue.getText());
 		}
 	}
 
@@ -335,7 +355,6 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 	@Override
 	public boolean logoutFromP6() {
-		final RequestTrackingId trackingId = new RequestTrackingId();
 		boolean status = false;
 		if (null != CacheManager.getWsHeaders().get(WS_COOKIE)) {
 			try {
@@ -721,6 +740,28 @@ public class P6WSClientImpl implements P6WSClient, P6EllipseWSConstants {
 
 			if (isExistUDFValue(activity.getActivityObjectId(),
 					getUdfTypeId(getProperty(ELLIPSE_TASK_USER_STATUS_TITLE))))
+				updateUDFValues.add(udfValue);
+			else
+				createUdfValues.add(udfValue);
+		}
+		if (null != activity.getStreetNameUDF() && !activity.getStreetNameUDF().isEmpty()) {
+			UDFValue udfValue = createUDFValue(activity.getActivityObjectId(),
+					getUdfTypeId(getProperty(ELLIPSE_STREET_NAME_TITLE)), SUBJECT_AREA,
+					getProperty(ELLIPSE_STREET_NAME_TITLE), activity.getStreetNameUDF(), null);
+
+			if (isExistUDFValue(activity.getActivityObjectId(),
+					getUdfTypeId(getProperty(ELLIPSE_STREET_NAME_TITLE))))
+				updateUDFValues.add(udfValue);
+			else
+				createUdfValues.add(udfValue);
+		}
+		if (null != activity.getSuburbUDF() && !activity.getSuburbUDF().isEmpty()) {
+			UDFValue udfValue = createUDFValue(activity.getActivityObjectId(),
+					getUdfTypeId(getProperty(ELLIPSE_SUBURB_TITLE)), SUBJECT_AREA,
+					getProperty(ELLIPSE_SUBURB_TITLE), activity.getSuburbUDF(), null);
+
+			if (isExistUDFValue(activity.getActivityObjectId(),
+					getUdfTypeId(getProperty(ELLIPSE_SUBURB_TITLE))))
 				updateUDFValues.add(udfValue);
 			else
 				createUdfValues.add(udfValue);

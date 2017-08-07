@@ -29,6 +29,7 @@
 	</bean>
 	<import resource="/mybatis/mybatis-context.xml"/>
 	<import resource="classpath:spring-ws-transaction-context.xml"/>
+	<import resource="classpath:spring-ws-work-order-service-context.xml"/>
 	<import resource="classpath:spring-ws-work-order-task-context.xml"/>
 	
 	<tx:annotation-driven transaction-manager="transactionManager" />

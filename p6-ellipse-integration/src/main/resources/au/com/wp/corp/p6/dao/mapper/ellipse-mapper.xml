@@ -24,7 +24,10 @@
 		<result property='taskDescription' column='Task_Description' />
 		<result property='actualStartDate' column='ACTUAL_START_DATE' />
 		<result property='actualFinishDate' column='ACTUAL_FINISH_DATE' />
-		
+		<result property="calcDurFlag" column="CALC_DUR_FLAG"/>	
+		<result property="suburb" column="SUBURB"/>
+		<result property="streetName" column="STREET_NAME"/>	
+				
 	</resultMap>
 	<select id="readElipseWorkorderDetails" resultMap="workOrderResultMap">
 		SELECT a.work_order || a.wo_task_no AS WOT,
@@ -48,7 +51,7 @@
 		|| SUBSTR (a.plan_str_date, 5, 2)
 		|| '/'
 		|| SUBSTR (a.plan_str_date, 1, 4)
-		|| ' 08:00:00'
+		|| ' 00:00:00'
 		END
 		AS plan_str_date,
 		CASE
@@ -76,7 +79,7 @@
 		tsk_dur_hours
 		ELSE
 		CASE
-		WHEN est_lab_hrs > 0 THEN est_lab_hrs / 5
+		WHEN a.est_lab_hrs > 0 THEN a.est_lab_hrs / 5
 		ELSE 0
 		END
 		END)
@@ -87,7 +90,7 @@
 		tsk_dur_hours
 		ELSE
 		CASE
-		WHEN est_lab_hrs > 0 THEN est_lab_hrs / 5
+		WHEN a.est_lab_hrs > 0 THEN a.est_lab_hrs / 5
 		ELSE 0
 		END
 		END)
@@ -112,7 +115,9 @@
 		a.WO_TASK_DESC AS Task_Description,
 		trim(d.STREET_NO) || ' ' || trim(d.STREET_NAME) || ' ' || trim(d.SUBURB) || ' ' ||
 		trim(d.TOWN_CITY) || ' ' || trim(d.COUNTY_SHIRE) || ' ' ||
-		trim(d.STATE) || ' ' || trim(d.ZIP_CODE) as address,   
+		trim(d.STATE) || ' ' || trim(d.ZIP_CODE) as address, 
+		trim(d.SUBURB) AS SUBURB,
+		trim(d.STREET_NAME) AS STREET_NAME,		  
     CASE
 		WHEN TRIM (a.ACTUAL_START_DATE) IS NULL
 		THEN
@@ -132,7 +137,8 @@
 		WHEN TRIM (a.ACTUAL_FINISH_TIME) IS NULL
 		THEN
 		'00:00:00'
-		ELSE a.ACTUAL_FINISH_TIME END, 'YYYYMMDD HH24:MI:SS'), 'DD/MM/YYYY HH24:MI:SS') END AS ACTUAL_FINISH_DATE
+		ELSE a.ACTUAL_FINISH_TIME END, 'YYYYMMDD HH24:MI:SS'), 'DD/MM/YYYY HH24:MI:SS') END AS ACTUAL_FINISH_DATE,
+		m.CALC_DUR_HRS_SW AS CALC_DUR_FLAG
     FROM nell.msf623 a,
 		nell.msf620 b,
 		nell.msf600 c,
@@ -149,8 +155,10 @@
 		RPAD ('N' || swsect_nsw_nid, 30) AS nodeId
 		FROM NDWu.DIST_LOCATION_ATTRIBUTE_DIM
 		WHERE curr_flg = 'Y') d, nell.msf600 e, nell.msf011 f
-		WHERE e.plant_no = d.nodeId AND e.location = f.location) z
+		WHERE e.plant_no = d.nodeId AND e.location = f.location) z,
+		nell.msf621 m
 		WHERE a.work_order = b.work_order
+		AND a.work_order = m.work_order
 		AND b.equip_no = c.equip_no
 		and d.location = c.location
 		<![CDATA[AND (a.task_status_m = 'A' OR (a.task_status_m = 'C' AND a.COMPLETED_CODE

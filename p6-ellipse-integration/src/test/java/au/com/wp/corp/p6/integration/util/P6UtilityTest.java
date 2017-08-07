@@ -92,5 +92,9 @@ public class P6UtilityTest {
 		Assert.assertFalse(P6Utility.isEqual(7.0, 6.0));
 	}
 	
+	@Test
+	public void testGetStreetName () {
+		Assert.assertEquals("Street Name", P6Utility.getStreetName("1 Street Name"));
+	}
 }
 

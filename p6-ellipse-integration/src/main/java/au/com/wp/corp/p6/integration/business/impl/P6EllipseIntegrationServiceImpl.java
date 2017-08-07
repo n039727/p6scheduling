@@ -58,6 +58,10 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 
 	public static final String TASK_STATUS_COMPLETED = "Completed";
 
+	public static final String CALC_DUR_FLAG_Y = "Y";
+
+	public static final String CALC_DUR_FLAG_N = "N";
+
 	@Autowired
 	P6EllipseDAO p6EllipseDAO;
 
@@ -462,6 +466,12 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			 */
 			ellipseActivityUpd.setPlannedStartDate(dateUtil.convertDateToString(p6Activity.getPlannedStartDate(),
 					DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP));
+
+			if (ellipseActivity.getCalcDurFlag() == null || ellipseActivity.getCalcDurFlag().trim().isEmpty()
+					|| ellipseActivity.getCalcDurFlag().equals(CALC_DUR_FLAG_N)) {
+				ellipseActivityUpd.setCalcDurFlag(CALC_DUR_FLAG_Y);
+			}
+
 			isUpdateReq = true;
 		}
 
@@ -567,17 +577,16 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			originalDuration = 1;
 			estimatdLaborHours = 1;
 
-		} else if (ellipseEstLaborsHours >=1 && ellipseEstLaborsHours < 5) {
+		} else if (ellipseEstLaborsHours >= 1 && ellipseEstLaborsHours < 5) {
 			originalDuration = 1;
 			estimatdLaborHours = ellipseEstLaborsHours;
 
-		} else if (ellipseEstLaborsHours >=5) {
+		} else if (ellipseEstLaborsHours >= 5) {
 			originalDuration = ellipseActivity.getOriginalDuration();
 			estimatdLaborHours = ellipseEstLaborsHours;
-		
+
 		}
-		
-		
+
 		if (!P6Utility.isEqual(p6Activity.getOriginalDuration(), originalDuration)) {
 			p6ActivityUpd.setOriginalDuration(originalDuration);
 			isUpdateReq = true;
@@ -648,7 +657,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * If the task user status is not same , update P6 task user status from
 		 * ellipse
 		 */
-		if (!ellipseActivity.getTaskUserStatus().isEmpty() &&!ellipseActivity.getTaskUserStatus().toUpperCase().equals(p6TaskUserStatus.toUpperCase())) {
+		if (!ellipseActivity.getTaskUserStatus().isEmpty()
+				&& !ellipseActivity.getTaskUserStatus().toUpperCase().equals(p6TaskUserStatus.toUpperCase())) {
 			p6ActivityUpd.setTaskUserStatusUDF(ellipseActivity.getTaskUserStatus());
 			isUpdateReq = true;
 		}
@@ -681,12 +691,23 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			}
 
 			if (!dateUtil.isSameDate(ellipseActivity.getActualFinishDate(), DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP,
-					p6Activity.getActualFinishDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP) && p6ActivityUpd.getActualStartDate() != null) {
+					p6Activity.getActualFinishDate(), DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP)
+					&& p6ActivityUpd.getActualStartDate() != null) {
 				p6ActivityUpd.setActualFinishDate(dateUtil.convertDateToString(ellipseActivity.getActualFinishDate(),
 						DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 				isUpdateReq = true;
 
 			}
+		}
+
+		if (!ellipseActivity.getSuburb().isEmpty() 
+				&& !ellipseActivity.getSuburb().equals(p6Activity.getSuburbUDF())) {
+			p6ActivityUpd.setSuburbUDF(ellipseActivity.getSuburb());
+		}
+		final String ellipseStreetName = P6Utility.getStreetName(ellipseActivity.getStreetName());
+		if (!ellipseStreetName.isEmpty() 
+				&& !ellipseStreetName.equals(p6Activity.getSuburbUDF())) {
+			p6ActivityUpd.setStreetNameUDF(ellipseStreetName);
 		}
 
 		/*
@@ -723,7 +744,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			Map<String, P6ProjWorkgroupDTO> projectWorkgroup, final String woGroup) throws P6BusinessException {
 		logger.debug("Constructing new activity for p6...");
 		final String workGroup = null == woGroup ? ellipseActivity.getWorkGroup() : woGroup;
-		
+
 		double originalDuration = 0;
 
 		double estimatdLaborHours = 0;
@@ -739,16 +760,16 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 			originalDuration = 1;
 			estimatdLaborHours = 1;
 
-		} else if (ellipseEstLaborsHours >=1 && ellipseEstLaborsHours < 5) {
+		} else if (ellipseEstLaborsHours >= 1 && ellipseEstLaborsHours < 5) {
 			originalDuration = 1;
 			estimatdLaborHours = ellipseEstLaborsHours;
 
-		} else if (ellipseEstLaborsHours >=5) {
+		} else if (ellipseEstLaborsHours >= 5) {
 			originalDuration = ellipseActivity.getOriginalDuration();
 			estimatdLaborHours = ellipseEstLaborsHours;
-		
-		}		
-		
+
+		}
+
 		P6ActivityDTO p6Activity = new P6ActivityDTO();
 		p6Activity.setActivityId(ellipseActivity.getWorkOrderTaskId());
 		p6Activity.setActivityJDCodeUDF(ellipseActivity.getJdCode());
@@ -759,13 +780,13 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		p6Activity.setEllipseStandardJobUDF(ellipseActivity.getEllipseStandardJob());
 		p6Activity.setEquipmentCodeUDF(ellipseActivity.getEquipmentCode());
 		p6Activity.setEquipmentNoUDF(ellipseActivity.getEquipmentNo());
-		
+
 		p6Activity.setFeederUDF(ellipseActivity.getFeeder());
 		p6Activity.setLocationInStreetUDF(ellipseActivity.getLocationInStreet());
-		
+
 		p6Activity.setEstimatedLabourHours(estimatdLaborHours);
 		p6Activity.setOriginalDuration(originalDuration);
-		
+
 		p6Activity.setPickIdUDF(ellipseActivity.getPlantNoOrPickId());
 
 		/*
@@ -790,6 +811,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		p6Activity.setUpStreamSwitchUDF(ellipseActivity.getUpStreamSwitch());
 		p6Activity.setWorkGroup(workGroup);
 		p6Activity.setPrimaryResorceObjectId(projectWorkgroup.get(workGroup).getPrimaryResourceObjectId());
+		p6Activity.setSuburbUDF(ellipseActivity.getSuburb());
+		p6Activity.setStreetNameUDF(P6Utility.getStreetName(ellipseActivity.getStreetName()));
 		/*
 		 * the WO task is read from Ellipse when the corresponding activity
 		 * needs to be created in P6 with all the details then it should be

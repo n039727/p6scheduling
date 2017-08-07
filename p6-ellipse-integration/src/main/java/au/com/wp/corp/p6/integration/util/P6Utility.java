@@ -3,6 +3,9 @@
  */
 package au.com.wp.corp.p6.integration.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +18,8 @@ import org.slf4j.LoggerFactory;
 public class P6Utility {
 
 	private static final Logger logger = LoggerFactory.getLogger(P6Utility.class);
+
+	private static final String ELLIPSE_STREET_NAME_PATTERN = "ELLIPSE_STREET_NAME_PATTERN";
 
 	private P6Utility() {
 	}
@@ -105,6 +110,28 @@ public class P6Utility {
 	 */
 	public static String covertIntegerToString(Integer value) {
 		return String.valueOf(value);
+
+	}
+
+	/**
+	 * extract the street name
+	 * 
+	 * @param street
+	 * @return
+	 */
+	public static String getStreetName(final String street) {
+		if (null == street) {
+			return "";
+		}
+		final String ellipseStreetNamePattern = "(\\b[a-zA-Z]{3,}\\b)";
+		final Pattern pattern = Pattern.compile(ellipseStreetNamePattern);
+		final Matcher matcher = pattern.matcher(street);
+
+		if (matcher.find()) {
+			return street.substring(street.indexOf(matcher.group()));
+		} else {
+			return street;
+		}
 
 	}
 
