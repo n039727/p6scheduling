@@ -18,8 +18,11 @@ import javax.xml.ws.handler.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.xml.ws.client.BindingProviderProperties;
+
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.utils.CacheManager;
+import au.com.wp.corp.p6.utils.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.wsclient.activity.Activity;
 import au.com.wp.corp.p6.wsclient.activity.ActivityFieldType;
 import au.com.wp.corp.p6.wsclient.activity.ActivityPortType;
@@ -61,7 +64,7 @@ public class ActivityServiceCall extends AbstractSOAPCall<List<Activity>> {
 				new QName("http://xmlns.oracle.com/Primavera/P6/WS/Activity/V1", "ActivityService"));
 		servicePort = Service.getActivityPort();
 		bp = (BindingProvider) servicePort;
-		
+				
 		Map<String, List<String>> headers = (Map<String, List<String>>) bp.getRequestContext()
 				.get("javax.xml.ws.http.request.headers");
 		if (headers == null) {
@@ -95,13 +98,20 @@ public class ActivityServiceCall extends AbstractSOAPCall<List<Activity>> {
 		fields.add(ActivityFieldType.PROJECT_OBJECT_ID);
 		fields.add(ActivityFieldType.PRIMARY_RESOURCE_ID);
 				
-		List<Activity> activities;
-		try {
-			activities = servicePort.readActivities(fields, filter, null);
-		} catch (IntegrationFault e) {
-			throw new P6ServiceException(e);
-		}
+		List<Activity> activities=null;
 		
+			try {
+				activities = servicePort.readActivities(fields, filter, null);
+			} catch (IntegrationFault e) {
+				
+				throw new P6ServiceException(e);
+				
+
+			}
+			catch (Exception e) {
+				throw new P6ServiceException(e);
+				
+			}
 		return new Holder<>(activities);
 	}
 

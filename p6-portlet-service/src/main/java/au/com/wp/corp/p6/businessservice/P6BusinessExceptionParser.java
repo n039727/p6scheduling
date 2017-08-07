@@ -3,9 +3,12 @@
  */
 package au.com.wp.corp.p6.businessservice;
 
+import java.net.ConnectException;
+
 import au.com.wp.corp.p6.exception.P6BusinessException;
 import au.com.wp.corp.p6.exception.P6ExceptionMapper;
 import au.com.wp.corp.p6.exception.P6ServiceException;
+import au.com.wp.corp.p6.wsclient.auth.IntegrationFault;
 
 /**
  * @author n039727
@@ -24,13 +27,17 @@ public interface P6BusinessExceptionParser extends P6ExceptionMapper{
 			throw new P6BusinessException (ARGUEMENT_MISMATCH, throwable);
 		}
 		if ( throwable instanceof P6ServiceException ){
-			throw new P6BusinessException (INTEGRATION_FAULT, throwable);
+			if(throwable.getCause() instanceof IntegrationFault){
+				throw new P6BusinessException (INTEGRATION_FAULT, throwable);
+			}else{
+				throw new P6BusinessException (INTERNAL_SERVICE_ERROR , throwable);
+			}
 		}
-		if ( throwable instanceof P6ServiceException ){
-			throw new P6BusinessException (INTERNAL_SERVICE_ERROR , throwable);
+		if ( throwable instanceof ConnectException ){
+			throw new P6BusinessException (INTERNAL_SERVICE_ERROR, throwable);
 		}
-		if ( throwable instanceof P6BusinessException ){
-			throw new P6BusinessException (throwable.getMessage(), throwable);
+		if ( throwable instanceof Exception ){
+			throw new P6BusinessException (INTERNAL_APPLICATION_ERROR, throwable);
 		}
 	}
 	

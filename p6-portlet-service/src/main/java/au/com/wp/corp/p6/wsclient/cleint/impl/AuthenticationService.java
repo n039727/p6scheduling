@@ -11,9 +11,14 @@ import javax.xml.ws.Holder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+
+import com.sun.xml.ws.client.BindingProviderProperties;
 
 import au.com.wp.corp.p6.exception.P6ServiceException;
 import au.com.wp.corp.p6.utils.CacheManager;
+import au.com.wp.corp.p6.utils.P6ReloadablePropertiesReader;
 import au.com.wp.corp.p6.wsclient.auth.AuthenticationServicePortType;
 import au.com.wp.corp.p6.wsclient.auth.IntegrationFault;
 import au.com.wp.corp.p6.wsclient.logging.RequestTrackingId;
@@ -53,16 +58,26 @@ public class AuthenticationService extends AbstractSOAPCall<Boolean> {
 				new QName("http://xmlns.oracle.com/Primavera/P6/WS/Authentication/V1", "AuthenticationService"));
 		servicePort = Service.getAuthenticationServiceSOAP12PortHttp();
 		bp = (BindingProvider) servicePort;
+		
 	}
 
 	@Override
 	protected Holder<Boolean> command() throws P6ServiceException {
-		boolean status;
-		try {
-			status = servicePort.login(userPrincipal, userCredential, p6DBInstance);
-		} catch (IntegrationFault e) {
-			throw new P6ServiceException(e);
-		}
+		boolean status=false;
+		
+			try {
+				status = servicePort.login(userPrincipal, userCredential, p6DBInstance);
+			} catch (IntegrationFault e) {
+				
+				throw new P6ServiceException(e);
+				
+
+			}catch (Exception e) {
+				
+				throw new P6ServiceException(e);
+				
+			}
+
 		final Holder<Boolean> holder = new Holder<>(status);
 		final Map<String, List<String>> responseHeaders = (Map<String, List<String>>) bp.getResponseContext()
 				.get("javax.xml.ws.http.response.headers");

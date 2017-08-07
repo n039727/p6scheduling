@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import au.com.wp.corp.p6.dto.ErrorResponse;
+import au.com.wp.corp.p6.exception.P6ExceptionMapper;
 
 /**
  * @author n039126
@@ -46,8 +47,14 @@ public class P6ControllerAdvice {
 		ErrorResponse error = new ErrorResponse();
 		if(ex != null && ex.getMessage() != null)
 		{
-			error.setErrorCode(ex.getMessage().trim());
-			error.setErrorMessage((String) configuration.getProperty(ex.getMessage().trim()));
+			if(null !=  configuration.getProperty(ex.getMessage())){
+				error.setErrorCode(ex.getMessage().trim());
+				error.setErrorMessage((String) configuration.getProperty(ex.getMessage().trim()));
+			}
+			else{
+				error.setErrorCode(P6ExceptionMapper.INTERNAL_APPLICATION_ERROR);
+				error.setErrorMessage((String) configuration.getProperty(P6ExceptionMapper.INTERNAL_APPLICATION_ERROR));
+			}
 		}else{
 			error.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 			error.setErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
