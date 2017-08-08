@@ -43,6 +43,13 @@ public abstract class AbstractSOAPCall<T> {
 	            retryCount++;
 				logger.info("Retry count for P6 service {}", retryCount );
 				if(retryCount<p6Maxretry){
+					try {
+						logger.debug("Going to wait for a second...");
+					    Thread.sleep(Long.parseLong(P6ReloadablePropertiesReader.getProperty("P6_RETRY_WAIT_TIME")));                 
+					} catch(InterruptedException ex) {
+						logger.info("Thread.sleep got InterruptedException >>{}", ex.getMessage() );
+					    Thread.currentThread().interrupt();
+					}
 					continue;
 				}
 				else{
