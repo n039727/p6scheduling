@@ -123,14 +123,14 @@ public class P6Utility {
 		if (null == street) {
 			return "";
 		}
-		final String ellipseStreetNamePattern = "(\\b[a-zA-Z]{3,}\\b)";
+		final String ellipseStreetNamePattern = "(( *?[a-zA-Z'*,*] *?){3,})";
 		final Pattern pattern = Pattern.compile(ellipseStreetNamePattern);
 		final Matcher matcher = pattern.matcher(street);
 
 		if (matcher.find()) {
-			return street.substring(street.indexOf(matcher.group()));
+			return street.substring(street.indexOf(matcher.group())).trim();
 		} else {
-			return street;
+			return street.trim();
 		}
 
 	}

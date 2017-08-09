@@ -171,6 +171,10 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				arrayModify = new ArrayOfWorkOrderTaskServiceModifyRequestDTO();
 				workOrderUpdateList = new ArrayList<>();
 				for (EllipseActivityDTO activity : ellipseActivities) {
+					logger.info(
+							"Update Activity in Ellipse # Workorder Id - {}, Work group- {}, planned start date - {}, planned finish date- {}, calc dur flag- {}, task user status - {}",
+							activity.getWorkOrderTaskId(), activity.getWorkGroup(), activity.getPlannedStartDate(),
+							activity.getPlannedFinishDate(), activity.getCalcDurFlag(), activity.getTaskUserStatus());
 					workorderTask = getWorkOrderNoWithPrefixAndTask(activity.getWorkOrderTaskId());
 
 					if (null != activity.getCalcDurFlag() && activity.getCalcDurFlag().equals("Y")) {
@@ -274,6 +278,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 	@Override
 	public boolean updateWorkOrderEllipse(List<EllipseActivityDTO> activities, String transId)
 			throws P6ServiceException {
+		logger.info("updating work order with calc dur flag..... ");
 		com.mincom.enterpriseservice.ellipse.workorder.MultipleModify multipleModify = new com.mincom.enterpriseservice.ellipse.workorder.MultipleModify();
 		ArrayOfWorkOrderServiceModifyRequestDTO requestParam = new ArrayOfWorkOrderServiceModifyRequestDTO();
 		WorkOrderServiceModifyRequestDTO workOrderModifyReqDTO = workOrderObjectFactory
@@ -300,6 +305,7 @@ public class EllipseWSClientImpl implements EllipseWSClient {
 				&& !multipleModify.getRequestParameters().getWorkOrderServiceModifyRequestDTO().isEmpty()) {
 			com.mincom.enterpriseservice.ellipse.workorder.MultipleModifyResponse modifyResponse = workOrderWsClient
 					.multipleModify(multipleModify);
+			logger.info("updating work order - got response -");
 			if (modifyResponse.getOut() != null) {
 				return true;
 			}

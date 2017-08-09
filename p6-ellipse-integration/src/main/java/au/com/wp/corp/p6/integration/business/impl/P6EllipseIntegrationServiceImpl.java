@@ -434,8 +434,8 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		 * Ellipse and P6 then update the Crew from P6 to Work Group in Ellipse.
 		 */
 		if (null != p6Activity.getWorkGroup()
-				&& !p6Activity.getWorkGroup().equals(ellipseActivity.getWorkGroup().trim())) {
-			ellipseActivityUpd.setWorkGroup(p6Activity.getWorkGroup());
+				&& !p6Activity.getWorkGroup().trim().equals(ellipseActivity.getWorkGroup().trim())) {
+			ellipseActivityUpd.setWorkGroup(p6Activity.getWorkGroup().trim());
 			isUpdateReq = true;
 		}
 
@@ -468,7 +468,7 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 					DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP, DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP));
 
 			if (ellipseActivity.getCalcDurFlag() == null || ellipseActivity.getCalcDurFlag().trim().isEmpty()
-					|| ellipseActivity.getCalcDurFlag().equals(CALC_DUR_FLAG_N)) {
+					|| ellipseActivity.getCalcDurFlag().trim().equals(CALC_DUR_FLAG_N)) {
 				ellipseActivityUpd.setCalcDurFlag(CALC_DUR_FLAG_Y);
 			}
 
@@ -703,11 +703,13 @@ public class P6EllipseIntegrationServiceImpl implements P6EllipseIntegrationServ
 		if (!ellipseActivity.getSuburb().isEmpty() 
 				&& !ellipseActivity.getSuburb().equals(p6Activity.getSuburbUDF())) {
 			p6ActivityUpd.setSuburbUDF(ellipseActivity.getSuburb());
+			isUpdateReq = true;
 		}
 		final String ellipseStreetName = P6Utility.getStreetName(ellipseActivity.getStreetName());
 		if (!ellipseStreetName.isEmpty() 
-				&& !ellipseStreetName.equals(p6Activity.getSuburbUDF())) {
+				&& !ellipseStreetName.equals(p6Activity.getStreetNameUDF())) {
 			p6ActivityUpd.setStreetNameUDF(ellipseStreetName);
+			isUpdateReq = true;
 		}
 
 		/*

@@ -99,6 +99,12 @@ public class DateUtilTest {
 		Assert.assertTrue(dateUtil.isSameDate("2017-06-20T08:00:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
 				"20/06/2017 08:00:00", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
 	}
+	
+	@Test
+	public void testIsSameDate2() {
+		Assert.assertTrue(dateUtil.isSameDate("2017-07-14T08:00:00", DateUtil.P6_DATE_FORMAT_WITH_TIMESTAMP,
+				"14/07/2017 00:00:00", DateUtil.ELLIPSE_DATE_FORMAT_WITH_TIMESTAMP));
+	}
 
 	@Test
 	public void testIsSameDate_ERORR1() {
